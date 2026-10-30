@@ -1,0 +1,6 @@
+'use client';
+import {createContext,useContext,useEffect,useState,type ReactNode}from'react';
+import{initial,readSaved,validateContent,type SiteData}from'@/lib/content';
+const KEY='danava-preview-content-v2';
+const Context=createContext<{data:SiteData;save:(next:SiteData)=>boolean;ready:boolean;error:string}>({data:initial,save:()=>false,ready:false,error:''});
+export function SiteStore({children}:{children:ReactNode}){const[data,setData]=useState(initial),[ready,setReady]=useState(false),[error,setError]=useState('');useEffect(()=>{try{setData(readSaved(localStorage.getItem(KEY)));}catch{setError('Trình duyệt chặn lưu trữ cục bộ.');}setReady(true);const listener=(e:StorageEvent)=>{if(e.key===KEY)setData(readSaved(e.newValue));};addEventListener('storage',listener);return()=>removeEventListener('storage',listener);},[]);function save(next:SiteData){if(!validateContent(next)){setError('Dữ liệu không đúng cấu trúc.');return false;}try{localStorage.setItem(KEY,JSON.stringify(next));setData(next);setError('');return true;}catch{setError('Không lưu được: bộ nhớ đầy hoặc trình duyệt chặn lưu trữ.');return false;}}return <Context.Provider value={{data,save,ready,error}}>{children}</Context.Provider>;}export const useSite=()=>useContext(Context);

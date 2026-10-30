@@ -1,0 +1,3 @@
+import{initial}from'@/lib/content';import{ServicePage}from'@/components/PublicPages';import{notFound}from'next/navigation';export function generateStaticParams(){return initial.services.map(s=>({slug:s.slug}));}export default async function Page({params}:{params:Promise<{slug:string}>}){const{slug}=await params;const s=initial.services.find(s=>s.slug===slug);if(!s)notFound();return <ServicePage service={s}/>;}
+
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}){const{slug}=await params;return {title:initial.services.find(item=>item.slug===slug)?.title||'DANAVA'};}

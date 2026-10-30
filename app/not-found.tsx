@@ -1,0 +1,1 @@
+import Link from'next/link';export default function NotFound(){return <main id="main" className="missing"><p>404 / DANAVA</p><h1>Trang bạn tìm chưa có.</h1><Link className="button amber" href="/">Về trang chủ ↗</Link></main>}

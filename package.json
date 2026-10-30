@@ -1,1 +1,25 @@
-{"name":"danava-company-homepage","version":"1.0.0","private":true,"type":"module","scripts":{"build":"node scripts/build.mjs","check":"node scripts/check.mjs","test":"node --test scripts/scroll.test.mjs"}}
+{
+  "name": "danava-company-website",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "next build",
+    "check": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/content.test.ts",
+    "dev:next": "node scripts/dev.mjs"
+  },
+  "dependencies": {
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "gsap": "^3.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  },
+  "type": "module"
+}
