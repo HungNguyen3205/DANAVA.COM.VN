@@ -1,4 +1,4 @@
-export type Person={id:string;name:string;role:string;visible:boolean};
+export type Person={id:string;name:string;role:string;visible:boolean;image?:string};
 export type Post={id:string;slug:string;title:string;category:string;date:string;body:string;published:boolean};
 export type Service={id:string;slug:string;title:string;description:string;items:string[]};
 export type SiteData={version:1;headline:string;description:string;email:string;phone:string;metrics:{id:string;label:string;value:string;visible:boolean}[];staff:Person[];posts:Post[];services:Service[]};
@@ -6,7 +6,7 @@ export const initial:SiteData={version:1,headline:'Cùng bạn phát triển.',d
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const str=(v:unknown,max=20000)=>typeof v==='string'&&v.length<=max;
 export function validateContent(v:unknown):v is SiteData{if(!object(v)||v.version!==1||!str(v.headline,150)||!str(v.description,1000)||!str(v.email,200)||!str(v.phone,50))return false;
-if(!Array.isArray(v.staff)||v.staff.length>100||!v.staff.every(p=>object(p)&&str(p.id,100)&&str(p.name,150)&&str(p.role,200)&&typeof p.visible==='boolean'))return false;
+if(!Array.isArray(v.staff)||v.staff.length>100||!v.staff.every(p=>object(p)&&str(p.id,100)&&str(p.name,150)&&str(p.role,200)&&typeof p.visible==='boolean'&&(p.image===undefined||p.image===''||(str(p.image,250)&&/^\/assets\/[a-zA-Z0-9/_.-]+\.(webp|png|jpe?g)$/.test(p.image as string)&&!(p.image as string).includes('..')))))return false;
 if(!Array.isArray(v.posts)||v.posts.length>500||!v.posts.every(p=>object(p)&&str(p.id,100)&&str(p.slug,150)&&/^[a-z0-9-]+$/.test(p.slug as string)&&str(p.title,250)&&str(p.category,100)&&str(p.date,30)&&str(p.body)&&typeof p.published==='boolean'))return false;
 if(!Array.isArray(v.metrics)||v.metrics.length>20||!v.metrics.every(m=>object(m)&&str(m.id,100)&&str(m.label,150)&&str(m.value,50)&&typeof m.visible==='boolean'))return false;
 if(!Array.isArray(v.services)||v.services.length>50||!v.services.every(s=>object(s)&&str(s.id,100)&&str(s.slug,150)&&initial.services.some(expected=>expected.id===s.id&&expected.slug===s.slug)&&str(s.title,200)&&str(s.description,2000)&&Array.isArray(s.items)&&s.items.every(i=>str(i,1000))))return false;

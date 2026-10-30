@@ -6,7 +6,7 @@
     "dev": "node scripts/serve.mjs",
     "build": "next build",
     "check": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/content.test.ts",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
     "dev:next": "node scripts/dev.mjs"
   },
   "dependencies": {

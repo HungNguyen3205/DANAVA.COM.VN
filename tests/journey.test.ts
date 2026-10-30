@@ -1,0 +1,3 @@
+import test from'node:test';import assert from'node:assert/strict';import{sceneAt,sceneWeights,sceneCenters}from'../lib/journey.ts';
+test('all scenes have a readable hold and adjacent crossfades never leave an empty frame',()=>{sceneCenters.forEach((p,i)=>{assert.equal(sceneAt(p),i);assert.equal(sceneWeights(p)[i],1);});for(let i=0;i<=1000;i++){const weights=sceneWeights(i/1000);assert.ok(Math.abs(weights.reduce((a,b)=>a+b,0)-1)<1e-9);assert.ok(Math.max(...weights)>=.5);}});
+test('reverse scrolling returns to the original scene',()=>{assert.equal(sceneAt(.72),3);assert.equal(sceneAt(.24),1);assert.equal(sceneAt(0),0);assert.equal(sceneAt(1),4);});

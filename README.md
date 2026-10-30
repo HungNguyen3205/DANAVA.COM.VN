@@ -19,7 +19,7 @@ Website giới thiệu công ty được phát triển bằng **Next.js App Rout
 
 ## Animation trang chủ
 
-Timeline GSAP được liên kết với cuộn qua ScrollTrigger, giữ sân khấu toàn màn hình, có scrub và chuyển động đảo khi cuộn ngược. Cận logo và camera thu từ nền kiến trúc → màn hình sản phẩm → người đại diện → hệ sinh thái → khám phá giải pháp. Có nút bỏ qua và chế độ giảm chuyển động theo thiết bị.
+Timeline GSAP được liên kết với cuộn qua ScrollTrigger, giữ sân khấu toàn màn hình, có scrub và chuyển động đảo khi cuộn ngược. Camera thu từ không gian thương hiệu → nền tảng số → người đại diện → hệ sinh thái → khám phá giải pháp. Hành trình đã rút ngắn, có điều hướng trực tiếp 5 cảnh, các cảnh chuyển chồng liên tục với tổng độ hiển thị luôn bằng 1 để tránh khung trống khi cuộn. Có nút bỏ qua và chế độ giảm chuyển động theo thiết bị.
 
 Đây là **cảnh 2.5D với các lớp hình ảnh và CSS perspective**, chưa phải một chuỗi render camera 3D như video tham khảo. Để khớp hoàn toàn video cần dựng và duyệt chuỗi khung hình hoặc mô hình 3D, cùng ảnh gốc người đại diện. Không tuyên bố bản này đã tái tạo chính xác video mẫu.
 
@@ -77,8 +77,14 @@ tests/               Kiểm tra nội dung và import/export
 
 ## Nội dung cần xác nhận
 
-Ảnh chân dung anh Lê Tấn Thành, ảnh nhân viên và chức danh; toàn văn bài viết, ngày đăng còn thiếu; ảnh dự án thực tế và số liệu. Danh sách nhân sự theo website đã đọc, không tự thay bằng nhân sự từ nguồn khác. Bài viết hiện là bản rút gọn giữ tiêu đề, ngày đăng và thông báo chờ nhập toàn văn — chưa di chuyển trọn kho nội dung. Ảnh không gian là ảnh minh họa, không khẳng định là văn phòng thật. Font Playfair Display và Be Vietnam Pro có fallback hệ thống; cần font UTM Eremitage và quyền sử dụng để áp dụng đúng font nhận diện.
+Ảnh chân dung và chức danh cần được chủ sở hữu rà soát lại; toàn văn bài viết, ngày đăng còn thiếu; hồ sơ dự án và số liệu cần xác nhận. Danh sách nhân sự theo website đã đọc, không tự thay bằng nhân sự từ nguồn khác. Bài viết hiện là bản rút gọn giữ tiêu đề, ngày đăng và thông báo chờ nhập toàn văn — chưa di chuyển trọn kho nội dung. Ảnh không gian là ảnh minh họa, không khẳng định là văn phòng thật. Font Playfair Display và Be Vietnam Pro có fallback hệ thống; cần font UTM Eremitage và quyền sử dụng để áp dụng đúng font nhận diện.
 
 ## Kiểm tra
 
-TypeScript, unit test xác thực dữ liệu và build export. Bản production đã được kiểm tra cấu trúc route/tài nguyên. Trình duyệt kiểm thử tại thời điểm phát triển chặn tài nguyên JavaScript `_next` bằng `ERR_BLOCKED_BY_CLIENT`, vì vậy kiểm thử tương tác GSAP và lưu localStorage trong môi trường đó chưa được xác nhận. Cần thử lại trên trình duyệt thông thường khi chạy localhost hoặc hosting thử nghiệm trước khi đưa vào production.
+TypeScript, unit test xác thực dữ liệu và build export. Bản production đã được kiểm tra cấu trúc route/tài nguyên. Ở bản rà soát mới, JavaScript đã tải được trong trình duyệt kiểm thử. Đã kiểm tra cảnh mở đầu, nút chọn cảnh người đại diện, tiến độ khi cuộn và chuyển xuống nội dung chính; đã sửa lỗi sân khấu cuộn nội bộ làm ảnh/chữ bị đẩy lên. Kiểm thử dữ liệu localStorage bằng unit test; không coi đó là kiểm thử backend. Cần kiểm tra thêm thiết bị di động và dữ liệu thật trước khi đưa vào production.
+
+## Ảnh từ website DANAVA cũ
+
+Đã đưa 15 ảnh vào `public/assets/legacy/`, gồm 5 ảnh nhân sự đúng theo từng hồ sơ, ảnh minh họa dịch vụ và ảnh sự kiện/workshop. File `sources.json` ghi URL nguồn cho từng ảnh. Ảnh được tối ưu WebP, không tái tạo hay chỉnh sửa khuôn mặt. Các ảnh dịch vụ chỉ minh họa lĩnh vực, không khẳng định là ảnh chụp giao diện DANAVA Studio. Các ảnh hoạt động lấy từ kho công khai DANAVA, không được gắn thêm kết quả kinh doanh hoặc tuyên bố dự án chưa xác nhận.
+
+Đổi ảnh mặc định trong `lib/media.ts`. Với nhân sự, bản quản trị thử hỗ trợ sửa đường dẫn ảnh cục bộ dạng `/assets/ten-anh.webp`; để trống để dùng chữ viết tắt. Việc thay đường dẫn không upload file lên hosting. Nội dung localStorage cũ tương thích với ảnh mặc định. Sau khi thay file ảnh cần build lại và upload thư mục `out/`.

@@ -1,0 +1,137 @@
+[
+  {
+    "name": "founder",
+    "source": "https://danava.com.vn/wp-content/uploads/2023/05/team-danava04-750x900.png",
+    "local": "/assets/legacy/founder.webp",
+    "size": [
+      750,
+      900
+    ]
+  },
+  {
+    "name": "pham-trang",
+    "source": "https://danava.com.vn/wp-content/uploads/2023/05/team-danava01-750x900.png",
+    "local": "/assets/legacy/pham-trang.webp",
+    "size": [
+      750,
+      900
+    ]
+  },
+  {
+    "name": "tran-van-nam",
+    "source": "https://danava.com.vn/wp-content/uploads/2023/03/nam-danva-750x900.png",
+    "local": "/assets/legacy/tran-van-nam.webp",
+    "size": [
+      750,
+      900
+    ]
+  },
+  {
+    "name": "avinash",
+    "source": "https://danava.com.vn/wp-content/uploads/2023/09/avi-master-750x900.png",
+    "local": "/assets/legacy/avinash.webp",
+    "size": [
+      750,
+      900
+    ]
+  },
+  {
+    "name": "dang-ngoc-thong",
+    "source": "https://danava.com.vn/wp-content/uploads/2023/03/thong-danava-750x900.png",
+    "local": "/assets/legacy/dang-ngoc-thong.webp",
+    "size": [
+      750,
+      900
+    ]
+  },
+  {
+    "name": "website",
+    "source": "https://danava.com.vn/wp-content/uploads/2021/04/apple-1868496_1920.jpg",
+    "local": "/assets/legacy/website.webp",
+    "size": [
+      1200,
+      800
+    ]
+  },
+  {
+    "name": "marketing",
+    "source": "https://danava.com.vn/wp-content/uploads/2021/04/internet-marketing-1802610_1280.png",
+    "local": "/assets/legacy/marketing.webp",
+    "size": [
+      1200,
+      726
+    ]
+  },
+  {
+    "name": "community",
+    "source": "https://danava.com.vn/wp-content/uploads/2021/04/Cong-Dong-Yoga-767x511.jpg",
+    "local": "/assets/legacy/community.webp",
+    "size": [
+      767,
+      511
+    ]
+  },
+  {
+    "name": "travel",
+    "source": "https://danava.com.vn/wp-content/uploads/revslider/Slider-DANAVA-001.jpg",
+    "local": "/assets/legacy/travel.webp",
+    "size": [
+      1200,
+      675
+    ]
+  },
+  {
+    "name": "cong-nghe",
+    "source": "https://danava.com.vn/wp-content/uploads/2021/04/Cong-Nghe-767x511.jpg",
+    "local": "/assets/legacy/cong-nghe.webp",
+    "size": [
+      767,
+      511
+    ]
+  },
+  {
+    "name": "event-group",
+    "source": "https://danava.com.vn/wp-content/uploads/2024/05/tumy-chua-lanh-bang-am-thanh81.png",
+    "local": "/assets/legacy/event-group.webp",
+    "size": [
+      1200,
+      799
+    ]
+  },
+  {
+    "name": "event-session",
+    "source": "https://danava.com.vn/wp-content/uploads/2024/05/tumy-chua-lanh-bang-am-thanh35.png",
+    "local": "/assets/legacy/event-session.webp",
+    "size": [
+      1200,
+      799
+    ]
+  },
+  {
+    "name": "event-workshop",
+    "source": "https://danava.com.vn/wp-content/uploads/2024/05/tumy-chua-lanh-bang-am-thanh15.png",
+    "local": "/assets/legacy/event-workshop.webp",
+    "size": [
+      1200,
+      799
+    ]
+  },
+  {
+    "name": "post-energy",
+    "source": "https://danava.com.vn/wp-content/uploads/2024/04/tumy-danava-huyentran-720x390.png",
+    "local": "/assets/legacy/post-energy.webp",
+    "size": [
+      720,
+      390
+    ]
+  },
+  {
+    "name": "post-tea",
+    "source": "https://danava.com.vn/wp-content/uploads/2024/01/2-720x390.png",
+    "local": "/assets/legacy/post-tea.webp",
+    "size": [
+      720,
+      390
+    ]
+  }
+]
