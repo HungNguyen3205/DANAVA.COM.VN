@@ -1,0 +1,3 @@
+import{readFile}from'node:fs/promises';import{join}from'node:path';import{mediaDirectory,validMediaName}from'@/lib/media-storage';
+export const runtime='nodejs';export const dynamic='force-dynamic';
+export async function GET(_req:Request,{params}:{params:Promise<{file:string}>}){const{file}=await params;if(!validMediaName(file))return new Response(null,{status:404});try{const bytes=await readFile(join(await mediaDirectory(),file));return new Response(new Uint8Array(bytes),{headers:{'Content-Type':'image/webp','Cache-Control':'public,max-age=31536000,immutable','X-Content-Type-Options':'nosniff'}})}catch{return new Response(null,{status:404})}}
