@@ -66,10 +66,10 @@ Sao chép **hash** in ra vào biến môi trường hosting. Không gửi mật 
 
 ## Nguồn nội dung và phạm vi
 
-- Hotline `0935917677`, email `danavadigital@gmail.com`, danh sách nhân sự và ảnh lấy từ website DANAVA công khai. Địa chỉ đang ghi theo website cũ, có chú thích gọi xác nhận trước khi đến; chưa khẳng định thay đổi hành chính/địa chỉ hoạt động mới.
+- Hotline `0935917677`, email liên hệ mới `hello@danava.vn`, danh sách nhân sự và ảnh lấy từ website DANAVA công khai. Địa chỉ liên hệ mới 08 Đặng Vũ Hỷ, An Hải, Đà Nẵng được đối chiếu từ footer nền tảng danava.vn; website cũ từng ghi địa chỉ Hàn Thuyên.
 - 15 ảnh gốc tối ưu WebP; `public/assets/legacy/sources.json` ghi URL. Không thay khuôn mặt bằng ảnh AI. Ảnh dịch vụ là minh họa lĩnh vực; ảnh nền kiến trúc là minh họa, không khẳng định là văn phòng DANAVA.
-- Ba bài viết đã chuyển toàn văn dạng text từ bản lưu WordPress: sự kiện Cổng Năng Lượng, Thiền Trà, Digital Marketing. `lib/archived-posts.ts` giữ nguồn, ngày gốc; không phải đã di chuyển toàn bộ kho bài viết.
-- Mặc định chưa có hồ sơ dự án được xác nhận. Không lấy case study, khách hàng, logo hay số liệu của SEODO để gán cho DANAVA. Chỉ tham khảo cách tổ chức giải pháp, bằng chứng dự án, lãnh đạo, kiến thức và CTA của https://seodo.vn/.
+- 30 bài viết đã chuyển toàn văn dạng text từ bản lưu WordPress. `lib/legacy-catalog.ts` giữ tiêu đề, chuyên mục, ngày và URL nguồn; `lib/archived-posts.ts` cung cấp chỉ mục đối chiếu. Sáu bài mới nhất có ảnh đúng từ chính bài gốc. Ba URL ngắn đã có trước được giữ nguyên. Chưa di chuyển mọi landing page hoặc tính năng thương mại của WordPress.
+- Mặc định có 2 hồ sơ được đối chiếu từ danava.vn: HARIVER Gym và Huế Pilates & Yoga. Mỗi hồ sơ có URL nguồn, không gán thêm số liệu kinh doanh. Không lấy case study, khách hàng, logo hay số liệu của SEODO để gán cho DANAVA. Chỉ tham khảo cách tổ chức giải pháp, bằng chứng dự án, lãnh đạo, kiến thức và CTA của https://seodo.vn/.
 - Chưa triển khai bản này lên tên miền. Không tự xóa WordPress cũ hay database cPanel.
 
 ## Kiểm thử
@@ -89,6 +89,14 @@ Unit tests: nội dung, import, ảnh an toàn, trùng slug, timeline cuộn. In
 
 Đã kiểm tra trên trình duyệt desktop: logo, chuyển cảnh Công nghệ (24%), Hệ sinh thái (72%) và cuộn ngược về mở đầu. Chưa kiểm thử trên điện thoại thật.
 
-![Cảnh logo](docs/screenshots/hero-logo.jpg)
-![Cảnh DANAVA Studio](docs/screenshots/hero-studio.jpg)
-![Cảnh hệ sinh thái](docs/screenshots/hero-ecosystem.jpg)
+![Trang chủ mới — hồ sơ triển khai thật](docs/screenshots/home-real-projects.jpg)
+
+## Đợt nâng cấp trải nghiệm sau video rà soát
+
+- Animation mở đầu dùng một foreground duy nhất: chữ và artwork của hai cảnh không chồng lên nhau. Chuyển cảnh có khoảng nhường cho camera/nền, nội dung có khoảng giữ rõ; giảm số tween tạo mỗi frame bằng cập nhật transform/opacity trực tiếp. Có đảo chiều, điều hướng cảnh và giảm chuyển động. Đây vẫn là phối cảnh 2.5D, không phải mô hình 3D của văn phòng thật.
+- Trang chủ được thiết kế thành câu chuyện: sứ mệnh → hệ sinh thái tương tác bằng tab → giải pháp accordion → màn hình Studio → hồ sơ triển khai → người đại diện → tư liệu cộng đồng → kho kiến thức → đội ngũ → cổng kết nối. Có reveal/parallax nhẹ, nội dung server vẫn có sẵn khi chưa có JavaScript.
+- Sáu mảng hệ sinh thái vẫn lấy từ dữ liệu quản trị; các nút tab có điều hướng bàn phím. Dịch vụ, dự án, bài viết, ảnh và nhân sự tiếp tục đọc dữ liệu CMS, không thay bằng mockup tĩnh.
+- Dữ liệu cũ đã lưu không bị ghi đè. Tại Cài đặt, nút **Bổ sung kho nội dung DANAVA đã đối chiếu** chỉ ghép bài viết/dự án còn thiếu vào bản chỉnh sửa; kiểm tra rồi lưu. ID hoặc slug có sẵn được giữ nguyên. Thông tin email đã chỉnh trên DB cũng không tự bị đổi theo mặc định.
+- Xem `docs/content-sources.md` để đối chiếu nội dung và ảnh. Không dùng các counter tổng hợp trên web cũ/mới làm kết quả kinh doanh được chứng thực; số liệu công khai vẫn do quản trị bật/tắt.
+
+- Bổ sung 40 redirect vĩnh viễn cho URL WordPress đã biết: 30 bài và 10 trang giới thiệu/dịch vụ. Cần giữ Node xử lý request tại tên miền mới để các redirect hoạt động; các URL cũ ngoài danh sách vẫn cần rà soát riêng.
