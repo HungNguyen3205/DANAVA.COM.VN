@@ -1,1 +1,1 @@
-import{ContactPage}from'@/components/PublicPages';export const metadata={title:'Liên hệ'};export default ContactPage;
+import{seo}from'@/lib/seo';export const metadata=seo("Liên hệ DANAVA","Trao đổi với DANAVA qua hotline 0935 91 7677 và email danavadigital@gmail.com.","/lien-he/");import{ContactPage}from'@/components/PublicPages';export default ContactPage;

@@ -1,1 +1,1 @@
-import Home from '@/components/Home';export default Home;
+import{seo}from'@/lib/seo';export const metadata=seo("DANAVA Solutions — Cùng bạn phát triển","Giải pháp công nghệ, truyền thông, trải nghiệm và cộng đồng cùng DANAVA Solutions.","/");import Home from '@/components/Home';export default Home;

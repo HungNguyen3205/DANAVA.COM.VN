@@ -1,1 +1,1 @@
-import{ServicesPage}from'@/components/PublicPages';export const metadata={title:'Giải pháp'};export default ServicesPage;
+import{seo}from'@/lib/seo';export const metadata=seo("Giải pháp cho doanh nghiệp","Website, marketing, phần mềm quản trị, du lịch sự kiện và kết nối cộng đồng.","/giai-phap/");import{ServicesPage}from'@/components/PublicPages';export default ServicesPage;

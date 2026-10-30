@@ -1,90 +1,77 @@
 # DANAVA Solutions
 
-Website giới thiệu công ty được phát triển bằng **Next.js App Router, TypeScript, React và GSAP ScrollTrigger**. Nhận diện giữ logo gốc, xanh #2B4294, vàng cam #F5AE1B, xanh sáng #53A5DB, đỏ #EE3132.
+Website doanh nghiệp với Next.js 16, React, TypeScript, GSAP và **backend Node.js + SQLite**. Nhận diện DANAVA: `#2B4294`, `#F5AE1B`, `#53A5DB`, `#EE3132`. Menu hòa nền đầu trang, chuyển kính xanh khi cuộn. Font Manrope / Noto Serif lưu cục bộ, có ký tự tiếng Việt; giấy phép tại `public/fonts/`.
 
-## Giao diện công khai
+## Chạy và kiểm tra
 
-| Đường dẫn | Nội dung |
-|---|---|
-| `/` | Trang chủ và hành trình cuộn 5 cảnh |
-| `/giai-phap/` | Danh mục giải pháp |
-| `/giai-phap/[slug]/` | 5 trang chi tiết giải pháp |
-| `/du-an/` | Bộ lọc năng lực, vị trí chờ case study xác nhận |
-| `/ve-danava/` | Người đại diện, sứ mệnh và đội ngũ |
-| `/kien-thuc/` | Tìm kiếm và lọc bài viết |
-| `/kien-thuc/[slug]/` | 3 bài lưu trữ có đường dẫn cố định |
-| `/kien-thuc/doc/?id=...` | Đọc bài mới tạo trong bản thử |
-| `/lien-he/` | Liên hệ bằng điện thoại và email |
-| `/admin/` | Tổng quan giao diện quản trị |
-
-## Animation trang chủ
-
-Timeline GSAP được liên kết với cuộn qua ScrollTrigger, giữ sân khấu toàn màn hình, có scrub và chuyển động đảo khi cuộn ngược. Camera thu từ không gian thương hiệu → nền tảng số → người đại diện → hệ sinh thái → khám phá giải pháp. Hành trình đã rút ngắn, có điều hướng trực tiếp 5 cảnh, các cảnh chuyển chồng liên tục với tổng độ hiển thị luôn bằng 1 để tránh khung trống khi cuộn. Có nút bỏ qua và chế độ giảm chuyển động theo thiết bị.
-
-Đây là **cảnh 2.5D với các lớp hình ảnh và CSS perspective**, chưa phải một chuỗi render camera 3D như video tham khảo. Để khớp hoàn toàn video cần dựng và duyệt chuỗi khung hình hoặc mô hình 3D, cùng ảnh gốc người đại diện. Không tuyên bố bản này đã tái tạo chính xác video mẫu.
-
-## Giao diện quản trị
-
-Các màn: Tổng quan, Trang chủ, Số liệu, Bài viết, Nhân sự, Giải pháp, Cài đặt & Dữ liệu.
-
-- Sửa tiêu đề, mô tả màn mở đầu, thông tin liên hệ, tên/mô tả/phạm vi giải pháp.
-- Sửa số liệu, bật/tắt hiển thị; mặc định không hiển thị chỉ số chưa được xác nhận.
-- Thêm/sửa/xóa hồ sơ nhân sự, đổi thứ tự, bật/tắt hiển thị.
-- Thêm/sửa/xóa bài viết, tìm tiêu đề, chỉnh trạng thái hiển thị trong bản thử.
-- Lưu bằng localStorage trên trình duyệt, xem thay đổi trên giao diện chính cùng origin.
-- Xuất/nhập JSON có kiểm tra cấu trúc và giới hạn dung lượng, khôi phục mặc định.
-
-**Đây là frontend quản trị thử nghiệm, chưa có xác thực, phân quyền, database, API, upload ảnh hoặc xuất bản lên server.** Không dùng cho nội dung mật. Dữ liệu không đồng bộ giữa người dùng/thiết bị. Không thay đổi đường dẫn các giải pháp qua import vì bản hiện tại xuất tĩnh; thêm route thật cần build lại. Bài mới sử dụng trang đọc chung theo ID.
-
-## Chạy dự án
-
-Yêu cầu **Node.js 22.18+** (khuyến nghị Node 24 LTS), npm.
+Yêu cầu **Node.js 24+**, ổ đĩa bền vững, một máy chủ ứng dụng. Không còn là bản export HTML trong `out/`.
 
 ```sh
 npm ci
-npm run dev:next
-```
-
-Mở địa chỉ Next.js in ra để phát triển với hot reload.
-
-```sh
 npm run check
 npm test
 npm run build
-npm run dev
+npm run test:integration
+npm start
 ```
 
-`npm run dev` phục vụ bản production trong `out/`, cần build trước. Có thể chỉ định `--port` cho cả hai script. Không cần cài Node.js trên hosting nếu chỉ upload bản xuất tĩnh.
+`npm run dev:next` phát triển với hot reload. `npm run dev -- --port 4173` xem bản production đã build. `npm run build` chuẩn bị cả public assets và JavaScript tĩnh cho standalone server. cPanel có thể dùng file khởi động `server.cjs` tại gốc dự án.
 
-## cPanel và backend tương lai
+## Chức năng
 
-Build tạo thư mục `out/`. Sao lưu website/database hiện tại, sau đó upload **nội dung bên trong** thư mục này vào Document Root tên miền thử nghiệm. Giữ nguyên thư mục `_next`, `assets` và các thư mục trang con. Server phải phục vụ `index.html` trong thư mục và trả 404 cho URL không tồn tại.
+- Trang chủ mở đầu bằng hành trình cuộn 5 cảnh; có chọn cảnh, bỏ qua và giảm chuyển động. Cảnh 2.5D bằng lớp ảnh, không phải camera 3D render như video mẫu.
+- Giải pháp và 5 trang chi tiết; giới thiệu người đại diện và đội ngũ; dự án và trang dự án động; kiến thức và trang bài viết động; liên hệ qua điện thoại và email.
+- `/admin/`: đăng nhập một quản trị viên bằng mật khẩu; cookie HttpOnly, SameSite Strict, CSRF, giới hạn thử đăng nhập, phiên 8 giờ, đăng xuất. Không cấu hình mật khẩu thì chức năng quản trị khóa. Đổi hash mật khẩu sẽ vô hiệu hóa phiên cũ.
+- Sửa tiêu đề/mô tả, liên hệ, số liệu kinh doanh, nhân sự, dịch vụ, bài viết và dự án. Thông tin lưu trên máy chủ, áp dụng cho mọi khách truy cập sau khi tải/điều hướng lại. Có kiểm tra revision để tránh ghi đè thay đổi từ phiên khác.
+- Bản nháp bài viết/dự án không nằm trong dữ liệu công khai, URL công khai trả 404. Bật xuất bản rồi lưu để hiện thẻ và trang chi tiết; chọn nổi bật để đưa dự án lên trang chủ.
+- Bài viết có slug, ảnh bìa và mô tả SEO. Nội dung văn bản thuần, không thực thi HTML từ import.
+- Quản trị dự án: thẻ và trang chi tiết có tên, lĩnh vực, khách hàng, ảnh, tóm tắt, bối cảnh, giải pháp và kết quả. Tải mẫu JSON trong `/admin/du-an/`, nhập mảng dự án (hoặc `{ "projects": [...] }`). Import ghép theo ID, kiểm tra trùng slug; kiểm tra xong bấm Lưu thay đổi. Dữ liệu mẫu luôn là nháp.
+- Cài đặt: xuất/nhập toàn bộ nội dung JSON, giới hạn 2 MB, kiểm tra cấu trúc trước khi ghi. Import toàn bộ thay thế bộ nội dung hiện hành; xuất bản sao trước khi nhập.
+- Ảnh hiện chọn bằng đường dẫn `/assets/ten-anh.webp|png|jpg|jpeg`. Thêm file ảnh vào `public/assets/`, build lại; **chưa có upload ảnh qua admin, trình soạn thảo rich text, nhiều tài khoản hay phân quyền**.
 
-Bản xuất tĩnh có thể chạy trên hosting phục vụ HTML/CSS/JS. Không xóa bài viết/WordPress/database cũ khi chưa có kế hoạch di chuyển và chuyển hướng 301.
+## Thống kê thực tế
 
-Để vận hành CMS thật cần chốt hosting hỗ trợ Node.js, database, lưu trữ ảnh, xác thực và phân quyền. Hướng dự kiến Next.js + Payload CMS + PostgreSQL; chưa cài Payload vào bản giao diện này. Không đưa mật khẩu hoặc kết nối database vào frontend.
+`/admin/thong-ke/`: lọc 7/30/90 ngày; trình duyệt duy nhất, phiên, lượt xem, thời gian tương tác trung bình mỗi phiên, phiên hoạt động 90 giây qua, trang được xem, nguồn tên miền và biểu đồ theo ngày.
 
-## Cấu trúc
+Chỉ đo khi khách đồng ý tại banner, tôn trọng Do Not Track, loại lượt đo từ quản trị viên đã đăng nhập. Mã trình duyệt ngẫu nhiên lưu ở localStorage, mã phiên theo tab ở sessionStorage; database giữ mã băm, không lưu IP hay nội dung biểu mẫu. Nguồn truy cập chỉ giữ hostname, không giữ query. Thời gian chỉ cộng khi tab hiển thị, có focus, có hoạt động trong 60 giây gần đây. Server giới hạn thời gian tăng theo thời gian thực; dữ liệu được dọn khi nhận sự kiện, giữ cửa sổ tối đa 90 ngày.
 
-```text
-app/                  Routes công khai, admin và stylesheet
-components/           Hero GSAP, layout, trang công khai và màn admin
-lib/content.ts        Kiểu dữ liệu, nội dung mặc định, kiểm tra dữ liệu
-public/assets/        Logo gốc và ảnh nền tối ưu WebP
-scripts/              Preview production và chạy Next dev
-tests/               Kiểm tra nội dung và import/export
+Đây là phép đo trình duyệt/phiên, không xác định người thật chính xác. Trình chặn và người từ chối không được tính; sự kiện tự động hoặc giả mạo vẫn có thể ảnh hưởng số liệu. Chưa tích hợp Google Analytics, Search Console, dữ liệu doanh thu hay app DANAVA Studio bên ngoài. Phần này đo **website hiện tại**.
+
+## SEO
+
+Trang xuất bản được render nội dung từ server, có URL slug riêng, title/description, canonical, Open Graph, Article/CreativeWork/Organization JSON-LD; sitemap cập nhật từ database, robots chặn admin/API. Admin có noindex. Số liệu chưa xác nhận và dự án chưa được cung cấp không được tự tạo. Đây là nền tảng kỹ thuật SEO, không phải cam kết thứ hạng. Cần kế hoạch redirect 301 từ URL WordPress cũ trước khi đổi tên miền sang bản mới.
+
+## Triển khai cPanel Node.js
+
+1. Sao lưu website WordPress, database và URL cũ. Triển khai trên tên miền thử trước.
+2. Chọn Node.js **24+** trong Setup Node.js App. Nếu chỉ có Node cũ, nhờ hosting nâng phiên bản hoặc dùng máy chủ Node phù hợp; không upload bản này như HTML tĩnh.
+3. Application Root là thư mục repository, Application Startup File là **`server.cjs`**, môi trường production. Cài dependency và chạy `npm run build`.
+4. Cấu hình biến môi trường:
+   - `SITE_URL`: origin HTTPS thật, không có đường dẫn, ví dụ `https://danava.com.vn`. Phải trùng origin để đăng nhập và lưu nội dung.
+   - `DANAVA_DATA_DIR`: đường dẫn tuyệt đối tới thư mục lưu trữ bền vững **ngoài public web root và ngoài thư mục build**, có quyền ghi cho ứng dụng. Chứa `danava.sqlite` và các file WAL/SHM. Không đưa vào Git, không xóa khi deploy.
+   - `DANAVA_ADMIN_PASSWORD_HASH`: giá trị tạo theo hướng dẫn bên dưới. Không dùng mật khẩu mẫu.
+   - `PORT`: do hosting cấp; `DANAVA_HOSTNAME` tùy chọn, mặc định `0.0.0.0`.
+5. Bật HTTPS/reverse proxy do hosting quản lý, giới hạn kích thước request (ví dụ 3 MB) và rate limit tại proxy; khởi động lại ứng dụng. Cookie quản trị production chỉ hoạt động qua HTTPS.
+6. Kiểm tra đăng nhập, tạo nháp, xuất bản dự án, sitemap và dữ liệu sau restart. Sao lưu SQLite bằng công cụ backup SQLite để nhất quán với WAL; không chỉ chép riêng file chính trong khi ứng dụng đang ghi. JSON chỉ sao lưu nội dung, không sao lưu thống kê/phiên.
+
+Tạo hash trên terminal riêng, nhập mật khẩu ít nhất 12 ký tự qua stdin, không ghi mật khẩu vào file hoặc câu lệnh:
+
+```sh
+read -rs -p 'Mật khẩu quản trị: ' DANAVA_INPUT
+printf '%s' "$DANAVA_INPUT" | npm run --silent admin:password
+unset DANAVA_INPUT
 ```
 
-## Nội dung cần xác nhận
+Sao chép **hash** in ra vào biến môi trường hosting. Không gửi mật khẩu thật trong chat hoặc commit. Khi chạy local, có thể cấu hình bằng file môi trường không được theo dõi bởi Git. Không chia sẻ một file SQLite qua nhiều máy chủ hoặc ổ mạng; bản này hướng đến một ứng dụng Node trên một host.
 
-Ảnh chân dung và chức danh cần được chủ sở hữu rà soát lại; toàn văn bài viết, ngày đăng còn thiếu; hồ sơ dự án và số liệu cần xác nhận. Danh sách nhân sự theo website đã đọc, không tự thay bằng nhân sự từ nguồn khác. Bài viết hiện là bản rút gọn giữ tiêu đề, ngày đăng và thông báo chờ nhập toàn văn — chưa di chuyển trọn kho nội dung. Ảnh không gian là ảnh minh họa, không khẳng định là văn phòng thật. Font Playfair Display và Be Vietnam Pro có fallback hệ thống; cần font UTM Eremitage và quyền sử dụng để áp dụng đúng font nhận diện.
+## Nguồn nội dung và phạm vi
 
-## Kiểm tra
+- Hotline `0935917677`, email `danavadigital@gmail.com`, danh sách nhân sự và ảnh lấy từ website DANAVA công khai. Địa chỉ đang ghi theo website cũ, có chú thích gọi xác nhận trước khi đến; chưa khẳng định thay đổi hành chính/địa chỉ hoạt động mới.
+- 15 ảnh gốc tối ưu WebP; `public/assets/legacy/sources.json` ghi URL. Không thay khuôn mặt bằng ảnh AI. Ảnh dịch vụ là minh họa lĩnh vực; ảnh nền kiến trúc là minh họa, không khẳng định là văn phòng DANAVA.
+- Ba bài viết đã chuyển toàn văn dạng text từ bản lưu WordPress: sự kiện Cổng Năng Lượng, Thiền Trà, Digital Marketing. `lib/archived-posts.ts` giữ nguồn, ngày gốc; không phải đã di chuyển toàn bộ kho bài viết.
+- Mặc định chưa có hồ sơ dự án được xác nhận. Không lấy case study, khách hàng, logo hay số liệu của SEODO để gán cho DANAVA. Chỉ tham khảo cách tổ chức giải pháp, bằng chứng dự án, lãnh đạo, kiến thức và CTA của https://seodo.vn/.
+- Chưa triển khai bản này lên tên miền. Không tự xóa WordPress cũ hay database cPanel.
 
-TypeScript, unit test xác thực dữ liệu và build export. Bản production đã được kiểm tra cấu trúc route/tài nguyên. Ở bản rà soát mới, JavaScript đã tải được trong trình duyệt kiểm thử. Đã kiểm tra cảnh mở đầu, nút chọn cảnh người đại diện, tiến độ khi cuộn và chuyển xuống nội dung chính; đã sửa lỗi sân khấu cuộn nội bộ làm ảnh/chữ bị đẩy lên. Kiểm thử dữ liệu localStorage bằng unit test; không coi đó là kiểm thử backend. Cần kiểm tra thêm thiết bị di động và dữ liệu thật trước khi đưa vào production.
+## Kiểm thử
 
-## Ảnh từ website DANAVA cũ
-
-Đã đưa 15 ảnh vào `public/assets/legacy/`, gồm 5 ảnh nhân sự đúng theo từng hồ sơ, ảnh minh họa dịch vụ và ảnh sự kiện/workshop. File `sources.json` ghi URL nguồn cho từng ảnh. Ảnh được tối ưu WebP, không tái tạo hay chỉnh sửa khuôn mặt. Các ảnh dịch vụ chỉ minh họa lĩnh vực, không khẳng định là ảnh chụp giao diện DANAVA Studio. Các ảnh hoạt động lấy từ kho công khai DANAVA, không được gắn thêm kết quả kinh doanh hoặc tuyên bố dự án chưa xác nhận.
-
-Đổi ảnh mặc định trong `lib/media.ts`. Với nhân sự, bản quản trị thử hỗ trợ sửa đường dẫn ảnh cục bộ dạng `/assets/ten-anh.webp`; để trống để dùng chữ viết tắt. Việc thay đường dẫn không upload file lên hosting. Nội dung localStorage cũ tương thích với ảnh mặc định. Sau khi thay file ảnh cần build lại và upload thư mục `out/`.
+Unit tests: nội dung, import, ảnh an toàn, trùng slug, timeline cuộn. Integration tests dùng SQLite tạm và server production riêng: đăng nhập, CSRF, xung đột revision, lưu sau restart, SSR bài/dự án mới, metadata, sitemap, bản nháp 404/không rò rỉ, font cục bộ, đếm truy cập/giới hạn thời gian/loại admin và đăng xuất. Kiểm thử tạm không ghi dữ liệu giả vào database vận hành. Cần xác nhận thực tế cấu hình Node/HTTPS/ổ đĩa trên hosting trước khi vận hành.

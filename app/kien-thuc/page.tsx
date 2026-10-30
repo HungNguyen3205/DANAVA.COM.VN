@@ -1,1 +1,1 @@
-import{BlogPage}from'@/components/PublicPages';export const metadata={title:'Kiến thức'};export default BlogPage;
+import{seo}from'@/lib/seo';export const metadata=seo("Kiến thức và câu chuyện DANAVA","Bài viết về marketing, sự kiện, workshop và cộng đồng từ kho DANAVA.","/kien-thuc/");import{BlogPage}from'@/components/PublicPages';export default BlogPage;

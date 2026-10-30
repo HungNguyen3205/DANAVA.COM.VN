@@ -3,11 +3,14 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/serve.mjs",
-    "build": "next build",
+    "dev": "node scripts/start.mjs",
+    "build": "next build && node scripts/prepare-standalone.mjs",
     "check": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "dev:next": "node scripts/dev.mjs"
+    "dev:next": "node scripts/dev.mjs",
+    "start": "node server.cjs",
+    "admin:password": "node scripts/admin-password.mjs",
+    "test:integration": "node scripts/integration-test.mjs"
   },
   "dependencies": {
     "next": "^16.0.0",
@@ -21,5 +24,8 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }

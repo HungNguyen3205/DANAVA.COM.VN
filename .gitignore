@@ -6,3 +6,10 @@ dist/
 .env*
 !.env.example
 .DS_Store
+
+.data/
+*.sqlite*
+
+work/
+
+!.env.example
