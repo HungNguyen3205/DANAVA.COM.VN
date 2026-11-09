@@ -1,19 +1,259 @@
 'use client';
-import{useEffect,useRef}from'react';import gsap from'gsap';import{ScrollTrigger}from'gsap/ScrollTrigger';import{defaultPresentation}from'@/lib/presentation';import{useSite}from'./SiteStore';import{sceneNames,sceneCenters,sceneFrame}from'@/lib/journey';
-export default function Hero(){const root=useRef<HTMLElement>(null);const{data}=useSite();const presentation=data.presentation||defaultPresentation;
-useEffect(()=>{gsap.registerPlugin(ScrollTrigger);const mm=gsap.matchMedia();mm.add('(prefers-reduced-motion: no-preference)',()=>{const node=root.current!;const chapters=Array.from(node.querySelectorAll<HTMLElement>('.chapter'));const world=node.querySelector<HTMLElement>('.world')!;const visuals=['.hero-logo','.screen-wrap','.founder-placeholder','.ecosystem-showcase'].map(selector=>node.querySelector<HTMLElement>(selector)!);const playhead={p:0};let last=-1;const render=()=>{const p=playhead.p,frame=sceneFrame(p),{index,opacity,local}=frame;node.style.setProperty('--progress',String(p));node.style.setProperty('--camera-turn',`${p*95}deg`);const number=node.querySelector('.progress-number');if(number)number.textContent=`${Math.round(p*100)}%`;if(index!==last){const label=node.querySelector('.chapter-label');if(label)label.textContent=sceneNames[index];const counter=node.querySelector('.scene-index');if(counter)counter.textContent=`0${index+1}`;node.querySelectorAll('.scene-navigation button').forEach((button,i)=>{if(i===index)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});chapters.forEach((chapter,i)=>{chapter.setAttribute('aria-hidden',String(i!==index));chapter.querySelectorAll('a').forEach(a=>a.tabIndex=i===index?0:-1)});last=index}chapters.forEach((chapter,i)=>{const alpha=frame.foreground[i];chapter.style.opacity=String(alpha);chapter.style.visibility=alpha>.001?'visible':'hidden';chapter.style.transform=`translate3d(0,${(1-alpha)*28}px,0) translateY(-43%)`;chapter.style.pointerEvents=i===index?'auto':'none'});world.style.transform=`translate3d(${7-p*10}%,${-2+p*3}%,0) scale(${1.72-p*.69})`;world.style.transformOrigin='60% 46%';visuals.forEach((el,i)=>{const alpha=i===index?opacity:0;el.style.opacity=String(alpha);el.style.visibility=alpha>.001?'visible':'hidden';const travel=(1-alpha)*55;if(i===0)el.style.transform=`translate3d(${travel*.3}px,${travel*.3}px,0) scale(${1.14-local*.22})`;if(i===1)el.style.transform=`perspective(1600px) translate3d(${travel}px,${travel*.4}px,0) rotateY(${-10+local*12}deg) scale(${1.24-local*.24})`;if(i===2)el.style.transform=`translate3d(${travel}px,${travel*.6}px,0) scale(${.97+local*.11})`;if(i===3)el.style.transform=`perspective(1600px) translate3d(${travel}px,0,0) rotateY(${-6+local*7}deg) scale(${1.14-local*.14})`});};render();const tween=gsap.to(playhead,{p:1,ease:'none',onUpdate:render,scrollTrigger:{trigger:node,start:'top top',end:'bottom bottom',pin:node.querySelector('.stage'),pinSpacing:false,scrub:.45,invalidateOnRefresh:true}});playhead.p=tween.scrollTrigger?.progress??0;render();return()=>{tween.scrollTrigger?.kill();tween.kill();chapters.forEach((el,i)=>{el.style.opacity=i===0?'1':'0';el.style.visibility=i===0?'visible':'hidden';el.style.transform='';el.setAttribute('aria-hidden',String(i!==0))});visuals.forEach(el=>{el.style.opacity='';el.style.visibility='';el.style.transform=''});world.style.transform='';};},root);return()=>mm.revert();},[]);
-function goToScene(i:number){const node=root.current;if(!node)return;if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.getElementById('solutions')?.scrollIntoView({behavior:'auto'});return;}window.scrollTo({top:node.getBoundingClientRect().top+scrollY+(node.offsetHeight-innerHeight)*sceneCenters[i],behavior:'smooth'});}
-return <section ref={root} className="journey cinematic" id="journey" aria-label="Hành trình khám phá DANAVA bằng cuộn"><div className="stage">
-<div className="world" aria-hidden="true"><div className="world-photo"/><div className="world-wash"/><div className="grid-floor"/></div><div className="hero-logo" aria-hidden="true"><div className="brand-showcase"><span className="brand-overline">CÔNG NGHỆ KẾT NỐI GIÁ TRỊ</span><img src="/assets/danava-logo.png" alt=""/><span className="brand-baseline">CÙNG BẠN PHÁT TRIỂN</span></div><div className="logo-ring"/></div>
-<div className="camera-atmosphere" aria-hidden="true"/><div className="scene-index" aria-hidden="true">01</div><div className="frame-corners" aria-hidden="true"/>
-<div className="chapter chapter-one"><p className="eyebrow"><span className="status-dot"/>DANAVA SOLUTIONS · ĐÀ NẴNG, VIỆT NAM</p><h1>{data.headline==='Cùng bạn phát triển.'?<>Cùng bạn<br/><em>phát triển.</em></>:data.headline}</h1><p className="hero-description">{data.description}</p><div className="scroll-invite"><span className="mouse"><i/></span><span>Cuộn để khám phá hành trình DANAVA</span></div><a className="intro-skip" href="#solutions">Khám phá giải pháp ngay ↗</a></div>
-<div className="chapter chapter-two" aria-hidden="true"><p className="eyebrow">01 / CÔNG NGHỆ TẠO KẾT NỐI</p><h2 className="presentation-heading">{presentation.technologyTitle}</h2><p className="hero-description">{presentation.technologyDescription}</p></div>
-<div className="screen-wrap" aria-hidden="true"><div className="app-screen"><div className="app-bar"><span className="app-d">D.</span><strong>DANAVA Studio</strong><span className="app-live">GIAO DIỆN MINH HỌA</span></div><div className="studio-capture"><img src={presentation.screenImage} alt=""/></div></div><div className="screen-base"/><p className="screen-caption">QUẢN TRỊ TẬP TRUNG · ẢNH CHỤP DỮ LIỆU DEMO</p></div>
-<div className="chapter chapter-three" aria-hidden="true"><p className="eyebrow">02 / NGƯỜI ĐẠI DIỆN DANAVA</p><h2>Giá trị bắt đầu<br/>từ <em>con người.</em></h2><div className="founder-name"><span>LÊ TẤN THÀNH</span><small>Founder & CEO · DANAVA Solutions</small></div><p className="hero-description">Đồng hành cùng doanh nghiệp bằng công nghệ,<br/>sự sáng tạo và tinh thần kết nối.</p></div>
-<div className="founder-placeholder has-portrait" aria-hidden="true"><img src="/assets/legacy/founder.webp" alt=""/><div className="portrait-caption"><small>NGƯỜI ĐẠI DIỆN DANAVA</small><strong>Lê Tấn Thành</strong><span>Founder & CEO</span></div></div>
-<div className="chapter chapter-four" aria-hidden="true"><p className="eyebrow">03 / HỆ SINH THÁI DANAVA</p><h2 className="presentation-heading">{presentation.ecosystemTitle}</h2><p className="hero-description">{presentation.ecosystemDescription}</p></div>
-<div className="ecosystem ecosystem-showcase" aria-hidden="true"><img src={presentation.ecosystemImage} alt=""/><div className="ecosystem-caption">{presentation.ecosystem.filter(x=>x.visible).map(x=><span key={x.id}>{x.name}</span>)}</div></div>
-<div className="chapter chapter-five" aria-hidden="true"><p className="eyebrow">DANAVA SOLUTIONS</p><h2>Ý tưởng hôm nay.<br/><em>Giá trị ngày mai.</em></h2><p className="hero-description">Cùng bạn viết tiếp hành trình phát triển.</p><a className="button amber" href="#solutions" tabIndex={-1}>Khám phá giải pháp ↗</a></div>
-<nav className="scene-navigation" aria-label="Chọn cảnh mở đầu">{['Khởi đầu','Công nghệ','Con người','Hệ sinh thái','Khám phá'].map((label,i)=><button key={label} aria-label={`Đến cảnh ${label}`} aria-current={i===0?'step':undefined} onClick={()=>goToScene(i)}><span>0{i+1}</span><b>{label}</b></button>)}</nav>
-<div className="stage-bottom"><span className="chapter-label">{sceneNames[0]}</span><div className="progress-track"><span/></div><span className="progress-number">00%</span><a href="#solutions">Bỏ qua mở đầu ↘</a></div>
-</div></section>}
+
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { defaultPresentation } from '@/lib/presentation';
+import { useSite } from './SiteStore';
+import { sceneNames, sceneCenters, sceneFrame } from '@/lib/journey';
+
+const sceneLabels = ['Khởi đầu', 'Công nghệ', 'Con người', 'Hệ sinh thái', 'Khám phá'];
+
+/**
+ * Trang mở đầu điện ảnh 5 cảnh: cuộn để chuyển cảnh
+ * (Khởi đầu → Công nghệ → Con người → Hệ sinh thái → Khám phá).
+ * Mỗi thời điểm chỉ có một cảnh tiền cảnh (xem lib/journey.ts) nên chữ và hình không chồng lên nhau.
+ */
+export default function Hero() {
+  const root = useRef<HTMLElement>(null);
+  const { data } = useSite();
+  const presentation = data.presentation || defaultPresentation;
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      const node = root.current!;
+      const chapters = Array.from(node.querySelectorAll<HTMLElement>('.chapter'));
+      const world = node.querySelector<HTMLElement>('.world')!;
+      const visuals = ['.hero-logo', '.screen-wrap', '.founder-placeholder', '.ecosystem-showcase']
+        .map(selector => node.querySelector<HTMLElement>(selector)!);
+      const playhead = { p: 0 };
+      let last = -1;
+
+      const render = () => {
+        const p = playhead.p;
+        const frame = sceneFrame(p);
+        const { index, opacity, local } = frame;
+
+        node.style.setProperty('--progress', String(p));
+        node.style.setProperty('--camera-turn', `${p * 95}deg`);
+        const number = node.querySelector('.progress-number');
+        if (number) number.textContent = `${Math.round(p * 100)}%`;
+
+        if (index !== last) {
+          const label = node.querySelector('.chapter-label');
+          if (label) label.textContent = sceneNames[index];
+          const counter = node.querySelector('.scene-index');
+          if (counter) counter.textContent = `0${index + 1}`;
+          node.querySelectorAll('.scene-navigation button').forEach((button, i) => {
+            if (i === index) button.setAttribute('aria-current', 'step');
+            else button.removeAttribute('aria-current');
+          });
+          chapters.forEach((chapter, i) => {
+            chapter.setAttribute('aria-hidden', String(i !== index));
+            chapter.querySelectorAll('a').forEach(a => (a.tabIndex = i === index ? 0 : -1));
+          });
+          last = index;
+        }
+
+        chapters.forEach((chapter, i) => {
+          const alpha = frame.foreground[i];
+          chapter.style.opacity = String(alpha);
+          chapter.style.visibility = alpha > 0.001 ? 'visible' : 'hidden';
+          chapter.style.transform = `translate3d(0,${(1 - alpha) * 28}px,0) translateY(-43%)`;
+          chapter.style.pointerEvents = i === index ? 'auto' : 'none';
+        });
+
+        world.style.transform = `translate3d(${7 - p * 10}%,${-2 + p * 3}%,0) scale(${1.72 - p * 0.69})`;
+        world.style.transformOrigin = '60% 46%';
+
+        visuals.forEach((el, i) => {
+          const alpha = i === index ? opacity : 0;
+          el.style.opacity = String(alpha);
+          el.style.visibility = alpha > 0.001 ? 'visible' : 'hidden';
+          // Biên độ nhỏ, quanh scale 1 ở giữa cảnh: hình luôn nằm gọn trong khung an toàn
+          const travel = (1 - alpha) * 40;
+          if (i === 0) el.style.transform = `translate3d(${travel * 0.4}px,${travel * 0.3}px,0) scale(${1.03 - local * 0.06})`;
+          if (i === 1) el.style.transform = `perspective(1600px) translate3d(${travel}px,${travel * 0.3}px,0) rotateY(${-7 + local * 7}deg) scale(${1.03 - local * 0.05})`;
+          if (i === 2) el.style.transform = `translate3d(${travel}px,${travel * 0.4}px,0) scale(${0.98 + local * 0.04})`;
+          if (i === 3) el.style.transform = `perspective(1600px) translate3d(${travel}px,0,0) rotateY(${-5 + local * 5}deg) scale(${1.03 - local * 0.05})`;
+        });
+      };
+
+      render();
+      const tween = gsap.to(playhead, {
+        p: 1,
+        ease: 'none',
+        onUpdate: render,
+        scrollTrigger: {
+          trigger: node,
+          start: 'top top',
+          end: 'bottom bottom',
+          pin: node.querySelector('.stage'),
+          pinSpacing: false,
+          scrub: 0.45,
+          invalidateOnRefresh: true
+        }
+      });
+      playhead.p = tween.scrollTrigger?.progress ?? 0;
+      render();
+
+      return () => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+        chapters.forEach((el, i) => {
+          el.style.opacity = i === 0 ? '1' : '0';
+          el.style.visibility = i === 0 ? 'visible' : 'hidden';
+          el.style.transform = '';
+          el.setAttribute('aria-hidden', String(i !== 0));
+        });
+        visuals.forEach(el => {
+          el.style.opacity = '';
+          el.style.visibility = '';
+          el.style.transform = '';
+        });
+        world.style.transform = '';
+      };
+    }, root);
+
+    return () => mm.revert();
+  }, []);
+
+  function goToScene(i: number) {
+    const node = root.current;
+    if (!node) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.getElementById('solutions')?.scrollIntoView({ behavior: 'auto' });
+      return;
+    }
+    window.scrollTo({
+      top: node.getBoundingClientRect().top + scrollY + (node.offsetHeight - innerHeight) * sceneCenters[i],
+      behavior: 'smooth'
+    });
+  }
+
+  return (
+    <section ref={root} className="journey cinematic" id="journey" aria-label="Hành trình khám phá DANAVA bằng cuộn">
+      <div className="stage">
+        <div className="world" aria-hidden="true">
+          <div className="world-photo" />
+          <div className="world-wash" />
+          <div className="grid-floor" />
+        </div>
+
+        <div className="hero-logo" aria-hidden="true">
+          <div className="brand-showcase">
+            <span className="brand-overline">CÔNG NGHỆ KẾT NỐI GIÁ TRỊ</span>
+            <img src="/assets/danava-logo.png" alt="" />
+            <span className="brand-baseline">CÙNG BẠN PHÁT TRIỂN</span>
+          </div>
+          <div className="logo-ring" />
+        </div>
+
+        <div className="camera-atmosphere" aria-hidden="true" />
+        <div className="scene-index" aria-hidden="true">01</div>
+        <div className="frame-corners" aria-hidden="true" />
+
+        {/* Cảnh 1 — Khởi đầu */}
+        <div className="chapter chapter-one">
+          <p className="eyebrow"><span className="status-dot" />DANAVA SOLUTIONS · ĐÀ NẴNG, VIỆT NAM</p>
+          <h1>
+            {data.headline === 'Cùng bạn phát triển.'
+              ? <>Cùng bạn<br /><em>phát triển.</em></>
+              : data.headline}
+          </h1>
+          <p className="hero-description">{data.description}</p>
+          <div className="scroll-invite">
+            <span className="mouse"><i /></span>
+            <span>Cuộn để khám phá hành trình DANAVA</span>
+          </div>
+          <a className="intro-skip" href="#solutions">Khám phá giải pháp ngay ↗</a>
+        </div>
+
+        {/* Cảnh 2 — Công nghệ */}
+        <div className="chapter chapter-two" aria-hidden="true">
+          <p className="eyebrow">01 / CÔNG NGHỆ TẠO KẾT NỐI</p>
+          <h2 className="presentation-heading">{presentation.technologyTitle}</h2>
+          <p className="hero-description">{presentation.technologyDescription}</p>
+        </div>
+        <div className="screen-wrap" aria-hidden="true">
+          <div className="app-screen">
+            <div className="app-bar">
+              <span className="app-d">D.</span>
+              <strong>DANAVA Studio</strong>
+              <span className="app-live">GIAO DIỆN MINH HỌA</span>
+            </div>
+            <div className="studio-capture"><img src={presentation.screenImage} alt="" /></div>
+          </div>
+          <div className="screen-base" />
+          <p className="screen-caption">QUẢN TRỊ TẬP TRUNG · ẢNH CHỤP DỮ LIỆU DEMO</p>
+        </div>
+
+        {/* Cảnh 3 — Con người */}
+        <div className="chapter chapter-three" aria-hidden="true">
+          <p className="eyebrow">02 / NGƯỜI ĐẠI DIỆN DANAVA</p>
+          <h2>Giá trị bắt đầu<br />từ <em>con người.</em></h2>
+          <div className="founder-name">
+            <span>LÊ TẤN THÀNH</span>
+            <small>Founder &amp; CEO · DANAVA Solutions</small>
+          </div>
+          <p className="hero-description">
+            Đồng hành cùng doanh nghiệp bằng công nghệ,<br />sự sáng tạo và tinh thần kết nối.
+          </p>
+        </div>
+        <div className="founder-placeholder has-portrait" aria-hidden="true">
+          <img src="/assets/legacy/founder.webp" alt="" />
+          <div className="portrait-caption">
+            <small>NGƯỜI ĐẠI DIỆN DANAVA</small>
+            <strong>Lê Tấn Thành</strong>
+            <span>Founder &amp; CEO</span>
+          </div>
+        </div>
+
+        {/* Cảnh 4 — Hệ sinh thái */}
+        <div className="chapter chapter-four" aria-hidden="true">
+          <p className="eyebrow">03 / HỆ SINH THÁI DANAVA</p>
+          <h2 className="presentation-heading">{presentation.ecosystemTitle}</h2>
+          <p className="hero-description">{presentation.ecosystemDescription}</p>
+        </div>
+        <div className="ecosystem ecosystem-showcase" aria-hidden="true">
+          <img src={presentation.ecosystemImage} alt="" />
+          <div className="ecosystem-caption">
+            {presentation.ecosystem.filter(x => x.visible).map(x => <span key={x.id}>{x.name}</span>)}
+          </div>
+        </div>
+
+        {/* Cảnh 5 — Khám phá */}
+        <div className="chapter chapter-five" aria-hidden="true">
+          <p className="eyebrow">DANAVA SOLUTIONS</p>
+          <h2>Ý tưởng hôm nay.<br /><em>Giá trị ngày mai.</em></h2>
+          <p className="hero-description">Cùng bạn viết tiếp hành trình phát triển.</p>
+          <a className="button amber" href="#solutions" tabIndex={-1}>Khám phá giải pháp ↗</a>
+        </div>
+
+        <nav className="scene-navigation" aria-label="Chọn cảnh mở đầu">
+          {sceneLabels.map((label, i) => (
+            <button
+              key={label}
+              aria-label={`Đến cảnh ${label}`}
+              aria-current={i === 0 ? 'step' : undefined}
+              onClick={() => goToScene(i)}
+            >
+              <span>0{i + 1}</span>
+              <b>{label}</b>
+            </button>
+          ))}
+        </nav>
+
+        <div className="stage-bottom">
+          <span className="chapter-label">{sceneNames[0]}</span>
+          <div className="progress-track"><span /></div>
+          <span className="progress-number">00%</span>
+          <a href="#solutions">Bỏ qua mở đầu ↘</a>
+        </div>
+      </div>
+    </section>
+  );
+}

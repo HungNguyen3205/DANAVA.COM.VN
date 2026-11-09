@@ -13,3 +13,41 @@ test('published articles require real text and valid calendar dates',()=>{assert
 test('presentation settings keep old imports compatible and validate ecosystem and image paths',()=>{const old=structuredClone(initial);delete old.presentation;assert.equal(validateContent(old),true);const data=structuredClone(initial);assert.equal(data.presentation?.ecosystem.length,6);data.presentation!.screenImage='/assets/uploads/12345678-1234-1234-1234-123456789abc.webp';assert.equal(validateContent(data),true);data.presentation!.ecosystem.push(data.presentation!.ecosystem[0]);assert.equal(validateContent(data),false);data.presentation!.ecosystem.pop();data.presentation!.screenImage='https://external.example/image.png';assert.equal(validateContent(data),false);});
 
 test('source-backed catalogue has complete text, safe provenance and unique published routes',()=>{assert.equal(initial.posts.length,30);assert.equal(initial.projects?.length,2);assert.ok(initial.posts.every(p=>p.body.trim().length>0&&p.source?.startsWith('https://danava.com.vn/')));assert.ok(initial.projects?.every(p=>p.source?.startsWith('https://danava.vn/blog/')));const data=structuredClone(initial);data.projects![0].source='javascript:alert(1)';assert.equal(validateContent(data),false);});
+
+test('lead storage and database published/draft revisions work correctly',async()=>{
+  const {saveLead, getLeads, getContent, writeContent} = await import('../lib/database.ts');
+  const leadId = saveLead({
+    name: 'Khách hàng thử nghiệm',
+    email: 'khachhang@example.com',
+    phone: '0905123456',
+    service: 'DANAVA Studio',
+    message: 'Cần tư vấn triển khai phần mềm cho phòng tập.'
+  });
+  assert.ok(leadId.startsWith('lead_'));
+  const leads = getLeads(10);
+  assert.ok(leads.some(l => l.email === 'khachhang@example.com' && l.name === 'Khách hàng thử nghiệm'));
+
+  const initialContent = getContent();
+  assert.ok(typeof initialContent.revision === 'number');
+  assert.ok(typeof initialContent.publishedRevision === 'number');
+  assert.ok(typeof initialContent.draftRevision === 'number');
+
+  // Test draftOnly write
+  const draftData = structuredClone(initialContent.data);
+  draftData.headline = 'Tiêu đề bản nháp mới';
+  const draftRev = writeContent(draftData, initialContent.revision, { draftOnly: true });
+  assert.ok(draftRev !== null);
+  const updatedContent = getContent();
+  assert.equal(updatedContent.hasDraft, true);
+
+  // Test publish write
+  const pubRev = writeContent(draftData, initialContent.revision);
+  assert.ok(pubRev !== null);
+  const finalContent = getContent();
+  assert.equal(finalContent.hasDraft, false);
+  assert.equal(finalContent.data.headline, 'Tiêu đề bản nháp mới');
+
+  // Restore initial headline to preserve clean state
+  const resetRev = writeContent(initialContent.data, finalContent.revision);
+  assert.ok(resetRev !== null);
+});

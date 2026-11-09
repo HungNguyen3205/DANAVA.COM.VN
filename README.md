@@ -40,28 +40,38 @@ Bất kỳ coder nào khi tham gia phát triển đều **phải tuân thủ ngh
 
 ### 2.1 Bảng Màu Nhận Diện Chuẩn (Brand Color Palette)
 
-Toàn bộ màu sắc được định nghĩa dưới dạng CSS Variables tại [`app/globals.css`](file:///app/globals.css):
+Toàn bộ màu sắc được chuẩn hóa theo định hướng semantic tokens tại [`app/globals.css`](file:///app/globals.css):
 
 ```css
 :root {
-  --blue: #2b4294;     /* DANAVA Deep Blue — Màu xanh đại dương chủ đạo */
-  --amber: #f5ae1b;    /* Sunlit Amber — Màu vàng hổ phách hành động & năng lượng */
-  --sky: #53a5db;      /* Sky Cyan — Màu xanh trời công nghệ & tương lai */
-  --red: #ee3132;      /* DANAVA Crimson — Màu đỏ điểm xuyết của logo */
-  --ink: #152449;      /* Deep Ink — Màu chữ than sẫm sang trọng (thay vì #000) */
-  --paper: #f8f9fd;    /* Silk Paper — Màu nền sáng thanh nhã (thay vì trắng tinh) */
-  --progress: 0;       /* Biến tiến trình phục vụ animation scroll */
+  /* Brand Primitives */
+  --brand-navy-deep: #0b132b;    /* Nền navy sâu (Hero & các khối nhấn) */
+  --brand-navy-surface: #1c2541; /* Nền lớp thứ hai (Card nền tối, drawer) */
+  --brand-navy-muted: #3a506b;   /* Viền và nền phụ (Border, divider, badge) */
+  --brand-info-cyan: #5bc0de;    /* Điểm nhấn thông tin (Tech, indicator) */
+  --brand-warm-cta: #f4d6b0;     /* CTA chính & điểm nhấn ấm (Action button) */
+  --brand-accent-amber: #d97706; /* Điểm nhấn cam có kiểm tra tương phản (WCAG AA/AAA) */
+
+  /* Neutrals & Roles */
+  --text-main: #0b132b;          /* Chữ chính trên nền sáng (Độ đọc cao) */
+  --text-secondary: #334155;     /* Chữ mô tả / đoạn văn */
+  --text-muted: #64748b;         /* Nhãn ngày tháng, metadata */
+  --text-on-dark: #f8f9fd;       /* Chữ sáng trên nền tối */
+  --bg-page: #f8f9fd;            /* Nền trang sáng dịu mắt */
+  --cta-bg: var(--brand-warm-cta);
+  --cta-text: #0b132b;           /* Tương phản 14.5:1 (vượt chuẩn WCAG AAA) */
 }
 ```
 
 | Tên biến CSS | Mã màu HEX | Vai trò & Ý nghĩa | Hướng dẫn ứng dụng |
 |---|---|---|---|
-| `--blue` | `#2B4294` | **Màu chủ đạo (Primary Brand)**: Thể hiện sự uy tín, chiều sâu công nghệ, bền vững và tin cậy. | Dùng cho header, các mảng nền cinematic tối, tiêu đề nhấn mạnh (`em`), icon nổi bật, button phụ. |
-| `--amber` | `#F5AE1B` | **Màu nhấn hành động (Accent / Energy)**: Tượng trưng cho bình minh, năng lượng yoga/wellness, sự thấu cảm và phát triển. | Dùng cho các nút Call To Action chính (`.button.amber`), thanh tiến trình, dot chỉ thị trạng thái, gạch chân hover. |
-| `--sky` | `#53A5DB` | **Màu bổ trợ công nghệ (Light Tech)**: Đại diện cho tính thông minh, kết nối đám mây, phần mềm SaaS. | Dùng cho biểu đồ, border highlight, thẻ trạng thái giải pháp DANAVA Studio, orb ánh sáng nền. |
-| `--red` | `#EE3132` | **Màu linh hồn logo (Logo Accent)**: Điểm nhấn trong biểu tượng khối ngũ giác / chữ D của logo DANAVA. | Chỉ dùng tiết chế trong logo hoặc các tín hiệu cảnh báo/thông báo cực kỳ đặc biệt. Không lạm dụng làm nền trang. |
-| `--ink` | `#152449` | **Màu chữ chính (Body & Headers)**: Sắc xanh thẫm ngả đen, mềm mại hơn màu đen thuần túy. | Toàn bộ font text đọc nội dung, tiêu đề trên nền giấy sáng. |
-| `--paper` | `#F8F9FD` | **Màu nền trang (Surface Base)**: Sắc trắng giấy lụa ngà dịu mắt. | Nền chính của website ở các section ban ngày, thẻ bài viết, thẻ giải pháp. |
+| `--brand-navy-deep` | `#0B132B` | **Nền navy sâu (Deep Navy)**: Uy tín, chiều sâu công nghệ, cao cấp và thanh lịch. | Dùng làm nền Hero, các section cinematic tối, footer đa trang. |
+| `--brand-navy-surface` | `#1C2541` | **Nền lớp thứ hai (Secondary Surface)**: Bề mặt nổi trên nền tối. | Dùng làm card trên nền navy, drawer menu di động, popover. |
+| `--brand-navy-muted` | `#3A506B` | **Viền và nền phụ (Subtle Navy)**: Phân cách tinh tế, đường bao nhẹ. | Dùng làm đường viền divider, border card tối, badge phụ. |
+| `--brand-info-cyan` | `#5BC0DE` | **Điểm nhấn thông tin (Info Cyan)**: Tính thông minh, số liệu công nghệ SaaS. | Dùng cho nhãn trạng thái, số thứ tự, biểu đồ, highlight thông tin. |
+| `--brand-warm-cta` | `#F4D6B0` | **CTA chính & Điểm nhấn ấm (Warm Peach/Amber)**: Năng lượng phát triển ấm áp. | Nút Call To Action (`.button.amber`, `.header-cta`), chữ tối `#0B132B` tương phản 14.5:1. |
+| `--brand-accent-amber` | `#D97706` | **Điểm nhấn cam tương phản (Contrast Amber)**: Tín hiệu chú ý, focus-visible. | Outline bàn phím khi tab, highlight icon, cảnh báo có kiểm tra tương phản. |
+| `--color-paper` | `#F8F9FD` | **Nền giấy sáng (Silk Paper)**: Màu nền sáng trang nhã, không gây mỏi mắt. | Nền chính của các section nội dung, blog, dự án, liên hệ. |
 
 ### 2.2 Nghệ Thuật Phông Chữ (Typography Pairing)
 

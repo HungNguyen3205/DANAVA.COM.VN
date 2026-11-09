@@ -1,1 +1,10 @@
-import{seo}from'@/lib/seo';export const metadata=seo("Giải pháp cho doanh nghiệp","Website, marketing, phần mềm quản trị, du lịch sự kiện và kết nối cộng đồng.","/giai-phap/");import{ServicesPage}from'@/components/PublicPages';export default ServicesPage;
+import { seo } from '@/lib/seo';
+import { ServicesPage } from '@/components/PublicPages';
+
+export const metadata = seo(
+  "Chọn giải pháp theo nhu cầu — DANAVA Solutions",
+  "Khám phá giải pháp quản lý phòng tập DANAVA Studio, thiết kế website thương hiệu và phát triển truyền thông theo đúng bài toán của doanh nghiệp Wellness.",
+  "/giai-phap/"
+);
+
+export default ServicesPage;

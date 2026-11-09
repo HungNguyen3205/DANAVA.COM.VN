@@ -1,0 +1,42 @@
+import { NextResponse } from 'next/server';
+import { session } from '@/lib/auth';
+import { getLeads, updateLeadAssignment } from '@/lib/database';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET(req: Request) {
+  if (!await session()) {
+    return new Response(null, { status: 401 });
+  }
+
+  const url = new URL(req.url);
+  const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 50));
+  const leads = getLeads(limit);
+
+  return NextResponse.json({ leads }, { headers: { 'Cache-Control': 'no-store' } });
+}
+
+export async function PATCH(req: Request) {
+  if (!await session()) {
+    return new Response(null, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { id, assigned_to, status, assigned_note } = body;
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json({ error: 'Missing lead id' }, { status: 400 });
+    }
+
+    const ok = updateLeadAssignment(id, { assigned_to, status, assigned_note });
+    if (!ok) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true, message: 'Phân công khách hàng thành công' });
+  } catch {
+    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+  }
+}
+
+

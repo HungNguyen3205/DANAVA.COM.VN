@@ -1,3 +1,38 @@
 'use client';
-import Hero from'./Hero';import Ecosystem from'./Ecosystem';import HomeMotion from'./HomeMotion';import{useSite}from'./SiteStore';import{ContactCTA,Team}from'./PublicPages';import{CompanyStory,Capabilities,StudioFeature,RealProjects,FounderStory,CommunityStory,KnowledgeFeed,PlatformLinks}from'./HomeSections';
-export default function Home(){const{data}=useSite();return <main id="main"><Hero/><HomeMotion><CompanyStory/><Ecosystem/><Capabilities/>{data.metrics.some(m=>m.visible&&m.value)&&<section className="metrics-band">{data.metrics.filter(m=>m.visible&&m.value).map(m=><div key={m.id}><strong>{m.value}</strong><span>{m.label}</span></div>)}</section>}<StudioFeature/><RealProjects/><FounderStory/><CommunityStory/><KnowledgeFeed/><section className="section home-team-section"><div className="team-heading" data-reveal><div><p className="eyebrow">CON NGƯỜI DANAVA</p><h2>Những người<br/><em>cùng đồng hành.</em></h2></div></div><Team/></section><PlatformLinks/><ContactCTA/></HomeMotion></main>}
+
+import Hero from './Hero';
+import Ecosystem from './Ecosystem';
+import HomeMotion from './HomeMotion';
+import HomeChapters from './HomeChapters';
+import {
+  CompanyStory,
+  Capabilities,
+  RealProjects,
+  PeopleSection,
+  CommunityStory,
+  KnowledgeFeed,
+  HomeClosing
+} from './HomeSections';
+
+/**
+ * Trang chủ = 5 cảnh mở đầu (Hero, giữ nguyên) + 7 chương nối tiếp + lời mời kết.
+ * 01 Về DANAVA → 02 Hệ sinh thái → 03 Giải pháp → 04 Dự án → 05 Con người → 06 Cộng đồng → 07 Góc nhìn.
+ */
+export default function Home() {
+  return (
+    <main id="main">
+      <Hero />
+      <HomeMotion>
+        <CompanyStory />
+        <Ecosystem />
+        <Capabilities />
+        <RealProjects />
+        <PeopleSection />
+        <CommunityStory />
+        <KnowledgeFeed />
+        <HomeClosing />
+      </HomeMotion>
+      <HomeChapters />
+    </main>
+  );
+}

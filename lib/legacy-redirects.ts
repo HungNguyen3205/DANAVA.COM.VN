@@ -199,5 +199,155 @@ export const legacyRedirects=[
     "source": "/su-kien/",
     "destination": "/kien-thuc/",
     "permanent": true
+  },
+  {
+    "source": "/dich-vu/thiet-ke-website/",
+    "destination": "/giai-phap/thiet-ke-website/",
+    "permanent": true
+  },
+  {
+    "source": "/dich-vu/website/",
+    "destination": "/giai-phap/thiet-ke-website/",
+    "permanent": true
+  },
+  {
+    "source": "/website/",
+    "destination": "/giai-phap/thiet-ke-website/",
+    "permanent": true
+  },
+  {
+    "source": "/dich-vu/danava-studio/",
+    "destination": "/giai-phap/danava-studio/",
+    "permanent": true
+  },
+  {
+    "source": "/dich-vu/digital-marketing/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/marketing/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/dich-vu/marketing/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/media/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/dich-vu/media/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/truyen-thong/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/dich-vu/truyen-thong/",
+    "destination": "/giai-phap/digital-marketing/",
+    "permanent": true
+  },
+  {
+    "source": "/team/",
+    "destination": "/doi-ngu/",
+    "permanent": true
+  },
+  {
+    "source": "/nhan-su/",
+    "destination": "/doi-ngu/",
+    "permanent": true
+  },
+  {
+    "source": "/doi-ngu-danava/",
+    "destination": "/doi-ngu/",
+    "permanent": true
+  },
+  {
+    "source": "/du-an/hariver-studio/",
+    "destination": "/du-an/hariver-gym-danava-studio/",
+    "permanent": true
+  },
+  {
+    "source": "/du-an/hue-studio/",
+    "destination": "/du-an/hue-pilates-yoga-danava-studio/",
+    "permanent": true
+  },
+  {
+    "source": "/ecosystem/",
+    "destination": "/he-sinh-thai/",
+    "permanent": true
+  },
+  {
+    "source": "/he-thong/",
+    "destination": "/he-sinh-thai/",
+    "permanent": true
+  },
+  {
+    "source": "/don-vi-thanh-vien/",
+    "destination": "/he-sinh-thai/",
+    "permanent": true
+  },
+  {
+    "source": "/privacy/",
+    "destination": "/chinh-sach-rieng-tu/",
+    "permanent": true
+  },
+  {
+    "source": "/privacy-policy/",
+    "destination": "/chinh-sach-rieng-tu/",
+    "permanent": true
+  },
+  {
+    "source": "/chinh-sach-bao-mat/",
+    "destination": "/chinh-sach-rieng-tu/",
+    "permanent": true
+  },
+  {
+    "source": "/chinh-sach/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/dieu-khoan-dich-vu/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/dieu-khoan/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/terms/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/terms-of-service/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/chinh-sach-bao-hanh/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/bao-hanh/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
+  },
+  {
+    "source": "/ho-tro/",
+    "destination": "/chinh-sach-dich-vu/",
+    "permanent": true
   }
 ];
