@@ -1,394 +1,319 @@
 'use client';
 
-import { useState, useEffect, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Icon } from './AdminIcons';
+import { initials } from './AdminShell';
+import { csrfToken, leadStatus, timeAgo, useAdminLeads, type AdminLead } from './adminData';
 
-export interface AdminLead {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  business_type?: string;
-  service?: string;
-  source?: string;
-  message: string;
-  created_at: number;
-  status: string;
-  assigned_to?: string;
-  assigned_note?: string;
-}
+export type { AdminLead };
 
 const DANAVA_STAFF_MEMBERS = [
   'Phạm Trang — Trưởng phòng CSKH',
   'Lê Tấn Thành — Founder & CEO',
   'Trần Văn Nam — Marketing Director',
   'Avinash Saini — Creative Director',
-  'Đặng Ngọc Thông — Manager'
+  'Đặng Ngọc Thông — Manager',
 ];
 
+const tabs = [
+  { key: 'all', label: 'Tất cả' },
+  { key: 'new', label: 'Mới' },
+  { key: 'assigned', label: 'Đã phân công' },
+  { key: 'contacted', label: 'Đang trao đổi' },
+  { key: 'completed', label: 'Hoàn tất' },
+];
+
+const fullDate = (ms: number) =>
+  new Date(ms).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
 export default function LeadsManager() {
-  const [leads, setLeads] = useState<AdminLead[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { leads, setLeads, loading, error, reload } = useAdminLeads(100);
   const [query, setQuery] = useState('');
-  const [selectedLead, setSelectedLead] = useState<AdminLead | null>(null);
+  const [tab, setTab] = useState('all');
+  const [selected, setSelected] = useState<AdminLead | null>(null);
 
-  // State phân công chuyên viên
   const [assignee, setAssignee] = useState('');
-  const [leadStatus, setLeadStatus] = useState('new');
+  const [status, setStatus] = useState('new');
   const [note, setNote] = useState('');
-  const [savingAssignment, setSavingAssignment] = useState(false);
-  const [saveMsg, setSaveMsg] = useState('');
-
-  async function fetchLeads() {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch('/api/admin/leads/?limit=100');
-      if (!res.ok) {
-        throw new Error('Không thể tải danh sách khách hàng liên hệ.');
-      }
-      const data = await res.json();
-      setLeads(data.leads || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Lỗi kết nối máy chủ.');
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
-    fetchLeads();
-  }, []);
+    if (!selected) return;
+    setAssignee(selected.assigned_to || '');
+    setStatus(selected.status || 'new');
+    setNote(selected.assigned_note || '');
+    setSaveMsg(null);
+  }, [selected]);
 
-  // Đồng bộ form phân công khi chọn lead
   useEffect(() => {
-    if (selectedLead) {
-      setAssignee(selectedLead.assigned_to || '');
-      setLeadStatus(selectedLead.status || 'new');
-      setNote(selectedLead.assigned_note || '');
-      setSaveMsg('');
-    }
-  }, [selectedLead]);
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setSelected(null);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected]);
 
-  async function handleSaveAssignment(e: FormEvent<HTMLFormElement>) {
+  async function saveAssignment(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!selectedLead) return;
-    setSavingAssignment(true);
-    setSaveMsg('');
+    if (!selected) return;
+    setSaving(true);
+    setSaveMsg(null);
     try {
       const res = await fetch('/api/admin/leads/', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: selectedLead.id,
-          assigned_to: assignee,
-          status: leadStatus,
-          assigned_note: note
-        })
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': await csrfToken() },
+        body: JSON.stringify({ id: selected.id, assigned_to: assignee, status, assigned_note: note }),
       });
-      if (!res.ok) throw new Error('Không thể cập nhật phân công.');
-      setSaveMsg('✓ Phân công chuyên viên tiếp nhận thành công!');
-      // Cập nhật state nội bộ
-      const updatedLead = {
-        ...selectedLead,
-        assigned_to: assignee,
-        status: leadStatus,
-        assigned_note: note
-      };
-      setLeads(prev => prev.map(l => l.id === selectedLead.id ? updatedLead : l));
-      setSelectedLead(updatedLead);
+      if (!res.ok) throw new Error('Không thể cập nhật. Thử tải lại trang rồi lưu lại.');
+      const updated = { ...selected, assigned_to: assignee, status, assigned_note: note };
+      setLeads(prev => prev.map(l => (l.id === selected.id ? updated : l)));
+      setSelected(updated);
+      setSaveMsg({ ok: true, text: 'Đã lưu phân công.' });
     } catch (err) {
-      setSaveMsg(err instanceof Error ? err.message : 'Lỗi cập nhật.');
+      setSaveMsg({ ok: false, text: err instanceof Error ? err.message : 'Lỗi cập nhật.' });
     } finally {
-      setSavingAssignment(false);
+      setSaving(false);
     }
   }
 
-  const filtered = leads.filter(l => {
+  const countBy = (k: string) => (k === 'all' ? leads.length : leads.filter(l => (l.status || 'new') === k).length);
+
+  const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      l.name.toLowerCase().includes(q) ||
-      (l.phone && l.phone.includes(q)) ||
-      (l.email && l.email.toLowerCase().includes(q)) ||
-      (l.service && l.service.toLowerCase().includes(q)) ||
-      (l.business_type && l.business_type.toLowerCase().includes(q)) ||
-      (l.assigned_to && l.assigned_to.toLowerCase().includes(q))
-    );
-  });
+    return leads.filter(l => {
+      if (tab !== 'all' && (l.status || 'new') !== tab) return false;
+      if (!q) return true;
+      return [l.name, l.phone, l.email, l.service, l.business_type, l.assigned_to].some(v => (v || '').toLowerCase().includes(q));
+    });
+  }, [leads, query, tab]);
+
+  const week = Date.now() - 7 * 86400_000;
 
   return (
-    <div className="admin-leads-container">
-      <section className="admin-panel">
-        <div className="panel-heading">
-          <div>
-            <h2>Khách hàng tiềm năng &amp; Phân công phụ trách</h2>
-            <p className="field-note">
-              Danh sách tiếp nhận trực tiếp từ form Liên hệ trên website DANAVA Solutions. Hỗ trợ phân công nhân sự và theo dõi tiến độ tư vấn.
-            </p>
+    <div className="adm-leads">
+      <div className="adm-stats">
+        <article className="adm-card adm-stat tone-amber">
+          <span className="adm-stat-label">
+            <Icon name="inbox" size={16} /> Tổng yêu cầu
+          </span>
+          <strong>{leads.length}</strong>
+          <span className="adm-stat-foot">
+            <em className="up">+{leads.filter(l => l.created_at >= week).length}</em> trong 7 ngày
+          </span>
+        </article>
+        <article className="adm-card adm-stat tone-rose">
+          <span className="adm-stat-label">
+            <Icon name="bell" size={16} /> Chờ phân công
+          </span>
+          <strong>{countBy('new')}</strong>
+          <span className="adm-stat-foot">Cần liên hệ lại sớm</span>
+        </article>
+        <article className="adm-card adm-stat tone-violet">
+          <span className="adm-stat-label">
+            <Icon name="phone" size={16} /> Đang trao đổi
+          </span>
+          <strong>{countBy('contacted') + countBy('assigned')}</strong>
+          <span className="adm-stat-foot">Đã có người phụ trách</span>
+        </article>
+        <article className="adm-card adm-stat tone-green">
+          <span className="adm-stat-label">
+            <Icon name="check" size={16} /> Hoàn tất
+          </span>
+          <strong>{countBy('completed')}</strong>
+          <span className="adm-stat-foot">
+            {leads.length ? Math.round((countBy('completed') / leads.length) * 100) : 0}% tổng yêu cầu
+          </span>
+        </article>
+      </div>
+
+      <section className="adm-card adm-table-card">
+        <div className="adm-toolbar">
+          <div className="adm-tabs" role="tablist" aria-label="Lọc theo trạng thái">
+            {tabs.map(t => (
+              <button key={t.key} role="tab" aria-selected={tab === t.key} onClick={() => setTab(t.key)}>
+                {t.label}
+                <span>{countBy(t.key)}</span>
+              </button>
+            ))}
           </div>
-          <button
-            type="button"
-            className="admin-secondary"
-            onClick={fetchLeads}
-            disabled={loading}
-          >
-            {loading ? 'Đang tải…' : 'Làm mới danh sách ⟳'}
-          </button>
+          <div className="adm-toolbar-right">
+            <label className="adm-input-icon">
+              <Icon name="search" size={16} />
+              <input
+                placeholder="Tìm tên, số điện thoại, dịch vụ…"
+                aria-label="Tìm khách hàng"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+              />
+            </label>
+            <button type="button" className="adm-btn adm-btn-ghost" onClick={reload} disabled={loading} aria-label="Tải lại danh sách">
+              <Icon name="refresh" size={16} /> {loading ? 'Đang tải…' : 'Tải lại'}
+            </button>
+          </div>
         </div>
 
-        {error && (
-          <div role="status" className="notice error">
-            {error}
-          </div>
-        )}
+        {error && <p className="adm-inline-error">{error}</p>}
 
-        <div className="admin-kpis" style={{ marginBottom: 20 }}>
-          <article>
-            <span>Tổng yêu cầu</span>
-            <strong>{leads.length}</strong>
-            <small>Đã ghi nhận trong cơ sở dữ liệu</small>
-          </article>
-          <article>
-            <span>Đã phân công</span>
-            <strong style={{ color: 'var(--blue)' }}>
-              {leads.filter(l => Boolean(l.assigned_to)).length}
-            </strong>
-            <small>Có nhân sự phụ trách tiếp nhận</small>
-          </article>
-          <article>
-            <span>Dịch vụ Studio &amp; Gym</span>
-            <strong>
-              {leads.filter(l => (l.service || '').toLowerCase().includes('studio') || (l.service || '').toLowerCase().includes('gym')).length}
-            </strong>
-            <small>Nhu cầu phần mềm phòng tập</small>
-          </article>
-          <article>
-            <span>Website &amp; Marketing</span>
-            <strong>
-              {leads.filter(l => (l.service || '').toLowerCase().includes('web') || (l.service || '').toLowerCase().includes('marketing')).length}
-            </strong>
-            <small>Hiện diện số &amp; truyền thông</small>
-          </article>
-        </div>
-
-        <input
-          className="search-input"
-          placeholder="Tìm theo tên, số điện thoại, email, dịch vụ, nhân sự phân công…"
-          aria-label="Tìm kiếm khách hàng liên hệ"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-        />
-
-        <div className="table-wrap">
-          <table>
+        <div className="adm-table-wrap">
+          <table className="adm-table">
             <thead>
               <tr>
-                <th>Thời gian</th>
                 <th>Khách hàng</th>
                 <th>Liên hệ</th>
-                <th>Dịch vụ &amp; Mô hình</th>
+                <th>Nhu cầu</th>
                 <th>Trạng thái</th>
-                <th>Phân công phụ trách</th>
-                <th>Thao tác</th>
+                <th>Phụ trách</th>
+                <th>Gửi lúc</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(item => {
-                const dateStr = new Date(item.created_at).toLocaleString('vi-VN', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                });
-
+              {filtered.map(l => {
+                const st = leadStatus[l.status || 'new'] || leadStatus.new;
                 return (
-                  <tr key={item.id}>
+                  <tr
+                    key={l.id}
+                    className={selected?.id === l.id ? 'is-selected' : ''}
+                    tabIndex={0}
+                    onClick={() => setSelected(l)}
+                    onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setSelected(l))}
+                    aria-label={`Mở chi tiết ${l.name}`}
+                  >
                     <td>
-                      <small style={{ whiteSpace: 'nowrap' }}>{dateStr}</small>
-                    </td>
-                    <td>
-                      <b>{item.name}</b>
-                      {item.source && (
-                        <small title={item.source} style={{ color: '#7a8ca8' }}>
-                          Nguồn: {item.source.replace(/^https?:\/\/[^/]+/, '') || '/'}
-                        </small>
-                      )}
-                    </td>
-                    <td>
-                      {item.phone && (
-                        <a href={`tel:${item.phone}`} style={{ color: 'var(--blue)', fontWeight: 600, display: 'block' }}>
-                          📞 {item.phone}
-                        </a>
-                      )}
-                      {item.email && (
-                        <a href={`mailto:${item.email}`} style={{ color: '#687898', fontSize: 11, display: 'block' }}>
-                          ✉️ {item.email}
-                        </a>
-                      )}
-                    </td>
-                    <td>
-                      <span className="badge green" style={{ whiteSpace: 'normal', maxWidth: 220, display: 'inline-block' }}>
-                        {item.service || 'Tư vấn chung'}
-                      </span>
-                      {item.business_type && (
-                        <small style={{ display: 'block', color: '#64748b', marginTop: 4 }}>
-                          {item.business_type}
-                        </small>
-                      )}
-                    </td>
-                    <td>
-                      <span className={`badge ${item.status === 'completed' ? 'green' : item.status === 'contacted' ? 'amber' : item.status === 'assigned' ? 'blue' : ''}`}>
-                        {item.status === 'completed' ? '✓ Đã xong' : item.status === 'contacted' ? 'Đang trao đổi' : item.status === 'assigned' ? 'Đã phân công' : 'Mới'}
-                      </span>
-                    </td>
-                    <td>
-                      {item.assigned_to ? (
-                        <span style={{ fontSize: 12, fontWeight: 600, color: '#1e3a8a' }}>
-                          👤 {item.assigned_to.split('—')[0].trim()}
+                      <div className="adm-person">
+                        <span className="adm-avatar sm">{initials(l.name)}</span>
+                        <span>
+                          <b>{l.name}</b>
+                          {l.business_type && <small>{l.business_type}</small>}
                         </span>
-                      ) : (
-                        <span style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic' }}>
-                          Chưa phân công
-                        </span>
-                      )}
+                      </div>
                     </td>
                     <td>
-                      <button
-                        type="button"
-                        className="text-link"
-                        onClick={() => setSelectedLead(item)}
-                      >
-                        {item.assigned_to ? 'Xem & Sửa ↗' : 'Phân công ↗'}
-                      </button>
+                      {l.phone && <span className="adm-cell-strong">{l.phone}</span>}
+                      {l.email && <small>{l.email}</small>}
+                    </td>
+                    <td>
+                      <span className="adm-cell-clip">{l.service || 'Tư vấn chung'}</span>
+                    </td>
+                    <td>
+                      <span className={`adm-pill tone-${st.tone}`}>{st.label}</span>
+                    </td>
+                    <td>{l.assigned_to ? <span className="adm-cell-strong">{l.assigned_to.split('—')[0].trim()}</span> : <small className="adm-muted">Chưa có</small>}</td>
+                    <td>
+                      <small title={fullDate(l.created_at)}>{timeAgo(l.created_at)}</small>
                     </td>
                   </tr>
                 );
               })}
-              {!filtered.length && !loading && (
-                <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '36px 0', color: '#8898b0' }}>
-                    Chưa có yêu cầu liên hệ nào phù hợp với bộ lọc tìm kiếm.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
+          {!filtered.length && !loading && (
+            <div className="adm-empty">
+              <Icon name="inbox" size={28} />
+              <p>{query || tab !== 'all' ? 'Không có khách hàng phù hợp bộ lọc.' : 'Chưa có yêu cầu tư vấn nào từ website.'}</p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* MODAL / CHI TIẾT & PHÂN CÔNG LEAD */}
-      {selectedLead && (
-        <section className="admin-panel" style={{ marginTop: 24, borderLeft: '4px solid var(--amber)' }}>
-          <div className="panel-heading">
-            <h2>Chi tiết &amp; Phân công khách hàng: {selectedLead.name}</h2>
-            <button type="button" onClick={() => setSelectedLead(null)} aria-label="Đóng chi tiết">
-              ✕ Đóng
-            </button>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 20 }}>
-            <div>
-              <span className="cell-label" style={{ fontSize: 10, color: '#8898b0' }}>HỌ VÀ TÊN</span>
-              <p style={{ fontSize: 15, fontWeight: 700, margin: '4px 0 0' }}>{selectedLead.name}</p>
-            </div>
-            <div>
-              <span className="cell-label" style={{ fontSize: 10, color: '#8898b0' }}>SỐ ĐIỆN THOẠI</span>
-              <p style={{ fontSize: 15, fontWeight: 700, margin: '4px 0 0' }}>
-                <a href={`tel:${selectedLead.phone}`} style={{ color: 'var(--blue)' }}>{selectedLead.phone}</a>
-              </p>
-            </div>
-            <div>
-              <span className="cell-label" style={{ fontSize: 10, color: '#8898b0' }}>EMAIL</span>
-              <p style={{ fontSize: 14, margin: '4px 0 0' }}>{selectedLead.email || 'Chưa cung cấp'}</p>
-            </div>
-            <div>
-              <span className="cell-label" style={{ fontSize: 10, color: '#8898b0' }}>DỊCH VỤ QUAN TÂM</span>
-              <p style={{ fontSize: 14, fontWeight: 600, color: '#2b509e', margin: '4px 0 0' }}>{selectedLead.service || 'Chung'}</p>
-            </div>
-          </div>
-
-          <div style={{ marginBottom: 20 }}>
-            <span className="cell-label" style={{ fontSize: 10, color: '#8898b0' }}>NỘI DUNG TRAO ĐỔI CỦA KHÁCH HÀNG</span>
-            <div style={{ background: '#f5f8fc', padding: 16, borderRadius: 8, marginTop: 6, fontSize: 14, lineHeight: 1.7, whiteSpace: 'pre-wrap', color: '#1a2b48' }}>
-              {selectedLead.message}
-            </div>
-          </div>
-
-          {/* FORM PHÂN CÔNG CHUYÊN VIÊN TIẾP NHẬN */}
-          <form onSubmit={handleSaveAssignment} style={{ background: '#eef3fa', padding: 20, borderRadius: 10, border: '1px solid #d0ddec' }}>
-            <h3 style={{ fontSize: 14, margin: '0 0 14px', color: '#1e3a8a', fontWeight: 700 }}>
-              Phân công nhân sự phụ trách &amp; Cập nhật trạng thái
-            </h3>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 14 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-                  Chuyên viên phụ trách:
-                </label>
-                <select
-                  value={assignee}
-                  onChange={e => setAssignee(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #c2d2e9', background: '#ffffff', fontSize: 13 }}
-                >
-                  <option value="">-- Chưa phân công --</option>
-                  {DANAVA_STAFF_MEMBERS.map(member => (
-                    <option key={member} value={member}>
-                      {member}
-                    </option>
-                  ))}
-                </select>
+      {/* Ngăn chi tiết trượt từ phải */}
+      <div className={`adm-drawer-wrap ${selected ? 'is-open' : ''}`} aria-hidden={!selected}>
+        <button className="adm-drawer-scrim" aria-label="Đóng chi tiết" tabIndex={-1} onClick={() => setSelected(null)} />
+        <aside className="adm-drawer" role="dialog" aria-modal="true" aria-label="Chi tiết khách hàng">
+          {selected && (
+            <>
+              <div className="adm-drawer-head">
+                <span className="adm-avatar lg">{initials(selected.name)}</span>
+                <div>
+                  <h2>{selected.name}</h2>
+                  <p>
+                    Gửi {timeAgo(selected.created_at)} · {fullDate(selected.created_at)}
+                  </p>
+                </div>
+                <button className="adm-icon-btn" aria-label="Đóng" onClick={() => setSelected(null)}>
+                  <Icon name="x" />
+                </button>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-                  Trạng thái xử lý:
-                </label>
-                <select
-                  value={leadStatus}
-                  onChange={e => setLeadStatus(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #c2d2e9', background: '#ffffff', fontSize: 13 }}
-                >
-                  <option value="new">Mới tiếp nhận</option>
-                  <option value="assigned">Đã phân công</option>
-                  <option value="contacted">Đang trao đổi tư vấn</option>
-                  <option value="completed">Đã chốt hợp đồng / Hoàn tất</option>
-                </select>
+              <div className="adm-drawer-actions">
+                {selected.phone && (
+                  <a className="adm-btn adm-btn-primary" href={`tel:${selected.phone}`}>
+                    <Icon name="phone" size={16} /> Gọi {selected.phone}
+                  </a>
+                )}
+                {selected.email && (
+                  <a className="adm-btn adm-btn-ghost" href={`mailto:${selected.email}`}>
+                    <Icon name="mail" size={16} /> Gửi email
+                  </a>
+                )}
               </div>
-            </div>
 
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-                Ghi chú nội bộ cho chuyên viên:
-              </label>
-              <textarea
-                rows={2}
-                value={note}
-                onChange={e => setNote(e.target.value)}
-                placeholder="VD: Đã hẹn gọi điện tư vấn giải pháp Studio lúc 14h chiều mai..."
-                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #c2d2e9', background: '#ffffff', fontSize: 13, resize: 'vertical' }}
-              />
-            </div>
+              <dl className="adm-facts">
+                <div>
+                  <dt>Nhu cầu</dt>
+                  <dd>{selected.service || 'Tư vấn chung'}</dd>
+                </div>
+                <div>
+                  <dt>Mô hình</dt>
+                  <dd>{selected.business_type || '—'}</dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd>{selected.email || 'Chưa cung cấp'}</dd>
+                </div>
+                <div>
+                  <dt>Trang gửi</dt>
+                  <dd>{selected.source ? selected.source.replace(/^https?:\/\/[^/]+/, '') || '/' : '—'}</dd>
+                </div>
+              </dl>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <button
-                type="submit"
-                className="admin-primary"
-                disabled={savingAssignment}
-                style={{ padding: '8px 20px', minHeight: 38 }}
-              >
-                {savingAssignment ? 'Đang lưu…' : 'Lưu phân công 💾'}
-              </button>
-              {saveMsg && (
-                <span style={{ fontSize: 13, color: saveMsg.startsWith('✓') ? '#15803d' : '#b91c1c', fontWeight: 600 }}>
-                  {saveMsg}
-                </span>
-              )}
-            </div>
-          </form>
-        </section>
-      )}
+              <div className="adm-message">
+                <p className="adm-mini-title">Lời nhắn của khách</p>
+                <blockquote>{selected.message || 'Khách không để lại lời nhắn.'}</blockquote>
+              </div>
+
+              <form onSubmit={saveAssignment} className="adm-assign">
+                <p className="adm-mini-title">Phân công & tiến độ</p>
+                <label className="adm-field">
+                  <span>Người phụ trách</span>
+                  <select value={assignee} onChange={e => setAssignee(e.target.value)}>
+                    <option value="">— Chưa phân công —</option>
+                    {DANAVA_STAFF_MEMBERS.map(m => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="adm-field">
+                  <span>Trạng thái</span>
+                  <div className="adm-segment" role="radiogroup" aria-label="Trạng thái xử lý">
+                    {Object.entries(leadStatus).map(([k, v]) => (
+                      <button type="button" key={k} role="radio" aria-checked={status === k} className={`tone-${v.tone}`} onClick={() => setStatus(k)}>
+                        {v.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <label className="adm-field">
+                  <span>Ghi chú nội bộ</span>
+                  <textarea
+                    rows={3}
+                    value={note}
+                    onChange={e => setNote(e.target.value)}
+                    placeholder="Ví dụ: Đã hẹn gọi tư vấn DANAVA Studio lúc 14h ngày mai…"
+                  />
+                </label>
+                <div className="adm-assign-foot">
+                  {saveMsg && <span className={saveMsg.ok ? 'adm-ok' : 'adm-inline-error'}>{saveMsg.text}</span>}
+                  <button type="submit" className="adm-btn adm-btn-primary" disabled={saving}>
+                    <Icon name="save" size={16} /> {saving ? 'Đang lưu…' : 'Lưu phân công'}
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </aside>
+      </div>
     </div>
   );
 }

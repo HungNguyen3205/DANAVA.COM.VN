@@ -264,6 +264,15 @@ npm run test:integration
 npm start
 ```
 
+### Chạy nhanh trên máy cá nhân (một lệnh)
+Trên Windows: bấm đúp **`CHAY-WEB.bat`** ở thư mục gốc rồi chọn:
+1. **Chạy thử** — chế độ phát triển, sửa code thấy ngay (cổng 3123).
+2. **Chạy bản hoàn thiện** — build production và chạy `server.cjs` giống server thật (cổng 3100).
+
+Hoặc dùng terminal trên mọi hệ điều hành: `npm run local` / `npm run local:prod` (thêm `-- --port 4000` để đổi cổng).
+
+Lần chạy đầu, file chạy tự cài thư viện, tự tạo `.env` và hỏi mật khẩu quản trị (gõ ẩn, chỉ lưu bản băm). Dữ liệu CMS lưu ở `.data/` tại gốc dự án (đã gitignore). Cổng bận thì tự chuyển sang cổng kế tiếp; `SITE_URL` được đặt theo localhost để trang quản trị lưu được nội dung. Muốn đổi mật khẩu: xóa dòng `DANAVA_ADMIN_PASSWORD_HASH` trong `.env` rồi chạy lại.
+
 ### Tạo mã băm mật khẩu Quản trị viên (Admin Password Hash)
 Để đăng nhập vào `/admin/`, chạy lệnh sau trên terminal nội bộ và dán chuỗi hash sinh ra vào file môi trường:
 
@@ -289,7 +298,8 @@ SITE_URL=https://danava.com.vn
 DANAVA_DATA_DIR=/home/username/danava_storage
 
 # 3. Mã băm mật khẩu quản trị được tạo từ scripts/admin-password.mjs
-DANAVA_ADMIN_PASSWORD_HASH=pbkdf2_sha256$...
+#    Định dạng: <salt 32 ký tự hex>:<hash 128 ký tự hex> — dán nguyên chuỗi script in ra
+DANAVA_ADMIN_PASSWORD_HASH=<salt>:<hash>
 
 # 4. Cổng lắng nghe máy chủ (cPanel tự cấp qua process.env.PORT)
 PORT=3000

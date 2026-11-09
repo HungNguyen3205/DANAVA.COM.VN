@@ -10,7 +10,9 @@
     "dev:next": "node scripts/dev.mjs",
     "start": "node server.cjs",
     "admin:password": "node scripts/admin-password.mjs",
-    "test:integration": "node scripts/integration-test.mjs"
+    "test:integration": "node scripts/integration-test.mjs",
+    "local": "node scripts/run-local.mjs",
+    "local:prod": "node scripts/run-local.mjs --prod"
   },
   "dependencies": {
     "gsap": "^3.13.0",

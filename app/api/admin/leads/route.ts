@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { session } from '@/lib/auth';
+import { session, authorizedMutation } from '@/lib/auth';
 import { getLeads, updateLeadAssignment } from '@/lib/database';
 
 export const dynamic = 'force-dynamic';
@@ -19,6 +19,10 @@ export async function GET(req: Request) {
 export async function PATCH(req: Request) {
   if (!await session()) {
     return new Response(null, { status: 401 });
+  }
+  // Thay đổi dữ liệu phải cùng nguồn gốc và có mã CSRF của phiên, giống API nội dung.
+  if (!await authorizedMutation(req)) {
+    return new Response(null, { status: 403 });
   }
 
   try {
