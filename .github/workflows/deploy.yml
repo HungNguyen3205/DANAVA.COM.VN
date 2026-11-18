@@ -50,6 +50,7 @@ jobs:
           printf '{\n  "name": "danava-company-website-deploy",\n  "private": true,\n  "main": "server.cjs"\n}\n' > "$OUT/package.json"
           printf '.data/\n.env\ntmp/\nnode_modules\n!standalone/node_modules\n' > "$OUT/.gitignore"
           echo "Built from ${GITHUB_SHA} at $(date -u +%FT%TZ)" > "$OUT/BUILD.txt"
+          cp deploy.sh "$OUT/deploy.sh"
 
       - name: Push to deploy branch
         run: |

@@ -5,6 +5,7 @@ import { Header, Footer, MobileBar } from '../Shell';
 export function SiteFrame({ children }: { children: ReactNode }) {
   return (
     <div className="s-app">
+      <div className="s-blobs" aria-hidden="true"><span /><span /><span /></div>
       <a className="s-skip" href="#main">Đến nội dung chính</a>
       <Header />
       {children}

@@ -44,14 +44,14 @@ Workflow: `.github/workflows/deploy.yml`. Nếu test lỗi, bản build **không
 
 1. Sửa code, chạy kiểm tra trên máy: `npm run check && npm test`.
 2. Commit và `git push origin main`.
-3. Chờ GitHub Actions xong (3–5 phút): tab **Actions** trên GitHub phải có dấu ✔ xanh.
+3. (Không bắt buộc) theo dõi tab **Actions** trên GitHub; `deploy.sh` cũng tự chờ.
 4. Trên terminal cPanel:
 
 ```bash
-cd ~/danava.com.vn && git fetch origin deploy && git reset --hard origin/deploy && mkdir -p ~/danava-data tmp && touch tmp/restart.txt && cat BUILD.txt && echo "=== XONG ==="
+cd ~/danava.com.vn && bash deploy.sh
 ```
 
-`BUILD.txt` in ra mã commit vừa được triển khai.
+`deploy.sh` tự chờ GitHub build xong bản mới nhất (tối đa 10 phút), kéo bản build về, khởi động lại app và kiểm tra các trang chính qua tên miền thật. Nếu có trang lỗi, script in log và lệnh quay lại bản trước. Không muốn chờ: `WAIT=0 bash deploy.sh`.
 
 **Quay lại bản trước** nếu bản mới lỗi: nhánh `deploy` bị ghi đè mỗi lần build nên GitHub chỉ giữ bản mới nhất, nhưng server vẫn nhớ các bản đã từng triển khai:
 

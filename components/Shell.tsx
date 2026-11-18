@@ -230,6 +230,7 @@ export function Footer() {
           </div>
         </div>
       </div>
+      <span className="s-footer__giant" aria-hidden="true">DANAVA</span>
     </footer>
   );
 }
