@@ -323,6 +323,17 @@ html.is-cine .s-mbar { opacity: 0 !important; visibility: hidden !important; poi
 .cine--flow .cine-pad { min-height: min(var(--stage-h), 860px); }
 .cine--flow .cine-proj, .cine--flow .cine-iris { min-height: min(var(--stage-h), 860px); }
 
+/* Chuyển cảnh mềm giữa các chương trình: ảnh nền mờ dần ở mép trên/dưới,
+   hai cảnh liền kề gối lên nhau một đoạn để ảnh trước tan vào ảnh sau. */
+.cine--flow { --blend: clamp(96px, 16vh, 180px); }
+.cine--flow .cine-proj__hero {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 var(--blend), #000 calc(100% - var(--blend)), transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0, #000 var(--blend), #000 calc(100% - var(--blend)), transparent 100%);
+}
+.cine--flow .cine-proj { margin-top: calc(-1 * var(--blend)); padding-top: var(--blend); }
+.cine--flow .cine-iris { padding-bottom: var(--blend); }
+.cine--flow .cine-proj + .cine-end { margin-top: calc(-.5 * var(--blend)); }
+
 /* Chữ & ảnh hiện dần khi cuộn tới — chạy trên luồng compositor, không tốn JS */
 @supports (animation-timeline: view()) {
   .cine--flow [style*="--s"] {
