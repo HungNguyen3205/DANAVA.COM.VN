@@ -40,6 +40,9 @@ jobs:
           OUT="$RUNNER_TEMP/deploy"
           mkdir -p "$OUT"
           cp -a .next/standalone "$OUT/standalone"
+          # Thư mục app nằm trong document root của tên miền: chặn tải trực tiếp mã đã build qua HTTP.
+          # Next.js đọc file từ ổ đĩa nên không bị ảnh hưởng.
+          printf 'Require all denied\n' > "$OUT/standalone/.htaccess"
           cat > "$OUT/server.cjs" <<'EOF'
           // cPanel Application Startup File (nhánh deploy). Cấu hình nằm trong biến môi trường của cPanel.
           const path = require('node:path');
