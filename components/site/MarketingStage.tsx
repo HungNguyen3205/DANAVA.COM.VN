@@ -3,23 +3,18 @@
  * /giai-phap/digital-marketing/ — trình bày dạng "một cú máy liền mạch".
  * Toàn bộ nội dung lấy từ DANAVA Company Profile 2026 (bản Canva) + nội dung dịch vụ đã có trên website.
  *
- * Cơ chế: một khối cuộn cao (.cine) chứa "sân khấu" sticky cao đúng một màn hình.
- * Mỗi cảnh (scene) chiếm một quãng cuộn; JS chỉ ghi các biến CSS:
- *   --g  tiến độ toàn phim (0→1) trên .cine
- *   --p  tiến độ cục bộ của cảnh (âm khi đang vào, >1 khi đang ra)
- *   --o  độ hiện của cảnh (giao thoa giữa hai cảnh)
- * Mọi chuyển động camera (đi xuống, đẩy qua, parallax) đều do CSS tính từ các biến này.
- * Không JS hoặc bật "giảm chuyển động" → các cảnh xếp dọc như trang bình thường.
+ * Cơ chế: các cảnh xếp dọc và cuộn tự nhiên như mọi trang khác (không ghim màn hình,
+ * không tính toán theo vị trí cuộn). Chữ và ảnh hiện dần nhẹ bằng CSS khi cuộn tới
+ * (animation-timeline: view(); trình duyệt chưa hỗ trợ thì hiện ngay).
  */
 import Link from 'next/link';
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import {
-  Phone, Mail, AtSign, Globe, ArrowDown, Send, Mic2, Megaphone, Speaker, Music4,
+  Phone, Mail, AtSign, Globe, Send, Mic2, Megaphone, Speaker, Music4,
   Camera, Users, Target, Lightbulb, Hammer, Cpu, Sparkles
 } from 'lucide-react';
 
 const P = '/assets/profile/';
-const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 type Project = {
   id: string; title: string; place?: string; note?: string; caption?: { title: string; text: string };
@@ -82,10 +77,6 @@ const img = (name: string) => `${P}${name}.webp`;
 export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, email }: {
   title: string; contactHref: string; cta: string; phone: string; phoneLabel: string; email: string;
 }) {
-  const root = useRef<HTMLDivElement>(null);
-  const [live, setLive] = useState(false);
-  const [hud, setHud] = useState({ i: 0, tc: '00:00:00:00' });
-
   const scenes: SceneDef[] = [
     { id: 'mo-dau', label: 'Mở đầu', len: 1.4 },
     { id: 've-danava', label: 'Về Danava', len: 1.5 },
@@ -96,78 +87,12 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
     ...PROJECTS.map(p => ({ id: p.id, label: p.title, len: 1.25 })),
     { id: 'lien-he', label: 'Liên hệ', len: 1.3 }
   ];
-  const total = scenes.reduce((a, s) => a + s.len, 0);
-
-  useIsoLayoutEffect(() => {
-    const el = root.current;
-    if (!el) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    setLive(true);
-  }, []);
-
-  useEffect(() => {
-    const el = root.current;
-    if (!live || !el) return;
-    const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cine-scene'));
-    const starts: number[] = [];
-    let acc = 0;
-    for (const s of scenes) { starts.push(acc); acc += s.len; }
-    const F = 0.38; // độ dài vùng giao thoa (đơn vị: chiều cao màn hình)
-    let raf = 0, lastI = -1, lastTc = '';
-
-    const frame = () => {
-      raf = 0;
-      const stage = el.querySelector<HTMLElement>('.cine-stage')!;
-      const vh = stage.clientHeight || window.innerHeight;
-      // offsetTop của phần tử sticky = quãng đã cuộn bên trong khối phim
-      const t = Math.min(total, Math.max(0, stage.offsetTop / vh));
-      el.style.setProperty('--g', (t / total).toFixed(4));
-      // Đang trong phim → ẩn thanh hành động nổi trên mobile để khung hình sạch
-      document.documentElement.classList.toggle('is-cine', el.getBoundingClientRect().bottom > window.innerHeight * 0.6);
-      let best = 0, bestO = -1;
-      nodes.forEach((n, i) => {
-        const s = starts[i], L = scenes[i].len;
-        const p = (t - s) / L;
-        const fin = i === 0 ? 1 : clamp((t - (s - F / 2)) / F);
-        const fout = i === nodes.length - 1 ? 1 : clamp((s + L + F / 2 - t) / F);
-        const o = Math.min(fin, fout);
-        n.style.setProperty('--p', p.toFixed(4));
-        n.style.setProperty('--o', o.toFixed(3));
-        const on = o > 0.002;
-        n.classList.toggle('is-on', on);
-        if (o >= 0.5) { n.removeAttribute('inert'); n.removeAttribute('aria-hidden'); }
-        else { n.setAttribute('inert', ''); n.setAttribute('aria-hidden', 'true'); }
-        if (o > bestO) { bestO = o; best = i; }
-      });
-      // Chỉ dựng cảnh hiện tại và hai cảnh kề bên — ảnh tải dần theo tiến độ phim
-      nodes.forEach((n, i) => n.classList.toggle('is-near', Math.abs(i - best) <= 1));
-      // Timecode 24 khung/giây — mỗi màn hình cuộn ≈ 4 giây phim
-      const secs = t * 4, f = Math.floor((secs % 1) * 24);
-      const tc = `00:${pad(Math.floor(secs / 60))}:${pad(Math.floor(secs % 60))}:${pad(f)}`;
-      if (best !== lastI || tc !== lastTc) { lastI = best; lastTc = tc; setHud({ i: best, tc }); }
-    };
-    const req = () => { if (!raf) raf = requestAnimationFrame(frame); };
-    frame();
-    window.addEventListener('scroll', req, { passive: true });
-    window.addEventListener('resize', req);
-    return () => { window.removeEventListener('scroll', req); window.removeEventListener('resize', req); cancelAnimationFrame(raf); document.documentElement.classList.remove('is-cine'); };
-    // scenes/total cố định theo dữ liệu tĩnh
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [live]);
-
-  const jump = (i: number) => {
-    const el = root.current; if (!el) return;
-    const stage = el.querySelector<HTMLElement>('.cine-stage')!;
-    const vh = stage.clientHeight, top = parseFloat(getComputedStyle(stage).top) || 0;
-    const s = scenes.slice(0, i).reduce((a, x) => a + x.len, 0) + scenes[i].len * 0.35;
-    window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - top + s * vh, behavior: 'smooth' });
-  };
 
   const sc = (id: string) => scenes.find(s => s.id === id)!;
   let shotNo = 0;
 
   return (
-    <div ref={root} className={`cine${live ? ' is-live' : ''}`} style={{ ['--total' as string]: total }}>
+    <div className="cine cine--flow">
       <div className="cine-stage">
         {/* ---- Thế giới nền: trời đêm, thành phố, dải lụa cam ---- */}
         <div className="cine-world" aria-hidden="true">
@@ -196,7 +121,6 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
               </h1>
               <p className="cine-sub" style={step(-0.3)}>Hồ sơ năng lực tổ chức sự kiện & truyền thông</p>
               <p className="cine-motto" style={step(-0.3)}><span>Cùng bạn phát triển</span></p>
-              <span className="cine-cue" aria-hidden="true"><ArrowDown />Cuộn để bắt đầu</span>
             </div>
           </Scene>
 
@@ -339,34 +263,9 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
           </Scene>
         </div>
 
-        {/* ---- Lớp "ống kính": letterbox, hạt phim, viền tối, HUD ---- */}
-        <div className="cine-lens" aria-hidden="true">
-          <span className="cine-bar cine-bar--t" />
-          <span className="cine-bar cine-bar--b" />
-          <span className="cine-grain" />
-          <span className="cine-vignette" />
-          <div className="cine-hud">
-            <span className="cine-hud__rec"><i />REC</span>
-            <span className="cine-hud__scene">SC.{pad(hud.i + 1)} — {scenes[hud.i]?.label}</span>
-            <span className="cine-hud__tc">{hud.tc}</span>
-          </div>
-          <span className="cine-frame cine-frame--tl" /><span className="cine-frame cine-frame--tr" />
-          <span className="cine-frame cine-frame--bl" /><span className="cine-frame cine-frame--br" />
-        </div>
-        {live && (
-          <nav className="cine-rail" aria-label="Các cảnh">
-            <span className="cine-rail__fill" aria-hidden="true" />
-            {scenes.map((s, i) => (
-              <button key={s.id} type="button" className={i === hud.i ? 'is-current' : ''} onClick={() => jump(i)} aria-label={`Cảnh ${i + 1}: ${s.label}`} aria-current={i === hud.i ? 'step' : undefined}>
-                <span>{s.label}</span>
-              </button>
-            ))}
-          </nav>
-        )}
       </div>
     </div>
   );
 }
 
-function clamp(v: number) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 function pad(n: number) { return String(n).padStart(2, '0'); }
