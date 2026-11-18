@@ -11,7 +11,7 @@
 4. [Không Gian Sáng Tạo Cho Lập Trình Viên (Creative Horizons)](#4-không-gian-sáng-tạo-cho-lập-trình-viên-creative-horizons)
 5. [Nguồn Gốc Dữ Liệu & Cách Lấy / Xác Minh Thông Tin](#5-nguồn-gốc-dữ-liệu--cách-lấy--xác-minh-thông-tin)
 6. [Kiến Trúc Kỹ Thuật & Cấu Trúc Mã Nguồn](#6-kiến-trúc-kỹ-thuật--cấu-trúc-mã-nguồn)
-7. [Hệ Thống CMS Tự Quản Trị & Cơ Sở Dữ Liệu SQLite](#7-hệ-thống-cms-tự-quản-trị--cơ-sở-dữ-liệu-sqlite)
+7. [Hệ Thống CMS Tự Quản Trị & Cơ Sở Dữ Liệu (MySQL / SQLite)](#7-hệ-thống-cms-tự-quản-trị--cơ-sở-dữ-liệu-mysql--sqlite)
 8. [Hướng Dẫn Cài Đặt, Phát Triển & Kiểm Thử](#8-hướng-dẫn-cài-đặt-phát-triển--kiểm-thử)
 9. [Hướng Dẫn Triển Khai Production (cPanel / Standalone Node.js)](#9-hướng-dẫn-triển-khai-production-cpanel--standalone-nodejs)
 10. [Quy Chuẩn Đóng Góp & Git Workflow](#10-quy-chuẩn-đóng-góp--git-workflow)
@@ -213,7 +213,7 @@ DANAVA.COM.VN/
 
 ---
 
-## 7. Hệ Thống CMS Tự Quản Trị & Cơ Sở Dữ Liệu SQLite
+## 7. Hệ Thống CMS Tự Quản Trị & Cơ Sở Dữ Liệu (MySQL / SQLite)
 
 Hệ thống sở hữu trang quản trị hoàn chỉnh tại `/admin/` với cơ chế vận hành độc lập, không phụ thuộc vào dịch vụ bên thứ ba:
 
@@ -308,14 +308,13 @@ PORT=3000
 DANAVA_HOSTNAME=0.0.0.0
 ```
 
-### 9.2 Cấu Hình Trên cPanel
-1. Vào **Setup Node.js App** trên cPanel, chọn phiên bản **Node.js 24+**.
-2. **Application Root**: Trỏ tới thư mục chứa mã nguồn dự án.
-3. **Application Startup File**: Điền **`server.cjs`** (tệp nạp Next.js Standalone Server tích hợp sẵn tại gốc repo).
-4. **Application Mode**: Đặt là `Production`.
-5. Chạy lệnh `npm ci` và `npm run build` trong terminal của cPanel.
-6. Đảm bảo thư mục khai báo trong `DANAVA_DATA_DIR` có đầy đủ quyền đọc/ghi (`chmod 750` hoặc `755`).
-7. Bấm **Restart** ứng dụng để kích hoạt.
+### 9.2 Cấu Hình Trên cPanel (đang dùng cho danava.com.vn)
+> Hướng dẫn vận hành đầy đủ: **[docs/BAN-GIAO.md](docs/BAN-GIAO.md)**.
+
+1. Production dùng MySQL: thêm `DANAVA_DB_HOST`, `DANAVA_DB_NAME`, `DANAVA_DB_USER`, `DANAVA_DB_PASSWORD` (bỏ trống `DANAVA_DB_HOST` để dùng SQLite).
+2. **Setup Node.js App**: Node.js **22**, mode `Production`, Application root `danava.com.vn`, startup file `server.cjs`.
+3. **Không build trên server** (glibc của hosting quá cũ cho trình biên dịch Next.js). GitHub Actions (`.github/workflows/deploy.yml`) build mỗi lần push `main` và đẩy bản chạy được vào nhánh `deploy`.
+4. Triển khai: `cd ~/danava.com.vn && git fetch origin deploy && git reset --hard origin/deploy && mkdir -p tmp && touch tmp/restart.txt`.
 
 ---
 
