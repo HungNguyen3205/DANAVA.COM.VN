@@ -7,7 +7,9 @@ let database:DatabaseSync|undefined;
 
 export function db(){
   if(database)return database;
-  const dir=resolve(/* turbopackIgnore: true */ process.env.DANAVA_DATA_DIR||'.data');
+  const dir = process.env.VERCEL
+    ? (process.env.DANAVA_DATA_DIR && process.env.DANAVA_DATA_DIR.startsWith('/tmp') ? process.env.DANAVA_DATA_DIR : '/tmp/.data')
+    : resolve(/* turbopackIgnore: true */ process.env.DANAVA_DATA_DIR||'.data');
   mkdirSync(dir,{recursive:true,mode:0o700});
   database=new DatabaseSync(resolve(dir,'danava.sqlite'));
   database.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;

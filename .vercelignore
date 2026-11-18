@@ -1,0 +1,6 @@
+.data/
+*.sqlite*
+.env
+.env.local
+tests/
+

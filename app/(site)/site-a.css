@@ -1,0 +1,145 @@
+/* Nhóm trang: Liên hệ, Chính sách, 404 — tiền tố .s-contact-, .s-policy-, .s-404- */
+
+/* ==========================================================================
+   Liên hệ
+   ========================================================================== */
+.s-contact { background: linear-gradient(180deg, var(--s-soft) 0, var(--s-soft) 340px, #fff 340px); }
+.s-contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+.s-app .s-contact-intro > * + * { margin-top: 18px; }
+.s-contact-intro .s-h1 { max-width: 560px; }
+.s-app .s-contact-methods { display: grid; gap: 4px; margin-top: 32px; margin-bottom: 8px; }
+.s-contact-methods li { display: flex; align-items: flex-start; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--s-line); }
+.s-contact-methods li:last-child { border-bottom: 0; }
+.s-contact-methods__label { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--s-muted); }
+.s-app .s-contact-methods__value { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; font-size: 17px; font-weight: 700; color: var(--s-ink); }
+a.s-contact-methods__value:hover { color: var(--s-blue); }
+.s-contact-ext { width: 16px; height: 16px; color: var(--s-muted); }
+.s-contact-card { padding: clamp(24px, 4vw, 40px); box-shadow: var(--s-shadow-lg); border-color: transparent; position: sticky; top: calc(var(--s-header-h) + 24px); overflow: visible; }
+.s-app .s-contact-card__sub { margin: 6px 0 24px; }
+.s-contact-done { display: grid; gap: 16px; justify-items: start; }
+@media (max-width: 860px) {
+  .s-contact { background: #fff; }
+  .s-contact-grid { grid-template-columns: 1fr; }
+  .s-contact-card { position: static; box-shadow: var(--s-shadow); border-color: var(--s-line); }
+}
+
+/* ==========================================================================
+   Chính sách (dịch vụ + riêng tư)
+   ========================================================================== */
+.s-policy-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+.s-policy-toc { position: sticky; top: calc(var(--s-header-h) + 24px); padding: 20px; border: 1px solid var(--s-line); border-radius: var(--s-radius); background: #fff; }
+.s-app .s-policy-toc__title { font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--s-muted); margin-bottom: 10px; }
+.s-app .s-policy-toc nav { display: grid; gap: 2px; }
+.s-policy-toc a { display: block; padding: 8px 10px; border-radius: 10px; font-size: 14.5px; font-weight: 600; color: var(--s-ink-2); line-height: 1.4; }
+.s-policy-toc a:hover { background: var(--s-soft); color: var(--s-ink); }
+.s-policy-toc a.is-flag { color: #b45309; }
+.s-policy-body { max-width: 820px; font-size: 17px; }
+.s-policy-body > section { scroll-margin-top: calc(var(--s-header-h) + 24px); }
+.s-prose.s-policy-body > section + section { margin-top: 48px; padding-top: 48px; border-top: 1px solid var(--s-line); }
+.s-app .s-policy-body > section > * + * { margin-top: 1em; }
+.s-prose.s-policy-body h2 { margin-top: 0; }
+.s-prose.s-policy-body > section > .s-badge + h2 { margin-top: 14px; }
+.s-policy-body code { font-size: .9em; padding: 2px 6px; border-radius: 6px; background: var(--s-soft); color: var(--s-ink); }
+
+/* Nút, badge & danh sách tự định dạng bên trong .s-prose */
+.s-prose .s-btn { text-decoration: none; }
+.s-prose .s-btn--primary { color: #fff; }
+.s-prose .s-btn--secondary { color: var(--s-ink); }
+.s-prose .s-btn--secondary:hover { color: #fff; }
+.s-prose a.s-badge { text-decoration: none; }
+.s-prose ul.s-policy-list, .s-prose ul.s-policy-issuer__list { list-style: none; padding-left: 0; }
+.s-prose .s-policy-card h3, .s-prose .s-policy-right h3, .s-prose .s-policy-flag__item h3, .s-prose .s-policy-issuer h3 { margin-top: 0; }
+
+.s-policy-lead { color: var(--s-muted); font-size: 16px; }
+.s-policy-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.s-policy-card { padding: 22px; border: 1px solid var(--s-line); border-radius: var(--s-radius); background: #fff; font-size: 15.5px; line-height: 1.6; }
+.s-app .s-policy-card h3 { font-size: 17px; margin-bottom: 12px; }
+.s-app .s-policy-card p { margin-top: 8px; }
+.s-policy-card--muted { background: var(--s-soft); border-color: transparent; }
+.s-policy-list { display: grid; gap: 10px; }
+.s-policy-list li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; }
+.s-policy-list li svg { width: 20px; height: 20px; padding: 3px; margin-top: 2px; border-radius: 999px; background: var(--s-blue-soft); color: var(--s-blue); }
+.s-policy-list--x li svg { background: #fdecec; color: #b91c1c; }
+.s-policy-more { font-size: 16px; font-weight: 700; }
+.s-prose .s-policy-more a { text-decoration: none; }
+.s-prose .s-policy-more a:hover { text-decoration: underline; }
+
+.s-policy-note { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 14px; background: var(--s-blue-soft); color: var(--s-blue-hover); font-size: 15.5px; line-height: 1.6; }
+.s-policy-note svg { width: 20px; height: 20px; flex: none; margin-top: 3px; }
+.s-prose .s-policy-note strong { color: inherit; }
+
+.s-policy-table-wrap { overflow-x: auto; border: 1px solid var(--s-line); border-radius: var(--s-radius); }
+.s-policy-table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; line-height: 1.55; }
+.s-policy-table th { padding: 14px 16px; text-align: left; background: var(--s-soft); color: var(--s-ink); font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.s-policy-table td { padding: 16px; border-top: 1px solid var(--s-line); vertical-align: top; color: var(--s-ink-2); }
+.s-policy-table td > strong { display: block; color: var(--s-ink); }
+.s-policy-table__sub { display: block; margin-top: 8px; font-size: 14px; color: var(--s-muted); }
+.s-policy-sla { display: inline-block; margin-bottom: 6px; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: .04em; }
+.s-policy-sla--critical { background: #fdecec; color: #b91c1c; }
+.s-policy-sla--major { background: var(--s-orange-soft); color: #b45309; }
+.s-policy-sla--minor { background: var(--s-blue-soft); color: var(--s-blue); }
+.s-policy-sla--request { background: #e8f6ee; color: #17663a; }
+
+.s-policy-rights { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.s-policy-right { padding: 22px; border-radius: var(--s-radius); background: var(--s-soft); font-size: 15.5px; line-height: 1.6; }
+.s-policy-right__num { display: block; font-size: 13px; font-weight: 800; color: var(--s-blue); margin-bottom: 8px; }
+.s-app .s-policy-right h3 { font-size: 17px; margin-bottom: 6px; }
+
+.s-policy-channels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.s-app .s-policy-channels .s-policy-card h3 { margin: 12px 0 4px; }
+.s-prose .s-policy-channel__value { display: inline-block; font-size: 17px; font-weight: 800; color: var(--s-blue); text-decoration: none; }
+.s-policy-channel__hours { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--s-muted); }
+.s-policy-channel__hours svg { width: 16px; height: 16px; flex: none; }
+.s-prose ol.s-policy-steps { counter-reset: step; list-style: none; padding-left: 0; display: grid; gap: 12px; }
+.s-policy-steps li { position: relative; padding: 18px 18px 18px 64px; border: 1px solid var(--s-line); border-radius: var(--s-radius); font-size: 15.5px; line-height: 1.6; }
+.s-policy-steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 18px; top: 16px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 999px; background: var(--s-blue); color: #fff; font-size: 14px; font-weight: 800; }
+
+.s-prose.s-policy-body > section.s-policy-flag { padding: clamp(22px, 3vw, 32px); border: 1.5px solid #f5d5ae; border-radius: var(--s-radius-lg); background: #fffaf3; }
+.s-policy-flag__badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--s-orange-soft); color: #9a4a06; font-size: 12.5px; font-weight: 800; letter-spacing: .03em; line-height: 1.4; }
+.s-policy-flag__badge svg { width: 16px; height: 16px; flex: none; }
+.s-policy-flag__item { padding: 20px; border-radius: var(--s-radius); background: #fff; border: 1px solid #f3e3cc; font-size: 15.5px; line-height: 1.6; }
+.s-app .s-policy-flag__item > * + * { margin-top: 8px; }
+.s-app .s-policy-flag__item h3 { font-size: 17px; }
+.s-policy-flag__tag { display: block; font-size: 12px; font-weight: 800; letter-spacing: .05em; color: #b45309; }
+.s-policy-flag__analysis { color: var(--s-muted); font-size: 14.5px; }
+.s-policy-flag__status { font-size: 13.5px; font-weight: 700; color: #9a4a06; }
+
+.s-policy-issuer { padding: clamp(22px, 3vw, 32px); border-radius: var(--s-radius-lg); background: var(--s-soft); font-size: 16px; }
+.s-app .s-policy-issuer > * + * { margin-top: 12px; }
+.s-app .s-policy-issuer h3 { font-size: 19px; }
+.s-policy-issuer__list { display: grid; gap: 10px; }
+.s-policy-issuer__list li { display: flex; gap: 10px; align-items: flex-start; }
+.s-policy-issuer__list svg { width: 18px; height: 18px; flex: none; margin-top: 4px; color: var(--s-blue); }
+.s-app .s-policy-issuer .s-row { margin-top: 20px; }
+
+@media (max-width: 960px) {
+  .s-policy-layout { grid-template-columns: 1fr; }
+  .s-policy-toc { position: static; }
+  .s-app .s-policy-toc nav { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .s-policy-cards, .s-policy-rights, .s-policy-channels { grid-template-columns: 1fr; }
+  .s-app .s-policy-toc nav { grid-template-columns: 1fr; }
+  .s-policy-body { font-size: 16px; }
+}
+
+/* ==========================================================================
+   404 (tên class giữ nguyên theo tests/not-found.test.ts)
+   ========================================================================== */
+.not-found-page-wrapper { padding: clamp(48px, 8vw, 104px) 0 clamp(56px, 8vw, 112px); background: radial-gradient(70% 50% at 50% 0%, var(--s-blue-soft), transparent 70%); }
+.not-found-card { max-width: 760px; margin: 0 auto; text-align: center; }
+.s-app .not-found-geometric-art { display: block; width: min(260px, 70%); height: auto; margin: 0 auto 24px; }
+.not-found-code { display: inline-block; padding: 6px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--s-line); font-size: 13px; font-weight: 800; letter-spacing: .08em; color: var(--s-blue); }
+.s-app .not-found-title { margin-top: 20px; }
+.s-app .not-found-desc { margin: 18px auto 0; max-width: 600px; }
+.not-found-actions { margin-top: 32px; }
+.not-found-exits-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; max-width: 1000px; margin: clamp(48px, 6vw, 72px) auto 0; }
+.exit-card { display: flex; flex-direction: column; gap: 10px; padding: 26px; border: 1px solid var(--s-line); border-radius: var(--s-radius-lg); background: #fff; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.exit-card:hover { transform: translateY(-4px); box-shadow: var(--s-shadow-lg); border-color: transparent; }
+.exit-card .s-icon { margin-bottom: 6px; }
+.exit-card__title { font-size: 18px; font-weight: 700; letter-spacing: -0.015em; }
+.exit-card__text { color: var(--s-ink-2); font-size: 15px; line-height: 1.55; }
+.exit-card .s-link { margin-top: auto; padding-top: 6px; }
+.s-app .not-found-note { margin-top: 40px; text-align: center; color: var(--s-muted); font-size: 15px; }
+.not-found-note a { color: var(--s-blue); font-weight: 700; }
+@media (max-width: 760px) { .not-found-exits-grid { grid-template-columns: 1fr; } }

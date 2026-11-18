@@ -1,419 +1,253 @@
 import Link from 'next/link';
+import { ShieldCheck, Wrench, Headphones, PackageCheck, Info, AlertTriangle, Check, X, Phone, Mail, MapPin, Clock } from 'lucide-react';
 import {
   SERVICE_POLICY_METADATA,
   APPROVED_SERVICE_POLICIES,
   SLA_MATRIX,
   SUPPORT_CHANNELS,
-  DRAFT_POLICY_CLAUSES
+  DRAFT_POLICY_CLAUSES,
+  type ServicePolicyGroup
 } from '@/lib/service-policy';
+import { PageHead, IconTile } from './site/ui';
+
+const HIGHLIGHTS = [
+  { icon: ShieldCheck, title: 'Uptime ≥ 99.9%', text: 'Hạ tầng đám mây chuyên dụng, sao lưu dữ liệu tự động hằng ngày để phần mềm vận hành liên tục.' },
+  { icon: Wrench, title: 'Bảo hành website 12 tháng', text: 'Khắc phục lỗi phát sinh và đảm bảo tương thích đa trình duyệt miễn phí trong tối thiểu 1 năm.' },
+  { icon: Headphones, title: 'Phản hồi khẩn cấp ≤ 60 phút', text: 'Hotline 24/7 và nhóm Zalo chuyên trách cho sự cố ảnh hưởng đến check-in và kinh doanh.' },
+  { icon: PackageCheck, title: 'Bàn giao quyền sở hữu', text: 'Khách hàng sở hữu dữ liệu hội viên, doanh thu và mã nguồn sau nghiệm thu.' }
+];
+
+function PolicyGroup({ group, labels, link }: {
+  group: ServicePolicyGroup;
+  labels: [string, string, string, string];
+  link: { href: string; label: string };
+}) {
+  const lists: [string, string[]][] = [
+    [labels[0], group.scopeOfSupport],
+    [labels[1], group.warrantyTerms],
+    [labels[2], group.ownershipAndHandover]
+  ];
+  return (
+    <>
+      <p className="s-policy-lead">{group.tagline}</p>
+      <div className="s-policy-cards">
+        {lists.map(([title, items]) => (
+          <div key={title} className="s-policy-card">
+            <h3>{title}</h3>
+            <ul className="s-policy-list">
+              {items.map((item, i) => <li key={i}><Check aria-hidden="true" /><span>{item}</span></li>)}
+            </ul>
+          </div>
+        ))}
+        <div className="s-policy-card s-policy-card--muted">
+          <h3>{labels[3]}</h3>
+          <ul className="s-policy-list s-policy-list--x">
+            {group.exclusions.map((item, i) => <li key={i}><X aria-hidden="true" /><span>{item}</span></li>)}
+          </ul>
+        </div>
+      </div>
+      <p className="s-policy-more">
+        <Link href={link.href}>{link.label} →</Link>
+      </p>
+    </>
+  );
+}
 
 export function ServicePolicy() {
+  const [software, website, media] = APPROVED_SERVICE_POLICIES;
   return (
-    <main id="main" className="service-policy-wrapper">
-      {/* 1. HERO PHẦN CHÍNH SÁCH */}
-      <section className="policy-hero-section">
-        <div className="policy-hero-container">
-          <nav aria-label="Breadcrumb" className="policy-breadcrumb">
-            <Link href="/">Trang chủ</Link>
-            <span className="sep" aria-hidden="true">/</span>
-            <span className="current" aria-current="page">Chính sách dịch vụ</span>
-          </nav>
-          <span className="policy-kicker">DANAVA SOLUTIONS · CAM KẾT ĐỒNG HÀNH &amp; CHẤT LƯỢNG DỊCH VỤ</span>
-          <h1 className="policy-title">Chính sách Dịch vụ &amp; Bảo hành Kỹ thuật</h1>
-          <p className="policy-subtitle">
-            Khung quy chuẩn về phạm vi cung cấp, cam kết chất lượng (SLA), thời hạn bảo hành phần mềm, bàn giao mã nguồn website và quy tắc bảo mật dữ liệu khách hàng tại DANAVA Solutions.
-          </p>
-          <div className="policy-meta-bar">
-            <span className="meta-pill version">
-              Phiên bản: <strong>{SERVICE_POLICY_METADATA.version}</strong>
-            </span>
-            <span className="meta-pill date">
-              Ngày cập nhật: <strong>{SERVICE_POLICY_METADATA.lastUpdated}</strong>
-            </span>
-            <span className="meta-pill hot-line">
-              Hotline hỗ trợ 24/7: <a href={`tel:${SERVICE_POLICY_METADATA.hotline}`}>{SERVICE_POLICY_METADATA.hotline}</a>
-            </span>
-            <span className="meta-pill org">
-              Đơn vị ban hành: <strong>{SERVICE_POLICY_METADATA.companyName}</strong>
-            </span>
+    <main id="main">
+      <PageHead
+        soft
+        crumbs={[{ href: '/', label: 'Trang chủ' }, { label: 'Chính sách dịch vụ' }]}
+        eyebrow="DANAVA SOLUTIONS · Cam kết chất lượng"
+        title="Chính sách dịch vụ & bảo hành"
+        lead="Phạm vi cung cấp, cam kết chất lượng (SLA), thời hạn bảo hành, bàn giao mã nguồn và bảo mật dữ liệu khách hàng tại DANAVA Solutions."
+      >
+        <span className="s-badge s-badge--neutral">Phiên bản {SERVICE_POLICY_METADATA.version}</span>
+        <span className="s-badge s-badge--neutral">Cập nhật {SERVICE_POLICY_METADATA.lastUpdated}</span>
+        <a className="s-badge" href={`tel:${SERVICE_POLICY_METADATA.hotline.replace(/\s/g, '')}`}>Hotline 24/7: {SERVICE_POLICY_METADATA.hotline}</a>
+      </PageHead>
+
+      <section className="s-section s-section--tight" aria-label="Tóm tắt cam kết chất lượng dịch vụ">
+        <div className="s-container">
+          <div className="s-grid s-grid--4">
+            {HIGHLIGHTS.map(item => (
+              <div key={item.title} className="s-card s-card--pad s-card--soft s-feature">
+                <IconTile icon={item.icon} />
+                <h2 className="s-feature__title">{item.title}</h2>
+                <p className="s-feature__text s-small">{item.text}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 2. KHUNG CAM KẾT CỐT LÕI (4 HIGHLIGHT CARDS) */}
-      <section className="section policy-highlights-section" aria-label="Tóm tắt cam kết chất lượng dịch vụ">
-        <div className="policy-highlights-grid">
-          <div className="highlight-card">
-            <span className="highlight-icon" aria-hidden="true">🛡️</span>
-            <h3>SLA Uptime $\ge$ 99.9%</h3>
-            <p>Hạ tầng đám mây chuyên dụng, sao lưu dữ liệu tự động hàng ngày, bảo đảm phần mềm vận hành liên tục không gián đoạn.</p>
-          </div>
-          <div className="highlight-card">
-            <span className="highlight-icon" aria-hidden="true">⚡</span>
-            <h3>Bảo hành Website 12 tháng</h3>
-            <p>Cam kết bảo hành mã nguồn tối thiểu 1 năm, khắc phục lỗi phát sinh và tương thích đa trình duyệt hoàn toàn miễn phí.</p>
-          </div>
-          <div className="highlight-card">
-            <span className="highlight-icon" aria-hidden="true">📞</span>
-            <h3>Phản hồi khẩn cấp $\le$ 60 phút</h3>
-            <p>Đường dây nóng 24/7 và nhóm Zalo chuyên trách xử lý tức thời các sự cố ảnh hưởng đến check-in và kinh doanh.</p>
-          </div>
-          <div className="highlight-card">
-            <span className="highlight-icon" aria-hidden="true">📦</span>
-            <h3>Bàn giao 100% Quyền sở hữu</h3>
-            <p>Khách hàng sở hữu toàn bộ dữ liệu hội viên, doanh thu và toàn quyền mã nguồn (Source Code) sau nghiệm thu.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. BỐ CỤC CHÍNH HAI CỘT: MỤC LỤC & NỘI DUNG CHI TIẾT */}
-      <section className="policy-content-section">
-        <div className="policy-layout-container">
-          {/* MỤC LỤC ĐIỀU HƯỚNG CỐ ĐỊNH (STICKY TOC) */}
-          <aside className="policy-toc-sidebar" aria-label="Mục lục chính sách dịch vụ">
-            <div className="policy-toc-box">
-              <span className="policy-toc-heading">MỤC LỤC CHÍNH SÁCH</span>
-              <nav className="policy-toc-nav">
-                <a href="#nguyen-tac-chung" className="toc-item-link">1. Nguyên tắc chung &amp; Phạm vi áp dụng</a>
-                <a href="#phan-mem" className="toc-item-link">2. Phần mềm Quản trị DANAVA Studio</a>
-                <a href="#thiet-ke-website" className="toc-item-link">3. Thiết kế Website &amp; Web App</a>
-                <a href="#truyen-thong-media" className="toc-item-link">4. Dịch vụ Truyền thông &amp; Media</a>
-                <a href="#ma-tran-sla" className="toc-item-link">5. Ma trận Sự cố &amp; Cam kết SLA</a>
-                <a href="#kenh-tiep-nhan" className="toc-item-link">6. Kênh Tiếp nhận &amp; Quy trình Hỗ trợ</a>
-                <a href="#mien-tru-trach-nhiem" className="toc-item-link">7. Điều khoản Miễn trừ Trách nhiệm</a>
-                <a href="#dieu-khoan-du-thao" className="toc-item-link highlight-draft">8. Phụ lục Dự thảo (Chờ Phê duyệt)</a>
-                <a href="#thong-tin-ban-hanh" className="toc-item-link">9. Thông tin Đơn vị Ban hành</a>
+      <section className="s-section s-section--flush-top">
+        <div className="s-container">
+          <div className="s-policy-layout">
+            <aside className="s-policy-toc" aria-label="Mục lục chính sách dịch vụ">
+              <p className="s-policy-toc__title">Mục lục</p>
+              <nav>
+                <a href="#nguyen-tac-chung">1. Nguyên tắc chung</a>
+                <a href="#phan-mem">2. Phần mềm DANAVA Studio</a>
+                <a href="#thiet-ke-website">3. Website &amp; Web App</a>
+                <a href="#truyen-thong-media">4. Truyền thông &amp; Media</a>
+                <a href="#ma-tran-sla">5. Ma trận sự cố &amp; SLA</a>
+                <a href="#kenh-tiep-nhan">6. Kênh tiếp nhận hỗ trợ</a>
+                <a href="#mien-tru-trach-nhiem">7. Miễn trừ trách nhiệm</a>
+                <a href="#dieu-khoan-du-thao" className="is-flag">8. Phụ lục dự thảo</a>
+                <a href="#thong-tin-ban-hanh">9. Đơn vị ban hành</a>
               </nav>
-            </div>
-          </aside>
+            </aside>
 
-          {/* CỘT NỘI DUNG CHI TIẾT */}
-          <article className="policy-body-column">
-            {/* MỤC 1: NGUYÊN TẮC CHUNG */}
-            <div id="nguyen-tac-chung" className="policy-block">
-              <h2>1. Nguyên tắc chung &amp; Phạm vi áp dụng</h2>
-              <p>
-                Chính sách này quy định rõ các tiêu chuẩn chất lượng dịch vụ, thời gian phản hồi (SLA), điều kiện bảo hành kỹ thuật và trách nhiệm bảo mật giữa <strong>CÔNG TY TNHH DANAVA SOLUTIONS</strong> và khách hàng sử dụng dịch vụ.
-              </p>
-              <p>
-                Với phương châm <em>"Đi cùng nhau · Tạo nên giá trị"</em>, DANAVA Solutions cam kết mang đến những giải pháp công nghệ ổn định và chiến dịch truyền thông hiệu quả, đồng hành dài hạn cùng sự phát triển của doanh nghiệp.
-              </p>
-              <div className="policy-info-note">
-                <span className="note-icon" aria-hidden="true">💡</span>
+            <article className="s-prose s-policy-body">
+              <section id="nguyen-tac-chung">
+                <h2>1. Nguyên tắc chung &amp; phạm vi áp dụng</h2>
                 <p>
-                  Chính sách này là một phần không thể tách rời của Hợp đồng dịch vụ hoặc Đơn đặt hàng đã được ký kết giữa DANAVA Solutions và Quý khách hàng.
+                  Chính sách này quy định tiêu chuẩn chất lượng dịch vụ, thời gian phản hồi (SLA), điều kiện bảo hành kỹ thuật và trách nhiệm bảo mật giữa <strong>{SERVICE_POLICY_METADATA.companyName}</strong> và khách hàng sử dụng dịch vụ.
                 </p>
-              </div>
-            </div>
+                <p>
+                  Với phương châm <em>“Đi cùng nhau · Tạo nên giá trị”</em>, DANAVA Solutions cam kết mang đến giải pháp công nghệ ổn định và chiến dịch truyền thông hiệu quả, đồng hành dài hạn cùng doanh nghiệp.
+                </p>
+                <div className="s-policy-note">
+                  <Info aria-hidden="true" />
+                  <p>Chính sách này là một phần không thể tách rời của Hợp đồng dịch vụ hoặc Đơn đặt hàng đã ký giữa DANAVA Solutions và Quý khách hàng.</p>
+                </div>
+              </section>
 
-            {/* MỤC 2: PHẦN MỀM DANAVA STUDIO */}
-            <div id="phan-mem" className="policy-block">
-              <div className="block-badge-category software">KHỐI DỊCH VỤ PHẦN MỀM &amp; SAAS</div>
-              <h2>2. Chính sách Phần mềm Quản trị DANAVA Studio</h2>
-              <p className="block-lead">
-                Áp dụng cho các cơ sở Gym, Trung tâm Yoga, Pilates Studio, Bể bơi và Spa sử dụng nền tảng quản trị đám mây DANAVA Studio.
-              </p>
+              <section id="phan-mem">
+                <span className="s-badge">Phần mềm &amp; SaaS</span>
+                <h2>2. {software.title}</h2>
+                <PolicyGroup
+                  group={software}
+                  labels={['Phạm vi hỗ trợ & hạ tầng', 'Bảo hành & cập nhật tính năng', 'Quyền sở hữu dữ liệu', 'Trường hợp loại trừ hỗ trợ']}
+                  link={{ href: '/giai-phap/danava-studio/', label: 'Tìm hiểu giải pháp DANAVA Studio' }}
+                />
+              </section>
 
-              <div className="sub-policy-card">
-                <h3>Phạm vi hỗ trợ &amp; Hạ tầng vận hành</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[0].scopeOfSupport.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
+              <section id="thiet-ke-website">
+                <span className="s-badge">Website &amp; Web App</span>
+                <h2>3. {website.title}</h2>
+                <PolicyGroup
+                  group={website}
+                  labels={['Quy chuẩn kỹ thuật & nghiệm thu', 'Thời hạn bảo hành 12 tháng', 'Bàn giao mã nguồn & quản trị', 'Trường hợp loại trừ bảo hành']}
+                  link={{ href: '/du-an/', label: 'Xem các dự án đã bàn giao' }}
+                />
+              </section>
 
-              <div className="sub-policy-card">
-                <h3>Chế độ bảo hành &amp; Cập nhật tính năng</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[0].warrantyTerms.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
+              <section id="truyen-thong-media">
+                <span className="s-badge">Truyền thông &amp; Media</span>
+                <h2>4. {media.title}</h2>
+                <PolicyGroup
+                  group={media}
+                  labels={['Kế hoạch thực thi & phê duyệt', 'Quy chuẩn duyệt & 02 vòng chỉnh sửa', 'Bàn giao file gốc & bảo mật tư liệu', 'Chi phí phát sinh ngoài phạm vi']}
+                  link={{ href: '/kien-thuc/', label: 'Xem bản tin & hoạt động' }}
+                />
+              </section>
 
-              <div className="sub-policy-card">
-                <h3>Quyền sở hữu dữ liệu &amp; Tính độc lập</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[0].ownershipAndHandover.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card warning-card">
-                <h3>Trường hợp loại trừ hỗ trợ</h3>
-                <ul className="policy-cross-list">
-                  {APPROVED_SERVICE_POLICIES[0].exclusions.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="policy-quick-link-box">
-                <span>Tìm hiểu thêm về nền tảng phần mềm:</span>
-                <Link href="/giai-phap/danava-studio/" className="text-cta-link">
-                  Khám phá giải pháp DANAVA Studio ↗
-                </Link>
-              </div>
-            </div>
-
-            {/* MỤC 3: THIẾT KẾ WEBSITE & WEB APP */}
-            <div id="thiet-ke-website" className="policy-block">
-              <div className="block-badge-category website">KHỐI THIẾT KẾ WEBSITE &amp; WEB APP</div>
-              <h2>3. Chính sách Thiết kế Website &amp; Ứng dụng Web</h2>
-              <p className="block-lead">
-                Áp dụng cho dịch vụ thiết kế website doanh nghiệp, landing page chuyển đổi cao và các nền tảng ứng dụng trực tuyến theo yêu cầu.
-              </p>
-
-              <div className="sub-policy-card">
-                <h3>Quy chuẩn kỹ thuật &amp; Nghiệm thu</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[1].scopeOfSupport.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card">
-                <h3>Thời hạn bảo hành 12 tháng</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[1].warrantyTerms.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card">
-                <h3>Bàn giao 100% Clean Source Code &amp; Quản trị</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[1].ownershipAndHandover.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card warning-card">
-                <h3>Trường hợp loại trừ bảo hành website</h3>
-                <ul className="policy-cross-list">
-                  {APPROVED_SERVICE_POLICIES[1].exclusions.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="policy-quick-link-box">
-                <span>Xem các dự án website đã bàn giao thực tế:</span>
-                <Link href="/du-an/" className="text-cta-link">
-                  Hồ sơ dự án tiêu biểu của DANAVA ↗
-                </Link>
-              </div>
-            </div>
-
-            {/* MỤC 4: TRUYỀN THÔNG & MEDIA */}
-            <div id="truyen-thong-media" className="policy-block">
-              <div className="block-badge-category media">KHỐI TRUYỀN THÔNG &amp; SẢN XUẤT MEDIA</div>
-              <h2>4. Chính sách Dịch vụ Truyền thông &amp; Sản xuất Media</h2>
-              <p className="block-lead">
-                Áp dụng cho các chiến dịch Digital Marketing tổng thể, chăm sóc kênh Fanpage/Zalo OA, quay dựng video ngắn và hình ảnh thương hiệu.
-              </p>
-
-              <div className="sub-policy-card">
-                <h3>Kế hoạch thực thi &amp; Phê duyệt trước</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[2].scopeOfSupport.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card">
-                <h3>Quy chuẩn duyệt &amp; 02 vòng chỉnh sửa (Revisions)</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[2].warrantyTerms.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card">
-                <h3>Bàn giao file thiết kế gốc &amp; Bảo mật tư liệu</h3>
-                <ul className="policy-check-list">
-                  {APPROVED_SERVICE_POLICIES[2].ownershipAndHandover.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="sub-policy-card warning-card">
-                <h3>Trường hợp phát sinh chi phí ngoài phạm vi</h3>
-                <ul className="policy-cross-list">
-                  {APPROVED_SERVICE_POLICIES[2].exclusions.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="policy-quick-link-box">
-                <span>Xem các ấn phẩm và bản tin truyền thông:</span>
-                <Link href="/kien-thuc/" className="text-cta-link">
-                  Bản tin &amp; Hoạt động DANAVA ↗
-                </Link>
-              </div>
-            </div>
-
-            {/* MỤC 5: MA TRẬN SLA THỜI GIAN PHẢN HỒI */}
-            <div id="ma-tran-sla" className="policy-block">
-              <h2>5. Ma trận Phân loại Sự cố &amp; Cam kết SLA</h2>
-              <p>
-                Để đảm bảo tính kịp thời và tập trung tối đa nguồn lực kỹ thuật, DANAVA Solutions áp dụng ma trận phân loại mức độ sự cố và thời gian xử lý cam kết như sau:
-              </p>
-
-              <div className="sla-table-wrapper">
-                <table className="sla-data-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: '22%' }}>Mức độ sự cố</th>
-                      <th style={{ width: '38%' }}>Tình huống mô tả</th>
-                      <th style={{ width: '20%' }}>Thời gian phản hồi</th>
-                      <th style={{ width: '20%' }}>Kênh tiếp nhận</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {SLA_MATRIX.map((sla, idx) => (
-                      <tr key={idx} className={`sla-row-${sla.level}`}>
-                        <td className="sla-level-cell">
-                          <span className={`sla-badge ${sla.level}`}>{sla.priorityText}</span>
-                          <strong>{sla.levelLabel}</strong>
-                        </td>
-                        <td>
-                          <p className="sla-scenario-text">{sla.scenario}</p>
-                          <span className="sla-res-time">Cam kết xử lý: <strong>{sla.resolutionTime}</strong></span>
-                        </td>
-                        <td className="sla-time-cell">
-                          <span className="sla-time-val">{sla.firstResponseTime}</span>
-                        </td>
-                        <td className="sla-channel-cell">
-                          <span>{sla.contactChannel}</span>
-                        </td>
+              <section id="ma-tran-sla">
+                <h2>5. Ma trận phân loại sự cố &amp; cam kết SLA</h2>
+                <p>DANAVA Solutions áp dụng ma trận phân loại mức độ sự cố và thời gian xử lý như sau:</p>
+                <div className="s-policy-table-wrap">
+                  <table className="s-policy-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Mức độ</th>
+                        <th scope="col">Tình huống</th>
+                        <th scope="col">Phản hồi đầu tiên</th>
+                        <th scope="col">Kênh tiếp nhận</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                    </thead>
+                    <tbody>
+                      {SLA_MATRIX.map(sla => (
+                        <tr key={sla.level}>
+                          <td>
+                            <span className={`s-policy-sla s-policy-sla--${sla.level}`}>{sla.priorityText}</span>
+                            <strong>{sla.levelLabel}</strong>
+                          </td>
+                          <td>
+                            {sla.scenario}
+                            <span className="s-policy-table__sub">Cam kết xử lý: <strong>{sla.resolutionTime}</strong></span>
+                          </td>
+                          <td><strong>{sla.firstResponseTime}</strong></td>
+                          <td>{sla.contactChannel}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
 
-            {/* MỤC 6: KÊNH TIẾP NHẬN & QUY TRÌNH */}
-            <div id="kenh-tiep-nhan" className="policy-block">
-              <h2>6. Kênh Tiếp nhận &amp; Quy trình Hỗ trợ Kỹ thuật</h2>
-              <p>
-                Quý khách hàng có thể liên hệ với đội ngũ DANAVA Solutions qua các kênh chính thức sau:
-              </p>
-
-              <div className="channels-grid">
-                {SUPPORT_CHANNELS.map((ch) => (
-                  <div key={ch.id} className="channel-item-card">
-                    <span className="channel-badge">{ch.badge}</span>
-                    <h3>{ch.title}</h3>
-                    <a href={ch.href} className="channel-value-link">{ch.value}</a>
-                    <p className="channel-desc">{ch.description}</p>
-                    <span className="channel-hours">🕒 {ch.workingHours}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="support-steps-box">
+              <section id="kenh-tiep-nhan">
+                <h2>6. Kênh tiếp nhận &amp; quy trình hỗ trợ</h2>
+                <p>Quý khách có thể liên hệ đội ngũ DANAVA Solutions qua các kênh chính thức:</p>
+                <div className="s-policy-channels">
+                  {SUPPORT_CHANNELS.map(ch => (
+                    <div key={ch.id} className="s-policy-card">
+                      <span className="s-badge s-badge--neutral">{ch.badge}</span>
+                      <h3>{ch.title}</h3>
+                      <a className="s-policy-channel__value" href={ch.href}>{ch.value}</a>
+                      <p>{ch.description}</p>
+                      <p className="s-policy-channel__hours"><Clock aria-hidden="true" />{ch.workingHours}</p>
+                    </div>
+                  ))}
+                </div>
                 <h3>Quy trình 3 bước xử lý yêu cầu kỹ thuật</h3>
-                <div className="steps-flow">
-                  <div className="step-flow-item">
-                    <span className="step-index">BƯỚC 1</span>
-                    <h4>Tiếp nhận &amp; Phân loại</h4>
-                    <p>Khách hàng gửi thông tin qua Hotline/Zalo; Kỹ thuật viên xác nhận trong khung giờ SLA tương ứng.</p>
-                  </div>
-                  <div className="step-flow-item">
-                    <span className="step-index">BƯỚC 2</span>
-                    <h4>Khắc phục &amp; Kiểm thử</h4>
-                    <p>Đội ngũ kỹ thuật cô lập lỗi, tiến hành sửa chữa trên môi trường Staging trước khi cập nhật Production.</p>
-                  </div>
-                  <div className="step-flow-item">
-                    <span className="step-index">BƯỚC 3</span>
-                    <h4>Bàn giao &amp; Xác nhận</h4>
-                    <p>Thông báo kết quả khắc phục cho khách hàng và ghi nhận hoàn tất vào nhật ký hỗ trợ kỹ thuật.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <ol className="s-policy-steps">
+                  <li><strong>Tiếp nhận &amp; phân loại.</strong> Khách hàng gửi thông tin qua Hotline/Zalo; kỹ thuật viên xác nhận trong khung giờ SLA tương ứng.</li>
+                  <li><strong>Khắc phục &amp; kiểm thử.</strong> Đội kỹ thuật cô lập lỗi, sửa trên môi trường Staging trước khi cập nhật Production.</li>
+                  <li><strong>Bàn giao &amp; xác nhận.</strong> Thông báo kết quả cho khách hàng và ghi nhận hoàn tất vào nhật ký hỗ trợ.</li>
+                </ol>
+              </section>
 
-            {/* MỤC 7: ĐIỀU KHOẢN MIỄN TRỪ TRÁCH NHIỆM */}
-            <div id="mien-tru-trach-nhiem" className="policy-block">
-              <h2>7. Điều khoản Miễn trừ &amp; Giới hạn Trách nhiệm</h2>
-              <p>
-                DANAVA Solutions được miễn trừ trách nhiệm bảo hành hoặc bồi thường trong các tình huống sau:
-              </p>
-              <ul className="policy-bullet-list">
-                <li><strong>Sự kiện bất khả kháng:</strong> Thiên tai, hỏa hoạn, động đất, sự cố đứt cáp quang biển quốc tế diện rộng, hoặc các chỉ thị hành chính bất khả kháng từ cơ quan Nhà nước có thẩm quyền.</li>
-                <li><strong>Tự ý sửa đổi mã nguồn:</strong> Khách hàng hoặc bên thứ ba tự ý can thiệp vào cấu trúc code, cơ sở dữ liệu hoặc cấu hình máy chủ hosting mà không có sự đồng ý hoặc phối hợp kỹ thuật với DANAVA.</li>
-                <li><strong>Để lộ thông tin xác thực:</strong> Sự cố bắt nguồn từ việc người dùng để lộ mật khẩu quản trị, lộ mã xác thực 2 bước (2FA) hoặc bị lừa đảo trực tuyến (phishing) từ bên ngoài.</li>
-                <li><strong>Hết hạn dịch vụ bên thứ ba:</strong> Tên miền (Domain), chứng chỉ SSL bên ngoài, hoặc máy chủ lưu trữ (Hosting) của khách hàng tự gia hạn bị hết hạn mà không thông báo gia hạn cho DANAVA.</li>
-              </ul>
-            </div>
+              <section id="mien-tru-trach-nhiem">
+                <h2>7. Miễn trừ &amp; giới hạn trách nhiệm</h2>
+                <p>DANAVA Solutions được miễn trừ trách nhiệm bảo hành hoặc bồi thường trong các tình huống sau:</p>
+                <ul>
+                  <li><strong>Sự kiện bất khả kháng:</strong> thiên tai, hỏa hoạn, động đất, sự cố đứt cáp quang biển diện rộng hoặc chỉ thị hành chính từ cơ quan Nhà nước có thẩm quyền.</li>
+                  <li><strong>Tự ý sửa đổi mã nguồn:</strong> khách hàng hoặc bên thứ ba can thiệp vào code, cơ sở dữ liệu hoặc cấu hình máy chủ mà không phối hợp với DANAVA.</li>
+                  <li><strong>Để lộ thông tin xác thực:</strong> sự cố do lộ mật khẩu quản trị, mã xác thực 2 bước (2FA) hoặc bị lừa đảo trực tuyến (phishing).</li>
+                  <li><strong>Hết hạn dịch vụ bên thứ ba:</strong> tên miền, chứng chỉ SSL hoặc hosting do khách hàng tự quản lý bị hết hạn mà không thông báo cho DANAVA.</li>
+                </ul>
+              </section>
 
-            {/* MỤC 8: PHỤ LỤC DỰ THẢO - CHỜ BAN GIÁM ĐỐC DUYỆT */}
-            <div id="dieu-khoan-du-thao" className="policy-block draft-flagged-block">
-              <div className="draft-banner-header">
-                <span className="draft-badge-pill">⚠️ BẢN DỰ THẢO — ĐANG CHỜ BAN GIÁM ĐỐC PHÊ DUYỆT CHÍNH THỨC</span>
-                <h2>8. Các điều khoản đang dự thảo (Trạng thái nháp)</h2>
-              </div>
-              <p className="draft-lead-text">
-                Theo quy định bảo đảm tính pháp lý của DANAVA Solutions, các điều khoản dưới đây <strong>đang trong quá trình nghiên cứu và chuẩn bị lấy ý kiến phê duyệt</strong>, chưa có hiệu lực áp dụng chính thức cho đến khi được ban hành văn bản chính thức:
-              </p>
-
-              <div className="draft-clauses-stack">
-                {DRAFT_POLICY_CLAUSES.map((clause) => (
-                  <div key={clause.id} className="draft-clause-card">
-                    <span className="clause-code">{clause.code}</span>
-                    <span className="clause-target">Áp dụng cho: <strong>{clause.targetService}</strong></span>
+              <section id="dieu-khoan-du-thao" className="s-policy-flag">
+                <p className="s-policy-flag__badge"><AlertTriangle aria-hidden="true" /> BẢN DỰ THẢO — ĐANG CHỜ BAN GIÁM ĐỐC PHÊ DUYỆT CHÍNH THỨC</p>
+                <h2>8. Các điều khoản đang dự thảo</h2>
+                <p>
+                  Các điều khoản dưới đây <strong>đang trong quá trình nghiên cứu và lấy ý kiến phê duyệt</strong>, chưa có hiệu lực cho đến khi được ban hành bằng văn bản chính thức.
+                </p>
+                {DRAFT_POLICY_CLAUSES.map(clause => (
+                  <div key={clause.id} className="s-policy-flag__item">
+                    <span className="s-policy-flag__tag">{clause.code} · {clause.targetService}</span>
                     <h3>{clause.title}</h3>
-                    <p className="clause-content"><strong>Nội dung đề xuất:</strong> {clause.proposedContent}</p>
-                    <div className="clause-analysis-box">
-                      <span className="analysis-tag">Đánh giá tác động &amp; Hiện trạng:</span>
-                      <p>{clause.impactAnalysis}</p>
-                    </div>
-                    <div className="clause-status-tag">
-                      <span>Trạng thái: <em>{clause.status}</em></span>
-                    </div>
+                    <p><strong>Nội dung đề xuất:</strong> {clause.proposedContent}</p>
+                    <p className="s-policy-flag__analysis"><strong>Đánh giá tác động:</strong> {clause.impactAnalysis}</p>
+                    <p className="s-policy-flag__status">Trạng thái: {clause.status}</p>
                   </div>
                 ))}
-              </div>
-            </div>
+              </section>
 
-            {/* MỤC 9: THÔNG TIN ĐƠN VỊ BAN HÀNH & LIÊN HỆ */}
-            <div id="thong-tin-ban-hanh" className="policy-block">
-              <h2>9. Thông tin Đơn vị Ban hành &amp; Đầu mối Kỹ thuật</h2>
-              <p>
-                Mọi thắc mắc về chính sách dịch vụ hoặc yêu cầu hỗ trợ kỹ thuật khẩn cấp, Quý khách vui lòng liên hệ:
-              </p>
-
-              <div className="policy-issuer-card">
-                <h3>{SERVICE_POLICY_METADATA.companyName}</h3>
-                <div className="issuer-meta-list">
-                  <p><strong>Người đại diện:</strong> {SERVICE_POLICY_METADATA.representative}</p>
-                  <p><strong>Địa chỉ:</strong> {SERVICE_POLICY_METADATA.address}</p>
-                  <p><strong>Hotline kỹ thuật:</strong> <a href={`tel:${SERVICE_POLICY_METADATA.hotline}`}>{SERVICE_POLICY_METADATA.hotline}</a></p>
-                  <p><strong>Email kỹ thuật:</strong> <a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>{SERVICE_POLICY_METADATA.supportEmail}</a></p>
-                  <p><strong>Email đối tác:</strong> <a href={`mailto:${SERVICE_POLICY_METADATA.generalEmail}`}>{SERVICE_POLICY_METADATA.generalEmail}</a></p>
+              <section id="thong-tin-ban-hanh">
+                <h2>9. Đơn vị ban hành &amp; đầu mối kỹ thuật</h2>
+                <p>Mọi thắc mắc về chính sách hoặc yêu cầu hỗ trợ kỹ thuật khẩn cấp, vui lòng liên hệ:</p>
+                <div className="s-policy-issuer">
+                  <h3>{SERVICE_POLICY_METADATA.companyName}</h3>
+                  <p>Người đại diện: {SERVICE_POLICY_METADATA.representative}</p>
+                  <ul className="s-policy-issuer__list">
+                    <li><MapPin aria-hidden="true" />{SERVICE_POLICY_METADATA.address}</li>
+                    <li><Phone aria-hidden="true" /><a href={`tel:${SERVICE_POLICY_METADATA.hotline.replace(/\s/g, '')}`}>{SERVICE_POLICY_METADATA.hotline}</a></li>
+                    <li><Mail aria-hidden="true" /><span>Kỹ thuật: <a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>{SERVICE_POLICY_METADATA.supportEmail}</a> · Đối tác: <a href={`mailto:${SERVICE_POLICY_METADATA.generalEmail}`}>{SERVICE_POLICY_METADATA.generalEmail}</a></span></li>
+                  </ul>
+                  <div className="s-row">
+                    <Link href="/lien-he/" className="s-btn s-btn--primary">Gửi yêu cầu hỗ trợ</Link>
+                    <Link href="/chinh-sach-rieng-tu/" className="s-btn s-btn--secondary">Chính sách riêng tư</Link>
+                  </div>
                 </div>
-                <div className="issuer-actions">
-                  <Link href="/lien-he/" className="button amber">
-                    Gửi yêu cầu hỗ trợ trực tuyến ↗
-                  </Link>
-                  <Link href="/chinh-sach-rieng-tu/" className="button secondary">
-                    Xem Chính sách Riêng tư ↗
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
+              </section>
+            </article>
+          </div>
         </div>
       </section>
     </main>
@@ -421,4 +255,3 @@ export function ServicePolicy() {
 }
 
 export default ServicePolicy;
-

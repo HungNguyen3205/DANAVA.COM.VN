@@ -8,6 +8,7 @@ import { company } from '@/lib/company';
 import { servicePhotos, activityPhotos, postPhotos } from '@/lib/media';
 import { defaultPresentation } from '@/lib/presentation';
 import { getApprovedSocialPosts } from '@/lib/social-feed';
+import MobileProjectCarousel from './MobileProjectCarousel';
 
 const isExternal = (href: string) => href.startsWith('https');
 const formatDate = (date: string) => date.split('-').reverse().join('.');
@@ -188,7 +189,8 @@ export function RealProjects() {
         lead="Mô hình triển khai và các hạng mục thực tế tại từng đối tác."
         link={{ href: '/du-an/', label: 'Xem tất cả dự án' }}
       />
-      <div className="home-case-grid">
+      {/* Desktop Grid (hiển thị trên màn hình lớn) */}
+      <div className="home-case-grid desktop-case-grid">
         {projects.slice(0, 4).map((p, i) => (
           <Link className="editorial-case" href={`/du-an/${p.slug}/`} key={p.id} data-reveal>
             <div className="editorial-case-image">
@@ -204,6 +206,9 @@ export function RealProjects() {
           </Link>
         ))}
       </div>
+
+      {/* Mobile Swipeable Carousel (lướt ngang mượt mà trên điện thoại) */}
+      <MobileProjectCarousel />
     </section>
   );
 }

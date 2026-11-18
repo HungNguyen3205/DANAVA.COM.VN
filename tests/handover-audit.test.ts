@@ -36,15 +36,15 @@ test('Workflow 1: Published projects appear in portfolio and services; drafts ar
   assert.ok(hue, 'Dự án Huế Pilates phải tìm được qua ID hoặc slug');
   assert.equal(hue.client, 'Huế Pilates & Yoga');
 
-  // Kiểm tra file component PublicPages.tsx đã hỗ trợ match linh hoạt
+  // Kiểm tra file component site/ProjectsPages.tsx đã hỗ trợ match linh hoạt
   const publicPagesSource = fs.readFileSync(
-    path.join(process.cwd(), 'components', 'PublicPages.tsx'),
+    path.join(process.cwd(), 'components', 'site', 'ProjectsPages.tsx'),
     'utf8'
   );
   assert.ok(
     publicPagesSource.includes("p.id === 'hariver-studio'") ||
     publicPagesSource.includes("p.slug === 'hariver-gym-danava-studio'"),
-    'PublicPages phải tìm kiếm dự án theo ID hoặc slug chuẩn hóa'
+    'ProjectsPages phải tìm kiếm dự án theo ID hoặc slug chuẩn hóa'
   );
 
   // Bản nháp (draft project) phải bị cô lập:
@@ -89,14 +89,14 @@ test('Workflow 2: Approved social posts display in Newsletter and Home; unapprov
     'Bài viết chưa duyệt (verified: false) không được xuất hiện'
   );
 
-  // Kiểm tra file HomeSections.tsx có import và render getApprovedSocialPosts
+  // Kiểm tra file site/HomePage.tsx có import và render getApprovedSocialPosts
   const homeSectionsSource = fs.readFileSync(
-    path.join(process.cwd(), 'components', 'HomeSections.tsx'),
+    path.join(process.cwd(), 'components', 'site', 'HomePage.tsx'),
     'utf8'
   );
   assert.ok(
     homeSectionsSource.includes('getApprovedSocialPosts'),
-    'HomeSections.tsx phải tích hợp getApprovedSocialPosts để hiện bài đăng đã duyệt trên Trang chủ'
+    'site/HomePage.tsx phải tích hợp getApprovedSocialPosts để hiện bài đăng đã duyệt trên Trang chủ'
   );
 });
 

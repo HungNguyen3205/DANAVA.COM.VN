@@ -1,1 +1,0 @@
-import{seo}from'@/lib/seo';export const metadata=seo("Dự án DANAVA","Các dự án và câu chuyện triển khai giải pháp của DANAVA.","/du-an/");import{ProjectsPage}from'@/components/PublicPages';export default ProjectsPage;

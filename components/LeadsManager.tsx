@@ -140,7 +140,7 @@ export default function LeadsManager() {
             <label className="adm-input-icon">
               <Icon name="search" size={16} />
               <input
-                placeholder="Tìm tên, số điện thoại, dịch vụ…"
+                placeholder="Tìm tên, SĐT, dịch vụ…"
                 aria-label="Tìm khách hàng"
                 value={query}
                 onChange={e => setQuery(e.target.value)}

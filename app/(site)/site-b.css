@@ -1,0 +1,86 @@
+/* Nhóm trang: Bản tin, Bài viết, Đội ngũ — tiền tố .s-news-, .s-article-, .s-team- */
+
+/* ---------- Bản tin ---------- */
+.s-news-cat { font-weight: 700; color: var(--s-blue); }
+.s-news-tabs { margin-bottom: 32px; }
+.s-news-featured { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+.s-news-featured__media { position: relative; min-height: 340px; background: var(--s-soft); }
+.s-news-featured__media > img, .s-news-featured__media > .s-visual { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.s-news-featured__body { display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: clamp(28px, 4vw, 56px); }
+.s-news-featured__title { font-size: clamp(26px, 2.8vw, 36px); }
+.s-news-featured:hover .s-news-featured__media img { transform: scale(1.03); }
+.s-news-featured__media img { transition: transform .5s ease; }
+.s-news-play { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; pointer-events: none; }
+.s-news-play svg { width: 56px; height: 56px; filter: drop-shadow(0 6px 18px rgba(0,0,0,.35)); }
+.s-news-social-title { font-size: 18px; }
+@media (max-width: 860px) {
+  .s-news-featured { grid-template-columns: 1fr; }
+  .s-news-featured__media { min-height: 0; aspect-ratio: 16 / 10; }
+}
+
+/* ---------- Bài viết ---------- */
+.s-article-head { padding: clamp(40px, 6vw, 80px) 0 clamp(28px, 4vw, 40px); }
+.s-article-head .s-container > * + * { margin-top: 18px; }
+.s-article-cat { margin-top: 28px !important; }
+.s-article-title { font-size: clamp(32px, 4.4vw, 52px); }
+.s-article-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; color: var(--s-muted); font-size: 15px; font-weight: 600; }
+.s-article-meta span { display: inline-flex; align-items: center; gap: 7px; }
+.s-article-meta svg { width: 17px; height: 17px; }
+.s-article-cover-wrap { max-width: calc(1040px + var(--s-gutter) * 2); }
+.s-article-cover { border-radius: var(--s-radius-lg); aspect-ratio: 16 / 9; }
+.s-article-layout { display: grid; grid-template-columns: 240px minmax(0, 720px); justify-content: center; gap: clamp(32px, 5vw, 72px); padding-top: clamp(40px, 5vw, 64px); padding-bottom: clamp(56px, 7vw, 96px); }
+.s-article-layout--single { grid-template-columns: minmax(0, 720px); }
+.s-article-toc__desktop { position: sticky; top: calc(var(--s-header-h) + 24px); }
+.s-article-toc__title { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--s-muted); margin-bottom: 14px; }
+.s-article-toc__list { display: grid; gap: 4px; border-left: 2px solid var(--s-line); }
+.s-article-toc__list a { display: block; padding: 6px 0 6px 14px; margin-left: -2px; border-left: 2px solid transparent; font-size: 14px; line-height: 1.45; color: var(--s-ink-2); font-weight: 600; }
+.s-article-toc__list a:hover { color: var(--s-blue); border-left-color: var(--s-blue); }
+.s-article-toc__sub a { padding-left: 26px; font-weight: 500; }
+.s-article-toc__mobile { display: none; border: 1px solid var(--s-line); border-radius: var(--s-radius); padding: 0 18px; background: var(--s-soft); }
+.s-article-toc__mobile summary { display: flex; align-items: center; justify-content: space-between; min-height: 52px; font-weight: 700; cursor: pointer; list-style: none; }
+.s-article-toc__mobile summary::-webkit-details-marker { display: none; }
+.s-article-toc__mobile summary svg { width: 20px; height: 20px; transition: transform .2s; }
+.s-article-toc__mobile[open] summary svg { transform: rotate(180deg); }
+.s-article-toc__mobile .s-article-toc__list { margin-bottom: 16px; }
+.s-article-body { min-width: 0; }
+.s-article-body .s-prose p { overflow-wrap: anywhere; }
+.s-article-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--s-line); }
+.s-article-missing { text-align: center; }
+.s-article-missing > * + * { margin-top: 18px; }
+.s-article-missing .s-row { margin-top: 32px; }
+@media (max-width: 960px) {
+  .s-article-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .s-article-toc__desktop { display: none; }
+  .s-article-toc__mobile { display: block; }
+}
+
+/* ---------- Đội ngũ ---------- */
+.s-team-tabs { margin-bottom: 32px; }
+.s-team-avatar--lg { width: 88px; height: 88px; font-size: 26px; }
+.s-team-avatar--xl { width: clamp(120px, 16vw, 168px); height: clamp(120px, 16vw, 168px); font-size: 44px; box-shadow: 0 0 0 6px #fff, var(--s-shadow); }
+.s-team-card { gap: 20px; }
+.s-team-card__body { display: grid; gap: 6px; }
+.s-team-card__role { font-weight: 600; color: var(--s-ink); }
+.s-team-hero { display: flex; align-items: center; gap: clamp(24px, 4vw, 48px); margin-top: 28px; }
+.s-team-hero__text { max-width: 760px; }
+.s-team-hero__text > * + * { margin-top: 12px; }
+.s-team-hero__role { font-size: 18px; font-weight: 700; color: var(--s-ink-2); }
+.s-team-links { margin-top: 24px !important; }
+.s-team-section-title { margin-bottom: 24px; }
+.s-team-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.s-team-chips .s-badge { height: auto; min-height: 30px; padding: 6px 12px; white-space: normal; }
+.s-team-projects { display: grid; gap: 24px; }
+.s-team-project { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+.s-team-project__media { position: relative; min-height: 260px; background: var(--s-soft); }
+.s-team-project__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.s-team-project__body { display: grid; gap: 16px; align-content: start; padding: clamp(24px, 3vw, 36px); }
+.s-team-role { display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; background: var(--s-blue-soft); }
+.s-team-role__label { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: var(--s-blue); }
+.s-team-role__value { font-weight: 700; color: var(--s-ink); }
+.s-team-product__title { margin-top: 14px; }
+.s-team-back { padding-top: 8px; padding-bottom: 8px; }
+@media (max-width: 860px) {
+  .s-team-hero { flex-direction: column; align-items: flex-start; }
+  .s-team-project { grid-template-columns: 1fr; }
+  .s-team-project__media { min-height: 0; aspect-ratio: 16 / 10; }
+}

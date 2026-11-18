@@ -23,7 +23,8 @@ export default function Hero() {
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia();
 
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+    // 1. Trên Desktop (> 768px): Chạy hành trình điện ảnh 5 cảnh với cuộn ghim mượt mà
+    mm.add('(min-width: 769px) and (prefers-reduced-motion: no-preference)', () => {
       const node = root.current!;
       const chapters = Array.from(node.querySelectorAll<HTMLElement>('.chapter'));
       const world = node.querySelector<HTMLElement>('.world')!;
@@ -117,6 +118,24 @@ export default function Hero() {
         world.style.transform = '';
       };
     }, root);
+
+    // 2. Trên Mobile (<= 768px): Tối ưu hóa Mobile-First không ghim màn hình, tránh giật lag hoặc quá nhạy
+    mm.add('(max-width: 768px)', () => {
+      const node = root.current;
+      if (!node) return;
+      const chapters = Array.from(node.querySelectorAll<HTMLElement>('.chapter'));
+      chapters.forEach((el, i) => {
+        el.style.opacity = i === 0 ? '1' : '0';
+        el.style.visibility = i === 0 ? 'visible' : 'hidden';
+        el.style.transform = 'none';
+        el.setAttribute('aria-hidden', String(i !== 0));
+        el.querySelectorAll('a').forEach(a => (a.tabIndex = i === 0 ? 0 : -1));
+      });
+      const world = node.querySelector<HTMLElement>('.world');
+      if (world) {
+        world.style.transform = 'none';
+      }
+    });
 
     return () => mm.revert();
   }, []);

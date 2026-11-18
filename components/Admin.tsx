@@ -488,7 +488,7 @@ function AdminWorkspace({ section }: { section: string }) {
                   Nội dung văn bản
                   <textarea
                     rows={12}
-                    maxLength={20000}
+                    maxLength={60000}
                     value={post.body}
                     onChange={(e) => editPost({ body: e.target.value })}
                   />

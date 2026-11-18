@@ -2,6 +2,7 @@
 
 import Hero from './Hero';
 import Ecosystem from './Ecosystem';
+import BentoServices from './BentoServices';
 import HomeMotion from './HomeMotion';
 import HomeChapters from './HomeChapters';
 import {
@@ -15,8 +16,9 @@ import {
 } from './HomeSections';
 
 /**
- * Trang chủ = 5 cảnh mở đầu (Hero, giữ nguyên) + 7 chương nối tiếp + lời mời kết.
- * 01 Về DANAVA → 02 Hệ sinh thái → 03 Giải pháp → 04 Dự án → 05 Con người → 06 Cộng đồng → 07 Góc nhìn.
+ * Trang chủ = Mở đầu điện ảnh (Desktop: 5 cảnh / Mobile: Hero tinh giản công nghệ)
+ * + Bố cục Bento Grid công nghệ 2x2
+ * + 7 chương kể chuyện thương hiệu & kết nối giải pháp.
  */
 export default function Home() {
   return (
@@ -24,6 +26,7 @@ export default function Home() {
       <Hero />
       <HomeMotion>
         <CompanyStory />
+        <BentoServices />
         <Ecosystem />
         <Capabilities />
         <RealProjects />

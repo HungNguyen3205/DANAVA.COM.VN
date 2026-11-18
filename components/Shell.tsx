@@ -1,236 +1,260 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import { useSite } from './SiteStore';
+import { SERVICE_META, sortServices, CONTACT, formatPhone } from './site/catalog';
+import { IconTile } from './site/ui';
+
+const NAV = [
+  { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
+  { href: '/du-an/', label: 'Dự án' },
+  { href: '/ve-danava/', label: 'Về chúng tôi' },
+  { href: '/kien-thuc/', label: 'Bản tin' }
+];
 
 export function Header() {
-  const path = usePathname();
+  const path = usePathname() || '/';
+  const { data } = useSite();
   const [open, setOpen] = useState(false);
+  const [mega, setMega] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const menuBtnRef = useRef<HTMLButtonElement | null>(null);
-  const navRef = useRef<HTMLElement | null>(null);
+  const megaRef = useRef<HTMLLIElement | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const services = sortServices(data.services);
+  const phone = data.phone || CONTACT.phone;
 
-  // Close menu and update scroll status on path change
   useEffect(() => {
     setOpen(false);
-    const update = () => setScrolled(window.scrollY > 30);
+    setMega(false);
+  }, [path]);
+
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 8);
     update();
     window.addEventListener('scroll', update, { passive: true });
     return () => window.removeEventListener('scroll', update);
-  }, [path]);
+  }, []);
 
-  // Keyboard accessibility and body scroll lock for mobile menu
   useEffect(() => {
-    if (!open) {
-      document.body.style.overflow = '';
-      return;
-    }
-
-    document.body.style.overflow = 'hidden';
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        menuBtnRef.current?.focus();
-        return;
-      }
-
-      if (e.key === 'Tab' && navRef.current) {
-        const focusable = [
-          menuBtnRef.current,
-          ...Array.from(navRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))
-        ].filter(Boolean) as HTMLElement[];
-
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
+    const app = document.querySelector('.s-app');
+    app?.classList.toggle('is-locked', open);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); app?.classList.remove('is-locked'); };
   }, [open]);
 
-  if (path.startsWith('/admin')) return null;
+  useEffect(() => {
+    if (!mega) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMega(false); };
+    const onClick = (e: MouseEvent) => { if (megaRef.current && !megaRef.current.contains(e.target as Node)) setMega(false); };
+    window.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onClick);
+    return () => { window.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
+  }, [mega]);
 
-  const navItems = [
-    { href: '/giai-phap/', label: 'Giải pháp' },
-    { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
-    { href: '/du-an/', label: 'Dự án' },
-    { href: '/ve-danava/', label: 'Về DANAVA' },
-    { href: '/kien-thuc/', label: 'Bản tin' }
-  ];
+  const enter = () => { if (closeTimer.current) clearTimeout(closeTimer.current); setMega(true); };
+  const leave = () => { closeTimer.current = setTimeout(() => setMega(false), 120); };
+  const active = (href: string) => path.startsWith(href);
 
   return (
     <>
-      <header
-        className={`header integrated-header ${scrolled ? 'is-scrolled' : ''} ${open ? 'menu-open' : ''}`}
-        role="banner"
-      >
-        <Link className="brand" href="/" aria-label="Trang chủ DANAVA Solutions">
-          <img src="/assets/danava-logo.png" alt="DANAVA Solutions" />
-        </Link>
+      <header className={`s-header${scrolled ? ' is-scrolled' : ''}`}>
+        <div className="s-container s-header__bar">
+          <Link className="s-logo" href="/" aria-label="DANAVA Solutions — Trang chủ">
+            <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
+          </Link>
 
-        {/* Desktop & Mobile Navigation Menu */}
-        <nav
-          ref={navRef}
-          id="main-nav"
-          className={`main-navigation ${open ? 'open' : ''}`}
-          aria-label="Điều hướng chính"
-        >
-          <div className="nav-items-wrapper">
-            {navItems.map(({ href, label }) => {
-              const isActive = path.startsWith(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`nav-link ${isActive ? 'is-active' : ''}`}
-                  aria-current={isActive ? 'page' : undefined}
-                  onClick={() => setOpen(false)}
+          <nav className="s-nav" aria-label="Điều hướng chính">
+            <ul className="s-nav__list">
+              <li className="s-nav__item">
+                <Link className="s-nav__link" href="/" aria-current={path === '/' ? 'page' : undefined}>Trang chủ</Link>
+              </li>
+              <li ref={megaRef} className={`s-nav__item${mega ? ' is-open' : ''}`} onMouseEnter={enter} onMouseLeave={leave}>
+                <button
+                  type="button"
+                  className="s-nav__link"
+                  aria-expanded={mega}
+                  aria-controls="s-mega-solutions"
+                  aria-current={active('/giai-phap/') ? 'page' : undefined}
+                  onClick={() => setMega(v => !v)}
                 >
-                  {label}
+                  Giải pháp <ChevronDown aria-hidden="true" />
+                </button>
+                <div className="s-mega" id="s-mega-solutions">
+                  {services.map(s => {
+                    const m = SERVICE_META[s.id];
+                    return (
+                      <Link key={s.id} href={`/giai-phap/${s.slug}/`} className="s-mega__item" onClick={() => setMega(false)}>
+                        {m && <IconTile icon={m.icon} tone={m.tone} />}
+                        <span>
+                          <span className="s-mega__title">{s.title}</span>
+                          <span className="s-mega__desc" style={{ display: 'block' }}>{s.description}</span>
+                        </span>
+                      </Link>
+                    );
+                  })}
+                  <div className="s-mega__foot">
+                    <span>Chưa chắc giải pháp nào phù hợp?</span>
+                    <Link className="s-link" href="/giai-phap/" onClick={() => setMega(false)}>Xem tất cả giải pháp <ArrowRight aria-hidden="true" /></Link>
+                  </div>
+                </div>
+              </li>
+              {NAV.map(item => (
+                <li key={item.href} className="s-nav__item">
+                  <Link className="s-nav__link" href={item.href} aria-current={active(item.href) ? 'page' : undefined}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="s-header__actions">
+            <a className="s-header__phone" href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
+            <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/">Nhận tư vấn</Link>
+            <button
+              type="button"
+              className="s-burger"
+              aria-label={open ? 'Đóng menu' : 'Mở menu'}
+              aria-expanded={open}
+              aria-controls="s-drawer"
+              onClick={() => setOpen(v => !v)}
+            >
+              {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div id="s-drawer" className={`s-drawer${open ? ' is-open' : ''}`} hidden={!open}>
+        <div className="s-drawer__group">
+          <Link className="s-drawer__link" href="/" aria-current={path === '/' ? 'page' : undefined}>
+            Trang chủ<ChevronRight aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="s-drawer__group">
+          <p className="s-drawer__label">Giải pháp</p>
+          <div className="s-drawer__sub">
+            {services.map(s => {
+              const m = SERVICE_META[s.id];
+              return (
+                <Link key={s.id} href={`/giai-phap/${s.slug}/`}>
+                  {m && <IconTile icon={m.icon} tone={m.tone} />}{s.title}
                 </Link>
               );
             })}
           </div>
-
-          {/* Secondary links inside mobile menu */}
-          <div className="mobile-menu-supplement">
-            <Link
-              href="/lien-he/"
-              className="mobile-cta-link"
-              onClick={() => setOpen(false)}
-            >
-              Liên hệ tư vấn ↗
+        </div>
+        <div className="s-drawer__group">
+          {NAV.map(item => (
+            <Link key={item.href} className="s-drawer__link" href={item.href} aria-current={active(item.href) ? 'page' : undefined}>
+              {item.label}<ChevronRight aria-hidden="true" />
             </Link>
-            <div className="mobile-contact-info">
-              <a href="tel:0935917677">Hotline: 0935 917 677</a>
-              <a href="mailto:hello@danava.vn">Email: hello@danava.vn</a>
-              <span>08 Đặng Vũ Hỷ, An Hải, Đà Nẵng</span>
-            </div>
-          </div>
-        </nav>
-
-        {/* Desktop Header CTA */}
-        <Link className="header-cta" href="/lien-he/">
-          Kết nối với DANAVA ↗
-        </Link>
-
-        {/* Accessible Mobile Menu Toggle */}
-        <button
-          ref={menuBtnRef}
-          type="button"
-          className={`menu-button ${open ? 'is-active' : ''}`}
-          aria-label={open ? 'Đóng menu điều hướng' : 'Mở menu điều hướng'}
-          aria-expanded={open}
-          aria-controls="main-nav"
-          onClick={() => setOpen(!open)}
-        >
-          <span className="menu-bar" />
-          <span className="menu-bar" />
-        </button>
-      </header>
-
-      {/* Backdrop for Mobile Drawer */}
-      {open && (
-        <div
-          className="menu-backdrop"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+          ))}
+          <Link className="s-drawer__link" href="/doi-ngu/" aria-current={active('/doi-ngu/') ? 'page' : undefined}>
+            Đội ngũ<ChevronRight aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="s-drawer__cta">
+          <Link className="s-btn s-btn--primary s-btn--lg s-btn--block" href="/lien-he/">Nhận tư vấn miễn phí</Link>
+          <a className="s-btn s-btn--secondary s-btn--lg s-btn--block" href={`tel:${phone}`}><Phone aria-hidden="true" />Gọi {formatPhone(phone)}</a>
+        </div>
+        <div className="s-drawer__contact">
+          <span>{data.email || CONTACT.email}</span>
+          <span>{CONTACT.address}</span>
+        </div>
+      </div>
     </>
   );
 }
 
 export function Footer() {
   const { data } = useSite();
-  const path = usePathname();
-  if (path.startsWith('/admin')) return null;
+  const services = sortServices(data.services);
+  const phone = data.phone || CONTACT.phone;
+  const email = data.email || CONTACT.email;
 
   return (
-    <footer className="site-footer" role="contentinfo">
-      <div className="footer-main">
-        {/* Brand / Positioning Column */}
-        <div className="footer-col footer-col-brand">
-          <Link href="/" className="footer-brand" aria-label="DANAVA Solutions — Trang chủ">
-            <img src="/assets/danava-logo.png" alt="DANAVA Solutions" />
-          </Link>
-          <p className="footer-slogan">
-            Công nghệ tạo khả năng. Con người tạo giá trị. Kết nối giải pháp quản trị số, truyền thông thương hiệu và trải nghiệm cộng đồng ý nghĩa.
-          </p>
-          <div className="footer-contact-block">
-            <p><strong>Trụ sở:</strong> 08 Đặng Vũ Hỷ, An Hải, Đà Nẵng</p>
-            <p><strong>Hotline:</strong> <a href={`tel:${data.phone || '0935917677'}`}>{data.phone || '0935 917 677'}</a></p>
-            <p><strong>Email:</strong> <a href={`mailto:${data.email || 'hello@danava.vn'}`}>{data.email || 'hello@danava.vn'}</a></p>
+    <footer className="s-footer">
+      <div className="s-container">
+        <div className="s-footer__top">
+          <div className="s-footer__brand">
+            <Link className="s-logo" href="/" aria-label="DANAVA Solutions — Trang chủ">
+              <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
+            </Link>
+            <p>Công nghệ tạo khả năng, con người tạo giá trị. DANAVA đồng hành cùng doanh nghiệp bằng phần mềm quản lý, truyền thông và trải nghiệm.</p>
+            <div className="s-footer__contact">
+              <a href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
+              <a href={`mailto:${email}`}><Mail aria-hidden="true" />{email}</a>
+              <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{CONTACT.address}</a>
+            </div>
+          </div>
+
+          <div>
+            <p className="s-footer__title">Giải pháp</p>
+            <ul className="s-footer__list">
+              {services.map(s => <li key={s.id}><Link href={`/giai-phap/${s.slug}/`}>{s.title}</Link></li>)}
+            </ul>
+          </div>
+
+          <div>
+            <p className="s-footer__title">Công ty</p>
+            <ul className="s-footer__list">
+              <li><Link href="/ve-danava/">Về DANAVA</Link></li>
+              <li><Link href="/doi-ngu/">Đội ngũ</Link></li>
+              <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
+              <li><Link href="/du-an/">Dự án</Link></li>
+              <li><Link href="/kien-thuc/">Bản tin</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="s-footer__title">Hỗ trợ</p>
+            <ul className="s-footer__list">
+              <li><Link href="/lien-he/">Liên hệ tư vấn</Link></li>
+              <li><Link href="/chinh-sach-dich-vu/">Chính sách dịch vụ</Link></li>
+              <li><Link href="/chinh-sach-rieng-tu/">Chính sách riêng tư</Link></li>
+              <li><a href="https://danava.vn/" target="_blank" rel="noopener noreferrer">Nền tảng danava.vn</a></li>
+            </ul>
           </div>
         </div>
 
-        {/* Solutions Column */}
-        <div className="footer-col">
-          <p className="footer-col-title">GIẢI PHÁP</p>
-          <ul className="footer-nav-list">
-            <li><Link href="/giai-phap/thiet-ke-website/">Website & Landing Page</Link></li>
-            <li><Link href="/giai-phap/danava-studio/">DANAVA Studio (Phòng tập)</Link></li>
-            <li><Link href="/giai-phap/digital-marketing/">Marketing & Truyền thông</Link></li>
-            <li><Link href="/giai-phap/du-lich-su-kien/">Du lịch & Sự kiện</Link></li>
-            <li><Link href="/giai-phap/cong-dong/">Cộng đồng & Đồng hành</Link></li>
-          </ul>
-        </div>
-
-        {/* Explore / Knowledge Column */}
-        <div className="footer-col">
-          <p className="footer-col-title">KHÁM PHÁ</p>
-          <ul className="footer-nav-list">
-            <li><Link href="/ve-danava/">Về con người DANAVA</Link></li>
-            <li><Link href="/doi-ngu/">Đội ngũ chuyên trách</Link></li>
-            <li><Link href="/he-sinh-thai/">Hệ sinh thái mở</Link></li>
-            <li><Link href="/du-an/">Hồ sơ triển khai thật</Link></li>
-            <li><Link href="/kien-thuc/">Bản tin & Góc nhìn</Link></li>
-            <li><a href="https://danava.vn/" target="_blank" rel="noopener noreferrer">Nền tảng danava.vn ↗</a></li>
-          </ul>
-        </div>
-
-        {/* Consultation Call To Action Column */}
-        <div className="footer-col footer-col-cta">
-          <p className="footer-col-title">KẾT NỐI HỢP TÁC</p>
-          <p className="footer-cta-text">
-            Bạn đang ấp ủ một ý tưởng phát triển hay bài toán quản trị vận hành? Hãy cùng DANAVA bắt đầu hành trình.
-          </p>
-          <Link href="/lien-he/" className="button amber footer-cta-btn">
-            Bắt đầu cuộc trò chuyện ↗
-          </Link>
-        </div>
-      </div>
-
-      {/* Footer Bottom Bar */}
-      <div className="footer-bottom-bar">
-        <div className="footer-bottom-inner">
-          <span className="copyright-text">
-            © {new Date().getFullYear()} DANAVA Solutions. Bảo lưu mọi quyền.
-          </span>
-          <div className="footer-bottom-links">
-            <Link href="/chinh-sach-dich-vu/">Chính sách dịch vụ</Link>
-            <span className="dot-divider" aria-hidden="true">·</span>
-            <Link href="/chinh-sach-rieng-tu/">Chính sách riêng tư</Link>
-            <span className="dot-divider" aria-hidden="true">·</span>
-            <Link href="/admin/">Quản trị CMS ↗</Link>
+        <div className="s-footer__bottom">
+          <span>© {new Date().getFullYear()} DANAVA Solutions. Bảo lưu mọi quyền.</span>
+          <div className="s-footer__legal">
+            <Link href="/chinh-sach-dich-vu/">Điều khoản dịch vụ</Link>
+            <Link href="/chinh-sach-rieng-tu/">Quyền riêng tư</Link>
+            {/* Link thường (không phải <Link>) để CMS tải lại toàn trang với stylesheet riêng */}
+            <a href="/admin/" rel="nofollow">Quản trị</a>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+/** Thanh hành động cố định trên mobile: gọi nhanh + nhận tư vấn. Ẩn ở trang Liên hệ. */
+export function MobileBar() {
+  const path = usePathname() || '/';
+  const { data } = useSite();
+  const [visible, setVisible] = useState(false);
+  const phone = data.phone || CONTACT.phone;
+
+  useEffect(() => {
+    const update = () => setVisible(window.scrollY > 420);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, []);
+
+  if (path.startsWith('/lien-he')) return null;
+  return (
+    <div className={`s-mbar${visible ? ' is-visible' : ''}`} aria-hidden={!visible}>
+      <a className="s-btn s-mbar__call" href={`tel:${phone}`} aria-label={`Gọi ${formatPhone(phone)}`} tabIndex={visible ? 0 : -1}>
+        <Phone aria-hidden="true" />
+      </a>
+      <Link className="s-btn s-btn--primary" href="/lien-he/" tabIndex={visible ? 0 : -1}>Nhận tư vấn miễn phí</Link>
+    </div>
   );
 }

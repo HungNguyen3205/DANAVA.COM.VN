@@ -83,7 +83,7 @@ test('privacy policy addresses real technical operations and flagged owner confi
 });
 
 test('privacy route page exports SEO metadata and WebPage JSON-LD schema', () => {
-  const pagePath = path.join(process.cwd(), 'app', 'chinh-sach-rieng-tu', 'page.tsx');
+  const pagePath = path.join(process.cwd(), 'app', '(site)', 'chinh-sach-rieng-tu', 'page.tsx');
   assert.ok(fs.existsSync(pagePath), 'Route app/chinh-sach-rieng-tu/page.tsx phải tồn tại');
 
   const content = fs.readFileSync(pagePath, 'utf8');

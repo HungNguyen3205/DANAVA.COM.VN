@@ -1,1 +1,0 @@
-import{seo}from'@/lib/seo';export const metadata=seo("Về DANAVA Solutions","Tìm hiểu người đại diện Lê Tấn Thành, sứ mệnh và đội ngũ DANAVA Solutions.","/ve-danava/");import{AboutPage}from'@/components/PublicPages';export default AboutPage;

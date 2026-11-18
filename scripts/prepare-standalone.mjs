@@ -1,7 +1,13 @@
-import{cp,mkdir}from'node:fs/promises';
-await mkdir('.next/standalone/.next',{recursive:true});
-await cp('public','.next/standalone/public',{recursive:true});
-await cp('.next/static','.next/standalone/.next/static',{recursive:true});
+import { cp, mkdir } from 'node:fs/promises';
+
+if (process.env.VERCEL) {
+  console.log('Detected Vercel environment: standalone asset preparation skipped.');
+  process.exit(0);
+}
+
+await mkdir('.next/standalone/.next', { recursive: true });
+await cp('public', '.next/standalone/public', { recursive: true });
+await cp('.next/static', '.next/standalone/.next/static', { recursive: true });
 try {
   await cp('node_modules/@img', '.next/standalone/node_modules/@img', { recursive: true });
 } catch {}

@@ -127,7 +127,7 @@ test('service policy component anchors match all TOC links', () => {
 });
 
 test('service policy route page exports valid metadata and JSON-LD schema', () => {
-  const pagePath = path.join(process.cwd(), 'app', 'chinh-sach-dich-vu', 'page.tsx');
+  const pagePath = path.join(process.cwd(), 'app', '(site)', 'chinh-sach-dich-vu', 'page.tsx');
   assert.ok(fs.existsSync(pagePath), 'Route app/chinh-sach-dich-vu/page.tsx phải tồn tại');
 
   const content = fs.readFileSync(pagePath, 'utf8');
