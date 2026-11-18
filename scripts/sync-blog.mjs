@@ -1,4 +1,5 @@
-// Đồng bộ 30 bài blog (đã kèm ảnh) từ lib/legacy-catalog.ts vào database đang chạy.
+// Nhập / đồng bộ nội dung (30 bài blog kèm ảnh) từ lib/legacy-catalog.ts vào database (MySQL hoặc SQLite).
+// Database trống: nhập toàn bộ nội dung. Đã có dữ liệu: chỉ cập nhật bài chưa bị sửa trong CMS.
 // Chạy: node --env-file-if-exists=.env scripts/sync-blog.mjs
 // - Tự sao lưu database trước khi ghi.
 // - Chỉ thay nội dung bài chưa bị sửa tay qua CMS (so với dấu vân tay bản cũ); chạy lại nhiều lần vẫn an toàn.
@@ -16,7 +17,14 @@ const norm = s => (s || '').normalize('NFC').replace(/\s+/g, ' ').trim();
 const hash = s => createHash('sha256').update(norm(s)).digest('hex').slice(0, 24);
 
 const cur = await getContent();
-if (cur.revision === 0) { console.log('Database chưa có nội dung lưu: web dùng thẳng catalog mới, không cần đồng bộ.'); await closeDb(); process.exit(0); }
+if (cur.revision === 0) {
+  // Database còn trống: nhập toàn bộ nội dung mặc định (30 bài blog, dự án, dịch vụ...) vào database.
+  const rev = await writeContent(cur.data, 0);
+  await closeDb();
+  if (rev === null) { console.error('Nội dung vừa bị thay đổi trong lúc nhập, hãy chạy lại.'); process.exit(1); }
+  console.log(`Đã nhập nội dung vào database: ${cur.data.posts.length} bài viết, ${(cur.data.projects || []).length} dự án (revision ${rev}).`);
+  process.exit(0);
+}
 
 let updated = 0, added = 0; const kept = [];
 const posts = cur.data.posts.map(p => {
