@@ -1,0 +1,63 @@
+# Build bản chạy production trên Linux rồi đẩy vào nhánh `deploy`.
+# Server cPanel không build được Next.js (glibc quá cũ cho trình biên dịch SWC),
+# nên server chỉ cần: git fetch origin deploy && git reset --hard origin/deploy && restart.
+name: Build deploy branch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-branch
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build (thử lại một lần nếu Next.js dừng để hiện thông báo)
+        run: npm run build || npm run build
+
+      - name: Assemble deploy bundle
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/deploy"
+          mkdir -p "$OUT"
+          cp -a .next/standalone "$OUT/standalone"
+          cat > "$OUT/server.cjs" <<'EOF'
+          // cPanel Application Startup File (nhánh deploy). Cấu hình nằm trong biến môi trường của cPanel.
+          const path = require('node:path');
+          process.env.HOSTNAME = process.env.DANAVA_HOSTNAME || '0.0.0.0';
+          process.env.DANAVA_DATA_DIR = process.env.DANAVA_DATA_DIR || path.join(__dirname, '.data');
+          require('./standalone/server.js');
+          EOF
+          printf '{\n  "name": "danava-company-website-deploy",\n  "private": true,\n  "main": "server.cjs"\n}\n' > "$OUT/package.json"
+          printf '.data/\n.env\ntmp/\nnode_modules\n!standalone/node_modules\n' > "$OUT/.gitignore"
+          echo "Built from ${GITHUB_SHA} at $(date -u +%FT%TZ)" > "$OUT/BUILD.txt"
+
+      - name: Push to deploy branch
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/deploy"
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -f
+          git commit -q -m "deploy: ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:deploy

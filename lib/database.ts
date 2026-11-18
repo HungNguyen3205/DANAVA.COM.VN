@@ -119,6 +119,12 @@ async function openMysql(): Promise<Sql> {
   const sql = wrap(pool as unknown as Q, tx);
   g.__danavaClose = () => pool.end();
   for (const statement of MYSQL_SCHEMA) await sql.run(statement);
+  // Lần chạy đầu trên database trống: nhập sẵn toàn bộ nội dung mặc định (30 bài blog, dự án, dịch vụ...).
+  if (!(await sql.get('SELECT id FROM content WHERE id=1'))) {
+    try {
+      await sql.run('INSERT INTO content(id, json, revision, published_revision, draft_revision) VALUES(1, ?, 1, 1, 1)', [JSON.stringify(initial).normalize('NFC')]);
+    } catch {} // tiến trình khác vừa nhập trước: bỏ qua
+  }
   return sql;
 }
 
