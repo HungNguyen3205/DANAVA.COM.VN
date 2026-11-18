@@ -165,8 +165,12 @@ body:has(.s-app) { background: var(--s-bg); }
 /* ---------- Header ---------- */
 .s-header { --s-header-h: 72px; background: #ffffffd9; backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-bottom: 1px solid var(--s-line); }
 .s-header .s-logo img { height: 40px; }
-.s-nav__link { border-radius: 999px; color: var(--s-ink); }
-.s-nav__link:hover, .s-nav__item.is-open > .s-nav__link, .s-nav__link[aria-current='page'] { background: var(--s-blue-soft); color: var(--s-blue); }
+.s-nav__link { position: relative; border-radius: 0; background: transparent !important; box-shadow: none !important; color: var(--s-ink); }
+/* Mục đang chọn / rê chuột: chỉ một gạch vàng bên dưới, không nền */
+.s-nav__link::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -2px; height: 3px; border-radius: 3px; background: var(--s-amber); transform: scaleX(0); transform-origin: left; transition: transform .25s var(--s-ease, ease); }
+.s-nav__link:hover, .s-nav__item.is-open > .s-nav__link, .s-nav__link[aria-current='page'] { color: var(--s-blue); }
+.s-nav__link:hover::after, .s-nav__item.is-open > .s-nav__link::after, .s-nav__link[aria-current='page']::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) { .s-nav__link::after { transition: none; } }
 
 /* ---------- Footer: nền xanh chuyển sắc, bo góc trên, chữ DANAVA cỡ lớn ---------- */
 .s-footer { position: relative; overflow: hidden; margin-top: 24px; border-top: 0; box-shadow: none; border-radius: 40px 40px 0 0; background: radial-gradient(60% 120% at 100% 0%, #53a5db33, transparent 60%), var(--s-grad-blue); color: #c9d4f5; }
