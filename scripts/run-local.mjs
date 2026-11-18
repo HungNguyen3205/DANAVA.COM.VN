@@ -107,19 +107,40 @@ const openUrl = target => {
   spawn(opener[0], opener[1], { stdio: 'ignore', detached: true }).unref();
 };
 
-// Next.js chỉ cho một dev server mỗi thư mục: nếu website đã chạy sẵn thì mở luôn thay vì báo lỗi.
+/** Tắt tiến trình đang giữ cổng (dùng khi dev server cũ bị hỏng). */
+const stopPort = port => new Promise(resolve => {
+  const cmd = process.platform === 'win32'
+    ? ['powershell', ['-NoProfile', '-Command',
+        `Get-NetTCPConnection -LocalPort ${port} -State Listen -ErrorAction SilentlyContinue | ForEach-Object { ` +
+        `$p = Get-CimInstance Win32_Process -Filter "ProcessId=$($_.OwningProcess)"; ` +
+        `$parent = Get-CimInstance Win32_Process -Filter "ProcessId=$($p.ParentProcessId)"; ` +
+        `taskkill /PID $p.ProcessId /T /F | Out-Null; ` +
+        `if ($parent -and $parent.CommandLine -match 'next') { taskkill /PID $parent.ProcessId /T /F | Out-Null } }`]]
+    : ['sh', ['-c', `lsof -ti tcp:${port} | xargs -r kill`]];
+  spawn(cmd[0], cmd[1], { stdio: 'ignore' }).once('exit', () => setTimeout(resolve, 1500)).once('error', () => resolve());
+});
+
+// Next.js chỉ cho một dev server mỗi thư mục: nếu website đã chạy sẵn và còn khỏe thì mở luôn.
 if (!prod && !(await portFree(preferredPort))) {
   const running = `http://localhost:${preferredPort}`;
-  const html = await fetch(running, { headers: { connection: 'close' }, signal: AbortSignal.timeout(15000) })
-    .then(r => r.text())
-    .catch(() => '');
-  if (html.includes('DANAVA')) {
-    say(`Website đã đang chạy tại ${running} — mở trình duyệt.`);
-    say(`Quản trị:    ${running}/admin/`);
-    if (openBrowser) openUrl(running);
-    // Chờ kết nối mạng đóng hẳn trước khi thoát (tránh lỗi libuv trên Windows).
-    await new Promise(r => setTimeout(r, 300));
-    process.exit(0);
+  const get = path => fetch(running + path, { headers: { connection: 'close' }, signal: AbortSignal.timeout(60000) })
+    .then(async r => ({ status: r.status, html: await r.text() }))
+    .catch(() => ({ status: 0, html: '' }));
+  const home = await get('/');
+  if (home.html.includes('DANAVA')) {
+    // Server chạy từ trước khi cập nhật thư viện (npm install) có thể hỏng ở các trang con
+    // ("Jest worker encountered ... child process exceptions") → thử một trang con.
+    const sub = await get('/giai-phap/digital-marketing/');
+    if (sub.status > 0 && sub.status < 500) {
+      say(`Website đã đang chạy tại ${running} — mở trình duyệt.`);
+      say(`Quản trị:    ${running}/admin/`);
+      if (openBrowser) openUrl(running);
+      // Chờ kết nối mạng đóng hẳn trước khi thoát (tránh lỗi libuv trên Windows).
+      await new Promise(r => setTimeout(r, 300));
+      process.exit(0);
+    }
+    say(`Server cũ ở cổng ${preferredPort} bị lỗi (trang con trả ${sub.status || 'không phản hồi'}) — tắt và khởi động lại...`);
+    await stopPort(preferredPort);
   }
 }
 
