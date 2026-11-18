@@ -1,4 +1,4 @@
-import test from 'node:test';
+import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -6,7 +6,8 @@ import { legacyRedirects } from '../lib/legacy-redirects.ts';
 import { verifiedProjects } from '../lib/verified-projects.ts';
 import { initialSocialPosts, getApprovedSocialPosts, type SocialPost } from '../lib/social-feed.ts';
 import { saveLead, getLeads, updateLeadAssignment, checkRecentDuplicateLead } from '../lib/database.ts';
-import { getContent } from '../lib/database.ts';
+import { getContent, closeDb } from '../lib/database.ts';
+after(() => closeDb());
 
 // -----------------------------------------------------------------------------
 // LUỒNG 1: XUẤT BẢN DỰ ÁN → HIỆN ĐÚNG Ở GIẢI PHÁP VÀ PORTFOLIO
@@ -103,7 +104,7 @@ test('Workflow 2: Approved social posts display in Newsletter and Home; unapprov
 // -----------------------------------------------------------------------------
 // LUỒNG 3: GỬI FORM → LEAD XUẤT HIỆN Ở ADMIN VÀ ĐƯỢC PHÂN CÔNG
 // -----------------------------------------------------------------------------
-test('Workflow 3: Lead submission saves to DB, appears in admin list and is assigned to staff', () => {
+test('Workflow 3: Lead submission saves to DB, appears in admin list and is assigned to staff', async () => {
   const uniquePhone = '0988' + Math.floor(100000 + Math.random() * 900000);
   const leadPayload = {
     name: 'CLB Yoga An Nhiên',
@@ -116,15 +117,15 @@ test('Workflow 3: Lead submission saves to DB, appears in admin list and is assi
   };
 
   // 1. Lưu lead vào cơ sở dữ liệu
-  const leadId = saveLead(leadPayload);
+  const leadId = await saveLead(leadPayload);
   assert.ok(leadId.startsWith('lead_'), 'Lead ID phải có tiền tố lead_');
 
   // 2. Chống trùng lặp trong 45 giây hoạt động
-  const isDup = checkRecentDuplicateLead(uniquePhone, 45000);
+  const isDup = await checkRecentDuplicateLead(uniquePhone, 45000);
   assert.equal(isDup, true, 'Anti-duplicate phải nhận diện được số điện thoại vừa gửi');
 
   // 3. Lấy danh sách leads ở admin
-  const leads = getLeads(50);
+  const leads = await getLeads(50);
   const createdLead = leads.find((l) => l.id === leadId);
   assert.ok(createdLead, 'Lead vừa tạo phải xuất hiện trong danh sách admin');
   assert.equal(createdLead.name, 'CLB Yoga An Nhiên');
@@ -134,7 +135,7 @@ test('Workflow 3: Lead submission saves to DB, appears in admin list and is assi
   // 4. Phân công cho chuyên viên phụ trách (Lead Assignment)
   const staffAssignee = 'Phạm Trang — Trưởng phòng CSKH';
   const internalNote = 'Đã liên hệ sơ bộ qua điện thoại, gửi báo giá qua Zalo.';
-  const updateSuccess = updateLeadAssignment(leadId, {
+  const updateSuccess = await updateLeadAssignment(leadId, {
     assigned_to: staffAssignee,
     status: 'assigned',
     assigned_note: internalNote
@@ -142,7 +143,7 @@ test('Workflow 3: Lead submission saves to DB, appears in admin list and is assi
   assert.equal(updateSuccess, true, 'Cập nhật phân công lead phải thành công');
 
   // 5. Xác nhận dữ liệu phân công đã lưu bền vững
-  const updatedLeads = getLeads(50);
+  const updatedLeads = await getLeads(50);
   const assignedLead = updatedLeads.find((l) => l.id === leadId)!;
   assert.equal(assignedLead.assigned_to, staffAssignee);
   assert.equal(assignedLead.status, 'assigned');

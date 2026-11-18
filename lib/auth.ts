@@ -46,15 +46,16 @@ export async function session() {
 
   // 2. Dự phòng tra cứu SQLite (đối với token cũ hoặc môi trường cục bộ)
   try {
-    return db()
-      .prepare('SELECT csrf,expires FROM sessions WHERE token=? AND expires>?')
-      .get(digest(token), Date.now()) as { csrf: string; expires: number } | undefined;
+    const row = await (await db()).get<{ csrf: string; expires: number }>(
+      'SELECT csrf,expires FROM sessions WHERE token=? AND expires>?', [digest(token), Date.now()]
+    );
+    return row ? { csrf: row.csrf, expires: Number(row.expires) } : null;
   } catch {
     return null;
   }
 }
 
-export function newSession() {
+export async function newSession() {
   const randomId = randomBytes(16).toString('hex');
   const csrf = randomBytes(16).toString('hex');
   const expires = Date.now() + 8 * 3600_000;
@@ -63,8 +64,9 @@ export function newSession() {
   const token = `${payload}.${sig}`;
 
   try {
-    db().prepare('DELETE FROM sessions WHERE expires<?').run(Date.now());
-    db().prepare('INSERT INTO sessions(token,csrf,expires) VALUES(?,?,?)').run(digest(token), csrf, expires);
+    const sql = await db();
+    await sql.run('DELETE FROM sessions WHERE expires<?', [Date.now()]);
+    await sql.run('INSERT INTO sessions(token,csrf,expires) VALUES(?,?,?)', [digest(token), csrf, expires]);
   } catch {}
 
   return { token, csrf, expires };
@@ -74,7 +76,7 @@ export async function logout() {
   const token = (await cookies()).get('danava_session')?.value;
   if (token) {
     try {
-      db().prepare('DELETE FROM sessions WHERE token=?').run(digest(token));
+      await (await db()).run('DELETE FROM sessions WHERE token=?', [digest(token)]);
     } catch {}
   }
 }
@@ -90,16 +92,23 @@ export async function authorizedMutation(req: Request) {
   return !!s && sameOrigin(req) && req.headers.get('x-csrf-token') === s.csrf;
 }
 
-export function loginAllowed() {
+export async function loginAllowed() {
   const now = Date.now();
   try {
-    db().prepare('DELETE FROM attempts WHERE until<?').run(now);
     const key = 'admin-login';
-    const row = db().prepare('SELECT count FROM attempts WHERE id=?').get(key) as { count: number } | undefined;
-    if (row && row.count >= 10) return false;
-    db().prepare('INSERT INTO attempts(id,count,until) VALUES(?,1,?) ON CONFLICT(id) DO UPDATE SET count=count+1').run(key, now + 15 * 60_000);
-    return true;
+    return await (await db()).tx(async sql => {
+      await sql.run('DELETE FROM attempts WHERE until<?', [now]);
+      const row = await sql.get<{ count: number }>('SELECT count FROM attempts WHERE id=?' + (sql.kind === 'mysql' ? ' FOR UPDATE' : ''), [key]);
+      if (row && Number(row.count) >= 10) return false;
+      if (row) await sql.run('UPDATE attempts SET count=count+1 WHERE id=?', [key]);
+      else await sql.run('INSERT INTO attempts(id,count,until) VALUES(?,1,?)', [key, now + 15 * 60_000]);
+      return true;
+    });
   } catch {
     return true;
   }
+}
+
+export async function clearLoginAttempts() {
+  try { await (await db()).run('DELETE FROM attempts WHERE id=?', ['admin-login']); } catch {}
 }

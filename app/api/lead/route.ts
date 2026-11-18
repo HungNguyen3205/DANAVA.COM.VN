@@ -58,14 +58,14 @@ export async function POST(req: Request) {
     }
 
     // 3. Chống gửi lặp liên tục (Anti-duplicate trong 45 giây cùng số điện thoại)
-    if (checkRecentDuplicateLead(phone, 45000)) {
+    if (await checkRecentDuplicateLead(phone, 45000)) {
       return NextResponse.json({
         error: 'Yêu cầu tư vấn của bạn vừa được gửi lên hệ thống. Đội ngũ chuyên viên DANAVA đang xử lý, vui lòng không gửi lặp lại liên tục.'
       }, { status: 429 });
     }
 
     // 4. Lưu dữ liệu lead vào hệ thống
-    const leadId = saveLead({
+    const leadId = await saveLead({
       name,
       phone,
       email: email || '',

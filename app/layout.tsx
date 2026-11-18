@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   description: 'Kết nối công nghệ, truyền thông, trải nghiệm và cộng đồng cùng DANAVA Solutions.'
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const { data } = getContent();
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const { data } = await getContent();
   return (
     <html lang="vi">
       <head>

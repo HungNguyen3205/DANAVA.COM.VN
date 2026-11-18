@@ -7,7 +7,7 @@ import StaffProfile from '@/components/site/StaffProfile';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data } = getContent();
+  const { data } = await getContent();
   const person = data.staff?.find(p => p.id === slug && p.visible);
 
   if (!person) {
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data } = getContent();
+  const { data } = await getContent();
   const person = data.staff?.find(p => p.id === slug && p.visible);
 
   // Nghiêm ngặt: 404 khi hồ sơ ẩn (visible === false) hoặc slug không tồn tại

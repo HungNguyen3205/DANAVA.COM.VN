@@ -4,17 +4,17 @@ import { getContent } from '@/lib/database';
 import { seo, jsonLD, siteURL } from '@/lib/seo';
 import { servicePhotos } from '@/lib/media';
 
-const find = (slug: string) => getContent().data.services.find(s => s.slug === slug);
+const find = async (slug: string) => (await getContent()).data.services.find(s => s.slug === slug);
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const s = find(slug);
+  const s = await find(slug);
   return s ? seo(`${s.title} — DANAVA Solutions`, s.description, `/giai-phap/${slug}/`, servicePhotos[s.id]) : { title: 'Không tìm thấy', robots: { index: false } };
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const s = find(slug);
+  const s = await find(slug);
   if (!s) notFound();
   return (
     <>

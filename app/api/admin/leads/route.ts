@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 50));
-  const leads = getLeads(limit);
+  const leads = await getLeads(limit);
 
   return NextResponse.json({ leads }, { headers: { 'Cache-Control': 'no-store' } });
 }
@@ -32,7 +32,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Missing lead id' }, { status: 400 });
     }
 
-    const ok = updateLeadAssignment(id, { assigned_to, status, assigned_note });
+    const ok = await updateLeadAssignment(id, { assigned_to, status, assigned_note });
     if (!ok) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }

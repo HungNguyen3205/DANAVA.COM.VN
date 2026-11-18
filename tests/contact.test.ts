@@ -1,4 +1,4 @@
-import test from 'node:test';
+import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   VALID_CONTACT_SERVICES,
@@ -6,7 +6,8 @@ import {
   resolveValidService,
   isValidPhoneNumber
 } from '../lib/contact-services.ts';
-import { saveLead, getLeads, checkRecentDuplicateLead } from '../lib/database.ts';
+import { saveLead, getLeads, checkRecentDuplicateLead, closeDb } from '../lib/database.ts';
+after(() => closeDb());
 
 test('valid contact services and business types contain comprehensive standard catalogues', () => {
   assert.ok(VALID_CONTACT_SERVICES.length >= 5, 'Phải có ít nhất 5 dịch vụ hợp lệ');
@@ -68,9 +69,9 @@ test('isValidPhoneNumber validates Vietnamese mobile numbers strictly', () => {
   assert.equal(isValidPhoneNumber('01234567890123456'), false);
 });
 
-test('saveLead persists business_type and source, and anti-duplicate check works', () => {
+test('saveLead persists business_type and source, and anti-duplicate check works', async () => {
   const uniquePhone = '0988' + Math.floor(100000 + Math.random() * 900000);
-  const leadId = saveLead({
+  const leadId = await saveLead({
     name: 'Khách hàng Hai Cột',
     phone: uniquePhone,
     email: 'haicot@example.com',
@@ -83,15 +84,15 @@ test('saveLead persists business_type and source, and anti-duplicate check works
   assert.ok(leadId.startsWith('lead_'));
 
   // Kiểm tra anti-duplicate ngay sau khi lưu
-  const isDuplicate = checkRecentDuplicateLead(uniquePhone, 30000);
+  const isDuplicate = await checkRecentDuplicateLead(uniquePhone, 30000);
   assert.equal(isDuplicate, true, 'Số điện thoại vừa lưu phải bị phát hiện nếu gửi lại ngay');
 
   // Số điện thoại chưa lưu phải trả về false
-  const notDuplicate = checkRecentDuplicateLead('0909000000', 30000);
+  const notDuplicate = await checkRecentDuplicateLead('0909000000', 30000);
   assert.equal(notDuplicate, false);
 
   // Kiểm tra getLeads lấy ra đúng các trường đã lưu
-  const leads = getLeads(10);
+  const leads = await getLeads(10);
   const found = leads.find(l => l.id === leadId);
   assert.ok(found, 'Lead vừa tạo phải xuất hiện trong getLeads');
   assert.equal(found.name, 'Khách hàng Hai Cột');

@@ -1,4 +1,4 @@
-import test from'node:test';import assert from'node:assert/strict';import{initial,readSaved,validateContent}from'../lib/content.ts';
+import test,{after} from'node:test';import{closeDb}from'../lib/database.ts';after(()=>closeDb());import assert from'node:assert/strict';import{initial,readSaved,validateContent}from'../lib/content.ts';
 test('default content and round-trip backup stay valid',()=>{assert.equal(validateContent(initial),true);assert.deepEqual(readSaved(JSON.stringify(initial)),initial);});
 test('malformed or incompatible backups do not destroy the fallback',()=>{for(const value of ['{','null','[]','{"version":2}',JSON.stringify({...initial,staff:[{name:'Wrong'}]})])assert.deepEqual(readSaved(value),initial);});
 test('duplicate records and invalid dynamic article slugs are rejected',()=>{assert.equal(validateContent({...initial,staff:[initial.staff[0],initial.staff[0]]}),false);assert.equal(validateContent({...initial,posts:[{...initial.posts[0],slug:'../admin'}]}),false);assert.equal(validateContent({...initial,headline:'x'.repeat(151)}),false);});
@@ -16,7 +16,7 @@ test('source-backed catalogue has complete text, safe provenance and unique publ
 
 test('lead storage and database published/draft revisions work correctly',async()=>{
   const {saveLead, getLeads, getContent, writeContent} = await import('../lib/database.ts');
-  const leadId = saveLead({
+  const leadId = await saveLead({
     name: 'Khách hàng thử nghiệm',
     email: 'khachhang@example.com',
     phone: '0905123456',
@@ -24,10 +24,10 @@ test('lead storage and database published/draft revisions work correctly',async(
     message: 'Cần tư vấn triển khai phần mềm cho phòng tập.'
   });
   assert.ok(leadId.startsWith('lead_'));
-  const leads = getLeads(10);
+  const leads = await getLeads(10);
   assert.ok(leads.some(l => l.email === 'khachhang@example.com' && l.name === 'Khách hàng thử nghiệm'));
 
-  const initialContent = getContent();
+  const initialContent = await getContent();
   assert.ok(typeof initialContent.revision === 'number');
   assert.ok(typeof initialContent.publishedRevision === 'number');
   assert.ok(typeof initialContent.draftRevision === 'number');
@@ -35,19 +35,19 @@ test('lead storage and database published/draft revisions work correctly',async(
   // Test draftOnly write
   const draftData = structuredClone(initialContent.data);
   draftData.headline = 'Tiêu đề bản nháp mới';
-  const draftRev = writeContent(draftData, initialContent.revision, { draftOnly: true });
+  const draftRev = await writeContent(draftData, initialContent.revision, { draftOnly: true });
   assert.ok(draftRev !== null);
-  const updatedContent = getContent();
+  const updatedContent = await getContent();
   assert.equal(updatedContent.hasDraft, true);
 
   // Test publish write
-  const pubRev = writeContent(draftData, initialContent.revision);
+  const pubRev = await writeContent(draftData, initialContent.revision);
   assert.ok(pubRev !== null);
-  const finalContent = getContent();
+  const finalContent = await getContent();
   assert.equal(finalContent.hasDraft, false);
   assert.equal(finalContent.data.headline, 'Tiêu đề bản nháp mới');
 
   // Restore initial headline to preserve clean state
-  const resetRev = writeContent(initialContent.data, finalContent.revision);
+  const resetRev = await writeContent(initialContent.data, finalContent.revision);
   assert.ok(resetRev !== null);
 });

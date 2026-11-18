@@ -1,9 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ArrowUpRight, CalendarDays, Clock, ChevronDown } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock, ChevronDown } from 'lucide-react';
 import { useSite } from '../SiteStore';
-import { archivedPosts } from '@/lib/archived-posts';
 import type { Post } from '@/lib/content';
 import { Crumbs, CtaBand } from './ui';
 import { formatDate } from './catalog';
@@ -118,7 +117,6 @@ export function ArticleView({ slug, post: given }: { slug?: string; post?: Post 
   const { blocks, toc, wordCount } = parseArticleBody(post.body || '');
   const minutes = Math.max(2, Math.ceil(wordCount / 220));
   const cover = postImage(post);
-  const source = post.source || archivedPosts[post.id]?.source;
   const others = data.posts.filter(p => p.published && p.id !== post.id);
   const related = [...others.filter(p => p.category === post.category), ...others.filter(p => p.category !== post.category)].slice(0, 3);
   const hasToc = toc.length >= 2;
@@ -185,11 +183,6 @@ export function ArticleView({ slug, post: given }: { slug?: string; post?: Post 
             </div>
 
             <footer className="s-article-foot">
-              {source && (
-                <a className="s-link" href={source} target="_blank" rel="noopener noreferrer">
-                  Xem bài gốc trên kênh DANAVA <ArrowUpRight aria-hidden="true" />
-                </a>
-              )}
               <Link className="s-link" href="/kien-thuc/"><ArrowLeft aria-hidden="true" />Tất cả bài viết</Link>
             </footer>
           </div>
