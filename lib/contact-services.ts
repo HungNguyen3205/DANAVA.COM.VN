@@ -24,7 +24,7 @@ export const VALID_CONTACT_SERVICES: ValidContactService[] = [
   },
   {
     id: 'digital-marketing',
-    label: 'Digital Marketing & Vận hành truyền thông tổng thể',
+    label: 'Marketing & Vận hành truyền thông tổng thể',
     slug: 'digital-marketing',
     category: 'Truyền thông'
   },

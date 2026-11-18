@@ -37,7 +37,7 @@ test('resolveValidService gracefully maps URL parameters and handles unexpected 
   );
   assert.equal(
     resolveValidService('marketing'),
-    'Digital Marketing & Vận hành truyền thông tổng thể'
+    'Marketing & Vận hành truyền thông tổng thể'
   );
   assert.equal(
     resolveValidService('travel'),

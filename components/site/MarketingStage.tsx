@@ -260,7 +260,7 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
           {/* 05 — Truyền thông số */}
           <Scene def={sc('truyen-thong-so')} className="cine-digital">
             <div className="cine-pad">
-              <p className="cine-eyebrow" style={step(0)}>Digital Marketing</p>
+              <p className="cine-eyebrow" style={step(0)}>Marketing</p>
               <h2 className="cine-h2 cine-h2--xl" style={step(0.04)}>Sự kiện kết thúc, <em>câu chuyện</em> vẫn tiếp tục trên mạng</h2>
               <p className="cine-text cine-text--center" style={step(0.1)}>Hình ảnh, video từ chương trình trở thành nội dung; kênh số giữ nhịp với khách hàng; quảng cáo đưa thương hiệu đến đúng người.</p>
               <div className="cine-digital__grid">
