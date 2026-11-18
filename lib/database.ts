@@ -69,7 +69,7 @@ const MYSQL_SCHEMA = [
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
 ];
 
-const SQLITE_SCHEMA = `PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
+const SQLITE_SCHEMA = `PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL;
 CREATE TABLE IF NOT EXISTS content (id INTEGER PRIMARY KEY CHECK(id=1), json TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 1, published_revision INTEGER NOT NULL DEFAULT 1, draft_json TEXT, draft_revision INTEGER NOT NULL DEFAULT 1);
 CREATE TABLE IF NOT EXISTS leads (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT, service TEXT, message TEXT NOT NULL, created_at INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'new');
 CREATE INDEX IF NOT EXISTS leads_created ON leads(created_at);
@@ -134,7 +134,7 @@ async function openSqlite(): Promise<Sql> {
     ? (process.env.DANAVA_DATA_DIR && process.env.DANAVA_DATA_DIR.startsWith('/tmp') ? process.env.DANAVA_DATA_DIR : '/tmp/.data')
     : resolve(/* turbopackIgnore: true */ process.env.DANAVA_DATA_DIR||'.data');
   mkdirSync(dir,{recursive:true,mode:0o700});
-  const d = new DatabaseSync(resolve(dir,'danava.sqlite'));
+  const d = new DatabaseSync(resolve(dir,'danava.sqlite'), { timeout: 5000 });
   d.exec(SQLITE_SCHEMA);
   for (const alter of [
     'ALTER TABLE content ADD COLUMN published_revision INTEGER NOT NULL DEFAULT 1',
