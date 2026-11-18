@@ -3,12 +3,16 @@
  * /giai-phap/digital-marketing/ — trình bày dạng "một cú máy liền mạch".
  * Toàn bộ nội dung lấy từ DANAVA Company Profile 2026 (bản Canva) + nội dung dịch vụ đã có trên website.
  *
- * Cơ chế: các cảnh xếp dọc và cuộn tự nhiên như mọi trang khác (không ghim màn hình,
- * không tính toán theo vị trí cuộn). Chữ và ảnh hiện dần nhẹ bằng CSS khi cuộn tới
- * (animation-timeline: view(); trình duyệt chưa hỗ trợ thì hiện ngay).
+ * Cơ chế "mỗi lần lướt = một slide":
+ *  - Mỗi cảnh cao đúng một màn hình và là một điểm hít (CSS scroll-snap, scroll-snap-stop: always).
+ *  - Chuyển cảnh kiểu máy quay (cảnh cũ phóng to rồi tan, cảnh mới hiện vào), nền thành phố,
+ *    dải lụa, ảnh Ken Burns… đều là CSS scroll-driven animation: trình duyệt tự chạy, không JS mỗi khung hình.
+ *  - JS chỉ dùng IntersectionObserver: khi một cảnh dừng trên màn hình thì gắn .is-in để chữ/ảnh
+ *    hiện lần lượt, và cập nhật số cảnh trên HUD (chỉ khi đổi cảnh).
+ *  - Bật "giảm chuyển động" → bỏ hít và hiệu ứng, cuộn như trang thường.
  */
 import Link from 'next/link';
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   Phone, Mail, AtSign, Globe, Send, Mic2, Megaphone, Speaker, Music4,
   Camera, Users, Target, Lightbulb, Hammer, Cpu, Sparkles
@@ -88,14 +92,130 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
     { id: 'lien-he', label: 'Liên hệ', len: 1.3 }
   ];
 
+  const root = useRef<HTMLDivElement>(null);
+  const [cur, setCur] = useState(0);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cine-scene'));
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        const n = e.target as HTMLElement;
+        if (e.isIntersecting) { n.classList.add('is-in'); setCur(nodes.indexOf(n)); }
+        else n.classList.remove('is-in');
+      }
+    }, { threshold: 0.55 });
+    nodes.forEach(n => io.observe(n));
+    setReady(true);
+
+    // ---- Máy tính: một cú lăn/vuốt touchpad (kể cả quán tính) = đúng một slide ----
+    // Điện thoại dùng CSS scroll-snap (xem site-mkt.css, @media (pointer: coarse)).
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const fine = window.matchMedia('(pointer: fine)');
+    const headerH = () => parseFloat(getComputedStyle(el).getPropertyValue('--s-header-h')) || 72;
+    const tops = () => nodes.map(n => n.getBoundingClientRect().top + window.scrollY - headerH());
+    let locked = false, lockAt = 0, lastWheel = 0, lastAbs = 0, acc = 0, moving = false;
+
+    const go = (dir: number) => {
+      const t = tops(), y = window.scrollY;
+      let i = 0;
+      for (let k = 0; k < t.length; k++) if (t[k] <= y + 4) i = k;
+      const next = Math.max(0, Math.min(t.length - 1, i + dir));
+      if (next === i && dir > 0) return false; // slide cuối → để cuộn tự nhiên xuống footer
+      if (dir < 0 && y > t[i] + 4) { window.scrollTo({ top: t[i], behavior: 'smooth' }); } // đang giữa slide → về đầu slide đó
+      else if (next === i) return false;
+      else window.scrollTo({ top: t[next], behavior: 'smooth' });
+      locked = true; moving = true; lockAt = performance.now();
+      return true;
+    };
+    // Slide cao hơn màn hình: cho cuộn tự nhiên tới hết slide rồi mới chuyển.
+    const roomInside = (dir: number) => {
+      const y = window.scrollY, h = window.innerHeight, t = tops();
+      const filmEnd = el.getBoundingClientRect().bottom + y;
+      for (let k = 0; k < t.length; k++) {
+        const top = t[k], bottom = k + 1 < t.length ? t[k + 1] : filmEnd - headerH();
+        if (y >= top - 4 && y < bottom - 4) {
+          const visibleBottom = y + h - headerH();
+          return dir > 0 ? visibleBottom < bottom - 8 : y > top + 8;
+        }
+      }
+      return false;
+    };
+    const inFilm = () => {
+      const t = tops(), y = window.scrollY;
+      return y >= t[0] - 4 && y <= t[t.length - 1] + 4;
+    };
+    const atEdge = (dir: number) => {
+      const t = tops(), y = window.scrollY;
+      let i = 0;
+      for (let k = 0; k < t.length; k++) if (t[k] <= y + 4) i = k;
+      return dir > 0 ? i === t.length - 1 : i === 0 && y <= t[0] + 4;
+    };
+    const onScrollEnd = () => { moving = false; };
+    const onWheel = (e: WheelEvent) => {
+      if (reduce.matches || !fine.matches || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const now = performance.now();
+      const dir = Math.sign(e.deltaY);
+      if (!dir) return;
+      if (!locked && !inFilm()) return;
+      if (!locked && roomInside(dir)) return;
+      if (!locked && atEdge(dir)) return; // slide đầu cuộn lên / slide cuối cuộn xuống → cuộn tự nhiên (ra footer)
+      e.preventDefault();
+      const abs = Math.abs(e.deltaY);
+      // Cú vuốt mới = sau khoảng lặng, hoặc lực vuốt tăng mạnh. Quán tính touchpad luôn yếu dần nên bị bỏ qua.
+      const quiet = now - lastWheel > 300;
+      const surge = abs >= 20 && abs > lastAbs * 1.6;
+      lastWheel = now; lastAbs = abs;
+      if (locked) {
+        if (!moving && now - lockAt > 650 && (quiet || surge)) locked = false;
+        else return;
+      }
+      acc = quiet ? e.deltaY : acc + e.deltaY;
+      if (Math.abs(acc) < 30) return;
+      acc = 0;
+      if (!go(dir)) locked = false;
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (reduce.matches || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target as HTMLElement | null)?.isContentEditable) return;
+      const dir = ['ArrowDown', 'PageDown'].includes(e.key) || (e.key === ' ' && !e.shiftKey) ? 1
+        : ['ArrowUp', 'PageUp'].includes(e.key) || (e.key === ' ' && e.shiftKey) ? -1 : 0;
+      if (!dir || !inFilm() || roomInside(dir)) return;
+      if (locked && moving) { e.preventDefault(); return; }
+      if (go(dir)) e.preventDefault();
+    };
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('scrollend', onScrollEnd);
+    // Trình duyệt chưa có sự kiện scrollend (Safari cũ): coi như cuộn xong sau 900ms
+    const fallback = 'onscrollend' in window ? 0 : globalThis.setInterval(() => { if (moving && performance.now() - lockAt > 900) moving = false; }, 150);
+
+    return () => {
+      io.disconnect();
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('scrollend', onScrollEnd);
+      if (fallback) globalThis.clearInterval(fallback);
+    };
+  }, []);
+
+  const jump = (i: number) => {
+    const n = root.current?.querySelectorAll<HTMLElement>('.cine-scene')[i];
+    n?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  };
+
   const sc = (id: string) => scenes.find(s => s.id === id)!;
   let shotNo = 0;
 
   return (
-    <div className="cine cine--flow">
+    <div ref={root} className={`cine cine--flow cine--snap${ready ? ' is-ready' : ''}`}>
       <div className="cine-stage">
-        {/* ---- Thế giới nền: trời đêm, thành phố, dải lụa cam ---- */}
-        <div className="cine-world" aria-hidden="true">
+        {/* ---- Thế giới nền: trời đêm, thành phố, dải lụa cam (đứng yên phía sau các slide) ---- */}
+        <div className="cine-fixed cine-fixed--back" aria-hidden="true">
+        <div className="cine-world">
           <div className="cine-sky" />
           <div className="cine-city" style={{ backgroundImage: `url(${img('city')})` }} />
           <div className="cine-dust" />
@@ -108,6 +228,31 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
             <path className="cine-ribbon__a" pathLength={1} d="M-80 120 C 260 -40, 520 360, 380 560 S 520 980, 1080 860" />
             <path className="cine-ribbon__b" pathLength={1} d="M1080 80 C 760 160, 900 460, 640 600 S 140 760, -80 1040" />
           </svg>
+        </div>
+        </div>
+
+        {/* ---- Lớp "ống kính" + HUD + thanh chọn cảnh (đứng yên phía trên các slide) ---- */}
+        <div className="cine-fixed cine-fixed--front">
+          <div className="cine-lens" aria-hidden="true">
+            <span className="cine-bar cine-bar--t" />
+            <span className="cine-bar cine-bar--b" />
+            <span className="cine-vignette" />
+            <div className="cine-hud">
+              <span className="cine-hud__rec"><i />REC</span>
+              <span className="cine-hud__scene">SC.{pad(cur + 1)} — {scenes[cur]?.label}</span>
+              <span className="cine-hud__tc">{pad(cur + 1)} / {pad(scenes.length)}</span>
+            </div>
+            <span className="cine-frame cine-frame--tl" /><span className="cine-frame cine-frame--tr" />
+            <span className="cine-frame cine-frame--bl" /><span className="cine-frame cine-frame--br" />
+          </div>
+          <nav className="cine-rail" aria-label="Các cảnh">
+            <span className="cine-rail__fill" aria-hidden="true" />
+            {scenes.map((s, i) => (
+              <button key={s.id} type="button" className={i === cur ? 'is-current' : ''} onClick={() => jump(i)} aria-label={`Cảnh ${i + 1}: ${s.label}`} aria-current={i === cur ? 'step' : undefined}>
+                <span>{s.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
 
         <div className="cine-scenes">

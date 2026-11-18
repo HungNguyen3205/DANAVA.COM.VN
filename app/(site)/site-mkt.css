@@ -336,7 +336,7 @@ html.is-cine .s-mbar { opacity: 0 !important; visibility: hidden !important; poi
 
 /* Chữ & ảnh hiện dần khi cuộn tới — chạy trên luồng compositor, không tốn JS */
 @supports (animation-timeline: view()) {
-  .cine--flow [style*="--s"] {
+  .cine--flow:not(.cine--snap) [style*="--s"] {
     animation: cine-in linear both;
     animation-timeline: view();
     animation-range: entry 0% entry 45%;
@@ -349,4 +349,85 @@ html.is-cine .s-mbar { opacity: 0 !important; visibility: hidden !important; poi
 
 @media (prefers-reduced-motion: reduce) {
   .cine--flow [style*="--s"] { animation: none; }
+}
+
+/* ==========================================================================
+   Chế độ slide (.cine--snap): mỗi lần lướt = một cảnh, giữ chuyển cảnh kiểu phim.
+   Toàn bộ chuyển động gắn với vị trí cuộn bằng CSS (scroll-driven animation) —
+   trình duyệt tự chạy trên luồng compositor, không có JS chạy theo từng khung hình.
+   ========================================================================== */
+/* Điện thoại/máy tính bảng: vuốt = một slide nhờ CSS scroll-snap. Máy tính: JS điều khiển con lăn (MarketingStage.tsx). */
+@media (pointer: coarse) {
+  html:has(.cine--snap) { scroll-snap-type: y mandatory; }
+  .s-app:has(.cine--snap) .s-footer { scroll-snap-align: end; }
+}
+
+.cine--snap .cine-scene,
+.cine--snap .cine-proj,
+.cine--snap .cine-iris { min-height: var(--stage-h); margin-top: 0; padding-top: 0; padding-bottom: 0; scroll-snap-align: start; scroll-snap-stop: always; scroll-margin-top: var(--s-header-h); }
+.cine--snap .cine-pad { min-height: var(--stage-h); }
+.cine--snap .cine-proj + .cine-end { margin-top: 0; }
+.cine--snap .cine-proj__hero { -webkit-mask-image: none; mask-image: none; }
+
+/* Hai lớp đứng yên: nền (sau slide) và ống kính/HUD/thanh cảnh (trước slide) */
+.cine-fixed { position: sticky; top: var(--s-header-h); height: var(--stage-h); margin-bottom: calc(-1 * var(--stage-h)); pointer-events: none; }
+.cine-fixed--back { z-index: 0; }
+.cine-fixed--front { z-index: 3; }
+.cine--snap .cine-world { position: absolute; inset: 0; height: auto; margin: 0; }
+.cine--snap .cine-lens { display: block; position: absolute; inset: 0; pointer-events: none; }
+.cine--snap .cine-rail { pointer-events: auto; }
+.cine-hud__tc { letter-spacing: .08em; }
+
+/* Chữ & ảnh trong cảnh hiện lần lượt khi cảnh dừng trên màn hình (.is-in do IntersectionObserver gắn) */
+.cine--snap.is-ready .cine-scene [style*="--s"] {
+  opacity: 0; transform: translateY(34px);
+  transition: opacity .6s ease, transform .9s cubic-bezier(.22, .8, .24, 1);
+}
+.cine--snap.is-ready .cine-scene.is-in [style*="--s"] {
+  opacity: 1; transform: none;
+  transition-delay: calc(.12s + max(0, var(--s)) * 2.2s);
+}
+
+@supports (animation-timeline: view()) {
+  /* Máy quay: cảnh mới trồi lên và rõ dần, cảnh cũ phóng to rồi tan */
+  .cine--snap .cine-scene > :not(.cine-sr) {
+    animation: cine-cam linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+  /* Ken Burns cho ảnh nền chương trình */
+  .cine--snap .cine-proj__hero img { animation: cine-kb linear both; animation-timeline: view(); }
+  /* Màn "Những chương trình nổi bật": đĩa cam nở ra như mở ống kính */
+  .cine--snap .cine-iris__disc { animation: cine-iris linear both; animation-timeline: view(); animation-range: cover 20% cover 100%; }
+  .cine--snap .cine-reel__track { animation: cine-reel linear both; animation-timeline: view(); }
+  /* Nền chung trôi theo tiến độ cả trang */
+  .cine--snap .cine-city { animation: cine-city linear both; animation-timeline: scroll(root); }
+  .cine--snap .cine-dust { animation: cine-dust linear both; animation-timeline: scroll(root); }
+  .cine--snap .cine-ribbon { animation: cine-ribbon linear both; animation-timeline: scroll(root); }
+  .cine--snap .cine-ribbon__a { animation: cine-draw-a linear both; animation-timeline: scroll(root); }
+  .cine--snap .cine-ribbon__b { animation: cine-draw-b linear both; animation-timeline: scroll(root); }
+  .cine--snap .cine-rail__fill { animation: cine-fill linear both; animation-timeline: scroll(root); }
+}
+@keyframes cine-cam {
+  0%   { opacity: 0; transform: translate3d(0, 9vh, 0) scale(.93); }
+  36%  { opacity: 1; transform: none; }
+  64%  { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translate3d(0, -5vh, 0) scale(1.14); }
+}
+@keyframes cine-kb { from { transform: scale(1.2) translate3d(2%, 0, 0); } to { transform: scale(1.04) translate3d(-2%, 0, 0); } }
+@keyframes cine-iris { 0% { transform: scale(.82); opacity: 1; } 45% { transform: scale(1); opacity: 1; } 100% { transform: scale(3.4); opacity: 0; } }
+@keyframes cine-reel { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -48%, 0); } }
+@keyframes cine-city { 0% { opacity: .62; transform: translate3d(0, 0, 0) scale(1.08); } 15% { opacity: .22; } 85% { opacity: .22; } 100% { opacity: .55; transform: translate3d(0, -28%, 0) scale(1.08); } }
+@keyframes cine-dust { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -40%, 0); } }
+@keyframes cine-ribbon { from { transform: rotate(-8deg); } to { transform: rotate(42deg) translate3d(0, -12%, 0); } }
+@keyframes cine-draw-a { from { stroke-dashoffset: .88; } to { stroke-dashoffset: 0; } }
+@keyframes cine-draw-b { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes cine-fill { from { background-size: 100% 0%; } to { background-size: 100% 100%; } }
+@media (max-width: 760px) { @keyframes cine-fill { from { background-size: 0% 100%; } to { background-size: 100% 100%; } } }
+
+/* Giảm chuyển động: không hít slide, không hiệu ứng, nội dung hiện ngay */
+@media (prefers-reduced-motion: reduce) {
+  html:has(.cine--snap) { scroll-snap-type: none; }
+  .cine--snap .cine-scene > *, .cine--snap .cine-scene *, .cine--snap .cine-world * { animation: none !important; }
+  .cine--snap.is-ready .cine-scene [style*="--s"] { opacity: 1; transform: none; transition: none; }
 }
