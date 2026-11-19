@@ -3,14 +3,14 @@
  * Mọi quan hệ dịch vụ ↔ dự án ↔ bài viết đi qua ID lưu trong dữ liệu (serviceIds, topicId, projectId),
  * không suy đoán từ từ khóa trong tiêu đề.
  */
-import type { Client, Post, Project, Service, SiteData, SubService, Testimonial, Topic } from './content.ts';
+import type { Client, Post, Project, Service, ShowcaseItem, SiteData, SubService, Testimonial, Topic } from './content.ts';
 import { ARCHIVE_TOPIC } from './content-defaults.ts';
 
 /** Số bài tối thiểu để một danh mục có trang riêng (URL riêng, vào sitemap). */
 export const TOPIC_PAGE_MIN_POSTS = 3;
 
 /** Thứ tự ưu tiên hiển thị giải pháp: sản phẩm chủ lực trước. */
-export const SERVICE_ORDER = ['studio', 'website', 'marketing', 'travel', 'community'];
+export const SERVICE_ORDER = ['studio', 'website', 'marketing', 'events', 'travel', 'community'];
 export const sortServices = (list: Service[]) =>
   [...list].sort((a, b) => (SERVICE_ORDER.indexOf(a.id) + 99) % 99 - (SERVICE_ORDER.indexOf(b.id) + 99) % 99);
 
@@ -88,6 +88,21 @@ export function authorOf(data: SiteData, post: Post) {
   return data.staff.find(p => p.id === post.authorId && p.visible);
 }
 
+/* ---------------------------------------------------------- Showcase */
+/** Mục trưng bày đã xuất bản của một giải pháp, theo thứ tự quản trị viên sắp xếp. */
+export const showcaseFor = (data: SiteData, serviceId: string): ShowcaseItem[] =>
+  (data.showcase || []).filter(x => x.published && x.serviceId === serviceId);
+
+/** Mục nổi bật đầu tiên (khối featured) và phần còn lại (không lặp lại mục nổi bật). */
+export function splitFeatured(items: ShowcaseItem[]) {
+  const featured = items.filter(x => x.featured);
+  return { featured, rest: items.filter(x => !x.featured) };
+}
+
+export const showcaseHref = (x: Pick<ShowcaseItem, 'slug'>) => `/du-an/${x.slug}/`;
+export const showcaseCaseStudies = (data: SiteData) => (data.showcase || []).filter(x => x.published && x.caseStudy);
+export const findShowcase = (data: SiteData, slug: string) => (data.showcase || []).find(x => x.slug === slug);
+
 /* ---------------------------------------------------------- Bằng chứng */
 export const publicClients = (data: SiteData): Client[] =>
   (data.clients || []).filter(c => c.published && c.permission && c.name.trim());
@@ -112,6 +127,8 @@ export function publicContent(data: SiteData): SiteData {
     subServices: publishedSubServices(data).map(s => ({ ...s, editorNote: undefined })),
     topics: (data.topics || []).filter(t => t.published || t.id === ARCHIVE_TOPIC),
     clients: publicClients(data).map(c => ({ ...c, note: '' })),
-    testimonials: publicTestimonials(data)
+    testimonials: publicTestimonials(data),
+    // Chỉ trang /du-an/ (client) cần showcase — chỉ gửi mục website đã xuất bản
+    showcase: (data.showcase || []).filter(x => x.published && x.serviceId === 'website')
   };
 }

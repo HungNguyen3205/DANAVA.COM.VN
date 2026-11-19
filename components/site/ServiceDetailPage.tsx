@@ -11,12 +11,12 @@ import { postsForService, projectsForService, publishedSubServices, sortServices
 import { serviceMeta, CONTACT, formatPhone, excerpt } from './catalog';
 import { SERVICE_DETAILS } from './service-content';
 import { Crumbs, CtaBand, SectionHeading, Visual } from './ui';
-import { MarketingFilm } from './MarketingStage';
+import { WebsitePage } from './WebsitePage';
+import { MarketingPage } from './MarketingPage';
+import { EventsPage } from './EventsPage';
 import { StudioShowcase } from './StudioShowcase';
 import { ProductGallery } from './ProductGallery';
 import { DanavaGoShowcase } from './DanavaGoShowcase';
-import { PortfolioGrid } from './PortfolioGrid';
-import { PORTFOLIO } from './portfolio';
 import { STUDIO_GALLERY } from './product-showcase';
 import { FaqSection, FeatureGrid, PricingSection, ProblemsSection, ProcessSection, RelatedPosts, RelatedProjects, ScopeSection, ServiceLinks } from './blocks';
 
@@ -24,7 +24,15 @@ export function contactHrefFor(service: Service) {
   return `/lien-he/?service=${SERVICE_DETAILS[service.id]?.contactService || service.slug}`;
 }
 
+/** Mỗi giải pháp chính có bố cục riêng; các giải pháp còn lại dùng bố cục chuẩn bên dưới. */
 export function ServiceDetailPage({ service, data }: { service: Service; data: SiteData }) {
+  if (service.id === 'website') return <WebsitePage service={service} data={data} />;
+  if (service.id === 'marketing') return <MarketingPage service={service} data={data} />;
+  if (service.id === 'events') return <EventsPage service={service} data={data} />;
+  return <StandardServicePage service={service} data={data} />;
+}
+
+function StandardServicePage({ service, data }: { service: Service; data: SiteData }) {
   const m = serviceMeta(service);
   const d = SERVICE_DETAILS[service.id];
   const phone = data.phone || CONTACT.phone;
@@ -35,20 +43,9 @@ export function ServiceDetailPage({ service, data }: { service: Service; data: S
   const posts = postsForService(data, service.id, 3);
   const subs = publishedSubServices(data, service.id);
   const others = sortServices(data.services).filter(s => s.id !== service.id).slice(0, 3);
-  const isMkt = service.id === 'marketing';
 
   return (
-    <main id="main" className={isMkt ? 's-mkt' : undefined}>
-      {isMkt ? (
-        <MarketingFilm
-          title={service.title}
-          contactHref={contactHref}
-          cta={cta}
-          phone={phone}
-          phoneLabel={formatPhone(phone)}
-          email={data.email || CONTACT.email}
-        />
-      ) : (
+    <main id="main">
         <section className="s-svc-hero">
           <div className="s-container s-split">
             <div className="s-svc-hero__copy">
@@ -77,10 +74,9 @@ export function ServiceDetailPage({ service, data }: { service: Service; data: S
             )}
           </div>
         </section>
-      )}
 
       <ProblemsSection
-        title={isMkt ? 'Doanh nghiệp thường gặp khó ở đâu?' : `Khi nào nên dùng ${service.title}?`}
+        title={`Khi nào nên dùng ${service.title}?`}
         problems={service.problems || []}
       />
 
@@ -100,25 +96,18 @@ export function ServiceDetailPage({ service, data }: { service: Service; data: S
         </section>
       )}
 
-      {/* Website & Landing Page: sản phẩm đã làm (components/site/portfolio.ts) */}
-      {service.id === 'website' && PORTFOLIO.length > 0 && (
-        <section className="s-section h-works" id="du-an-web" aria-labelledby="web-works-title">
-          <div className="s-container">
-            <div className="h-works__head">
-              <div>
-                <p className="h-chapter"><span>{String(PORTFOLIO.length).padStart(2, '0')}</span>Sản phẩm đã thực hiện</p>
-                <h2 className="h-title" id="web-works-title">Website & landing page <em>DANAVA đã xây dựng.</em></h2>
-              </div>
-              <p className="h-works__lead">Nền tảng đặt vé, website thương hiệu, landing page sự kiện, bất động sản và bán hàng. Bấm vào thẻ để mở website đang chạy.</p>
-            </div>
-            <PortfolioGrid items={PORTFOLIO} />
+      {service.id === 'travel' && <DanavaGoShowcase />}
+
+      {service.id === 'travel' && (
+        <section className="s-section s-section--tight" aria-label="Sự kiện doanh nghiệp">
+          <div className="s-container u-crosslink">
+            <p><strong>Tổ chức hội nghị, kick-off, gala hay booth trưng bày?</strong> Xem các chương trình thực tế và hạng mục tại trang Sự kiện & Truyền thông.</p>
+            <Link className="s-btn s-btn--secondary" href="/giai-phap/su-kien-truyen-thong/">Sự kiện & Truyền thông</Link>
           </div>
         </section>
       )}
 
-      {service.id === 'travel' && <DanavaGoShowcase />}
-
-      {!isMkt && d?.blocks.map((b, bi) => (
+      {d?.blocks.map((b, bi) => (
         <FeatureGrid key={b.id} id={b.id} eyebrow={b.eyebrow} title={b.title} lead={b.lead} features={b.features} soft={bi % 2 === 0} />
       ))}
 

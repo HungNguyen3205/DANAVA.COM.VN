@@ -1,0 +1,52 @@
+PASS 1440 / h1="Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ" sw=1440/1440
+PASS 1440 /giai-phap/thiet-ke-website/ h1="Website & Landing Page" sw=1440/1440
+PASS 1440 /du-an/vinhomes-hai-van-bay-website/ h1="Vinhomes Hải Vân Bay" sw=1440/1440
+PASS 1440 /giai-phap/su-kien-truyen-thong/ h1="Sự kiện & Truyền thông" sw=1440/1440
+PASS 1440 /giai-phap/digital-marketing/ h1="Digital Marketing cho doanh nghiệp dịch vụ" sw=1440/1440
+PASS 1440 /giai-phap/du-lich-su-kien/ h1="Du lịch & Sự kiện" sw=1440/1440
+PASS 1440 /du-an/ h1="Câu chuyện triển khai thực tế" sw=1440/1440
+PASS 390 / h1="Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ" sw=390/390
+PASS 390 /giai-phap/thiet-ke-website/ h1="Website & Landing Page" sw=390/390
+PASS 390 /du-an/vinhomes-hai-van-bay-website/ h1="Vinhomes Hải Vân Bay" sw=390/390
+PASS 390 /giai-phap/su-kien-truyen-thong/ h1="Sự kiện & Truyền thông" sw=390/390
+PASS 390 /giai-phap/digital-marketing/ h1="Digital Marketing cho doanh nghiệp dịch vụ" sw=390/390
+PASS 390 /giai-phap/du-lich-su-kien/ h1="Du lịch & Sự kiện" sw=390/390
+PASS 390 /du-an/ h1="Câu chuyện triển khai thực tế" sw=390/390
+PASS 360 / h1="Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ" sw=360/360
+PASS 360 /giai-phap/thiet-ke-website/ h1="Website & Landing Page" sw=360/360
+PASS 360 /du-an/vinhomes-hai-van-bay-website/ h1="Vinhomes Hải Vân Bay" sw=360/360
+PASS 360 /giai-phap/su-kien-truyen-thong/ h1="Sự kiện & Truyền thông" sw=360/360
+PASS 360 /giai-phap/digital-marketing/ h1="Digital Marketing cho doanh nghiệp dịch vụ" sw=360/360
+PASS 360 /giai-phap/du-lich-su-kien/ h1="Du lịch & Sự kiện" sw=360/360
+PASS 360 /du-an/ h1="Câu chuyện triển khai thực tế" sw=360/360
+PASS 768 / h1="Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ" sw=768/768
+PASS 768 /giai-phap/thiet-ke-website/ h1="Website & Landing Page" sw=768/768
+PASS 768 /du-an/vinhomes-hai-van-bay-website/ h1="Vinhomes Hải Vân Bay" sw=768/768
+PASS 768 /giai-phap/su-kien-truyen-thong/ h1="Sự kiện & Truyền thông" sw=768/768
+PASS 768 /giai-phap/digital-marketing/ h1="Digital Marketing cho doanh nghiệp dịch vụ" sw=768/768
+PASS 768 /giai-phap/du-lich-su-kien/ h1="Du lịch & Sự kiện" sw=768/768
+PASS 768 /du-an/ h1="Câu chuyện triển khai thực tế" sw=768/768
+PASS 1024 / h1="Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ" sw=1024/1024
+PASS 1024 /giai-phap/thiet-ke-website/ h1="Website & Landing Page" sw=1024/1024
+PASS 1024 /du-an/vinhomes-hai-van-bay-website/ h1="Vinhomes Hải Vân Bay" sw=1024/1024
+PASS 1024 /giai-phap/su-kien-truyen-thong/ h1="Sự kiện & Truyền thông" sw=1024/1024
+PASS 1024 /giai-phap/digital-marketing/ h1="Digital Marketing cho doanh nghiệp dịch vụ" sw=1024/1024
+PASS 1024 /giai-phap/du-lich-su-kien/ h1="Du lịch & Sự kiện" sw=1024/1024
+PASS 1024 /du-an/ h1="Câu chuyện triển khai thực tế" sw=1024/1024
+PASS Trang chủ: Vinhomes là khối featured đầu khu portfolio, không lặp trong danh sách bên dưới
+PASS Trang Website: Vinhomes ngay sau hero, không lặp trong thư viện
+PASS Khối Vinhomes có CTA case study nội bộ + mở website thật
+PASS Bàn phím: Tab tới được nút lọc "Landing page"
+PASS Bàn phím: Enter lọc thư viện 12 → 2 mục, aria-pressed=true, viền focus: solid 3px
+PASS Sự kiện (390px): CTA "Gửi yêu cầu tổ chức" nằm trong màn hình đầu tiên
+PASS Sự kiện: thanh mục lục dính → tới "Hạng mục" (từ y=2500)
+PASS Sự kiện: không ép cuộn theo cảnh (scroll-snap-type: none)
+PASS Sự kiện (390px): thanh tab dưới và nút Zalo/Gọi không che CTA cuối trang
+PASS Giảm chuyển động: tắt hiệu ứng Ken Burns ảnh hero sự kiện
+PASS Giảm chuyển động: ảnh động Vinhomes thay bằng ảnh tĩnh
+PASS Bình thường: hiển thị ảnh động ghi từ website thật
+PASS Giảm chuyển động: tắt hiệu ứng ảnh hero Website
+PASS 390 /: nút nổi không che nút CTA
+PASS 390 /giai-phap/su-kien-truyen-thong/: nút nổi không che nút CTA
+PASS 390 /giai-phap/thiet-ke-website/: nút nổi không che nút CTA
+PASS 390 /giai-phap/digital-marketing/: nút nổi không che nút CTA

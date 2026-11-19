@@ -171,7 +171,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
     ],
     officialLink: {
       label: 'Tìm hiểu dịch vụ Media & Fanpage',
-      href: '/giai-phap/digital-marketing/#dich-vu-media'
+      href: '/giai-phap/su-kien-truyen-thong/'
     },
     badge: 'Sản xuất nội dung',
     image: '/assets/legacy/event-workshop.webp',
@@ -221,7 +221,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
     ],
     officialLink: {
       label: 'Xem dịch vụ Tổ chức Sự kiện',
-      href: '/giai-phap/du-lich-su-kien/#hoi-nghi'
+      href: '/giai-phap/su-kien-truyen-thong/'
     },
     badge: 'Sự kiện doanh nghiệp',
     image: '/assets/legacy/event-group.webp',

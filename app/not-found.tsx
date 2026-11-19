@@ -10,11 +10,11 @@ import './(site)/site-b.css';
 import './(site)/site-c.css';
 import './(site)/site-v2.css';
 import './(site)/site-v3.css';
-import './(site)/site-mkt.css';
 import './(site)/site-home.css';
 import './(site)/site-theme.css';
 import './(site)/site-app.css';
 import './(site)/site-upgrade.css';
+import './(site)/site-identity.css';
 
 /**
  * 404 toàn cục (URL không khớp route nào): nằm ngoài nhóm (site) nên tự nạp stylesheet và khung website.

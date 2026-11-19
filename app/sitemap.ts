@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getContent } from '@/lib/database';
 import { siteURL, indexable } from '@/lib/seo';
-import { publishedProjects, publishedSubServices, subServiceHref, topicHasPage, topicHref, postsForTopic } from '@/lib/site-queries';
+import { showcaseCaseStudies, publishedProjects, publishedSubServices, subServiceHref, topicHasPage, topicHref, postsForTopic } from '@/lib/site-queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,6 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/he-sinh-thai/'),
     entry('/du-an/', latest(...projects.map(p => p.updated))),
     ...projects.map(p => entry(`/du-an/${p.slug}/`, p.updated)),
+    ...showcaseCaseStudies(data).map(x => entry(`/du-an/${x.slug}/`, x.updated)),
     entry('/ve-danava/'),
     entry('/doi-ngu/'),
     ...data.staff.filter(p => p.visible).map(p => entry(`/doi-ngu/${p.id}/`)),

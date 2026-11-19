@@ -6,7 +6,8 @@
  * Nguồn: nội dung đã có trên website (components/site/service-content.ts trước đây, trang Về DANAVA),
  * case study trên danava.vn (lib/verified-projects.ts). Không thêm số liệu, giá hay cam kết mới.
  */
-import type { Client, Feature, Faq, Project, Service, SiteData, SubService, Topic } from './content.ts';
+import { initial, type Client, type Feature, type Faq, type Project, type Service, type SiteData, type SubService, type Topic } from './content.ts';
+import { SHOWCASE_SEEDS } from './showcase-seeds.ts';
 
 /* ------------------------------------------------------------------ Dịch vụ */
 type ServiceSeed = Pick<Service, 'heroLead' | 'audience' | 'problems' | 'process' | 'faqs' | 'pricing' | 'productUrl' | 'productLabel'>;
@@ -64,7 +65,7 @@ export const SERVICE_SEEDS: Record<string, ServiceSeed> = {
   },
   marketing: {
     heroLead: 'Chiến lược, nội dung, quay chụp và quảng cáo được kết nối thành một kế hoạch. Thương hiệu của bạn đến gần khách hàng hơn, với số liệu minh bạch.',
-    audience: ['Phòng tập & studio', 'Spa & wellness', 'Doanh nghiệp dịch vụ', 'Sự kiện & cộng đồng'],
+    audience: ['Phòng tập & studio', 'Spa & wellness', 'Doanh nghiệp dịch vụ', 'Cơ sở đào tạo'],
     problems: [
       'Đăng bài không đều, hình ảnh mỗi kênh một kiểu nên thương hiệu thiếu nhất quán.',
       'Chạy quảng cáo nhưng không rõ khách đến từ đâu, tin nhắn và đăng ký dễ bị bỏ sót.',
@@ -85,13 +86,34 @@ export const SERVICE_SEEDS: Record<string, ServiceSeed> = {
     ],
     pricing: 'Phí dịch vụ được thỏa thuận theo phạm vi công việc: số kênh, tần suất nội dung, số buổi quay chụp. Ngân sách quảng cáo do doanh nghiệp thanh toán trực tiếp cho nền tảng theo hóa đơn thực tế.'
   },
+  events: {
+    heroLead: 'DANAVA kết nối ý tưởng, nguồn lực và triển khai để tạo nên những sự kiện mang dấu ấn riêng của doanh nghiệp: từ kịch bản, không gian, sân khấu đến điều phối và biểu diễn.',
+    audience: ['Doanh nghiệp', 'Thương hiệu bán lẻ', 'Hiệp hội & câu lạc bộ', 'Chuỗi dịch vụ'],
+    problems: [
+      'Phải làm việc với nhiều đơn vị riêng lẻ: thi công, âm thanh ánh sáng, nhân sự biểu diễn.',
+      'Không gian sự kiện chưa thể hiện được nhận diện thương hiệu.',
+      'Sự kiện thiếu kịch bản và người điều phối tại chỗ.'
+    ],
+    process: [
+      { title: 'Ý tưởng & kế hoạch', text: 'Thống nhất mục tiêu, khách mời, chủ đề và kế hoạch tổ chức.' },
+      { title: 'Thiết kế không gian', text: 'Phối cảnh booth, backdrop, sân khấu và đạo cụ để duyệt trước khi thi công.' },
+      { title: 'Thi công & kỹ thuật', text: 'Dựng không gian, phối hợp thiết bị âm thanh, ánh sáng, LED và nhân sự kỹ thuật.' },
+      { title: 'Điều phối & ghi hình', text: 'Điều phối tại chỗ, nhân sự biểu diễn, ghi hình và tổng kết sau chương trình.' }
+    ],
+    faqs: [
+      { q: 'DANAVA có nhận thi công riêng booth, backdrop hoặc đạo cụ không?', a: 'Có. Thiết kế, thi công booth, backdrop, đạo cụ và không gian sự kiện là một hạng mục DANAVA thực hiện, có thể đặt riêng hoặc trong gói tổ chức.' },
+      { q: 'Tôi cần chuẩn bị gì để nhận báo giá?', a: 'Chỉ cần cho biết thời gian dự kiến, số lượng khách mời, địa điểm mong muốn và mục tiêu chương trình.' },
+      { q: 'Hình ảnh, video sau sự kiện có dùng được cho truyền thông không?', a: 'Có. Hình ảnh, video ghi lại tại chương trình được bàn giao để doanh nghiệp dùng cho website, Fanpage và quảng cáo.' }
+    ],
+    pricing: 'Báo giá theo quy mô chương trình, địa điểm và các hạng mục: thiết kế – thi công không gian, thiết bị kỹ thuật, nhân sự biểu diễn, điều phối và ghi hình. DANAVA gửi đề xuất chi tiết sau khi nhận thông tin chương trình.'
+  },
   travel: {
-    heroLead: 'Tour trải nghiệm, retreat yoga, hội thảo, workshop và team building, được thiết kế để mỗi chuyến đi, mỗi cuộc gặp gỡ đều có ý nghĩa.',
+    heroLead: 'Tour trải nghiệm, retreat yoga và hành trình thiết kế riêng cho từng nhóm: lịch trình, phòng nghỉ, phương tiện và vé tham quan do một đầu mối sắp xếp.',
     audience: ['Doanh nghiệp', 'Câu lạc bộ & cộng đồng', 'Trung tâm yoga', 'Nhóm khách riêng'],
     problems: [
       'Phải làm việc với nhiều đầu mối: xe, phòng, địa điểm và hậu cần.',
       'Lịch trình chung chung, chưa phù hợp mục tiêu gắn kết hay nghỉ dưỡng của nhóm.',
-      'Sự kiện thiếu kịch bản và người điều phối tại chỗ.'
+      'Khó tìm nơi vừa có không gian tập luyện vừa có lưu trú phù hợp cho nhóm yoga.'
     ],
     process: [],
     faqs: [
@@ -297,21 +319,21 @@ export const SUB_SERVICE_SEEDS: SubService[] = [
     editorNote: 'Cần bộ ảnh/video thực tế đã thực hiện cho khách hàng (có quyền sử dụng) trước khi xuất bản.'
   },
   {
-    id: 'event-corporate', parentId: 'travel', slug: 'to-chuc-su-kien-doanh-nghiep', title: 'Tổ chức sự kiện doanh nghiệp',
+    id: 'event-corporate', parentId: 'events', slug: 'to-chuc-su-kien-doanh-nghiep', title: 'Tổ chức sự kiện doanh nghiệp',
     description: 'Hội nghị, kick-off, gala và team building: kịch bản, hậu cần, truyền thông và ghi hình.',
     heroLead: 'Một đầu mối lo kịch bản, hậu cần, sân khấu và ghi hình để doanh nghiệp tập trung vào khách mời.',
     audience: ['Doanh nghiệp', 'Chuỗi cửa hàng', 'Hiệp hội & câu lạc bộ'],
-    problems: SERVICE_SEEDS.travel.problems!,
+    problems: SERVICE_SEEDS.events.problems!,
     features: [
       f('Hội nghị & hội thảo', 'Lên kịch bản, hậu cần, truyền thông và ghi hình cho sự kiện doanh nghiệp.'),
       f('Team building & gala', 'Chương trình gắn kết đội ngũ, từ hoạt động ngoài trời đến đêm gala.'),
       f('Trang trí & booth', 'Không gian sự kiện và booth theo nhận diện thương hiệu.')
     ],
-    process: PROCESS_EVENT, faqs: SERVICE_SEEDS.travel.faqs!, pricing: SERVICE_SEEDS.travel.pricing!, image: '/assets/legacy/event-group.webp', published: false, updated: '2026-11-19',
+    process: SERVICE_SEEDS.events.process!, faqs: SERVICE_SEEDS.events.faqs!.slice(1), pricing: SERVICE_SEEDS.events.pricing!, image: '/assets/legacy/event-group.webp', published: false, updated: '2026-11-19',
     editorNote: 'Ảnh hồ sơ năng lực (PNJ, LUTECH, Highlands…) cần DANAVA xác nhận vai trò thực hiện và quyền nêu tên trước khi dùng làm dự án.'
   },
   {
-    id: 'event-workshop', parentId: 'travel', slug: 'to-chuc-workshop', title: 'Tổ chức workshop',
+    id: 'event-workshop', parentId: 'events', slug: 'to-chuc-workshop', title: 'Tổ chức workshop',
     description: 'Workshop chuyên đề cho cộng đồng và khách hàng: nội dung, diễn giả, địa điểm và truyền thông.',
     heroLead: 'Những buổi chia sẻ quy mô nhỏ, tập trung vào trải nghiệm và kết nối người tham gia.',
     audience: ['Cộng đồng yoga', 'Doanh nghiệp', 'Trung tâm đào tạo'],
@@ -406,10 +428,13 @@ const fill = <T,>(value: T | undefined, fallback: T): T => (value === undefined 
 export function normalizeContent(data: SiteData): SiteData {
   const topics = fill(data.topics, TOPIC_SEEDS.map(t => ({ ...t, serviceIds: [...t.serviceIds] })));
   const topicServices = new Map(topics.map(t => [t.id, t.serviceIds]));
+  // Giải pháp mới thêm sau (vd. Sự kiện & Truyền thông) được bổ sung vào dữ liệu cũ, giữ thứ tự gốc.
+  const services = [...data.services, ...initial.services.filter(x => !data.services.some(s => s.id === x.id)).map(x => structuredClone(x))];
   return {
     ...data,
     heroTitle: fill(data.heroTitle, DEFAULT_HERO_TITLE),
-    services: data.services.map(s => {
+    showcase: fill(data.showcase, structuredClone(SHOWCASE_SEEDS)),
+    services: services.map(s => {
       const seed = SERVICE_SEEDS[s.id] || {};
       return {
         ...s,

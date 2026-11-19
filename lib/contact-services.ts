@@ -29,6 +29,12 @@ export const VALID_CONTACT_SERVICES: ValidContactService[] = [
     category: 'Truyền thông'
   },
   {
+    id: 'su-kien-truyen-thong',
+    label: 'Tổ chức sự kiện, thi công không gian & truyền thông sự kiện',
+    slug: 'su-kien-truyen-thong',
+    category: 'Sự kiện & Truyền thông'
+  },
+  {
     id: 'media-production',
     label: 'Sản xuất Video ngắn, TVC & Hình ảnh thương hiệu',
     slug: 'media',
@@ -61,6 +67,8 @@ export const VALID_BUSINESS_TYPES: string[] = [
  * Nhận diện và ánh xạ tham số URL sang dịch vụ hợp lệ trong danh sách
  * Hỗ trợ các biến thể query params: studio, danava-studio, website, marketing, travel, media...
  */
+const byId = (id: string) => VALID_CONTACT_SERVICES.find(s => s.id === id)?.label || '';
+
 export function resolveValidService(queryParam?: string | null): string {
   // Không có tham số → để khách tự chọn (không gán sẵn DANAVA Studio làm sai thống kê nhu cầu).
   if (!queryParam || !queryParam.trim()) {
@@ -84,22 +92,25 @@ export function resolveValidService(queryParam?: string | null): string {
 
   // Khớp từ khóa phổ thông
   if (needle.includes('studio') || needle.includes('gym') || needle.includes('yoga') || needle.includes('phong-tap')) {
-    return VALID_CONTACT_SERVICES[0].label;
+    return byId('danava-studio');
   }
   if (needle.includes('web') || needle.includes('landing')) {
-    return VALID_CONTACT_SERVICES[1].label;
+    return byId('thiet-ke-website');
   }
   if (needle.includes('marketing') || needle.includes('quang-cao') || needle.includes('fanpage')) {
-    return VALID_CONTACT_SERVICES[2].label;
+    return byId('digital-marketing');
   }
   if (needle.includes('media') || needle.includes('video') || needle.includes('tvc') || needle.includes('anh')) {
-    return VALID_CONTACT_SERVICES[3].label;
+    return byId('media-production');
   }
-  if (needle.includes('travel') || needle.includes('du-lich') || needle.includes('su-kien') || needle.includes('event')) {
-    return VALID_CONTACT_SERVICES[4].label;
+  if (needle.includes('event') || needle.includes('booth') || needle.includes('truyen-thong')) {
+    return byId('su-kien-truyen-thong');
+  }
+  if (needle.includes('travel') || needle.includes('du-lich') || needle.includes('retreat') || needle.includes('su-kien')) {
+    return byId('du-lich-su-kien');
   }
   if (needle.includes('tu-van') || needle.includes('chuyen-doi-so')) {
-    return VALID_CONTACT_SERVICES[5].label;
+    return byId('tu-van-chuyen-doi-so');
   }
 
   // Giá trị lạ → để khách tự chọn

@@ -87,6 +87,46 @@ export type Topic = {
   seoTitle?: string; seoDescription?: string;
 };
 
+/**
+ * Sản phẩm/chương trình trưng bày (portfolio website, chương trình sự kiện).
+ * Thứ tự hiển thị = thứ tự trong mảng (admin sắp xếp được). `featured` = khối nổi bật cỡ lớn.
+ * `caseStudy` = có trang chi tiết nội bộ /du-an/{slug}/.
+ */
+export type ShowcaseItem = {
+  id: string; slug: string;
+  /** Giải pháp chứa mục này: 'website' | 'events' | … (data.services[].id) */
+  serviceId: string;
+  name: string;
+  /** Loại sản phẩm hiển thị trên thẻ (vd. Landing page bất động sản) */
+  kind: string;
+  /** Nhóm dùng cho bộ lọc */
+  category: string;
+  description: string;
+  /** Ảnh chính (desktop) */
+  image: string;
+  /** Ảnh giao diện điện thoại (tùy chọn) */
+  mobileImage: string;
+  /** Ảnh động ghi lại chuyển động thật (WebP động, tùy chọn) và ảnh tĩnh thay thế */
+  motion: string; motionPoster: string;
+  gallery: GalleryImage[];
+  /** Địa chỉ website đang chạy (https, tùy chọn) */
+  url: string;
+  /** Địa điểm (chương trình sự kiện) */
+  place: string;
+  tags: string[];
+  /** Phạm vi DANAVA thực hiện — chỉ ghi điều đã xác nhận */
+  scope: string[];
+  featured: boolean; published: boolean;
+  caseStudy: boolean;
+  /** Nội dung trang case study */
+  intro: string;
+  highlights: Feature[];
+  /** Ghi chú công khai về vai trò (vd. không đại diện chủ đầu tư) */
+  disclaimer: string;
+  updated: string;
+  seoTitle?: string; seoDescription?: string;
+};
+
 /** Khách hàng tiêu biểu — chỉ hiển thị khi published && permission. */
 export type Client = {
   id: string; name: string; logo: string; url: string; projectId: string;
@@ -118,6 +158,7 @@ export type SiteData = {
   topics?: Topic[];
   clients?: Client[];
   testimonials?: Testimonial[];
+  showcase?: ShowcaseItem[];
 };
 
 /** Đường dẫn bài viết không được trùng các trang tĩnh trong /kien-thuc/. */
@@ -146,8 +187,9 @@ export const initial: SiteData = {
   services: [
     { id: 'website', slug: 'thiet-ke-website', title: 'Website & Landing Page', description: 'Một không gian số thể hiện đúng bản sắc và mục tiêu của doanh nghiệp.', items: ['Website doanh nghiệp, cá nhân, bán hàng và cộng đồng', 'Landing page giới thiệu dịch vụ và chiến dịch', 'Giao diện thích ứng điện thoại', 'Tổ chức nội dung và hành trình liên hệ'] },
     { id: 'studio', slug: 'danava-studio', title: 'DANAVA Studio', description: 'Phần mềm quản trị dành cho Gym, Yoga, Pilates, bể bơi và Spa.', items: ['Quản lý hội viên và gói dịch vụ', 'Lịch lớp, đặt chỗ và check-in', 'Theo dõi hạn gói và gia hạn', 'Báo cáo và phân quyền theo phạm vi gói'] },
-    { id: 'marketing', slug: 'digital-marketing', title: 'Marketing', description: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng.', items: ['Digital marketing và truyền thông tổng thể', 'Chăm sóc fanpage', 'Sản xuất nội dung, quay phim và chụp hình', 'Tư vấn kế hoạch theo mục tiêu'] },
-    { id: 'travel', slug: 'du-lich-su-kien', title: 'Du lịch & Sự kiện', description: 'Những hành trình và cuộc gặp gỡ tạo nên kết nối ý nghĩa.', items: ['Du lịch trải nghiệm và tour yoga', 'Hội nghị, hội thảo và workshop', 'Team building và gala dinner', 'Phối hợp tổ chức theo yêu cầu'] },
+    { id: 'marketing', slug: 'digital-marketing', title: 'Digital Marketing', description: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng.', items: ['Digital marketing và truyền thông tổng thể', 'Chăm sóc fanpage', 'Sản xuất nội dung, quay phim và chụp hình', 'Tư vấn kế hoạch theo mục tiêu'] },
+    { id: 'events', slug: 'su-kien-truyen-thong', title: 'Sự kiện & Truyền thông', description: 'Ý tưởng, không gian, sân khấu, thi công và điều phối cho sự kiện của doanh nghiệp.', items: ['Lễ ra mắt sản phẩm, họp báo, triển lãm, lễ kỷ niệm, gala dinner', 'Thiết kế, thi công booth, backdrop, đạo cụ và không gian sự kiện', 'Thiết bị âm thanh, ánh sáng, màn hình LED và nhân sự kỹ thuật', 'MC, DJ, ca sĩ, band nhạc, vũ đoàn và nhân sự biểu diễn', 'Roadshow, activation, sampling và truyền thông sự kiện'] },
+    { id: 'travel', slug: 'du-lich-su-kien', title: 'Du lịch trải nghiệm', description: 'Tour trải nghiệm, retreat yoga và hành trình thiết kế riêng cho từng nhóm.', items: ['Du lịch trải nghiệm và tour yoga', 'Retreat kết hợp tập luyện và nghỉ dưỡng', 'Workshop và team building cho nhóm', 'Đặt tour, phòng, xe và vé tham quan'] },
     { id: 'community', slug: 'cong-dong', title: 'Cộng đồng & Đồng hành', description: 'Kết nối cộng đồng yoga và đồng hành cùng doanh nghiệp.', items: ['Yoga Club Vietnam', 'Workshop và giao lưu cộng đồng', 'Review và chia sẻ trải nghiệm', 'Tư vấn thành lập doanh nghiệp theo thỏa thuận'] }
   ],
   posts: legacyCatalog.map(p => ({ ...p }))
@@ -227,6 +269,21 @@ function validTopic(t: unknown) {
     && strList(t.serviceIds, 10, 100) && typeof t.published === 'boolean' && optStr(t.seoTitle, 200) && optStr(t.seoDescription, 300);
 }
 
+function validShowcase(x: unknown) {
+  return object(x) && str(x.id, 100) && slug(x.slug) && initial.services.some(s => s.id === x.serviceId)
+    && str(x.name, 150) && (x.name as string).trim() !== '' && str(x.kind, 120) && str(x.category, 80) && str(x.description, 1000)
+    && safeImage(x.image) && safeImage(x.mobileImage) && safeImage(x.motion) && safeImage(x.motionPoster)
+    && Array.isArray(x.gallery) && x.gallery.length <= 24 && x.gallery.every(g => object(g) && safeImage(g.src) && g.src !== '' && str(g.caption, 300))
+    && httpsURL(x.url) && str(x.place, 150) && strList(x.tags, 8, 60) && strList(x.scope, 20, 300)
+    && typeof x.featured === 'boolean' && typeof x.published === 'boolean' && typeof x.caseStudy === 'boolean'
+    && str(x.intro, 3000) && featureList(x.highlights) && str(x.disclaimer, 500) && validDate(x.updated)
+    && optStr(x.seoTitle, 200) && optStr(x.seoDescription, 300)
+    // Không xuất bản mục không có ảnh thật (tránh khung giữ chỗ trên trang công khai)
+    && (!x.published || x.image !== '')
+    // Case study cần nội dung riêng
+    && (!x.caseStudy || (x.intro as string).trim() !== '');
+}
+
 function validClient(c: unknown) {
   return object(c) && str(c.id, 100) && str(c.name, 150) && safeImage(c.logo) && httpsURL(c.url) && str(c.projectId, 100)
     && typeof c.permission === 'boolean' && typeof c.published === 'boolean' && str(c.note, 1000)
@@ -255,6 +312,10 @@ export function validateContent(v: unknown): v is SiteData {
   if (v.topics !== undefined && (!Array.isArray(v.topics) || v.topics.length > 50 || !v.topics.every(validTopic)
     || !uniqueBy(v.topics as Topic[], t => t.id) || !uniqueBy(v.topics as Topic[], t => t.slug))) return false;
   if (v.clients !== undefined && (!Array.isArray(v.clients) || v.clients.length > 100 || !v.clients.every(validClient) || !uniqueBy(v.clients as Client[], c => c.id))) return false;
+  if (v.showcase !== undefined && (!Array.isArray(v.showcase) || v.showcase.length > 200 || !v.showcase.every(validShowcase)
+    || !uniqueBy(v.showcase as ShowcaseItem[], x => x.id) || !uniqueBy(v.showcase as ShowcaseItem[], x => x.slug)
+    // Slug case study không trùng slug dự án (cùng dùng /du-an/{slug}/)
+    || (v.showcase as ShowcaseItem[]).some(x => (v.projects as Project[] | undefined)?.some(p => p.slug === x.slug)))) return false;
   if (v.testimonials !== undefined && (!Array.isArray(v.testimonials) || v.testimonials.length > 100 || !v.testimonials.every(validTestimonial) || !uniqueBy(v.testimonials as Testimonial[], t => t.id))) return false;
   return ['staff', 'posts', 'metrics', 'services'].every(key => uniqueBy(v[key] as { id: string }[], x => x.id))
     && uniqueBy(v.posts as Post[], p => p.slug);

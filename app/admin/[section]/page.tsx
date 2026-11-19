@@ -20,6 +20,7 @@ export function generateStaticParams() {
     'giai-phap',
     'chu-de',
     'bang-chung',
+    'trung-bay',
     'cai-dat'
   ].map(section => ({ section }));
 }

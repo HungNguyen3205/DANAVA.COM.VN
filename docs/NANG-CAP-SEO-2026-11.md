@@ -50,3 +50,37 @@ Nhánh: `feature/danava-seo-upgrade`. Chưa triển khai production, chưa hợp
 - `images.unoptimized` giữ nguyên vì hosting cPanel không bảo đảm chạy sharp; ảnh đã là WebP nhưng chưa có bản nhiều kích thước (srcset).
 - Chưa thử trên MySQL thật (chỉ SQLite); cấu trúc bảng không đổi, chỉ đổi nội dung JSON.
 - Không đảm bảo thứ hạng Google hay hiển thị rich result.
+
+---
+
+# Đợt 2 — Bản sắc từng trang dịch vụ & dự án Vinhomes Hải Vân Bay
+
+## Thay đổi
+| Yêu cầu | Triển khai | File |
+|---|---|---|
+| Tách đúng dịch vụ | Thêm giải pháp **Sự kiện & Truyền thông** `/giai-phap/su-kien-truyen-thong/` nhận toàn bộ nội dung chương trình sự kiện (trước đây nằm sai ở trang Digital Marketing). `/media/`, `/truyen-thong/`, `/dich-vu/media/`, `/dich-vu/truyen-thong/` chuyển 308 sang trang mới (không tạo chuỗi). Liên kết trang chủ, hệ sinh thái, du lịch cập nhật theo | `lib/content.ts`, `lib/content-defaults.ts`, `lib/legacy-redirects.ts`, `lib/ecosystem.ts` |
+| Mỗi trang một bố cục riêng | Website: portfolio sáng tạo (nền sáng, chồng ảnh thật, thư viện so le có bộ lọc, nguyên tắc thiết kế trước thông số kỹ thuật). Sự kiện: điện ảnh nền tối, ảnh chương trình thật, chương trình nổi bật lên đầu, thanh mục lục dính, **cuộn tự nhiên** (bỏ khóa cuộn/hít từng cảnh). Digital Marketing: sơ đồ 5 khâu chiến lược → nội dung → kênh → quảng cáo → đo lường, nền giấy nhấn cam. Studio/Du lịch/Cộng đồng giữ bố cục chuẩn | `components/site/WebsitePage.tsx`, `EventsPage.tsx`, `MarketingPage.tsx`, `ServiceDetailPage.tsx`, `app/(site)/site-identity.css` |
+| Portfolio & chương trình quản trị được | Bộ sưu tập `showcase` trong CMS (mục **Portfolio & chương trình**): chọn **Nổi bật**, đổi **thứ tự** (↑↓), xuất bản, phạm vi DANAVA thực hiện, ảnh desktop/mobile/ảnh động, case study. Không cho xuất bản mục thiếu ảnh (bỏ khung “ảnh đang cập nhật” trên trang công khai) | `lib/showcase-seeds.ts`, `components/AdminContentEditors.tsx#ShowcaseEditor` |
+| Vinhomes Hải Vân Bay nổi bật nhất | Khối featured riêng (ảnh desktop lớn + điện thoại + điểm nhấn + 2 CTA “Khám phá thiết kế” / “Mở website”) đứng đầu khu portfolio trang chủ, ngay sau hero trang Website và trong /du-an/. Không lặp lại trong danh sách bên dưới. Case study nội bộ `/du-an/vinhomes-hai-van-bay-website/` | `components/site/showcase.tsx`, `ShowcaseCaseStudy.tsx` |
+| Tư liệu thật | 9 ảnh + 1 ảnh động cuộn trang (93 khung, ~530KB, chỉ tải khi cuộn tới) chụp từ website đang chạy bằng Chrome headless ngày 19/11/2026, popup khuyến mãi được đóng trước khi chụp. Nguồn ghi ở `public/assets/portfolio/vinhomes/sources.json`. Nội dung không nêu giải thưởng, số liệu, quan hệ chủ đầu tư; có ghi chú “DANAVA không phải chủ đầu tư hay đơn vị phân phối dự án” | `public/assets/portfolio/vinhomes/` |
+| Phạm vi từng chương trình sự kiện | Chỉ ghi phạm vi tư liệu nêu rõ (đạo cụ phim trường, thi công booth Ariyana, trang trí Highlands, trang trí EVERLASTIFY). PNJ, Water Run, LUTECH, CBD chưa rõ phạm vi → chỉ hiện ở “Khoảnh khắc từ các chương trình khác”, không gắn nhãn “DANAVA thực hiện” | `lib/showcase-seeds.ts` |
+| Nút nổi không che CTA | Cụm Zalo/Gọi tự trượt ra khi chồng lên nút, CTA hoặc ô nhập | `components/Shell.tsx#QuickContact` |
+| Giảm chuyển động | Ken Burns, chồng ảnh, sơ đồ marketing chỉ chạy khi `prefers-reduced-motion: no-preference`; ảnh động thay bằng ảnh tĩnh qua `<picture media>` | `site-identity.css`, `showcase.tsx` |
+| Gọn mã | Gỡ `MarketingStage.tsx` và `site-mkt.css` (~33KB CSS nạp ở mọi trang), `portfolio.ts`, `PortfolioGrid.tsx` | — |
+
+## Nghiệm thu (trình duyệt thật, production build)
+`docs/screenshots/identity/ket-qua-nghiem-thu.txt` — **52/52 PASS**:
+- 7 trang × 5 kích thước (360, 390, 768, 1024, 1440): đúng 1 H1 nói rõ dịch vụ, không tràn ngang, không ảnh hỏng, không lỗi console.
+- Vinhomes: featured đầu khu portfolio trang chủ; ngay sau hero trang Website; không lặp trong thư viện; có CTA case study + website thật.
+- Bàn phím: Tab tới bộ lọc portfolio, Enter lọc (12 → 2 mục, `aria-pressed`), viền focus 3px.
+- Sự kiện: CTA trong màn hình đầu ở 390px; mục lục dính đưa tới đúng mục; `scroll-snap-type: none`; thanh tab + nút nổi không che CTA.
+- Giảm chuyển động: tắt hiệu ứng, ảnh động Vinhomes thành ảnh tĩnh. Chế độ thường: ảnh động hiển thị.
+- `npm test` 80/80 (thêm `tests/identity.test.ts`), `tsc` sạch, `npm run build` thành công.
+Ảnh: `docs/screenshots/identity/` (1440 và 390 cho trang chủ, Website, case study Vinhomes, Sự kiện, Marketing; ảnh Website ở chế độ giảm chuyển động).
+
+## Cần DANAVA xác nhận / làm trong admin sau khi deploy
+1. **Đổi tên giải pháp** trong admin cho khớp cấu trúc mới (dữ liệu production đang lưu tên cũ, code không ghi đè): “Marketing & Truyền thông” → “Digital Marketing”; “Du lịch & Sự kiện” → “Du lịch trải nghiệm”. Phạm vi của Du lịch còn ghi “Hội nghị…/Team building…” — nên chuyển sang Sự kiện & Truyền thông.
+2. Phạm vi DANAVA thực hiện cho PNJ, Water Run, LUTECH, CBD (nhập trong Portfolio & chương trình để chúng lên thành chương trình có phạm vi).
+3. Xác nhận phạm vi Vinhomes (thiết kế + lập trình React/Vite) đúng với hợp đồng; nếu có video quay màn hình chất lượng cao hơn, thay ảnh động trong admin.
+4. Ảnh giao diện cho GLG Hotel, DANAVA Page (đang ẩn vì chưa có ảnh).
+5. Không có video chương trình sự kiện trong kho; nếu có, có thể thay ảnh hero trang Sự kiện.

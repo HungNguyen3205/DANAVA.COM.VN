@@ -16,6 +16,12 @@ export type ServiceDetail = {
 };
 
 export const SERVICE_DETAILS: Record<string, ServiceDetail> = {
+  events: {
+    blocks: [],
+    contactService: 'su-kien-truyen-thong',
+    primaryCta: 'Gửi yêu cầu tổ chức',
+    relatedEcosystem: ['media', 'digital']
+  },
   studio: {
     blocks: [{
       id: 'tinh-nang',
@@ -99,16 +105,6 @@ export const SERVICE_DETAILS: Record<string, ServiceDetail> = {
           { title: 'Tour yoga & retreat', text: 'Lịch trình kết hợp tập luyện, nghỉ dưỡng và khám phá điểm đến.' },
           { title: 'Thiết kế theo yêu cầu', text: 'Điều chỉnh lịch trình, phòng nghỉ, phương tiện theo nhu cầu và ngân sách của nhóm.' },
           { title: 'Đặt dịch vụ trọn gói', text: 'Tour, phòng, xe và vé tham quan được sắp xếp bởi một đầu mối.' }
-        ]
-      },
-      {
-        id: 'hoi-nghi',
-        eyebrow: 'Sự kiện',
-        title: 'Hội nghị, workshop và team building',
-        features: [
-          { title: 'Hội nghị & hội thảo', text: 'Lên kịch bản, hậu cần, truyền thông và ghi hình cho sự kiện doanh nghiệp.' },
-          { title: 'Workshop & giao lưu', text: 'Không gian học hỏi, chia sẻ cho cộng đồng và khách hàng của bạn.' },
-          { title: 'Team building & gala', text: 'Chương trình gắn kết đội ngũ, từ hoạt động ngoài trời đến đêm gala.' }
         ]
       }
     ],

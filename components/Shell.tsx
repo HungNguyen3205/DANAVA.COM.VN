@@ -296,9 +296,34 @@ export function QuickContact() {
   const path = usePathname() || '/';
   const { data } = useSite();
   const phone = (data.phone || CONTACT.phone).replace(/\D/g, '');
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [dodge, setDodge] = useState(false);
+
+  // Tự né: khi cụm nút nổi đang chồng lên nút bấm, liên kết CTA hoặc ô nhập liệu thì trượt ra mép màn hình.
+  useEffect(() => {
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const box = ref.current?.getBoundingClientRect();
+      if (!box) return;
+      const pad = 6;
+      const hit = [...document.querySelectorAll<HTMLElement>('main .s-btn, main input, main select, main textarea, main button, .s-footer a')].some(el => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.bottom > box.top - pad && r.top < box.bottom + pad && r.right > box.left - pad && r.left < box.right + pad;
+      });
+      setDodge(hit);
+    };
+    const req = () => { if (!raf) raf = requestAnimationFrame(check); };
+    check();
+    window.addEventListener('scroll', req, { passive: true });
+    window.addEventListener('resize', req);
+    const t = setTimeout(check, 600);
+    return () => { window.removeEventListener('scroll', req); window.removeEventListener('resize', req); cancelAnimationFrame(raf); clearTimeout(t); };
+  }, [path]);
+
   if (path.startsWith('/lien-he')) return null;
   return (
-    <div className="s-quick" aria-label="Liên hệ nhanh">
+    <div ref={ref} className={`s-quick${dodge ? ' is-dodged' : ''}`} aria-label="Liên hệ nhanh">
       <a className="s-quick__btn s-quick__btn--zalo" href={`https://zalo.me/${phone}`} target="_blank" rel="noopener noreferrer" aria-label="Nhắn Zalo cho DANAVA">
         Zalo
         <span className="s-quick__tip">Nhắn Zalo</span>

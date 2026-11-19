@@ -6,7 +6,7 @@
  */
 import { useState } from 'react';
 import MediaPicker from './MediaPicker';
-import type { Client, Faq, Feature, Service, SiteData, SubService, Testimonial, Topic } from '@/lib/content';
+import type { Client, Faq, Feature, Service, ShowcaseItem, SiteData, SubService, Testimonial, Topic } from '@/lib/content';
 
 const uid = () => globalThis.crypto.randomUUID();
 const slugify = (v: string) => v.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 100);
@@ -283,6 +283,105 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
           </details>
         ))}
       </section>
+    </div>
+  );
+}
+
+/* ------------------------------------------------ Portfolio & chương trình */
+export function ShowcaseEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+  const all = draft.showcase || [];
+  const services = draft.services.filter(s => ['website', 'events'].includes(s.id) || all.some(x => x.serviceId === s.id));
+  const [svc, setSvc] = useState(services[0]?.id || 'website');
+  const [sel, setSel] = useState('');
+  const list = all.filter(x => x.serviceId === svc);
+  const it = all.find(x => x.id === sel);
+  const save = (next: ShowcaseItem[]) => setDraft({ ...draft, showcase: next });
+  const edit = (patch: Partial<ShowcaseItem>) => save(all.map(x => (x.id === sel ? { ...x, ...patch } : x)));
+  /** Đổi chỗ với mục liền trước/sau CÙNG giải pháp (thứ tự hiển thị = thứ tự trong mảng). */
+  const move = (id: string, dir: -1 | 1) => {
+    const idx = list.findIndex(x => x.id === id);
+    const other = list[idx + dir];
+    if (!other) return;
+    const a = all.findIndex(x => x.id === id), b = all.findIndex(x => x.id === other.id);
+    const next = [...all];
+    [next[a], next[b]] = [next[b], next[a]];
+    save(next);
+  };
+  const add = () => {
+    const id = uid();
+    save([...all, { id, slug: `san-pham-${id.slice(0, 6)}`, serviceId: svc, name: 'Mục mới', kind: '', category: '', description: '', image: '', mobileImage: '', motion: '', motionPoster: '', gallery: [], url: '', place: '', tags: [], scope: [], featured: false, published: false, caseStudy: false, intro: '', highlights: [], disclaimer: '', updated: today() }]);
+    setSel(id);
+  };
+
+  return (
+    <div className="admin-post-layout">
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>Portfolio & chương trình</h2>
+          <button type="button" className="admin-secondary" onClick={add}>+ Thêm</button>
+        </div>
+        <label>
+          Giải pháp
+          <select value={svc} onChange={e => { setSvc(e.target.value); setSel(''); }}>
+            {services.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+          </select>
+        </label>
+        <p className="field-note">Thứ tự trong danh sách = thứ tự hiển thị. Mục <b>Nổi bật</b> hiện thành khối lớn (website: ngay sau phần đầu trang và đứng đầu khu portfolio trang chủ) và không lặp lại trong thư viện bên dưới. Chương trình sự kiện chỉ hiện nhãn “DANAVA thực hiện” khi có phạm vi.</p>
+        {list.map((x, i) => (
+          <div key={x.id} className="adm-row">
+            <button type="button" className="project-admin-row" aria-pressed={x.id === sel} onClick={() => setSel(x.id === sel ? '' : x.id)}>
+              {x.image ? <img src={x.image} alt="" /> : <span className="adm-thumb" aria-hidden="true" />}
+              <span><b>{x.featured ? '★ ' : ''}{x.name}</b><small>{x.published ? 'Hiển thị' : 'Ẩn'}{x.caseStudy ? ' · có case study' : ''}{!x.scope.length && svc === 'events' ? ' · chưa có phạm vi' : ''}</small></span>
+            </button>
+            <div className="row-actions">
+              <button type="button" disabled={i === 0} aria-label={`Đưa ${x.name} lên`} onClick={() => move(x.id, -1)}>↑</button>
+              <button type="button" disabled={i === list.length - 1} aria-label={`Đưa ${x.name} xuống`} onClick={() => move(x.id, 1)}>↓</button>
+            </div>
+          </div>
+        ))}
+      </section>
+      {it && (
+        <section className="admin-panel post-editor">
+          <div className="panel-heading">
+            <h2>{it.name}</h2>
+            {it.caseStudy && <a className="text-link" href={`/du-an/${it.slug}/`} target="_blank" rel="noopener">Xem case study ↗</a>}
+          </div>
+          <Toggle label="Nổi bật (khối lớn)" checked={it.featured} onChange={featured => edit({ featured })} />
+          <Toggle label={it.image ? 'Hiển thị công khai' : 'Hiển thị công khai (cần ảnh chính)'} checked={it.published} onChange={published => edit({ published: published && !!it.image })} />
+          <Text label="Tên" value={it.name} max={150} onChange={name => edit({ name })} />
+          <Text label="Đường dẫn case study (/du-an/…/)" value={it.slug} max={150} onChange={v => edit({ slug: slugify(v) })} />
+          <Text label="Loại sản phẩm / chương trình" value={it.kind} max={120} onChange={kind => edit({ kind })} />
+          <Text label="Nhóm (dùng cho bộ lọc)" value={it.category} max={80} onChange={category => edit({ category })} />
+          <Text label="Mô tả ngắn" value={it.description} area max={1000} onChange={description => edit({ description })} />
+          <Text label="Website đang chạy (https://…)" value={it.url} max={300} onChange={url => edit({ url })} />
+          <Text label="Địa điểm (chương trình sự kiện)" value={it.place} max={150} onChange={place => edit({ place })} />
+          <Lines label="Phạm vi DANAVA thực hiện (chỉ ghi điều đã xác nhận)" value={it.scope} onChange={scope => edit({ scope })} />
+          <Lines label="Thẻ (mỗi dòng một thẻ, tối đa 8)" value={it.tags} rows={2} onChange={tags => edit({ tags: tags.slice(0, 8) })} />
+          <MediaPicker label="Ảnh chính (desktop)" value={it.image} onChange={image => edit({ image })} />
+          <MediaPicker label="Ảnh điện thoại" value={it.mobileImage} onChange={mobileImage => edit({ mobileImage })} />
+          <Text label="Ảnh động ghi từ sản phẩm (đường dẫn /assets/….webp, tùy chọn)" value={it.motion} max={250} onChange={motion => edit({ motion })} />
+          <Text label="Ảnh tĩnh thay thế cho ảnh động" value={it.motionPoster} max={250} onChange={motionPoster => edit({ motionPoster })} />
+          <fieldset className="adm-fieldset">
+            <legend>Thư viện ảnh</legend>
+            {it.gallery.map((g, i) => (
+              <div key={i} className="adm-pair">
+                <MediaPicker label={`Ảnh ${i + 1}`} value={g.src} onChange={src => edit({ gallery: it.gallery.map((x, j) => (j === i ? { ...x, src } : x)).filter(x => x.src) })} />
+                <input placeholder="Chú thích" maxLength={300} value={g.caption} onChange={e => edit({ gallery: it.gallery.map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)) })} />
+                <button type="button" className="danger" onClick={() => edit({ gallery: it.gallery.filter((_, j) => j !== i) })}>Xóa ảnh</button>
+              </div>
+            ))}
+            <MediaPicker label="Thêm ảnh" value="" onChange={src => src && edit({ gallery: [...it.gallery, { src, caption: '' }] })} />
+          </fieldset>
+          <Toggle label={it.intro.trim() ? 'Có trang case study' : 'Có trang case study (cần đoạn giới thiệu)'} checked={it.caseStudy} onChange={caseStudy => edit({ caseStudy: caseStudy && !!it.intro.trim() })} />
+          <Text label="Giới thiệu case study" value={it.intro} area rows={4} max={3000} onChange={intro => edit({ intro })} />
+          <FeatureList label="Điểm nhấn thiết kế" items={it.highlights} onChange={highlights => edit({ highlights })} />
+          <Text label="Ghi chú vai trò công khai (vd. không đại diện chủ đầu tư)" value={it.disclaimer} area max={500} onChange={disclaimer => edit({ disclaimer })} />
+          <Text label="Tiêu đề SEO" value={it.seoTitle || ''} max={200} onChange={seoTitle => edit({ seoTitle })} />
+          <Text label="Mô tả SEO" value={it.seoDescription || ''} max={300} onChange={seoDescription => edit({ seoDescription })} />
+          <Text label="Ngày cập nhật" type="date" value={it.updated} onChange={updated => edit({ updated })} />
+          <button type="button" className="danger" onClick={() => { if (confirm('Xóa mục này khỏi bản chỉnh sửa?')) { save(all.filter(x => x.id !== it.id)); setSel(''); } }}>Xóa</button>
+        </section>
+      )}
     </div>
   );
 }

@@ -31,7 +31,7 @@ export default function Page() {
       {
         '@type': 'ListItem',
         position: 3,
-        name: 'DANAVA Go & Du lịch Trải nghiệm',
+        name: 'Du lịch trải nghiệm & DANAVA Go',
         url: `${siteURL}/giai-phap/du-lich-su-kien/`
       },
       {

@@ -15,7 +15,7 @@ import { Icon } from './AdminIcons';
 import { useAdminLeads } from './adminData';
 import { initial, validateContent, type SiteData, type Post } from '@/lib/content';
 import { useSite } from './SiteStore';
-import { ServicesEditor, TopicsEditor, ProofEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
+import { ServicesEditor, TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
 export const adminSections = [
   'tong-quan',
   'khach-hang',
@@ -30,6 +30,7 @@ export const adminSections = [
   'giai-phap',
   'chu-de',
   'bang-chung',
+  'trung-bay',
   'cai-dat',
 ];
 const uid = () => globalThis.crypto.randomUUID();
@@ -72,7 +73,8 @@ function AdminWorkspace({ section }: { section: string }) {
       ...d,
       services: d.services.map(x => ({ ...x, faqs: cleanFeatures(x.faqs), process: cleanFeatures(x.process), items: x.items.map(i => i.trim()).filter(Boolean), audience: (x.audience || []).filter(i => i.trim()), problems: (x.problems || []).filter(i => i.trim()) })),
       subServices: (d.subServices || []).map(x => ({ ...x, faqs: cleanFeatures(x.faqs), process: cleanFeatures(x.process), features: cleanFeatures(x.features), audience: x.audience.filter(i => i.trim()), problems: x.problems.filter(i => i.trim()) })),
-      projects: (d.projects || []).map(x => ({ ...x, scope: (x.scope || []).map(i => i.trim()).filter(Boolean) }))
+      projects: (d.projects || []).map(x => ({ ...x, scope: (x.scope || []).map(i => i.trim()).filter(Boolean) })),
+      showcase: (d.showcase || []).map(x => ({ ...x, scope: x.scope.map(i => i.trim()).filter(Boolean), tags: x.tags.map(i => i.trim()).filter(Boolean), highlights: cleanFeatures(x.highlights) }))
     };
   }
   async function persist() {
@@ -565,6 +567,7 @@ function AdminWorkspace({ section }: { section: string }) {
         {section === 'giai-phap' && <ServicesEditor draft={draft} setDraft={setDraft} />}
         {section === 'chu-de' && <TopicsEditor draft={draft} setDraft={setDraft} />}
         {section === 'bang-chung' && <ProofEditor draft={draft} setDraft={setDraft} />}
+        {section === 'trung-bay' && <ShowcaseEditor draft={draft} setDraft={setDraft} />}
         {section === 'cai-dat' && (
           <div className="admin-two">
             <section className="admin-panel">

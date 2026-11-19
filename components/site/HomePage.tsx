@@ -12,12 +12,11 @@ import type { SiteData } from '@/lib/content';
 import { company } from '@/lib/company';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { defaultPresentation } from '@/lib/presentation';
-import { knowledgePosts, publicClients, publicTestimonials, publishedProjects, serviceHref, sortServices, visibleMetrics, projectHref } from '@/lib/site-queries';
+import { showcaseFor, splitFeatured, knowledgePosts, publicClients, publicTestimonials, publishedProjects, serviceHref, sortServices, visibleMetrics, projectHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, formatDate } from './catalog';
 import { CheckList, IconTile } from './ui';
 import { StudioShowcase } from './StudioShowcase';
-import { PORTFOLIO } from './portfolio';
-import { PortfolioGrid } from './PortfolioGrid';
+import { FeaturedShowcase, ShowcaseStrip } from './showcase';
 import { StaffAvatar } from './TeamPage';
 import { ProjectTile, PostTile, Testimonials, JsonLd, faqLD } from './blocks';
 import { HeroSlides, SolutionsExplorer, Reveal, type SolutionItem } from './HomeClient';
@@ -34,15 +33,16 @@ const SLIDES = [
 
 const PILLARS = [
   { icon: Cpu, title: 'Công nghệ', text: 'Phần mềm DANAVA Studio, website & landing page.', href: '/giai-phap/danava-studio/' },
-  { icon: Megaphone, title: 'Marketing', text: 'Digital marketing, nội dung, quay phim, chụp ảnh.', href: '/giai-phap/digital-marketing/' },
-  { icon: PartyPopper, title: 'Trải nghiệm', text: 'Sự kiện, du lịch trải nghiệm và cộng đồng.', href: '/giai-phap/du-lich-su-kien/' }
+  { icon: Megaphone, title: 'Marketing', text: 'Chiến lược, nội dung, Fanpage, quảng cáo, đo lường.', href: '/giai-phap/digital-marketing/' },
+  { icon: PartyPopper, title: 'Sự kiện', text: 'Sân khấu, không gian thương hiệu, truyền thông sự kiện.', href: '/giai-phap/su-kien-truyen-thong/' }
 ];
 
 const ECO_IMAGES: Record<string, string> = {
   studio: '/assets/presentation/studio-dashboard.webp',
-  website: '/assets/portfolio/danava-go.webp',
-  marketing: `${PF}waterrun-3.webp`,
-  travel: '/assets/legacy/travel.webp',
+  website: '/assets/portfolio/vinhomes/desktop-hero.webp',
+  marketing: '/assets/legacy/event-session.webp',
+  events: `${PF}set-stage.webp`,
+  travel: '/assets/legacy/community.webp',
   community: '/assets/legacy/community.webp'
 };
 
@@ -64,6 +64,9 @@ export default function HomePage({ data }: { data: SiteData }) {
     const featured = list.filter(p => p.featured);
     return (featured.length ? featured : list).slice(0, 3);
   })();
+  const web = splitFeatured(showcaseFor(data, 'website'));
+  const webLead = web.featured[0];
+  const webMore = [...web.featured.slice(1), ...web.rest].slice(0, 4);
   const posts = knowledgePosts(data).slice(0, 3);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
   const staff = data.staff.filter(p => p.visible).slice(0, 5);
@@ -176,34 +179,39 @@ export default function HomePage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      {/* 5 · Dự án tiêu biểu */}
-      {(projects.length > 0 || PORTFOLIO.length > 0) && (
-        <section className="s-section s-section--soft" aria-labelledby="home-projects">
-          <div className="s-container">
-            <div className="u-head-row s-mb">
-              <div className="s-heading">
-                <p className="s-eyebrow">Dự án tiêu biểu</p>
-                <h2 className="s-h2" id="home-projects">Case study và sản phẩm <span className="s-hl">đang chạy thật</span></h2>
-              </div>
-              <Link className="s-link" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+      {/* 5 · Dự án tiêu biểu — dự án website nổi bật đứng đầu, sau đó case study và sản phẩm khác */}
+      <section className="s-section s-section--soft h-portfolio" aria-labelledby="home-projects">
+        <div className="s-container">
+          <div className="u-head-row s-mb">
+            <div className="s-heading">
+              <p className="s-eyebrow">Dự án tiêu biểu</p>
+              <h2 className="s-h2" id="home-projects">Sản phẩm <span className="s-hl">đang chạy thật</span></h2>
             </div>
-            {projects.length > 0 && (
+            <Link className="s-link" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+          </div>
+          {webLead && <FeaturedShowcase item={webLead} headingLevel="h3" eyebrow="Dự án thiết kế website nổi bật" id="home-featured-web" />}
+          {projects.length > 0 && (
+            <div className="u-subblock">
+              <div className="u-head-row">
+                <h3 className="s-h4">Case study DANAVA Studio</h3>
+                <Link className="s-link" href="/giai-phap/danava-studio/">Về DANAVA Studio <ArrowRight aria-hidden="true" /></Link>
+              </div>
               <div className={`s-grid s-snap ${projects.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
                 {projects.map(p => <ProjectTile key={p.id} p={p} />)}
               </div>
-            )}
-            {PORTFOLIO.length > 0 && (
-              <div className="u-subblock h-works">
-                <div className="u-head-row">
-                  <h3 className="s-h4">Website & nền tảng DANAVA đã xây dựng</h3>
-                  <Link className="s-link" href="/giai-phap/thiet-ke-website/#du-an-web">Xem {PORTFOLIO.length} sản phẩm <ArrowRight aria-hidden="true" /></Link>
-                </div>
-                <PortfolioGrid items={PORTFOLIO.filter(p => p.image).slice(0, 3)} />
+            </div>
+          )}
+          {webMore.length > 0 && (
+            <div className="u-subblock">
+              <div className="u-head-row">
+                <h3 className="s-h4">Website & nền tảng khác</h3>
+                <Link className="s-link" href="/giai-phap/thiet-ke-website/#du-an-web">Xem portfolio website <ArrowRight aria-hidden="true" /></Link>
               </div>
-            )}
-          </div>
-        </section>
-      )}
+              <ShowcaseStrip items={webMore} />
+            </div>
+          )}
+        </div>
+      </section>
 
       <Testimonials items={testimonials} />
 

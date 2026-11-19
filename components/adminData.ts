@@ -45,6 +45,7 @@ export const adminNav: {
       { slug: 'trang-chu', icon: 'layout', label: 'Trang chủ', desc: 'Tiêu đề H1, thông điệp thương hiệu và câu mô tả ở màn mở đầu.' },
       { slug: 'trinh-chieu', icon: 'play', label: 'Trình chiếu', desc: 'Nội dung 5 cảnh mở đầu và sơ đồ hệ sinh thái DANAVA.' },
       { slug: 'bai-viet', icon: 'file', label: 'Bài viết', desc: 'Viết, chỉnh sửa và xuất bản bài cho mục Kiến thức: danh mục, tác giả, giải pháp liên quan, SEO.' },
+      { slug: 'trung-bay', icon: 'globe', label: 'Portfolio & chương trình', desc: 'Website, landing page và chương trình sự kiện đã thực hiện: chọn mục nổi bật, sắp xếp thứ tự, phạm vi và case study.' },
       { slug: 'du-an', icon: 'briefcase', label: 'Dự án', desc: 'Hồ sơ dự án đã triển khai. Dự án chỉ hiện công khai khi bật xuất bản và lưu.' },
       { slug: 'giai-phap', icon: 'layers', label: 'Giải pháp', desc: 'Nội dung, FAQ, quy trình, chi phí, SEO của từng giải pháp và các trang dịch vụ con.' },
       { slug: 'chu-de', icon: 'menu', label: 'Danh mục kiến thức', desc: 'Nhóm chủ đề cho mục Kiến thức, gắn với giải pháp liên quan.' },

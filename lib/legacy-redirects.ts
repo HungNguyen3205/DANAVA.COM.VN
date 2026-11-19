@@ -237,22 +237,22 @@ export const legacyRedirects=[
   },
   {
     "source": "/media/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/su-kien-truyen-thong/",
     "permanent": true
   },
   {
     "source": "/dich-vu/media/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/su-kien-truyen-thong/",
     "permanent": true
   },
   {
     "source": "/truyen-thong/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/su-kien-truyen-thong/",
     "permanent": true
   },
   {
     "source": "/dich-vu/truyen-thong/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/su-kien-truyen-thong/",
     "permanent": true
   },
   {

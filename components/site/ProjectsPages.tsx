@@ -6,6 +6,7 @@ import type { Project } from '@/lib/content';
 import { useSite } from '../SiteStore';
 import { excerpt } from './catalog';
 import { PageHead, CtaBand, Visual } from './ui';
+import { FeaturedShowcase, ShowcaseStrip } from './showcase';
 
 export { getProjectTeam, findProject, projectGallery } from './project-helpers';
 
@@ -43,6 +44,10 @@ export function ProjectsIndex() {
   const industries = useMemo(() => Array.from(new Set(projects.map(p => p.industry || '').filter(Boolean))), [projects]);
   const [filter, setFilter] = useState('all');
   const shown = filter === 'all' ? projects : projects.filter(p => p.industry === filter);
+  const web = (data.showcase || []).filter(x => x.published && x.serviceId === 'website');
+  const webCase = web.filter(x => x.caseStudy);
+  const webLead = webCase.find(x => x.featured) || webCase[0];
+  const webMore = web.filter(x => x !== webLead).slice(0, 4);
 
   return (
     <main id="main">
@@ -74,6 +79,18 @@ export function ProjectsIndex() {
           )}
         </div>
       </section>
+      {webLead && (
+        <section className="s-section s-section--soft" aria-labelledby="proj-web">
+          <div className="s-container">
+            <div className="s-heading s-mb">
+              <p className="s-eyebrow">Thiết kế website</p>
+              <h2 className="s-h2" id="proj-web">Case study website</h2>
+            </div>
+            <FeaturedShowcase item={webLead} headingLevel="h3" eyebrow="Dự án thiết kế website nổi bật" id="proj-web-featured" />
+            {webMore.length > 0 && <div className="u-subblock"><ShowcaseStrip items={webMore} /></div>}
+          </div>
+        </section>
+      )}
       <CtaBand title="Dự án tiếp theo có thể là của bạn" lead="Chia sẻ bài toán của doanh nghiệp, DANAVA sẽ đề xuất cách triển khai phù hợp." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
