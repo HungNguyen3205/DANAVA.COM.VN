@@ -208,6 +208,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
               <div className="c-field c-field--full">
                 <label className="c-sr" htmlFor="contact-service">Dịch vụ quan tâm</label>
                 <select id="contact-service" name="service" value={fields.service} onChange={set('service')}>
+                  <option value="">Dịch vụ quan tâm (chưa chọn)</option>
                   {VALID_CONTACT_SERVICES.map(s => <option key={s.id} value={s.label}>{s.label}</option>)}
                 </select>
               </div>

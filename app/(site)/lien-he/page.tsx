@@ -1,9 +1,10 @@
-import { seo, jsonLD, siteURL } from '@/lib/seo';
+import { seo, jsonLD, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
+import { CONTACT } from '@/lib/company';
 import { ContactPage } from '@/components/site/ContactPage';
 import { resolveValidService } from '@/lib/contact-services';
 
 export const metadata = seo(
-  'Liên hệ DANAVA Solutions — Tư vấn Giải pháp & Báo giá',
+  'Liên hệ tư vấn và báo giá',
   'Trao đổi trực tiếp với DANAVA Solutions qua hotline 0935 91 76 77, email hello@danava.vn hoặc gửi yêu cầu tư vấn số hóa phòng tập và truyền thông trực tuyến.',
   '/lien-he/',
   '/assets/legacy/travel.webp'
@@ -18,17 +19,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     name: 'Liên hệ DANAVA Solutions',
     description: 'Trang tiếp nhận yêu cầu tư vấn phần mềm quản lý phòng tập, thiết kế website và truyền thông đa kênh.',
     url: `${siteURL}/lien-he/`,
+    // Địa điểm văn phòng (thông tin đã xác minh, khớp nội dung hiển thị trên trang).
     mainEntity: {
-      '@type': 'Organization',
+      '@type': 'LocalBusiness',
+      '@id': `${siteURL}/lien-he/#office`,
       name: 'DANAVA Solutions',
-      telephone: '0935917677',
-      email: 'hello@danava.vn',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: '08 Đặng Vũ Hỷ, An Hải',
-        addressLocality: 'Đà Nẵng',
-        addressCountry: 'VN'
-      }
+      parentOrganization: { '@id': ORG_ID },
+      url: `${siteURL}/`,
+      image: `${siteURL}/assets/danava-logo.png`,
+      telephone: CONTACT.phone,
+      email: CONTACT.email,
+      address: { '@type': 'PostalAddress', streetAddress: CONTACT.street, addressLocality: CONTACT.city, addressCountry: 'VN' },
+      openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '18:00' }]
     }
   };
 
@@ -38,6 +40,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLD(schemaData) }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLD(breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Liên hệ', href: '/lien-he/' }])) }} />
       <ContactPage initialService={initialService} />
     </>
   );

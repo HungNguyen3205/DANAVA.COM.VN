@@ -1,1 +1,17 @@
-import ArticleReader from'@/components/ArticleReader';export const metadata={title:'Đọc bài viết',robots:{index:false,follow:false}};export default ArticleReader;
+import { notFound, permanentRedirect } from 'next/navigation';
+import { getContent } from '@/lib/database';
+
+/**
+ * Đường dẫn đọc nhanh cũ /kien-thuc/doc/?id=<mã bài> → chuyển hướng 308 về URL chính thức của bài.
+ * Mã không tồn tại hoặc bài chưa xuất bản → 404 thật.
+ */
+export const metadata = { title: 'Đọc bài viết', robots: { index: false, follow: false } };
+
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const raw = (await searchParams).id;
+  const id = Array.isArray(raw) ? raw[0] : raw;
+  if (!id) notFound();
+  const post = (await getContent()).data.posts.find(p => p.id === id && p.published);
+  if (!post) notFound();
+  permanentRedirect(`/kien-thuc/${post.slug}/`);
+}

@@ -64,19 +64,11 @@ export const SERVICE_META: Record<string, { icon: LucideIcon; tone: Tone; group:
 
 export const serviceMeta = (s: Service) => SERVICE_META[s.id] || { icon: Handshake, tone: 'blue' as Tone, group: 'trai-nghiem' as GroupId, kicker: 'Giải pháp' };
 
-/** Thứ tự ưu tiên hiển thị giải pháp: sản phẩm chủ lực trước. */
-export const SERVICE_ORDER = ['studio', 'website', 'marketing', 'travel', 'community'];
-export const sortServices = (list: Service[]) =>
-  [...list].sort((a, b) => (SERVICE_ORDER.indexOf(a.id) + 99) % 99 - (SERVICE_ORDER.indexOf(b.id) + 99) % 99);
+/** Thứ tự ưu tiên hiển thị giải pháp: sản phẩm chủ lực trước (lib/site-queries.ts). */
+export { SERVICE_ORDER, sortServices } from '@/lib/site-queries';
 
-export const CONTACT = {
-  phone: '0935917677',
-  phoneDisplay: '0935 91 76 77',
-  email: 'hello@danava.vn',
-  supportEmail: 'support@danava.vn',
-  address: '08 Đặng Vũ Hỷ, An Hải, Đà Nẵng',
-  mapUrl: 'https://maps.google.com/?q=08+%C4%90%E1%BA%B7ng+V%C5%A9+H%E1%BB%B7,+An+H%E1%BA%A3i,+%C4%90%C3%A0+N%E1%BA%B5ng'
-};
+export { CONTACT } from '@/lib/company';
+import { CONTACT } from '@/lib/company';
 
 /** Định dạng số điện thoại CMS thành dạng dễ đọc: 0935 91 76 77 */
 export function formatPhone(raw: string | undefined) {

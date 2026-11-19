@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Nâng cấp cấu trúc nội dung & SEO (11/2026)
+   Khối mới trên trang chủ, trang dịch vụ, case study, kiến thức. Dùng lại token màu/bo góc hiện có.
+   ========================================================================== */
+
+/* Ảnh có khai báo width/height (chống dịch chuyển bố cục) giữ tỉ lệ; mọi quy tắc có class vẫn được ưu tiên. */
+:where(.s-app) :where(img[width][height]) { height: auto; max-width: 100%; }
+
+/* ---------- Hero trang chủ: H1 định vị + thông điệp thương hiệu ---------- */
+.h-hero__title.u-hero-title {
+  max-width: 17ch;
+  font-size: clamp(36px, 5.4vw, 76px);
+  line-height: 1.08;
+  animation: h-rise 1.2s .2s both;
+  text-wrap: balance;
+}
+.u-hero-brand {
+  margin: 14px 0 0;
+  width: fit-content;
+  font-family: var(--h-serif);
+  font-style: italic;
+  font-size: clamp(26px, 3.2vw, 44px);
+  line-height: 1.2;
+  padding: .06em .08em .1em 0;
+  background: linear-gradient(95deg, #ffe08a 0%, var(--h-gold) 45%, var(--h-orange) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: h-rise 1.2s .35s both;
+}
+@media (max-width: 600px) {
+  .h-hero__title.u-hero-title { font-size: clamp(30px, 8.6vw, 40px); max-width: none; }
+  .h-hero__eyebrow { letter-spacing: .16em; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .h-hero__title.u-hero-title, .u-hero-brand { animation: none; }
+}
+
+/* ---------- Hàng tiêu đề + liên kết ---------- */
+.u-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; }
+.u-head-row > .s-heading { margin: 0; }
+.u-subblock { margin-top: clamp(40px, 6vw, 64px); }
+.u-subblock .u-head-row { margin-bottom: 20px; align-items: center; }
+
+/* ---------- 2 · Khách hàng tiêu biểu ---------- */
+.u-proof { background: #fff; border-bottom: 1px solid var(--s-line); }
+.u-proof__inner { display: flex; align-items: center; justify-content: space-between; gap: 18px 40px; flex-wrap: wrap; padding-top: 26px; padding-bottom: 26px; }
+.u-proof__title { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--s-muted); }
+.u-proof__clients { display: flex; flex-wrap: wrap; gap: 12px 14px; margin: 0; padding: 0; list-style: none; }
+.u-proof__clients a, .u-proof__clients > li > span {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 18px;
+  border: 1px solid var(--s-line); border-radius: 999px; background: var(--s-soft); color: var(--s-ink); text-decoration: none;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.u-proof__clients a:hover { border-color: var(--s-blue); background: var(--s-blue-soft); transform: translateY(-2px); }
+.u-proof__clients a:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 2px; }
+.u-proof__name { font-weight: 800; letter-spacing: -.01em; }
+.u-proof__clients small { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--s-blue); }
+.u-proof__clients small svg { width: 14px; height: 14px; }
+.u-proof__clients img { display: block; height: 32px; width: auto; }
+.u-proof__metrics { display: flex; gap: 28px; margin: 0; }
+.u-proof__metrics div { display: flex; flex-direction: column-reverse; }
+.u-proof__metrics dt { font-size: 13px; color: var(--s-muted); }
+.u-proof__metrics dd { margin: 0; font-size: 26px; font-weight: 800; color: var(--s-ink); }
+
+/* ---------- 8 · Đội ngũ trên trang chủ ---------- */
+.u-team { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.u-team a { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 16px; background: #fff; border: 1px solid var(--s-line); color: var(--s-ink); text-decoration: none; transition: transform .2s, box-shadow .2s; }
+.u-team a:hover { transform: translateX(4px); box-shadow: var(--s-shadow); }
+.u-team a:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 2px; }
+.u-team .s-avatar { width: 52px; height: 52px; flex: none; }
+.u-team strong { display: block; font-size: 16px; }
+.u-team small { display: block; color: var(--s-muted); font-size: 13px; }
+
+/* ---------- 10 · FAQ + liên hệ ---------- */
+.u-faq-contact { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: start; }
+.u-faq-contact .s-faq { margin-top: 22px; }
+.u-contact-card { position: sticky; top: calc(var(--s-header-h) + 20px); padding: clamp(22px, 3vw, 32px); border-radius: var(--s-radius-lg); background: var(--s-navy); color: #fff; box-shadow: var(--s-shadow-lg); }
+.u-contact-card .s-h3 { color: #fff; margin: 0 0 8px; }
+.u-contact-card .s-text { color: rgba(255, 255, 255, .8); }
+.u-contact-card__actions { display: grid; gap: 10px; margin: 20px 0; }
+.u-contact-card__actions .s-btn--secondary { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .35); }
+.u-contact-card__actions .s-btn--secondary:hover { background: rgba(255, 255, 255, .08); }
+.u-contact-card__list { display: grid; gap: 12px; margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgba(255, 255, 255, .14); font-size: 15px; }
+.u-contact-card__list li { display: flex; gap: 10px; align-items: flex-start; color: rgba(255, 255, 255, .86); }
+.u-contact-card__list svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--h-gold, #ffc233); }
+.u-contact-card__list a { color: #fff; text-decoration: none; min-height: 24px; }
+.u-contact-card__list a:hover { text-decoration: underline; }
+@media (max-width: 900px) {
+  .u-faq-contact { grid-template-columns: 1fr; }
+  .u-contact-card { position: static; }
+}
+
+/* ---------- Trang dịch vụ: vấn đề thường gặp ---------- */
+.u-problems { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.u-problems li { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: var(--s-radius); background: var(--s-orange-soft); border: 1px solid #fde3c4; color: var(--s-ink); line-height: 1.55; }
+.u-problems svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: #c2620a; }
+
+/* ---------- Chi phí & báo giá ---------- */
+.u-pricing { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px 24px; align-items: center; padding: clamp(20px, 3vw, 32px); border-radius: var(--s-radius-lg); border: 1px solid var(--s-line); background: #fff; box-shadow: var(--s-shadow); }
+.u-pricing .s-h3 { margin: 4px 0 6px; }
+.u-pricing__actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+@media (max-width: 800px) {
+  .u-pricing { grid-template-columns: 1fr; }
+  .u-pricing__actions { justify-content: flex-start; }
+}
+
+/* ---------- Nhận xét khách hàng ---------- */
+.u-quote { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.u-quote > svg { width: 28px; height: 28px; color: var(--s-orange); }
+.u-quote blockquote { margin: 0; font-size: 17px; line-height: 1.65; color: var(--s-ink); }
+.u-quote figcaption { display: flex; gap: 12px; align-items: center; margin-top: auto; font-size: 14px; color: var(--s-muted); }
+.u-quote figcaption img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.u-quote figcaption strong { display: block; color: var(--s-ink); }
+
+/* ---------- Bản nháp (chỉ admin nhìn thấy) ---------- */
+.u-draft { position: sticky; top: var(--s-header-h); z-index: 30; padding: 10px var(--s-gutter); background: #fff4e8; border-bottom: 1px solid #f6c58f; color: #7a3d00; font-size: 14px; text-align: center; }
+
+/* ---------- Danh sách liên kết ---------- */
+.u-linklist { display: grid; gap: 4px; margin: 16px 0 0; padding: 0; list-style: none; }
+.u-linklist a { display: inline-flex; align-items: center; min-height: 44px; color: var(--s-blue); font-weight: 600; text-decoration: none; }
+.u-linklist a:hover { text-decoration: underline; }
+.u-linklist--dates li { display: flex; justify-content: space-between; gap: 16px; align-items: center; border-bottom: 1px solid var(--s-line); }
+.u-linklist--dates time { flex: none; font-size: 13px; color: var(--s-muted); }
+@media (max-width: 600px) { .u-linklist--dates li { flex-direction: column; align-items: flex-start; gap: 0; padding-bottom: 8px; } .u-linklist--dates a { min-height: 40px; } }
+
+/* ---------- Kiến thức: thanh danh mục ---------- */
+.u-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 clamp(24px, 4vw, 40px); padding: 6px; border-radius: 999px; background: var(--s-soft); width: fit-content; max-width: 100%; }
+.u-topics .s-tab { text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
+.u-topics .s-tab[aria-current='page'] { background: #fff; color: var(--s-ink); box-shadow: var(--s-shadow); }
+@media (max-width: 760px) {
+  .u-topics { flex-wrap: nowrap; overflow-x: auto; border-radius: 16px; width: auto; margin-left: calc(var(--s-gutter) * -1); margin-right: calc(var(--s-gutter) * -1); padding: 6px var(--s-gutter); background: transparent; scrollbar-width: none; }
+  .u-topics::-webkit-scrollbar { display: none; }
+  .u-topics .s-tab { flex: none; background: var(--s-soft); }
+}
+.u-topic-sec + .u-topic-sec { padding-top: 0; }
+.u-topic-sec { scroll-margin-top: calc(var(--s-header-h) + 16px); }
+
+/* ---------- Bài viết: CTA giải pháp liên quan ---------- */
+.u-article-cta { margin-top: 40px; padding: 22px 24px; border-radius: var(--s-radius); background: var(--s-blue-soft); border: 1px solid #d6def3; }
+.u-article-cta .s-text { margin: 6px 0 14px; }
+.s-article-meta a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.s-prose h3 { scroll-margin-top: calc(var(--s-header-h) + 24px); }
+
+/* ---------- /ve-danava/: định hướng, hành trình có ảnh, khoảnh khắc ---------- */
+.u-goals { margin: 0; padding: 0; list-style: none; }
+.u-goals__n { display: block; font-family: var(--h-serif, Georgia, serif); font-style: italic; font-size: 34px; color: var(--s-orange); margin-bottom: 6px; }
+.u-timeline-img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 14px; margin-bottom: 14px; }
+.u-moments { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.u-moments figure { position: relative; margin: 0; overflow: hidden; border-radius: 16px; aspect-ratio: 4 / 3; background: var(--s-soft); }
+.u-moments figure:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+.u-moments img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.u-moments figure:hover img { transform: scale(1.04); }
+.u-moments figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 12px 10px; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(transparent, rgba(11, 19, 43, .78)); }
+@media (max-width: 760px) {
+  .u-moments { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .u-moments figure:first-child { grid-column: span 2; grid-row: auto; aspect-ratio: 16 / 10; }
+}
+@media (prefers-reduced-motion: reduce) { .u-moments img { transition: none; } .u-moments figure:hover img { transform: none; } }
+
+/* ---------- Mega menu: trang dịch vụ con ---------- */
+.s-mega__subs { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 10px 16px 4px; font-size: 13px; color: var(--s-muted); }
+.s-mega__subs a { color: var(--s-blue); font-weight: 600; text-decoration: none; }
+.s-mega__subs a:hover { text-decoration: underline; }
+
+/* Nút có nhãn dài trong khối báo giá / CTA bài viết: cho xuống dòng thay vì tràn khung trên điện thoại */
+.u-pricing, .u-pricing > div { min-width: 0; }
+.u-pricing .s-btn, .u-article-cta .s-btn, .u-contact-card .s-btn { white-space: normal; text-align: center; height: auto; min-height: 44px; }
+@media (max-width: 600px) { .u-pricing__actions .s-btn, .u-article-cta .s-btn { width: 100%; justify-content: center; } }

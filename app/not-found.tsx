@@ -14,6 +14,7 @@ import './(site)/site-mkt.css';
 import './(site)/site-home.css';
 import './(site)/site-theme.css';
 import './(site)/site-app.css';
+import './(site)/site-upgrade.css';
 
 /**
  * 404 toàn cục (URL không khớp route nào): nằm ngoài nhóm (site) nên tự nạp stylesheet và khung website.
@@ -21,7 +22,7 @@ import './(site)/site-app.css';
  * vì layout (site) đã có header/footer (tránh lặp 2 header + 2 footer).
  */
 export const metadata: Metadata = {
-  title: '404 — Không tìm thấy trang | DANAVA Solutions',
+  title: '404 — Không tìm thấy trang',
   description: 'Trang bạn đang tìm kiếm không tồn tại hoặc đã được chuyển sang địa chỉ mới trên website DANAVA Solutions.',
   robots: {
     index: false,
@@ -93,7 +94,7 @@ export function NotFoundContent() {
         </div>
 
         <p className="not-found-note">
-          Cần hỗ trợ kỹ thuật gấp? Hotline 24/7 <a href="tel:0935917677">0935 91 76 77</a> · Email <a href="mailto:support@danava.vn">support@danava.vn</a>
+          Cần hỗ trợ? Hotline <a href="tel:0935917677">0935 91 76 77</a> (Thứ Hai – Thứ Bảy, 08:00 – 18:00) · Email <a href="mailto:support@danava.vn">support@danava.vn</a>
         </p>
       </div>
     </main>

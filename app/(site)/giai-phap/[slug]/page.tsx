@@ -1,38 +1,42 @@
 import { notFound } from 'next/navigation';
-import { ServiceDetail } from '@/components/site/ServicesPages';
+import { ServiceDetailPage } from '@/components/site/ServiceDetailPage';
+import { JsonLd } from '@/components/site/blocks';
 import { getContent } from '@/lib/database';
-import { seo, jsonLD, siteURL } from '@/lib/seo';
+import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta } from '@/lib/seo';
+import { findService } from '@/lib/site-queries';
 import { servicePhotos } from '@/lib/media';
 
-const find = async (slug: string) => (await getContent()).data.services.find(s => s.slug === slug);
+type Params = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
-  const s = await find(slug);
-  return s ? seo(`${s.title} — DANAVA Solutions`, s.description, `/giai-phap/${slug}/`, servicePhotos[s.id]) : { title: 'Không tìm thấy', robots: { index: false } };
+  const s = findService((await getContent()).data, slug);
+  if (!s) return notFoundMeta;
+  return seo(s.seoTitle || s.title, s.seoDescription || s.heroLead || s.description, `/giai-phap/${s.slug}/`, s.image || servicePhotos[s.id]);
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+export default async function Page({ params }: Params) {
   const { slug } = await params;
-  const s = await find(slug);
+  const { data } = await getContent();
+  const s = findService(data, slug);
   if (!s) notFound();
+  const url = `${siteURL}/giai-phap/${s.slug}/`;
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLD({
-            '@context': 'https://schema.org',
-            '@type': 'Service',
-            name: s.title,
-            description: s.description,
-            url: `${siteURL}/giai-phap/${slug}/`,
-            provider: { '@type': 'Organization', name: 'DANAVA Solutions', url: siteURL },
-            areaServed: 'VN'
-          })
-        }}
-      />
-      <ServiceDetail service={s} />
+      <JsonLd value={{
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        '@id': `${url}#service`,
+        name: s.title,
+        description: s.heroLead || s.description,
+        url,
+        serviceType: s.title,
+        provider: { '@id': ORG_ID },
+        areaServed: { '@type': 'Country', name: 'Việt Nam' },
+        ...(s.audience?.length ? { audience: { '@type': 'BusinessAudience', audienceType: s.audience.join(', ') } } : {})
+      }} />
+      <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Giải pháp', href: '/giai-phap/' }, { label: s.title, href: `/giai-phap/${s.slug}/` }])} />
+      <ServiceDetailPage service={s} data={data} />
     </>
   );
 }

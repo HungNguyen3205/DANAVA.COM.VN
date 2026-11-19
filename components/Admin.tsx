@@ -15,6 +15,7 @@ import { Icon } from './AdminIcons';
 import { useAdminLeads } from './adminData';
 import { initial, validateContent, type SiteData, type Post } from '@/lib/content';
 import { useSite } from './SiteStore';
+import { ServicesEditor, TopicsEditor, ProofEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
 export const adminSections = [
   'tong-quan',
   'khach-hang',
@@ -27,6 +28,8 @@ export const adminSections = [
   'bai-viet',
   'nhan-su',
   'giai-phap',
+  'chu-de',
+  'bang-chung',
   'cai-dat',
 ];
 const uid = () => globalThis.crypto.randomUUID();
@@ -63,10 +66,20 @@ function AdminWorkspace({ section }: { section: string }) {
     addEventListener('beforeunload', warn);
     return () => removeEventListener('beforeunload', warn);
   }, [dirty]);
+  /** Bỏ dòng trống trong danh sách (FAQ, quy trình, tính năng) trước khi lưu. */
+  function cleaned(d: SiteData): SiteData {
+    return {
+      ...d,
+      services: d.services.map(x => ({ ...x, faqs: cleanFeatures(x.faqs), process: cleanFeatures(x.process), items: x.items.map(i => i.trim()).filter(Boolean), audience: (x.audience || []).filter(i => i.trim()), problems: (x.problems || []).filter(i => i.trim()) })),
+      subServices: (d.subServices || []).map(x => ({ ...x, faqs: cleanFeatures(x.faqs), process: cleanFeatures(x.process), features: cleanFeatures(x.features), audience: x.audience.filter(i => i.trim()), problems: x.problems.filter(i => i.trim()) })),
+      projects: (d.projects || []).map(x => ({ ...x, scope: (x.scope || []).map(i => i.trim()).filter(Boolean) }))
+    };
+  }
   async function persist() {
     setSaving(true);
     try {
-      if (await save(draft)) setNotice('Đã lưu. Nội dung xuất bản đã cập nhật trên website.');
+      const next = cleaned(draft);
+      if (await save(next)) { setDraft(next); setNotice('Đã lưu. Nội dung xuất bản đã cập nhật trên website.'); }
     } finally {
       setSaving(false);
     }
@@ -174,7 +187,7 @@ function AdminWorkspace({ section }: { section: string }) {
         {section === 'thu-vien' && <MediaLibrary />}
         {section === 'thong-ke' && <AnalyticsDashboard />}
         {section === 'du-an' && (
-          <ProjectManager projects={draft.projects || []} onChange={(projects) => setDraft({ ...draft, projects })} />
+          <ProjectManager projects={draft.projects || []} services={draft.services} onChange={(projects) => setDraft({ ...draft, projects })} />
         )}
         {section === 'khach-hang' && <LeadsManager />}
         {section === 'trang-chu' && (
@@ -182,7 +195,15 @@ function AdminWorkspace({ section }: { section: string }) {
             <section className="admin-panel">
               <h2>Màn mở đầu</h2>
               <label>
-                Tiêu đề chính
+                Tiêu đề H1 (định vị: doanh nghiệp làm gì, cho ai)
+                <input
+                  maxLength={150}
+                  value={draft.heroTitle || ''}
+                  onChange={(e) => setDraft({ ...draft, heroTitle: e.target.value })}
+                />
+              </label>
+              <label>
+                Thông điệp thương hiệu
                 <input
                   maxLength={150}
                   value={draft.headline}
@@ -464,6 +485,7 @@ function AdminWorkspace({ section }: { section: string }) {
                   value={post.image || ''}
                   onChange={(image) => editPost({ image })}
                 />
+                <Text label="Tiêu đề SEO (bỏ trống = tiêu đề bài)" value={post.seoTitle || ''} max={300} onChange={(seoTitle) => editPost({ seoTitle })} />
                 <label>
                   Mô tả SEO
                   <textarea
@@ -472,6 +494,23 @@ function AdminWorkspace({ section }: { section: string }) {
                     onChange={(e) => editPost({ seoDescription: e.target.value })}
                   />
                 </label>
+                <Text label="Tóm tắt (hiện trên thẻ bài và đầu bài)" value={post.excerpt || ''} area max={1000} onChange={(excerpt) => editPost({ excerpt })} />
+                <label>
+                  Danh mục kiến thức
+                  <select value={post.topicId || ''} onChange={(e) => editPost({ topicId: e.target.value })}>
+                    <option value="">Chưa phân loại</option>
+                    {(draft.topics || []).map((t) => <option key={t.id} value={t.id}>{t.name}{t.published ? '' : ' (ẩn)'}</option>)}
+                  </select>
+                </label>
+                <label>
+                  Tác giả
+                  <select value={post.authorId || ''} onChange={(e) => editPost({ authorId: e.target.value || undefined })}>
+                    <option value="">DANAVA Solutions (tổ chức)</option>
+                    {draft.staff.filter((p) => p.visible).map((p) => <option key={p.id} value={p.id}>{p.name} — {p.role}</option>)}
+                  </select>
+                  <small className="field-note">Chỉ chọn người thật sự viết bài. Bỏ trống thì tác giả là DANAVA Solutions.</small>
+                </label>
+                <ServiceChecks services={draft.services} value={post.serviceIds || []} onChange={(serviceIds) => editPost({ serviceIds })} />
                 <label>
                   Chuyên mục
                   <input
@@ -483,6 +522,10 @@ function AdminWorkspace({ section }: { section: string }) {
                 <label>
                   Ngày đăng
                   <input type="date" value={post.date} onChange={(e) => editPost({ date: e.target.value })} />
+                </label>
+                <label>
+                  Ngày cập nhật (khi sửa nội dung đáng kể)
+                  <input type="date" value={post.updated || ''} onChange={(e) => editPost({ updated: e.target.value || undefined })} />
                 </label>
                 <label>
                   Nội dung văn bản
@@ -501,8 +544,11 @@ function AdminWorkspace({ section }: { section: string }) {
                   />
                   Xuất bản công khai
                 </label>
+                <Toggle label="Không cho Google lập chỉ mục bài này (noindex)" checked={!!post.noindex} onChange={(noindex) => editPost({ noindex: noindex || undefined })} />
                 <p className="field-note">
-                  Bài xuất bản có đường dẫn riêng và được đưa vào sitemap. Bản nháp chỉ đọc trong quản trị.
+                  Bài xuất bản có đường dẫn riêng và được đưa vào sitemap (trừ bài noindex). Bản nháp trả 404 với khách;
+                  quản trị viên đang đăng nhập xem trước được tại{' '}
+                  <a className="text-link" href={`/kien-thuc/${post.slug}/`} target="_blank" rel="noopener">/kien-thuc/{post.slug}/ ↗</a> (sau khi lưu).
                 </p>
                 <div className="panel-heading">
                   <button className="admin-primary" onClick={persist}>
@@ -516,56 +562,9 @@ function AdminWorkspace({ section }: { section: string }) {
             )}
           </div>
         )}
-        {section === 'giai-phap' && (
-          <div className="admin-service-list">
-            {draft.services.map((s) => (
-              <section className="admin-panel" key={s.id}>
-                <h2>{s.title}</h2>
-                <label>
-                  Tên giải pháp
-                  <input
-                    value={s.title}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        services: draft.services.map((x) => (x.id === s.id ? { ...x, title: e.target.value } : x)),
-                      })
-                    }
-                  />
-                </label>
-                <label>
-                  Mô tả
-                  <textarea
-                    value={s.description}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        services: draft.services.map((x) =>
-                          x.id === s.id ? { ...x, description: e.target.value } : x,
-                        ),
-                      })
-                    }
-                  />
-                </label>
-                <label>
-                  Phạm vi — mỗi dòng một mục
-                  <textarea
-                    rows={4}
-                    value={s.items.join('\n')}
-                    onChange={(e) =>
-                      setDraft({
-                        ...draft,
-                        services: draft.services.map((x) =>
-                          x.id === s.id ? { ...x, items: e.target.value.split('\n') } : x,
-                        ),
-                      })
-                    }
-                  />
-                </label>
-              </section>
-            ))}
-          </div>
-        )}
+        {section === 'giai-phap' && <ServicesEditor draft={draft} setDraft={setDraft} />}
+        {section === 'chu-de' && <TopicsEditor draft={draft} setDraft={setDraft} />}
+        {section === 'bang-chung' && <ProofEditor draft={draft} setDraft={setDraft} />}
         {section === 'cai-dat' && (
           <div className="admin-two">
             <section className="admin-panel">
@@ -583,7 +582,7 @@ function AdminWorkspace({ section }: { section: string }) {
                 <input type="tel" value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} />
               </label>
               <div className="field-note">
-                Nội dung lưu bằng SQLite trên máy chủ. Mật khẩu quản trị được cấu hình qua biến môi trường; không nhập
+                Nội dung lưu trong database của website (MySQL trên hosting, SQLite khi chạy máy cá nhân). Mật khẩu quản trị được cấu hình qua biến môi trường; không nhập
                 mật khẩu trong nội dung website. Tải ảnh trực tiếp tại Thư viện ảnh, hoặc dùng đường dẫn assets.
               </div>
             </section>

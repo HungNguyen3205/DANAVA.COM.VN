@@ -6,12 +6,13 @@ import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight, Ho
 import { useSite } from './SiteStore';
 import { SERVICE_META, sortServices, CONTACT, formatPhone } from './site/catalog';
 import { IconTile } from './site/ui';
+import { publishedSubServices, subServiceHref } from '@/lib/site-queries';
 
 const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
   { href: '/du-an/', label: 'Dự án' },
   { href: '/ve-danava/', label: 'Về chúng tôi' },
-  { href: '/kien-thuc/', label: 'Bản tin' }
+  { href: '/kien-thuc/', label: 'Kiến thức' }
 ];
 
 export function Header() {
@@ -23,6 +24,7 @@ export function Header() {
   const megaRef = useRef<HTMLLIElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const services = sortServices(data.services);
+  const subs = publishedSubServices(data);
   const phone = data.phone || CONTACT.phone;
 
   useEffect(() => {
@@ -96,6 +98,12 @@ export function Header() {
                       </Link>
                     );
                   })}
+                  {subs.length > 0 && (
+                    <div className="s-mega__subs">
+                      <span>Theo mô hình:</span>
+                      {subs.map(x => <Link key={x.id} href={subServiceHref(data, x)} onClick={() => setMega(false)}>{x.title}</Link>)}
+                    </div>
+                  )}
                   <div className="s-mega__foot">
                     <span>Chưa chắc giải pháp nào phù hợp?</span>
                     <Link className="s-link" href="/giai-phap/" onClick={() => setMega(false)}>Xem tất cả giải pháp <ArrowRight aria-hidden="true" /></Link>
@@ -157,7 +165,7 @@ export function Header() {
           </Link>
         </div>
         <div className="s-drawer__cta">
-          <Link className="s-btn s-btn--primary s-btn--lg s-btn--block" href="/lien-he/">Nhận tư vấn miễn phí</Link>
+          <Link className="s-btn s-btn--primary s-btn--lg s-btn--block" href="/lien-he/">Nhận tư vấn</Link>
           <a className="s-btn s-btn--secondary s-btn--lg s-btn--block" href={`tel:${phone}`}><Phone aria-hidden="true" />Gọi {formatPhone(phone)}</a>
         </div>
         <div className="s-drawer__contact">
@@ -205,7 +213,7 @@ export function Footer() {
               <li><Link href="/doi-ngu/">Đội ngũ</Link></li>
               <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
               <li><Link href="/du-an/">Dự án</Link></li>
-              <li><Link href="/kien-thuc/">Bản tin</Link></li>
+              <li><Link href="/kien-thuc/">Kiến thức</Link></li>
             </ul>
           </div>
 
@@ -215,7 +223,7 @@ export function Footer() {
               <li><Link href="/lien-he/">Liên hệ tư vấn</Link></li>
               <li><Link href="/chinh-sach-dich-vu/">Chính sách dịch vụ</Link></li>
               <li><Link href="/chinh-sach-rieng-tu/">Chính sách riêng tư</Link></li>
-              <li><a href="https://danava.vn/" target="_blank" rel="noopener noreferrer">Nền tảng danava.vn</a></li>
+              <li><a href="https://danava.vn/" target="_blank" rel="noopener">Nền tảng danava.vn</a></li>
             </ul>
           </div>
         </div>
@@ -250,7 +258,7 @@ const TABS = [
   { href: '/giai-phap/', label: 'Giải pháp', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
   { href: '/lien-he/', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
   { href: '/du-an/', label: 'Dự án', icon: Briefcase, match: (p: string) => p.startsWith('/du-an') },
-  { href: '/kien-thuc/', label: 'Bản tin', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
+  { href: '/kien-thuc/', label: 'Kiến thức', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
 ];
 
 /**

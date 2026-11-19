@@ -357,7 +357,8 @@
    ========================================================================== */
 /* Điện thoại/máy tính bảng: vuốt = một slide nhờ CSS scroll-snap. Máy tính: JS điều khiển con lăn (MarketingStage.tsx). */
 @media (pointer: coarse) {
-  html:has(.cine--snap) { scroll-snap-type: y mandatory; }
+  /* proximity (không phải mandatory): nội dung chuẩn sau phần phim (vấn đề, quy trình, FAQ…) vẫn cuộn đọc tự nhiên */
+  html:has(.cine--snap) { scroll-snap-type: y proximity; }
   .s-app:has(.cine--snap) .s-footer { scroll-snap-align: end; }
 }
 

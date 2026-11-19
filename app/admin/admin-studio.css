@@ -809,3 +809,16 @@
   .ds-root .ds-sidebar,
   .ds-root .ds-main { transition: none !important; }
 }
+
+/* ---- Trình chỉnh sửa mở rộng (AdminContentEditors.tsx) ---- */
+.adm-fieldset { border: 1px solid #e3e7ef; border-radius: 12px; padding: 12px 14px 14px; margin: 6px 0 14px; display: grid; gap: 8px; }
+.adm-fieldset legend { padding: 0 6px; font-weight: 700; font-size: 14px; }
+.adm-pair { display: grid; gap: 6px; padding: 10px; border-radius: 10px; background: #f6f7fb; }
+.adm-pair textarea, .adm-pair input { width: 100%; }
+.adm-card { border: 1px solid #e3e7ef; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; background: #fff; }
+.adm-card > summary { cursor: pointer; padding: 6px 0; }
+.adm-card[open] > summary { margin-bottom: 8px; border-bottom: 1px solid #eef0f5; }
+.adm-subsection { margin-top: 24px; padding-top: 18px; border-top: 2px solid #eef0f5; }
+.adm-subeditor { margin-top: 12px; padding: 14px; border-radius: 12px; background: #fafbfe; border: 1px solid #e3e7ef; }
+.adm-note { padding: 10px 12px; border-radius: 10px; background: #fff4e8; color: #7a3d00; font-size: 14px; }
+.project-admin-row[aria-pressed='true'] { outline: 2px solid #2b4294; outline-offset: -2px; }

@@ -2,14 +2,25 @@ import { legacyRedirects } from './lib/legacy-redirects';
 import type { NextConfig } from 'next';
 
 const isVercel = !!process.env.VERCEL;
+const noindex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }];
 
 const config: NextConfig = {
   ...(isVercel ? {} : { output: 'standalone' }),
   trailingSlash: true,
+  // Hosting cPanel không bảo đảm chạy được sharp (glibc cũ) nên không dùng tối ưu ảnh động của Next.js.
+  // Ảnh trong public/ đã được nén WebP sẵn; khung ảnh khai báo kích thước/tỉ lệ để tránh dịch chuyển bố cục.
   images: { unoptimized: true },
   poweredByHeader: false,
+  async headers() {
+    return [
+      { source: '/admin/:path*', headers: noindex },
+      { source: '/api/:path*', headers: noindex },
+      { source: '/kien-thuc/doc/:path*', headers: noindex }
+    ];
+  },
   async redirects() {
-    return legacyRedirects;
+    // Trình duyệt luôn hỏi /favicon.ico; icon thật nằm ở app/icon.png.
+    return [...legacyRedirects, { source: '/favicon.ico', destination: '/icon.png', permanent: true }];
   }
 };
 

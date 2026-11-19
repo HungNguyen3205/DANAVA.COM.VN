@@ -1,0 +1,288 @@
+'use client';
+/**
+ * Trình chỉnh sửa nội dung mở rộng cho CMS: trang dịch vụ, trang dịch vụ con, danh mục kiến thức,
+ * khách hàng tiêu biểu & nhận xét, và các trường quan hệ/SEO dùng chung.
+ * Mọi thay đổi chỉ nằm trong bản chỉnh sửa (draft) cho tới khi bấm "Lưu thay đổi" → lưu vào database.
+ */
+import { useState } from 'react';
+import MediaPicker from './MediaPicker';
+import type { Client, Faq, Feature, Service, SiteData, SubService, Testimonial, Topic } from '@/lib/content';
+
+const uid = () => globalThis.crypto.randomUUID();
+const slugify = (v: string) => v.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 100);
+const today = () => new Date(Date.now() + 7 * 3600_000).toISOString().slice(0, 10);
+
+/* ------------------------------------------------------------ Trường cơ bản */
+export function Lines({ label, value, onChange, rows = 4, hint }: { label: string; value: string[]; onChange: (v: string[]) => void; rows?: number; hint?: string }) {
+  return (
+    <label>
+      {label}
+      <textarea rows={rows} value={value.join('\n')} onChange={e => onChange(e.target.value.split('\n'))} onBlur={e => onChange(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))} />
+      {hint && <small className="field-note">{hint}</small>}
+    </label>
+  );
+}
+
+export function Text({ label, value, onChange, max = 300, area = false, rows = 3, type = 'text', placeholder }: { label: string; value: string; onChange: (v: string) => void; max?: number; area?: boolean; rows?: number; type?: string; placeholder?: string }) {
+  return (
+    <label>
+      {label}
+      {area
+        ? <textarea rows={rows} maxLength={max} value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} />
+        : <input type={type} maxLength={max} value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} />}
+      {max <= 320 && !area && type === 'text' && <small className="field-note">{value.length}/{max}</small>}
+    </label>
+  );
+}
+
+export function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return <label className="toggle-label"><input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} />{label}</label>;
+}
+
+/** Chọn nhiều giải pháp liên quan (lưu theo ID). */
+export function ServiceChecks({ services, value, onChange, label = 'Giải pháp liên quan' }: { services: Service[]; value: string[]; onChange: (v: string[]) => void; label?: string }) {
+  return (
+    <fieldset className="adm-fieldset">
+      <legend>{label}</legend>
+      {services.map(s => (
+        <label key={s.id} className="toggle-label">
+          <input type="checkbox" checked={value.includes(s.id)} onChange={e => onChange(e.target.checked ? [...value, s.id] : value.filter(x => x !== s.id))} />
+          {s.title}
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+
+/** Danh sách cặp (tiêu đề–mô tả hoặc câu hỏi–trả lời). */
+function PairList<T extends Feature | Faq>({ label, items, onChange, keys, labels, max = [200, 2000] }: {
+  label: string; items: T[]; onChange: (v: T[]) => void; keys: [keyof T & string, keyof T & string]; labels: [string, string]; max?: [number, number];
+}) {
+  const [a, b] = keys;
+  const set = (i: number, k: string, v: string) => onChange(items.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
+  return (
+    <fieldset className="adm-fieldset">
+      <legend>{label}</legend>
+      {items.map((it, i) => (
+        <div key={i} className="adm-pair">
+          <input aria-label={`${labels[0]} ${i + 1}`} placeholder={labels[0]} maxLength={max[0]} value={String(it[a] ?? '')} onChange={e => set(i, a, e.target.value)} />
+          <textarea aria-label={`${labels[1]} ${i + 1}`} placeholder={labels[1]} rows={2} maxLength={max[1]} value={String(it[b] ?? '')} onChange={e => set(i, b, e.target.value)} />
+          <div className="row-actions">
+            <button type="button" disabled={i === 0} aria-label="Đưa lên" onClick={() => { const n = [...items]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; onChange(n); }}>↑</button>
+            <button type="button" className="danger" onClick={() => onChange(items.filter((_, j) => j !== i))}>Xóa</button>
+          </div>
+        </div>
+      ))}
+      <button type="button" className="admin-secondary" onClick={() => onChange([...items, { [a]: '', [b]: '' } as T])}>+ Thêm</button>
+    </fieldset>
+  );
+}
+
+export const FeatureList = (p: { label: string; items: Feature[]; onChange: (v: Feature[]) => void }) =>
+  <PairList<Feature> {...p} keys={['title', 'text']} labels={['Tiêu đề', 'Mô tả']} />;
+export const FaqList = (p: { label?: string; items: Faq[]; onChange: (v: Faq[]) => void }) =>
+  <PairList<Faq> label={p.label || 'Câu hỏi thường gặp (FAQ)'} items={p.items} onChange={p.onChange} keys={['q', 'a']} labels={['Câu hỏi', 'Trả lời']} max={[300, 3000]} />;
+
+/** Lọc dòng trống trước khi lưu (tránh lỗi kiểm tra cấu trúc). */
+export function cleanFeatures<T extends Feature | Faq>(list: T[] | undefined): T[] {
+  return (list || []).filter(x => Object.values(x).some(v => String(v).trim()));
+}
+
+/* ---------------------------------------------------------------- Dịch vụ */
+export function ServicesEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+  const [open, setOpen] = useState<string>(draft.services[0]?.id || '');
+  const editService = (id: string, patch: Partial<Service>) =>
+    setDraft({ ...draft, services: draft.services.map(s => (s.id === id ? { ...s, ...patch } : s)) });
+  const s = draft.services.find(x => x.id === open);
+
+  return (
+    <div className="admin-post-layout">
+      <section className="admin-panel">
+        <h2>Trang giải pháp</h2>
+        <p className="field-note">Mỗi giải pháp có trang riêng /giai-phap/…/. Đường dẫn cố định để không mất thứ hạng tìm kiếm.</p>
+        {draft.services.map(x => (
+          <button key={x.id} type="button" className="project-admin-row" aria-pressed={x.id === open} onClick={() => setOpen(x.id)}>
+            <span><b>{x.title}</b><small>/giai-phap/{x.slug}/ · {(draft.subServices || []).filter(t => t.parentId === x.id).length} trang con</small></span><b>→</b>
+          </button>
+        ))}
+      </section>
+      {s && (
+        <section className="admin-panel post-editor">
+          <div className="panel-heading">
+            <h2>{s.title}</h2>
+            <a className="text-link" href={`/giai-phap/${s.slug}/`} target="_blank" rel="noopener">Xem trang ↗</a>
+          </div>
+          <Text label="Tên giải pháp" value={s.title} max={200} onChange={title => editService(s.id, { title })} />
+          <Text label="Mô tả ngắn (thẻ, menu)" value={s.description} area max={2000} onChange={description => editService(s.id, { description })} />
+          <Text label="Đoạn mở đầu: dịch vụ là gì, dành cho ai" value={s.heroLead || ''} area max={1000} onChange={heroLead => editService(s.id, { heroLead })} />
+          <Lines label="Phù hợp với (mỗi dòng một nhóm khách hàng)" value={s.audience || []} onChange={audience => editService(s.id, { audience })} rows={3} />
+          <Lines label="Vấn đề khách hàng thường gặp (mỗi dòng một ý)" value={s.problems || []} onChange={problems => editService(s.id, { problems })} />
+          <Lines label="Phạm vi công việc (mỗi dòng một mục)" value={s.items} onChange={items => editService(s.id, { items })} />
+          <FeatureList label="Quy trình triển khai" items={s.process || []} onChange={process => editService(s.id, { process })} />
+          <Text label="Chi phí / cách xác định báo giá" value={s.pricing || ''} area max={2000} placeholder="Chỉ ghi giá đã được xác nhận, hoặc mô tả cách tính báo giá." onChange={pricing => editService(s.id, { pricing })} />
+          <Text label="Trang sản phẩm chính thức (https://…)" value={s.productUrl || ''} max={300} onChange={productUrl => editService(s.id, { productUrl })} />
+          <Text label="Nhãn nút trang sản phẩm" value={s.productLabel || ''} max={120} onChange={productLabel => editService(s.id, { productLabel })} />
+          <FaqList items={s.faqs || []} onChange={faqs => editService(s.id, { faqs })} />
+          <MediaPicker label="Ảnh đại diện / ảnh chia sẻ" value={s.image || ''} onChange={image => editService(s.id, { image })} />
+          <Text label="Tiêu đề SEO (bỏ trống = tên giải pháp)" value={s.seoTitle || ''} max={200} onChange={seoTitle => editService(s.id, { seoTitle })} />
+          <Text label="Mô tả SEO" value={s.seoDescription || ''} max={300} onChange={seoDescription => editService(s.id, { seoDescription })} />
+          <Text label="Ngày cập nhật nội dung" type="date" value={s.updated || ''} onChange={updated => editService(s.id, { updated })} />
+          <button type="button" className="admin-secondary" onClick={() => editService(s.id, { updated: today() })}>Đặt ngày cập nhật = hôm nay</button>
+          <SubServicesEditor draft={draft} setDraft={setDraft} parent={s} />
+        </section>
+      )}
+    </div>
+  );
+}
+
+function SubServicesEditor({ draft, setDraft, parent }: { draft: SiteData; setDraft: (d: SiteData) => void; parent: Service }) {
+  const list = (draft.subServices || []).filter(x => x.parentId === parent.id);
+  const [sel, setSel] = useState('');
+  const sub = list.find(x => x.id === sel);
+  const editSub = (patch: Partial<SubService>) =>
+    setDraft({ ...draft, subServices: (draft.subServices || []).map(x => (x.id === sel ? { ...x, ...patch } : x)) });
+  const add = () => {
+    const id = uid();
+    const item: SubService = {
+      id, parentId: parent.id, slug: `trang-moi-${id.slice(0, 6)}`, title: 'Trang dịch vụ mới', description: '', heroLead: '',
+      audience: [], problems: [], features: [], process: [], faqs: [], pricing: '', image: '', published: false, updated: today()
+    };
+    setDraft({ ...draft, subServices: [...(draft.subServices || []), item] });
+    setSel(id);
+  };
+  const ready = (x: SubService) => x.title.trim() && x.heroLead.trim() && cleanFeatures(x.features).length > 0;
+
+  return (
+    <div className="adm-subsection">
+      <div className="panel-heading">
+        <h3>Trang dịch vụ con</h3>
+        <button type="button" className="admin-secondary" onClick={add}>+ Thêm trang</button>
+      </div>
+      <p className="field-note">Chỉ xuất bản khi trang có nội dung riêng, hình ảnh/dự án thực tế. Bản nháp trả 404 với khách, không vào sitemap; quản trị viên đang đăng nhập vẫn xem trước được.</p>
+      {list.map(x => (
+        <button key={x.id} type="button" className="project-admin-row" aria-pressed={x.id === sel} onClick={() => setSel(x.id === sel ? '' : x.id)}>
+          <span><b>{x.title}</b><small>{x.published ? 'Đã xuất bản' : 'Bản nháp'} · /giai-phap/{parent.slug}/{x.slug}/</small></span><b>{x.id === sel ? '×' : '→'}</b>
+        </button>
+      ))}
+      {sub && (
+        <div className="adm-subeditor">
+          {sub.editorNote && <p className="adm-note"><b>Ghi chú biên tập:</b> {sub.editorNote}</p>}
+          <Text label="Tiêu đề trang (H1)" value={sub.title} max={200} onChange={title => editSub({ title })} />
+          <Text label="Đường dẫn (không dấu, nối bằng -)" value={sub.slug} max={150} onChange={v => editSub({ slug: slugify(v) })} />
+          <Text label="Mô tả ngắn" value={sub.description} area max={1000} onChange={description => editSub({ description })} />
+          <Text label="Đoạn mở đầu" value={sub.heroLead} area max={1000} onChange={heroLead => editSub({ heroLead })} />
+          <Lines label="Phù hợp với" value={sub.audience} onChange={audience => editSub({ audience })} rows={3} />
+          <Lines label="Vấn đề thường gặp" value={sub.problems} onChange={problems => editSub({ problems })} />
+          <FeatureList label="Tính năng / phạm vi" items={sub.features} onChange={features => editSub({ features })} />
+          <FeatureList label="Quy trình" items={sub.process} onChange={process => editSub({ process })} />
+          <Text label="Chi phí / cách báo giá (bỏ trống = dùng của giải pháp chính)" value={sub.pricing} area max={2000} onChange={pricing => editSub({ pricing })} />
+          <FaqList items={sub.faqs} onChange={faqs => editSub({ faqs })} />
+          <MediaPicker label="Ảnh thực tế" value={sub.image} onChange={image => editSub({ image })} />
+          <Text label="Tiêu đề SEO" value={sub.seoTitle || ''} max={200} onChange={seoTitle => editSub({ seoTitle })} />
+          <Text label="Mô tả SEO" value={sub.seoDescription || ''} max={300} onChange={seoDescription => editSub({ seoDescription })} />
+          <Text label="Ngày cập nhật" type="date" value={sub.updated} onChange={updated => editSub({ updated })} />
+          <Text label="Ghi chú biên tập (không hiển thị công khai)" value={sub.editorNote || ''} area max={2000} onChange={editorNote => editSub({ editorNote })} />
+          <Toggle label={ready(sub) ? 'Xuất bản công khai' : 'Xuất bản công khai (cần tiêu đề, đoạn mở đầu và ít nhất một tính năng)'} checked={sub.published} onChange={published => editSub({ published: published && !!ready(sub), features: cleanFeatures(sub.features), process: cleanFeatures(sub.process), faqs: cleanFeatures(sub.faqs) })} />
+          <div className="panel-heading">
+            <a className="text-link" href={`/giai-phap/${parent.slug}/${sub.slug}/`} target="_blank" rel="noopener">Xem trước (sau khi lưu) ↗</a>
+            <button type="button" className="danger" onClick={() => { if (confirm('Xóa trang dịch vụ con này khỏi bản chỉnh sửa?')) { setDraft({ ...draft, subServices: (draft.subServices || []).filter(x => x.id !== sub.id) }); setSel(''); } }}>Xóa trang</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------- Danh mục kiến thức */
+export function TopicsEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+  const topics = draft.topics || [];
+  const set = (id: string, patch: Partial<Topic>) => setDraft({ ...draft, topics: topics.map(t => (t.id === id ? { ...t, ...patch } : t)) });
+  const count = (id: string) => draft.posts.filter(p => p.published && p.topicId === id).length;
+  return (
+    <section className="admin-panel">
+      <div className="panel-heading">
+        <h2>Danh mục kiến thức</h2>
+        <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, topics: [...topics, { id: uid(), slug: `danh-muc-${Date.now().toString(36)}`, name: 'Danh mục mới', description: '', serviceIds: [], published: false }] })}>+ Thêm danh mục</button>
+      </div>
+      <p className="field-note">Danh mục đã xuất bản và có từ 3 bài trở lên sẽ có trang riêng /kien-thuc/chu-de/…/ và được đưa vào sitemap. Danh mục ít bài hơn chỉ hiện thành nhóm trong trang Kiến thức.</p>
+      {topics.map(t => (
+        <details key={t.id} className="adm-card">
+          <summary><b>{t.name}</b> · {count(t.id)} bài đã xuất bản · {t.published ? (count(t.id) >= 3 ? 'có trang riêng' : 'đang hiển thị') : 'ẩn'}</summary>
+          <Text label="Tên danh mục" value={t.name} max={100} onChange={name => set(t.id, { name })} />
+          <Text label="Đường dẫn" value={t.slug} max={100} onChange={v => set(t.id, { slug: slugify(v) })} />
+          <Text label="Mô tả" value={t.description} area max={1000} onChange={description => set(t.id, { description })} />
+          <ServiceChecks services={draft.services} value={t.serviceIds} onChange={serviceIds => set(t.id, { serviceIds })} label="Thuộc giải pháp" />
+          <Text label="Tiêu đề SEO" value={t.seoTitle || ''} max={200} onChange={seoTitle => set(t.id, { seoTitle })} />
+          <Text label="Mô tả SEO" value={t.seoDescription || ''} max={300} onChange={seoDescription => set(t.id, { seoDescription })} />
+          <Toggle label="Hiển thị công khai" checked={t.published} onChange={published => set(t.id, { published })} />
+          <button type="button" className="danger" disabled={count(t.id) > 0 || draft.posts.some(p => p.topicId === t.id)} title="Chỉ xóa được danh mục chưa có bài" onClick={() => setDraft({ ...draft, topics: topics.filter(x => x.id !== t.id) })}>Xóa danh mục</button>
+        </details>
+      ))}
+    </section>
+  );
+}
+
+/* ------------------------------------------------ Khách hàng & nhận xét */
+export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+  const clients = draft.clients || [];
+  const tests = draft.testimonials || [];
+  const projects = draft.projects || [];
+  const setC = (id: string, patch: Partial<Client>) => setDraft({ ...draft, clients: clients.map(c => (c.id === id ? { ...c, ...patch } : c)) });
+  const setT = (id: string, patch: Partial<Testimonial>) => setDraft({ ...draft, testimonials: tests.map(t => (t.id === id ? { ...t, ...patch } : t)) });
+  const projectSelect = (value: string, onChange: (v: string) => void) => (
+    <label>
+      Dự án liên quan
+      <select value={value} onChange={e => onChange(e.target.value)}>
+        <option value="">Không gắn dự án</option>
+        {projects.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
+      </select>
+    </label>
+  );
+
+  return (
+    <div className="admin-two">
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>Khách hàng tiêu biểu</h2>
+          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, clients: [...clients, { id: uid(), name: '', logo: '', url: '', projectId: '', permission: false, published: false, note: '' }] })}>+ Thêm</button>
+        </div>
+        <p className="field-note">Chỉ hiển thị trên trang chủ khi đã bật <b>Có quyền hiển thị</b> và <b>Xuất bản</b>. Ghi nguồn xác nhận quyền vào ghi chú.</p>
+        {clients.map(c => (
+          <details key={c.id} className="adm-card">
+            <summary><b>{c.name || 'Khách hàng chưa đặt tên'}</b> · {c.published && c.permission ? 'Đang hiển thị' : 'Ẩn'}</summary>
+            <Text label="Tên khách hàng" value={c.name} max={150} onChange={name => setC(c.id, { name })} />
+            <MediaPicker label="Logo (để trống nếu chưa có quyền dùng logo)" value={c.logo} onChange={logo => setC(c.id, { logo })} />
+            <Text label="Website khách hàng (https://…)" value={c.url} max={300} onChange={url => setC(c.id, { url })} />
+            {projectSelect(c.projectId, projectId => setC(c.id, { projectId }))}
+            <Text label="Ghi chú nguồn / quyền sử dụng (nội bộ)" value={c.note} area max={1000} onChange={note => setC(c.id, { note })} />
+            <Toggle label="Có quyền hiển thị tên/logo công khai" checked={c.permission} onChange={permission => setC(c.id, { permission, published: permission && c.published })} />
+            <Toggle label="Xuất bản" checked={c.published} onChange={published => setC(c.id, { published: published && c.permission && !!c.name.trim() })} />
+            <button type="button" className="danger" onClick={() => setDraft({ ...draft, clients: clients.filter(x => x.id !== c.id) })}>Xóa</button>
+          </details>
+        ))}
+      </section>
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>Nhận xét khách hàng</h2>
+          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, testimonials: [...tests, { id: uid(), quote: '', name: '', role: '', company: '', projectId: '', image: '', source: '', permission: false, published: false }] })}>+ Thêm</button>
+        </div>
+        <p className="field-note">Chỉ nhập nhận xét thật, khách hàng đã đồng ý công bố. Nhận xét hiển thị trên trang chủ và trang dự án liên quan. Không đánh dấu sao/điểm đánh giá.</p>
+        {tests.map(t => (
+          <details key={t.id} className="adm-card">
+            <summary><b>{t.name || 'Chưa có tên'}</b> · {t.published && t.permission ? 'Đang hiển thị' : 'Ẩn'}</summary>
+            <Text label="Nội dung nhận xét" value={t.quote} area rows={4} max={1500} onChange={quote => setT(t.id, { quote })} />
+            <Text label="Người nhận xét" value={t.name} max={150} onChange={name => setT(t.id, { name })} />
+            <Text label="Chức danh" value={t.role} max={150} onChange={role => setT(t.id, { role })} />
+            <Text label="Doanh nghiệp" value={t.company} max={150} onChange={company => setT(t.id, { company })} />
+            {projectSelect(t.projectId, projectId => setT(t.id, { projectId }))}
+            <MediaPicker label="Ảnh (tùy chọn, cần đồng ý của người trong ảnh)" value={t.image} onChange={image => setT(t.id, { image })} />
+            <Text label="Nguồn / bằng chứng đồng ý (nội bộ)" value={t.source} area max={500} onChange={source => setT(t.id, { source })} />
+            <Toggle label="Khách hàng đã đồng ý công bố" checked={t.permission} onChange={permission => setT(t.id, { permission, published: permission && t.published })} />
+            <Toggle label="Xuất bản" checked={t.published} onChange={published => setT(t.id, { published: published && t.permission && !!t.quote.trim() && !!t.name.trim() })} />
+            <button type="button" className="danger" onClick={() => setDraft({ ...draft, testimonials: tests.filter(x => x.id !== t.id) })}>Xóa</button>
+          </details>
+        ))}
+      </section>
+    </div>
+  );
+}

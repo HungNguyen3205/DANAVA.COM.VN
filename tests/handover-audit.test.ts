@@ -39,7 +39,7 @@ test('Workflow 1: Published projects appear in portfolio and services; drafts ar
 
   // Kiểm tra file component site/ProjectsPages.tsx đã hỗ trợ match linh hoạt
   const publicPagesSource = fs.readFileSync(
-    path.join(process.cwd(), 'components', 'site', 'ProjectsPages.tsx'),
+    path.join(process.cwd(), 'components', 'site', 'project-helpers.ts'),
     'utf8'
   );
   assert.ok(

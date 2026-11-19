@@ -62,8 +62,9 @@ export const VALID_BUSINESS_TYPES: string[] = [
  * Hỗ trợ các biến thể query params: studio, danava-studio, website, marketing, travel, media...
  */
 export function resolveValidService(queryParam?: string | null): string {
-  if (!queryParam) {
-    return VALID_CONTACT_SERVICES[0].label;
+  // Không có tham số → để khách tự chọn (không gán sẵn DANAVA Studio làm sai thống kê nhu cầu).
+  if (!queryParam || !queryParam.trim()) {
+    return '';
   }
 
   const needle = queryParam.trim().toLowerCase();
@@ -101,8 +102,8 @@ export function resolveValidService(queryParam?: string | null): string {
     return VALID_CONTACT_SERVICES[5].label;
   }
 
-  // Fallback về dịch vụ mặc định hợp lệ đầu tiên
-  return VALID_CONTACT_SERVICES[0].label;
+  // Giá trị lạ → để khách tự chọn
+  return '';
 }
 
 /**

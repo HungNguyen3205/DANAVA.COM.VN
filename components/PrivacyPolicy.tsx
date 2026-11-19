@@ -104,7 +104,7 @@ export function PrivacyPolicy() {
               <section id="embeds">
                 <h2>4. Nội dung nhúng bên thứ ba</h2>
                 <p>
-                  Trên trang <Link href="/kien-thuc/">Bản tin DANAVA</Link>, chúng tôi có thể dẫn nguồn hoặc cho phép xem trực tiếp video, bài đăng từ YouTube, Facebook hoặc Zalo OA:
+                  Trên mục <Link href="/kien-thuc/">Kiến thức DANAVA</Link>, chúng tôi có thể dẫn nguồn hoặc cho phép xem trực tiếp video, bài đăng từ YouTube, Facebook hoặc Zalo OA:
                 </p>
                 <ul>
                   <li><strong>Tải khi tương tác (click-to-load):</strong> mặc định website không tự tải iframe bên thứ ba, giúp trang nhanh hơn và tránh cookie theo dõi ngầm.</li>

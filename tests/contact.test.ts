@@ -48,10 +48,10 @@ test('resolveValidService gracefully maps URL parameters and handles unexpected 
     'Sản xuất Video ngắn, TVC & Hình ảnh thương hiệu'
   );
 
-  // Fallback an toàn khi tham số null, rỗng hoặc giá trị lạ
-  assert.equal(resolveValidService(null), VALID_CONTACT_SERVICES[0].label);
-  assert.equal(resolveValidService(''), VALID_CONTACT_SERVICES[0].label);
-  assert.equal(resolveValidService('gia-tri-khong-ton-tai'), VALID_CONTACT_SERVICES[0].label);
+  // Không có tham số hoặc giá trị lạ: không tự gán dịch vụ, để khách chọn
+  assert.equal(resolveValidService(null), '');
+  assert.equal(resolveValidService(''), '');
+  assert.equal(resolveValidService('gia-tri-khong-ton-tai'), '');
 });
 
 test('isValidPhoneNumber validates Vietnamese mobile numbers strictly', () => {

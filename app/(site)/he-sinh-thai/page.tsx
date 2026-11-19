@@ -2,7 +2,7 @@ import { seo, jsonLD, siteURL } from '@/lib/seo';
 import { EcosystemPage } from '@/components/site/EcosystemPage';
 
 export const metadata = seo(
-  "Hệ sinh thái — DANAVA Solutions",
+  "Hệ sinh thái DANAVA",
   "Khám phá hệ sinh thái toàn diện của DANAVA Solutions: Sản phẩm số, Marketing & Media, Du lịch & Sự kiện, và Cộng đồng Yoga Club Vietnam.",
   "/he-sinh-thai/",
   "/assets/presentation/danava-ecosystem.webp"

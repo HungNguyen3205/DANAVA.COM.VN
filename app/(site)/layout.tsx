@@ -8,6 +8,7 @@ import './site-mkt.css';
 import './site-home.css';
 import './site-theme.css';
 import './site-app.css';
+import './site-upgrade.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 import { siteFont } from '@/lib/site-font';
 

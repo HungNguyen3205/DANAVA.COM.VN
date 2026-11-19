@@ -18,6 +18,8 @@ export function generateStaticParams() {
     'bai-viet',
     'nhan-su',
     'giai-phap',
+    'chu-de',
+    'bang-chung',
     'cai-dat'
   ].map(section => ({ section }));
 }

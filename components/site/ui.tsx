@@ -97,7 +97,7 @@ export function Visual({ icon: Icon, tone = 'blue', label, chips = [] }: { icon:
 export function CtaBand({
   title = 'Bắt đầu cùng DANAVA',
   lead = 'Chia sẻ bài toán của bạn. Chuyên viên DANAVA sẽ liên hệ lại để tư vấn giải pháp phù hợp, không ràng buộc.',
-  primary = { href: '/lien-he/', label: 'Nhận tư vấn miễn phí' },
+  primary = { href: '/lien-he/', label: 'Nhận tư vấn' },
   secondary
 }: {
   title?: ReactNode; lead?: ReactNode; primary?: { href: string; label: string }; secondary?: { href: string; label: string };

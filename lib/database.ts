@@ -1,6 +1,7 @@
 import {mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {initial,validateContent,type SiteData} from './content.ts';
+import {normalizeContent} from './content-defaults.ts';
 
 /*
  * Lớp lưu trữ dùng chung cho hai môi trường:
@@ -122,7 +123,7 @@ async function openMysql(): Promise<Sql> {
   // Lần chạy đầu trên database trống: nhập sẵn toàn bộ nội dung mặc định (30 bài blog, dự án, dịch vụ...).
   if (!(await sql.get('SELECT id FROM content WHERE id=1'))) {
     try {
-      await sql.run('INSERT INTO content(id, json, revision, published_revision, draft_revision) VALUES(1, ?, 1, 1, 1)', [JSON.stringify(initial).normalize('NFC')]);
+      await sql.run('INSERT INTO content(id, json, revision, published_revision, draft_revision) VALUES(1, ?, 1, 1, 1)', [JSON.stringify(normalizeContent(initial)).normalize('NFC')]);
     } catch {} // tiến trình khác vừa nhập trước: bỏ qua
   }
   return sql;
@@ -189,11 +190,13 @@ async function readContent(sql: Sql, lock = false): Promise<ContentEnvelope & { 
   const row = await sql.get<ContentRow>(
     'SELECT json, revision, published_revision, draft_json, draft_revision FROM content WHERE id=1' + (lock && sql.kind === 'mysql' ? ' FOR UPDATE' : '')
   );
-  if(!row) return { data: initial, revision: 0, publishedRevision: 0, draftRevision: 0, hasDraft: false, exists: false };
+  if(!row) return { data: normalizeContent(initial), revision: 0, publishedRevision: 0, draftRevision: 0, hasDraft: false, exists: false };
   const data: unknown = JSON.parse(row.json);
   if(!validateContent(data)) throw Error('Nội dung lưu trữ không hợp lệ');
   return {
-    data,
+    // Điền các trường mới (dịch vụ chi tiết, danh mục, quan hệ...) cho dữ liệu lưu từ phiên bản trước.
+    // Chỉ ghi xuống database khi quản trị viên bấm Lưu.
+    data: normalizeContent(data),
     revision: Number(row.revision),
     publishedRevision: Number(row.published_revision || row.revision),
     draftRevision: Number(row.draft_revision || row.revision),
@@ -207,14 +210,8 @@ export async function getContent(): Promise<ContentEnvelope> {
   return envelope;
 }
 
-export function publicContent(data: SiteData): SiteData {
-  return {
-    ...data,
-    staff: data.staff.filter(p => p.visible),
-    posts: data.posts.filter(p => p.published),
-    projects: (data.projects || []).filter(p => p.published)
-  };
-}
+/** Dữ liệu công khai (đã loại bản nháp) — xem lib/site-queries.ts. */
+export { publicContent } from './site-queries.ts';
 
 export async function writeContent(
   data: SiteData,

@@ -4,22 +4,12 @@ import { MapPin, Clock, Phone, Compass, BarChart3, KeyRound, Infinity as Infinit
 import { useSite } from '../SiteStore';
 import { company } from '@/lib/company';
 import { CONTACT, formatPhone } from './catalog';
-import { SectionHeading, CtaBand, IconTile, ArrowLink } from './ui';
+import { SectionHeading, CtaBand, IconTile, ArrowLink, Crumbs } from './ui';
 import { StaffAvatar } from './TeamPage';
+import { GOALS, MILESTONES, MOMENTS, PRINCIPLES } from './company-content';
 
-const MILESTONES = [
-  { year: '2021', title: 'Khởi đầu kết nối số & cộng đồng', text: 'Triển khai thiết kế website doanh nghiệp, marketing và đồng hành cùng các câu lạc bộ yoga tại Đà Nẵng và miền Trung.' },
-  { year: '2023', title: 'Chuẩn hóa hệ sinh thái', text: 'Quy tụ đội ngũ cốt lõi với năm mảng: công nghệ quản trị, website, marketing & media, du lịch & sự kiện, cộng đồng.' },
-  { year: '2024', title: 'Chuỗi sự kiện Cổng Năng Lượng', text: 'Đồng hành tổ chức Soundbath Live Concert ngày 05/05/2024 tại Đà Nẵng cùng Team Tumy và các câu lạc bộ yoga.' },
-  { year: '2026', title: 'Nền tảng DANAVA Studio', text: 'Triển khai phần mềm DANAVA Studio và app hội viên mang thương hiệu riêng cho HARIVER Gym và Huế Pilates & Yoga.' }
-];
-
-const PRINCIPLES = [
-  { icon: Compass, tone: 'blue' as const, title: 'Thấu hiểu thực địa', text: 'Xuống tận cơ sở, quan sát giờ cao điểm và quy trình tại quầy để thiết kế thao tác thuận tiện nhất.' },
-  { icon: BarChart3, tone: 'orange' as const, title: 'Minh bạch số liệu', text: 'Không số liệu ảo, không hứa hẹn viển vông. Chi phí và kết quả được báo cáo từ hệ thống chính chủ.' },
-  { icon: KeyRound, tone: 'sky' as const, title: 'Tài sản thuộc về khách hàng', text: 'Website, tài khoản quảng cáo và dữ liệu khách hàng thuộc quyền sở hữu của doanh nghiệp.' },
-  { icon: InfinityIcon, tone: 'green' as const, title: 'Đồng hành dài hạn', text: 'Bàn giao đi cùng đào tạo, hỗ trợ kỹ thuật và cải tiến theo sự phát triển của cơ sở.' }
-];
+const PRINCIPLE_ICONS = { field: Compass, transparent: BarChart3, ownership: KeyRound, longterm: InfinityIcon } as const;
+const PRINCIPLE_TONES = { field: 'blue', transparent: 'orange', ownership: 'sky', longterm: 'green' } as const;
 
 export default function AboutPage() {
   const { data } = useSite();
@@ -33,6 +23,7 @@ export default function AboutPage() {
       <section className="s-about-hero">
         <div className="s-container s-split">
           <div className="s-about-hero__copy">
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Về DANAVA' }]} />
             <p className="s-eyebrow">Về DANAVA</p>
             <h1 className="s-h1">Đồng hành bằng công nghệ. <span className="s-hl">Gắn kết bằng giá trị thực.</span></h1>
             <p className="s-lead">DANAVA Solutions là đơn vị công nghệ, truyền thông và trải nghiệm tại Đà Nẵng. Chúng tôi giải quyết bài toán vận hành thực tế cho phòng tập, studio wellness và doanh nghiệp dịch vụ, biến quy trình thủ công thành nền tảng số gọn nhẹ.</p>
@@ -62,6 +53,22 @@ export default function AboutPage() {
             <p className="s-eyebrow">Trụ sở</p>
             <p className="s-h4">{CONTACT.address}</p>
           </div>
+        </div>
+      </section>
+
+      {/* Giá trị cốt lõi · Sứ mệnh · Tầm nhìn */}
+      <section className="s-section s-section--soft" aria-labelledby="about-goals">
+        <div className="s-container">
+          <SectionHeading eyebrow="Định hướng" title={<span id="about-goals">“Công nghệ tạo khả năng, <span className="s-hl">con người tạo giá trị.</span>”</span>} />
+          <ol className="s-grid s-grid--3 s-tiles u-goals">
+            {GOALS.map(g => (
+              <li key={g.n} className="s-card s-card--pad">
+                <span className="u-goals__n" aria-hidden="true">{g.n}</span>
+                <h3 className="s-h4">{g.title}</h3>
+                <p className="s-text">{g.text}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -98,6 +105,7 @@ export default function AboutPage() {
           <ol className="s-about-timeline">
             {MILESTONES.map(m => (
               <li key={m.year}>
+                <img className="u-timeline-img" src={m.image} alt="" loading="lazy" decoding="async" width={640} height={400} />
                 <span className="s-about-timeline__year">{m.year}</span>
                 <h3 className="s-h4">{m.title}</h3>
                 <p className="s-text">{m.text}</p>
@@ -107,14 +115,29 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Khoảnh khắc */}
+      <section className="s-section" aria-labelledby="about-moments">
+        <div className="s-container">
+          <SectionHeading eyebrow="Dấu ấn" title={<span id="about-moments">Những chương trình <span className="s-hl">DANAVA đã cùng thực hiện</span></span>} lead="Hình ảnh từ hồ sơ năng lực của DANAVA." action={<ArrowLink href="/giai-phap/digital-marketing/">Xem hồ sơ chương trình</ArrowLink>} />
+          <div className="u-moments">
+            {MOMENTS.map(m => (
+              <figure key={m.src}>
+                <img src={m.src} alt={m.title} loading="lazy" decoding="async" width={800} height={600} />
+                <figcaption>{m.title}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Nguyên tắc */}
       <section className="s-section" aria-labelledby="about-principles">
         <div className="s-container">
           <SectionHeading eyebrow="Nguyên tắc làm việc" title={<span id="about-principles">Bốn điều <span className="s-hl">chúng tôi luôn giữ</span></span>} />
           <div className="s-grid s-grid--4 s-tiles">
             {PRINCIPLES.map(p => (
-              <div key={p.title} className="s-feature">
-                <IconTile icon={p.icon} tone={p.tone} />
+              <div key={p.key} className="s-feature">
+                <IconTile icon={PRINCIPLE_ICONS[p.key]} tone={PRINCIPLE_TONES[p.key]} />
                 <h3 className="s-feature__title">{p.title}</h3>
                 <p className="s-feature__text">{p.text}</p>
               </div>
@@ -149,12 +172,12 @@ export default function AboutPage() {
       <section className="s-section s-section--tight" aria-label="Văn phòng">
         <div className="s-container s-about-office">
           <div className="s-about-office__item"><MapPin aria-hidden="true" /><span><strong>Văn phòng</strong><a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer">{CONTACT.address}</a></span></div>
-          <div className="s-about-office__item"><Clock aria-hidden="true" /><span><strong>Giờ làm việc</strong>Thứ Hai – Thứ Bảy, 8:00 – 18:00</span></div>
+          <div className="s-about-office__item"><Clock aria-hidden="true" /><span><strong>Giờ làm việc</strong>{CONTACT.hours}</span></div>
           <div className="s-about-office__item"><Phone aria-hidden="true" /><span><strong>Hotline</strong><a href={`tel:${phone}`}>{formatPhone(phone)}</a></span></div>
         </div>
       </section>
 
-      <CtaBand title="Sẵn sàng cùng bạn bắt đầu" />
+      <CtaBand title="Sẵn sàng cùng bạn bắt đầu" primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

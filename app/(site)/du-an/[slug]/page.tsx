@@ -1,36 +1,54 @@
 import { notFound } from 'next/navigation';
-import { ProjectDetail } from '@/components/site/ProjectsPages';
+import { ProjectDetailPage } from '@/components/site/ProjectDetailPage';
+import { JsonLd } from '@/components/site/blocks';
 import { getContent } from '@/lib/database';
-import { seo, jsonLD, siteURL } from '@/lib/seo';
+import { session } from '@/lib/auth';
+import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta, absoluteURL } from '@/lib/seo';
+import { servicesForProject } from '@/lib/site-queries';
 
-const find = async (slug: string) => (await getContent()).data.projects?.find(p => p.slug === slug && p.published);
+type Params = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const p = await find(slug);
-  return p ? seo(p.title, p.summary, `/du-an/${p.slug}/`, p.image) : { title: 'Không tìm thấy dự án', robots: { index: false } };
+/** Dự án nháp: 404 với khách; quản trị viên đã đăng nhập xem trước (noindex). */
+async function load(slug: string) {
+  const { data } = await getContent();
+  const p = (data.projects || []).find(x => x.slug === slug);
+  if (!p) return null;
+  if (p.published) return { p, data, preview: false };
+  return (await session()) ? { p, data, preview: true } : null;
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
-  const p = await find(slug);
-  if (!p) notFound();
+  const r = await load(slug);
+  if (!r) return notFoundMeta;
+  return seo(r.p.seoTitle || r.p.title, r.p.seoDescription || r.p.summary, `/du-an/${r.p.slug}/`, r.p.image || undefined, { noindex: r.preview });
+}
+
+export default async function Page({ params }: Params) {
+  const { slug } = await params;
+  const r = await load(slug);
+  if (!r) notFound();
+  const { p, data } = r;
+  const url = `${siteURL}/du-an/${p.slug}/`;
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLD({
+      {!r.preview && (
+        <>
+          <JsonLd value={{
             '@context': 'https://schema.org',
             '@type': 'CreativeWork',
             name: p.title,
             description: p.summary,
-            url: `${siteURL}/du-an/${slug}/`,
-            creator: { '@type': 'Organization', name: 'DANAVA Solutions' }
-          })
-        }}
-      />
-      <ProjectDetail slug={slug} />
+            url,
+            ...(p.image ? { image: absoluteURL(p.image) } : {}),
+            ...(p.updated ? { dateModified: p.updated } : {}),
+            creator: { '@id': ORG_ID },
+            ...(servicesForProject(data, p).length ? { about: servicesForProject(data, p).map(s => ({ '@type': 'Service', name: s.title, url: `${siteURL}/giai-phap/${s.slug}/` })) } : {})
+          }} />
+          <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Dự án', href: '/du-an/' }, { label: p.client || p.title, href: `/du-an/${p.slug}/` }])} />
+        </>
+      )}
+      <ProjectDetailPage project={p} data={data} preview={r.preview} />
     </>
   );
 }

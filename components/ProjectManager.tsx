@@ -1,13 +1,16 @@
 'use client';
 import MediaPicker from './MediaPicker';
 import { useRef, useState } from 'react';
-import { initial, validateContent, type Project } from '@/lib/content';
+import { initial, validateContent, type Project, type Service } from '@/lib/content';
+import { Lines, ServiceChecks, Text } from './AdminContentEditors';
 export default function ProjectManager({
   projects,
   onChange,
+  services = [],
 }: {
   projects: Project[];
   onChange: (p: Project[]) => void;
+  services?: Service[];
 }) {
   const [selected, setSelected] = useState(''),
     [error, setError] = useState(''),
@@ -137,12 +140,26 @@ export default function ProjectManager({
               />
             </label>
           ))}
+          <Text label="Ngành của khách hàng (vd. Gym & Fitness)" value={project.industry || ''} max={100} onChange={(industry) => edit({ industry })} />
+          <ServiceChecks services={services} value={project.serviceIds || []} onChange={(serviceIds) => edit({ serviceIds })} label="Dịch vụ DANAVA đã cung cấp (hiện dự án ở trang dịch vụ tương ứng)" />
           <MediaPicker label="Ảnh dự án" value={project.image} onChange={(image) => edit({ image })} />
+          <Lines label="Phạm vi DANAVA thực hiện (mỗi dòng một hạng mục)" value={project.scope || []} onChange={(scope) => edit({ scope })} />
+          <fieldset className="adm-fieldset">
+            <legend>Thư viện ảnh thực tế</legend>
+            {(project.gallery || []).map((g, i) => (
+              <div key={i} className="adm-pair">
+                <MediaPicker label={`Ảnh ${i + 1}`} value={g.src} onChange={(src) => edit({ gallery: (project.gallery || []).map((x, j) => (j === i ? { ...x, src } : x)).filter((x) => x.src) })} />
+                <input placeholder="Chú thích ảnh" maxLength={300} value={g.caption} onChange={(e) => edit({ gallery: (project.gallery || []).map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)) })} />
+                <button type="button" className="danger" onClick={() => edit({ gallery: (project.gallery || []).filter((_, j) => j !== i) })}>Xóa ảnh</button>
+              </div>
+            ))}
+            <MediaPicker label="Thêm ảnh" value="" onChange={(src) => src && edit({ gallery: [...(project.gallery || []), { src, caption: '' }] })} />
+          </fieldset>
           {[
             ['summary', 'Mô tả ngắn trên thẻ'],
             ['challenge', 'Bối cảnh / bài toán'],
             ['solution', 'Giải pháp triển khai'],
-            ['result', 'Kết quả đã xác nhận'],
+            ['result', 'Kết quả bàn giao (chỉ ghi điều đã bàn giao/đã xác nhận, không ước đoán số liệu)'],
           ].map(([key, label]) => (
             <label key={key}>
               {label}
@@ -154,6 +171,10 @@ export default function ProjectManager({
               />
             </label>
           ))}
+          <Text label="Tiêu đề SEO" value={project.seoTitle || ''} max={200} onChange={(seoTitle) => edit({ seoTitle })} />
+          <Text label="Mô tả SEO" value={project.seoDescription || ''} max={300} onChange={(seoDescription) => edit({ seoDescription })} />
+          <Text label="Ngày cập nhật" type="date" value={project.updated || ''} onChange={(updated) => edit({ updated: updated || undefined })} />
+          <a className="text-link" href={`/du-an/${project.slug}/`} target="_blank" rel="noopener">Xem trước (sau khi lưu) ↗</a>
           <label className="toggle-label">
             <input
               type="checkbox"

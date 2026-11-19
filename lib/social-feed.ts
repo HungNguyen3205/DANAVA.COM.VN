@@ -165,3 +165,21 @@ export function getSocialPlatformCounts(posts: SocialPost[] = initialSocialPosts
   return counts;
 }
 
+
+/** Link gốc thật sự nằm trên nền tảng được ghi nhãn (không phải link nội bộ website). */
+export function isPlatformSourced(p: SocialPost): boolean {
+  const host = (() => { try { return new URL(p.originalUrl).hostname.replace(/^www\./, ''); } catch { return ''; } })();
+  if (p.platform === 'facebook') return host === 'facebook.com' || host === 'fb.watch';
+  if (p.platform === 'youtube') return host === 'youtube.com' || host === 'youtu.be';
+  if (p.platform === 'zalo') return host === 'zalo.me' && /\/(s|oa)\//.test(new URL(p.originalUrl).pathname);
+  if (p.platform === 'tiktok') return host === 'tiktok.com';
+  return false;
+}
+
+/**
+ * Bài đăng được phép hiện công khai trong khối "Từ kênh chính thức":
+ * đã duyệt VÀ có link tới bài gốc trên đúng nền tảng. Bài trỏ về trang nội bộ bị ẩn để không gây hiểu nhầm nguồn.
+ */
+export function getPublicSocialPosts(posts: SocialPost[] = initialSocialPosts): SocialPost[] {
+  return getApprovedSocialPosts(posts).filter(isPlatformSourced);
+}

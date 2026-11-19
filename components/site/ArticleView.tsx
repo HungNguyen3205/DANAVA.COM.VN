@@ -1,12 +1,16 @@
-'use client';
-
+/**
+ * /kien-thuc/[slug]/ — trang bài viết (server component: toàn văn, mục lục và JSON-LD có trong HTML phản hồi).
+ * Mục lục tự sinh từ tiêu đề; mỗi tiêu đề có id ổn định theo nội dung để liên kết neo hoạt động.
+ */
 import Link from 'next/link';
-import { ArrowLeft, CalendarDays, Clock, ChevronDown } from 'lucide-react';
-import { useSite } from '../SiteStore';
-import type { Post } from '@/lib/content';
+import { ArrowLeft, CalendarDays, Clock, ChevronDown, RefreshCw, UserRound } from 'lucide-react';
+import type { Post, SiteData } from '@/lib/content';
+import { authorOf, relatedPosts, servicesForPost, topicHasPage, topicHref, topicOf } from '@/lib/site-queries';
 import { Crumbs, CtaBand } from './ui';
 import { formatDate } from './catalog';
-import { PostCard, postImage } from './NewsPage';
+import { postCover, RelatedPosts, ServiceLinks } from './blocks';
+import { contactHrefFor } from './ServiceDetailPage';
+import { DraftBanner } from './SubServicePage';
 
 type TocItem = { id: string; title: string; level: number };
 type Img = { src: string; alt: string };
@@ -14,15 +18,38 @@ type Block = { type: 'heading' | 'paragraph' | 'list' | 'quote' | 'images'; id?:
 
 const IMAGE_LINE = /^!\[([^\]]*)\]\((\/assets\/[a-zA-Z0-9/_.-]+\.(?:webp|png|jpe?g))\)$/;
 
+/** "Tiêu đề Mục 1" → "tieu-de-muc-1" */
+export function anchorSlug(text: string) {
+  return text
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'muc';
+}
+
 /** Chuẩn hóa nội dung CMS (văn bản thuần) thành khối tiêu đề, đoạn, danh sách, trích dẫn. */
 export function parseArticleBody(rawBody: string): { blocks: Block[]; toc: TocItem[]; wordCount: number } {
   const lines = rawBody.split('\n');
   const blocks: Block[] = [];
   const toc: TocItem[] = [];
+  const used = new Map<string, number>();
   let list: string[] = [];
   let wordCount = 0;
-  let index = 1;
   const flush = () => { if (list.length) { blocks.push({ type: 'list', items: list }); list = []; } };
+  const idFor = (title: string) => {
+    const base = anchorSlug(title);
+    const n = (used.get(base) || 0) + 1;
+    used.set(base, n);
+    return n === 1 ? base : `${base}-${n}`;
+  };
+  const heading = (title: string, level: number) => {
+    flush();
+    const id = idFor(title);
+    toc.push({ id, title, level });
+    blocks.push({ type: 'heading', id, text: title, level });
+  };
 
   for (const line of lines) {
     const t = line.trim();
@@ -43,14 +70,7 @@ export function parseArticleBody(rawBody: string): { blocks: Block[]; toc: TocIt
 
     // Tiêu đề tường minh kiểu Markdown: `## Tiêu đề`, `### Tiêu đề phụ`.
     const md = t.match(/^(#{2,3})\s+(.+)/);
-    if (md) {
-      flush();
-      const id = `section-${index++}`;
-      const level = md[1].length;
-      toc.push({ id, title: md[2], level });
-      blocks.push({ type: 'heading', id, text: md[2], level });
-      continue;
-    }
+    if (md) { heading(md[2], md[1].length); continue; }
 
     if (/^[-*+]\s+/.test(t)) { list.push(t.replace(/^[-*+]\s+/, '')); continue; }
     if (/^\d+\.\d+\s+/.test(t)) { list.push(t); continue; }
@@ -58,14 +78,7 @@ export function parseArticleBody(rawBody: string): { blocks: Block[]; toc: TocIt
     const numbered = /^(\d+|[IVX]+)[.)]\s+(.+)/.test(t);
     const step = /^Bước\s+\d+[:\-]\s+(.+)/i.test(t);
     const caps = t.length >= 6 && t.length <= 85 && t === t.toUpperCase() && !t.endsWith('.') && !t.includes(':') && words >= 2;
-    if (numbered || step || caps) {
-      flush();
-      const id = `section-${index++}`;
-      const level = numbered || step ? 2 : 3;
-      toc.push({ id, title: t, level });
-      blocks.push({ type: 'heading', id, text: t, level });
-      continue;
-    }
+    if (numbered || step || caps) { heading(t, numbered || step ? 2 : 3); continue; }
     if (t.startsWith('>') || (t.startsWith('“') && t.endsWith('”'))) {
       flush();
       blocks.push({ type: 'quote', text: t.replace(/^>\s*/, '') });
@@ -90,49 +103,36 @@ function TocList({ toc }: { toc: TocItem[] }) {
   );
 }
 
-export function ArticleNotAvailable({ title, text }: { title: string; text: string }) {
-  return (
-    <main id="main" className="s-section">
-      <div className="s-container s-container--narrow s-article-missing">
-        <p className="s-eyebrow">Bản tin DANAVA</p>
-        <h1 className="s-h1">{title}</h1>
-        <p className="s-lead">{text}</p>
-        <div className="s-row s-row--center">
-          <Link className="s-btn s-btn--primary" href="/kien-thuc/"><ArrowLeft aria-hidden="true" />Quay lại Bản tin</Link>
-          <Link className="s-btn s-btn--secondary" href="/">Về Trang chủ</Link>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-export function ArticleView({ slug, post: given }: { slug?: string; post?: Post }) {
-  const { data } = useSite();
-  const post = given || data.posts.find(p => p.slug === slug && p.published);
-
-  if (!post) {
-    return <ArticleNotAvailable title="Bài viết chưa được xuất bản" text="Nội dung này đang được biên tập, đã ẩn hoặc chưa sẵn sàng công khai." />;
-  }
-
+export function ArticleView({ post, data, preview }: { post: Post; data: SiteData; preview?: boolean }) {
   const { blocks, toc, wordCount } = parseArticleBody(post.body || '');
   const minutes = Math.max(2, Math.ceil(wordCount / 220));
-  const cover = postImage(post);
-  const others = data.posts.filter(p => p.published && p.id !== post.id);
-  const related = [...others.filter(p => p.category === post.category), ...others.filter(p => p.category !== post.category)].slice(0, 3);
+  const cover = postCover(post);
+  const topic = topicOf(data, post);
+  const author = authorOf(data, post);
+  const related = relatedPosts(data, post, 3);
+  const services = servicesForPost(data, post);
   const hasToc = toc.length >= 2;
+  const topicCrumb = topic && topicHasPage(data, topic) ? { href: topicHref(topic), label: topic.name } : { label: topic?.name || post.category };
 
   return (
     <main id="main">
+      {preview && <DraftBanner />}
       <article>
         <header className="s-article-head">
           <div className="s-container s-container--narrow">
-            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Bản tin' }, { label: post.category }]} />
-            <p className="s-eyebrow s-article-cat">{post.category}</p>
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Kiến thức' }, topicCrumb]} />
+            <p className="s-eyebrow s-article-cat">{topic?.name || post.category}</p>
             <h1 className="s-h1 s-article-title">{post.title}</h1>
             {post.excerpt && <p className="s-lead">{post.excerpt}</p>}
             <div className="s-article-meta">
-              <span>DANAVA Solutions</span>
+              <span>
+                <UserRound aria-hidden="true" />
+                {author ? <Link href={`/doi-ngu/${author.id}/`}>{author.name}</Link> : 'DANAVA Solutions'}
+              </span>
               {post.date && <span><CalendarDays aria-hidden="true" /><time dateTime={post.date}>{formatDate(post.date)}</time></span>}
+              {post.updated && post.updated !== post.date && (
+                <span><RefreshCw aria-hidden="true" />Cập nhật <time dateTime={post.updated}>{formatDate(post.updated)}</time></span>
+              )}
               <span><Clock aria-hidden="true" />{minutes} phút đọc</span>
             </div>
           </div>
@@ -141,7 +141,7 @@ export function ArticleView({ slug, post: given }: { slug?: string; post?: Post 
         {cover && (
           <div className="s-container s-article-cover-wrap">
             <figure className="s-frame s-frame--plain s-article-cover">
-              <img src={cover} alt={post.title} />
+              <img src={cover} alt={post.title} fetchPriority="high" />
             </figure>
           </div>
         )}
@@ -153,10 +153,10 @@ export function ArticleView({ slug, post: given }: { slug?: string; post?: Post 
                 <summary>Mục lục nội dung <ChevronDown aria-hidden="true" /></summary>
                 <TocList toc={toc} />
               </details>
-              <div className="s-article-toc__desktop">
+              <nav className="s-article-toc__desktop" aria-label="Mục lục">
                 <p className="s-article-toc__title">Mục lục nội dung</p>
                 <TocList toc={toc} />
-              </div>
+              </nav>
             </aside>
           )}
 
@@ -182,23 +182,29 @@ export function ArticleView({ slug, post: given }: { slug?: string; post?: Post 
               })}
             </div>
 
+            {services.length > 0 && (
+              <aside className="u-article-cta" aria-label="Giải pháp liên quan">
+                <p className="s-eyebrow">Giải pháp liên quan</p>
+                <p className="s-text">Bài viết thuộc chủ đề {services.map(s => s.title).join(', ')}. Bạn cần trao đổi cho trường hợp của doanh nghiệp mình?</p>
+                <div className="s-row">
+                  <Link className="s-btn s-btn--primary" href={contactHrefFor(services[0])}>{services[0].id === 'studio' ? 'Đăng ký demo' : 'Nhận tư vấn'}</Link>
+                  <Link className="s-btn s-btn--secondary" href={`/giai-phap/${services[0].slug}/`}>Tìm hiểu {services[0].title}</Link>
+                </div>
+              </aside>
+            )}
+
             <footer className="s-article-foot">
-              <Link className="s-link" href="/kien-thuc/"><ArrowLeft aria-hidden="true" />Tất cả bài viết</Link>
+              <Link className="s-link" href={topic && topicHasPage(data, topic) ? topicHref(topic) : '/kien-thuc/'}>
+                <ArrowLeft aria-hidden="true" />{topic && topicHasPage(data, topic) ? `Bài khác trong ${topic.name}` : 'Tất cả bài viết'}
+              </Link>
             </footer>
           </div>
         </div>
       </article>
 
-      {related.length > 0 && (
-        <section className="s-section s-section--soft" aria-labelledby="s-article-related">
-          <div className="s-container">
-            <div className="s-mb"><h2 className="s-h2" id="s-article-related">Bài viết liên quan</h2></div>
-            <div className="s-grid s-grid--3">{related.map(p => <PostCard key={p.id} post={p} />)}</div>
-          </div>
-        </section>
-      )}
-
-      <CtaBand />
+      <RelatedPosts posts={related} data={data} title="Bài viết liên quan" id="s-article-related" soft />
+      <ServiceLinks services={services.slice(0, 3)} />
+      <CtaBand primary={{ href: services[0] ? contactHrefFor(services[0]) : '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

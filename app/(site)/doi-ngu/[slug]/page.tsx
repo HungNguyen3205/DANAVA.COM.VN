@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getContent } from '@/lib/database';
-import { seo, jsonLD, siteURL } from '@/lib/seo';
+import { seo, jsonLD, siteURL, breadcrumbLD, ORG_ID } from '@/lib/seo';
 import { personPhoto } from '@/lib/media';
 import { getStaffProfile } from '@/lib/staff';
 import StaffProfile from '@/components/site/StaffProfile';
@@ -12,14 +12,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!person) {
     return {
-      title: 'Không tìm thấy hồ sơ nhân sự — DANAVA Solutions',
+      title: 'Không tìm thấy hồ sơ nhân sự',
       robots: { index: false }
     };
   }
 
   const photo = personPhoto(person) || '/assets/legacy/founder.webp';
   return seo(
-    `${person.name} — ${person.role} | DANAVA Solutions`,
+    `${person.name} — ${person.role}`,
     `Hồ sơ năng lực, kỹ năng chuyên sâu, các dự án triển khai thực tế và vai trò đảm nhiệm của ${person.name} tại DANAVA Solutions.`,
     `/doi-ngu/${slug}/`,
     photo
@@ -43,11 +43,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     '@type': 'Person',
     name: person.name,
     jobTitle: person.role,
-    worksFor: {
-      '@type': 'Organization',
-      name: 'DANAVA Solutions',
-      url: siteURL
-    },
+    worksFor: { '@id': ORG_ID },
     url: `${siteURL}/doi-ngu/${slug}/`
   };
 
@@ -56,6 +52,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLD(schema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLD(breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Đội ngũ', href: '/doi-ngu/' }, { label: person.name, href: `/doi-ngu/${slug}/` }])) }}
       />
       <StaffProfile profile={profile} />
     </>
