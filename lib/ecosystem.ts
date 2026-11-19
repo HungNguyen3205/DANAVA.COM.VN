@@ -1,4 +1,13 @@
+/*
+ * Hệ sinh thái DANAVA — dữ liệu cho /he-sinh-thai/.
+ * Chỉ ghi điều có căn cứ: nội dung giải pháp đã có trên website, sơ đồ hệ sinh thái do chủ sở hữu cung cấp,
+ * và các sản phẩm đang chạy đã được kiểm tra trực tiếp ngày 19/11/2026 (public/assets/ecosystem/sources.json).
+ * Không ghi số liệu thành viên, cam kết hiệu quả hay tốc độ chưa đo.
+ */
 export type EcosystemCategory = 'san-pham-so' | 'truyen-thong' | 'du-lich-su-kien' | 'cong-dong';
+
+/** Vị trí trên hành trình khách hàng của doanh nghiệp dịch vụ. */
+export type JourneyStage = 'thu-hut' | 'van-hanh' | 'gan-ket' | 'trai-nghiem';
 
 export interface EcosystemUnit {
   id: string;
@@ -10,305 +19,186 @@ export interface EcosystemUnit {
   targetAudience: string;
   description: string;
   features: string[];
-  officialLink: {
-    label: string;
-    href: string;
-    isExternal?: boolean;
-  };
+  officialLink: { label: string; href: string; isExternal?: boolean };
   badge: string;
+  /** Ảnh đại diện (đường dẫn nội bộ) */
   image: string;
   visible: boolean;
   statusText?: string;
+  /** Sản phẩm đang chạy (đã kiểm tra) */
+  live?: { label: string; href: string }[];
+  /** Ảnh chụp màn hình thật của sản phẩm (nếu có) */
+  screenshot?: string;
+  stage?: JourneyStage;
 }
 
 export const ECOSYSTEM_CATEGORIES: { id: 'all' | EcosystemCategory; label: string; shortDesc: string }[] = [
-  { id: 'all', label: 'Tất cả hệ sinh thái', shortDesc: 'Toàn bộ 4 khối năng lực: Sản phẩm số, Truyền thông, Du lịch & Sự kiện, và Cộng đồng' },
-  { id: 'san-pham-so', label: 'Sản phẩm số', shortDesc: 'Phần mềm quản lý chuyên sâu Studio, PMS, E-learning và nền tảng website' },
-  { id: 'truyen-thong', label: 'Truyền thông', shortDesc: 'Tiếp thị số theo KPI, sản xuất video, ấn phẩm và quản trị Fanpage/Zalo OA' },
-  { id: 'du-lich-su-kien', label: 'Du lịch & Sự kiện', shortDesc: 'Tour trải nghiệm yoga retreat, hội thảo doanh nghiệp và team building' },
-  { id: 'cong-dong', label: 'Cộng đồng', shortDesc: 'Mạng lưới Yoga Club Vietnam, chuỗi sự kiện Cổng Năng Lượng và hỗ trợ doanh nghiệp' }
+  { id: 'all', label: 'Tất cả hệ sinh thái', shortDesc: 'Bốn khối năng lực: Sản phẩm số, Truyền thông, Du lịch & Sự kiện và Cộng đồng.' },
+  { id: 'san-pham-so', label: 'Sản phẩm số', shortDesc: 'Phần mềm và nền tảng do DANAVA xây dựng, vận hành.' },
+  { id: 'truyen-thong', label: 'Truyền thông', shortDesc: 'Digital marketing, sự kiện và sản xuất nội dung cho doanh nghiệp.' },
+  { id: 'du-lich-su-kien', label: 'Du lịch & Sự kiện', shortDesc: 'Đặt vé trực tuyến, tour trải nghiệm và retreat yoga.' },
+  { id: 'cong-dong', label: 'Cộng đồng', shortDesc: 'Cộng đồng yoga và đồng hành cùng doanh nghiệp mới.' }
+];
+
+export const JOURNEY_STAGES: { id: JourneyStage; label: string; text: string }[] = [
+  { id: 'thu-hut', label: 'Thu hút', text: 'Khách hàng biết đến và liên hệ' },
+  { id: 'van-hanh', label: 'Vận hành', text: 'Phục vụ khách gọn, đúng, nhanh' },
+  { id: 'gan-ket', label: 'Gắn kết', text: 'Hội viên quay lại và học tiếp' },
+  { id: 'trai-nghiem', label: 'Trải nghiệm', text: 'Hành trình, sự kiện, cộng đồng' }
 ];
 
 export const initialEcosystemUnits: EcosystemUnit[] = [
-  // 1. NHÓM SẢN PHẨM SỐ
+  /* ---------------- Sản phẩm số ---------------- */
   {
-    id: 'studio',
-    name: 'DANAVA Studio',
-    shortName: 'Studio Management',
-    category: 'san-pham-so',
-    categoryName: 'Sản phẩm số',
-    categoryKicker: 'NỀN TẢNG QUẢN TRỊ THỂ THAO & WELLNESS',
-    targetAudience: 'Chủ cơ sở, ban quản trị chuỗi phòng Gym, Yoga, Pilates, Bể bơi, Spa & Fitness Center',
-    description: 'Nền tảng phần mềm quản lý khép kín tại cơ sở: kiểm soát hội viên, gói tập, lịch ca học, tự động hóa check-in bằng mã QR và tích hợp ứng dụng hội viên di động mang thương hiệu riêng.',
-    features: [
-      'Quản lý hội viên, hợp đồng và tự động cảnh báo hạn thẻ',
-      'Xếp lịch lớp, quản lý sĩ số và danh sách chờ (Waitlist) thông minh',
-      'QR Check-in cửa từ không chạm, vận hành ổn định ngoại tuyến',
-      'App hội viên iOS & Android mang tên và thương hiệu riêng của cơ sở'
-    ],
-    officialLink: {
-      label: 'Khám phá sản phẩm DANAVA Studio',
-      href: '/giai-phap/danava-studio/'
-    },
-    badge: 'Sản phẩm cốt lõi',
-    image: '/assets/presentation/studio-dashboard.webp',
-    visible: true,
-    statusText: 'Đang vận hành thực tế'
+    id: 'studio', name: 'DANAVA Studio', shortName: 'Studio', category: 'san-pham-so', categoryName: 'Sản phẩm số',
+    categoryKicker: 'Phần mềm quản lý', stage: 'van-hanh',
+    targetAudience: 'Phòng Gym, Yoga, Pilates, bể bơi, Spa và trung tâm wellness',
+    description: 'Phần mềm quản lý hội viên, gói tập, lịch lớp, check-in, bán hàng và báo cáo trên một hệ thống; mỗi cơ sở có app hội viên mang tên riêng.',
+    features: ['Hội viên, gói tập và nhắc gia hạn', 'Lịch lớp, đặt chỗ, lịch hẹn PT', 'Check-in QR, bán hàng tại quầy, tủ đồ', 'App hội viên theo thương hiệu cơ sở'],
+    officialLink: { label: 'Xem DANAVA Studio', href: '/giai-phap/danava-studio/' },
+    badge: 'Sản phẩm chủ lực', image: '/assets/presentation/studio-dashboard.webp', screenshot: '/assets/presentation/studio-dashboard.webp',
+    visible: true, statusText: 'Đang vận hành',
+    live: [{ label: 'studio.danava.vn', href: 'https://studio.danava.vn' }, { label: 'Báo giá · hello.danava.vn', href: 'https://hello.danava.vn' }]
   },
   {
-    id: 'website',
-    name: 'Website & Landing Page DANAVA',
-    shortName: 'Web & Landing Page',
-    category: 'san-pham-so',
-    categoryName: 'Sản phẩm số',
-    categoryKicker: 'NHẬN DIỆN THƯƠNG HIỆU SỐ CHUẨN SEO',
-    targetAudience: 'Doanh nghiệp dịch vụ, chuỗi phòng tập, cơ sở đào tạo cần nâng tầm hình ảnh trực tuyến',
-    description: 'Thiết kế website doanh nghiệp và landing page chiến dịch tối ưu tốc độ tải trang, trải nghiệm mobile-first, giao diện độc bản và tích hợp luồng thu thập khách hàng tiềm năng.',
-    features: [
-      'Giao diện thích ứng điện thoại, thời gian tải trang dưới 1 giây',
-      'Cấu trúc nội dung chuẩn SEO, tối ưu khả năng xuất hiện trên Google',
-      'Biểu mẫu nhận tư vấn thông minh, bảo vệ dữ liệu chống spam',
-      'Đồng bộ dữ liệu khách hàng trực tiếp với hệ thống quản trị'
-    ],
-    officialLink: {
-      label: 'Xem giải pháp Thiết kế Website',
-      href: '/giai-phap/thiet-ke-website/'
-    },
-    badge: 'Giải pháp số',
-    image: '/assets/legacy/website.webp',
-    visible: true,
-    statusText: 'Sẵn sàng triển khai'
+    id: 'platform', name: 'Nền tảng danava.vn', shortName: 'danava.vn', category: 'san-pham-so', categoryName: 'Sản phẩm số',
+    categoryKicker: 'Nền tảng wellness', stage: 'gan-ket',
+    targetAudience: 'Người tập tìm phòng tập, khóa học, tour; cơ sở wellness muốn có thêm khách',
+    description: 'Nền tảng wellness kết nối người dùng với phòng tập, khóa học, tour và sản phẩm. Các cơ sở trên nền tảng vận hành bằng DANAVA Studio.',
+    features: ['Tìm phòng tập, khóa học, tour wellness', 'Trang riêng cho từng cơ sở đối tác', 'Đồng bộ với DANAVA Studio'],
+    officialLink: { label: 'Mở danava.vn', href: 'https://danava.vn/', isExternal: true },
+    badge: 'Nền tảng', image: '/assets/portfolio/danava-vn.webp', screenshot: '/assets/portfolio/danava-vn.webp',
+    visible: true, statusText: 'Đang vận hành',
+    live: [{ label: 'danava.vn', href: 'https://danava.vn' }]
   },
   {
-    id: 'pms',
-    name: 'DANAVA PMS',
-    shortName: 'PMS Quản lý lưu trú',
-    category: 'san-pham-so',
-    categoryName: 'Sản phẩm số',
-    categoryKicker: 'QUẢN LÝ KHÁCH SẠN & CHO THUÊ',
-    targetAudience: 'Chủ khách sạn boutique, chuỗi homestay, căn hộ dịch vụ và biệt thự nghỉ dưỡng',
-    description: 'Phần mềm quản lý buồng phòng tinh gọn: theo dõi sơ đồ phòng trực quan, điều phối đặt/trả phòng nhanh, quản lý thu chi hóa đơn và báo cáo công suất phòng minh bạch.',
-    features: [
-      'Sơ đồ phòng cập nhật trạng thái dọn phòng thời gian thực',
-      'Quy trình check-in / check-out nhanh chóng cho khách lưu trú',
-      'Báo cáo doanh thu, công suất phòng và dòng tiền hàng ngày',
-      'Phân quyền nhân viên lễ tân, buồng phòng và quản lý rõ ràng'
-    ],
-    officialLink: {
-      label: 'Trao đổi giải pháp DANAVA PMS',
-      href: '/lien-he/?service=DANAVA+PMS'
-    },
-    badge: 'Phần mềm quản trị',
-    image: '/assets/legacy/community.webp',
-    visible: true,
-    statusText: 'Đang triển khai theo yêu cầu'
+    id: 'elearning', name: 'DANAVA E-learning', shortName: 'E-learning', category: 'san-pham-so', categoryName: 'Sản phẩm số',
+    categoryKicker: 'Đào tạo trực tuyến', stage: 'gan-ket',
+    targetAudience: 'Trung tâm đào tạo, câu lạc bộ yoga, huấn luyện viên muốn bán khóa học online',
+    description: 'Nền tảng khóa học online: video bài giảng, combo lộ trình, bán khóa học và cấp chứng chỉ. Đang chạy thực tế với Yoga Club Vietnam tại edu-yoga.danava.vn.',
+    features: ['Soạn khóa học, video bài giảng', 'Bán khóa học, combo lộ trình', 'Chứng chỉ hoàn thành có mã QR'],
+    officialLink: { label: 'Xem edu-yoga.danava.vn', href: 'https://edu-yoga.danava.vn/', isExternal: true },
+    badge: 'Đào tạo', image: '/assets/ecosystem/edu-yoga-khoa-hoc.webp', screenshot: '/assets/ecosystem/edu-yoga-khoa-hoc.webp',
+    visible: true, statusText: 'Đang vận hành',
+    live: [{ label: 'edu-yoga.danava.vn', href: 'https://edu-yoga.danava.vn' }]
   },
   {
-    id: 'elearning',
-    name: 'DANAVA E-Learning',
-    shortName: 'Đào tạo trực tuyến',
-    category: 'san-pham-so',
-    categoryName: 'Sản phẩm số',
-    categoryKicker: 'NỀN TẢNG HỌC TẬP & KHOÁ HỌC SỐ',
-    targetAudience: 'Giảng viên, huấn luyện viên yoga, trung tâm đào tạo và học viên học từ xa',
-    description: 'Nền tảng đào tạo kỹ năng trực tuyến với kho bài giảng video chất lượng cao, bài kiểm tra tương tác, theo dõi tiến độ rèn luyện và cấp chứng nhận hoàn thành.',
-    features: [
-      'Kho bài giảng video phân cấp từ cơ bản đến nâng cao',
-      'Hệ thống trắc nghiệm kiểm tra và ghi nhận tiến độ học tập',
-      'Tương tác hỏi đáp trực tiếp với chuyên gia và huấn luyện viên',
-      'Truy cập thuận tiện trên mọi thiết bị máy tính và điện thoại'
-    ],
-    officialLink: {
-      label: 'Khám phá nền tảng danava.vn',
-      href: 'https://danava.vn/',
-      isExternal: true
-    },
-    badge: 'Nền tảng đào tạo',
-    image: '/assets/legacy/event-session.webp',
-    visible: true,
-    statusText: 'Đang hoạt động trên danava.vn'
+    id: 'website', name: 'Website & Landing Page', shortName: 'Website', category: 'san-pham-so', categoryName: 'Sản phẩm số',
+    categoryKicker: 'Thiết kế website', stage: 'thu-hut',
+    targetAudience: 'Doanh nghiệp dịch vụ, dự án, chiến dịch cần website thể hiện đúng bản sắc',
+    description: 'Website và landing page thiết kế riêng theo thương hiệu, ưu tiên điện thoại, có trang quản trị và biểu mẫu nhận yêu cầu tư vấn.',
+    features: ['Thiết kế riêng, không dùng theme dựng sẵn', 'Ưu tiên điện thoại', 'Nền tảng SEO kỹ thuật, tự quản trị nội dung'],
+    officialLink: { label: 'Xem portfolio website', href: '/giai-phap/thiet-ke-website/' },
+    badge: 'Giải pháp số', image: '/assets/portfolio/vinhomes/desktop-hero.webp', screenshot: '/assets/portfolio/vinhomes/desktop-hero.webp',
+    visible: true, statusText: 'Nhận dự án'
+  },
+  {
+    id: 'pms', name: 'DANAVA PMS', shortName: 'PMS', category: 'san-pham-so', categoryName: 'Sản phẩm số',
+    categoryKicker: 'Quản lý lưu trú', stage: 'van-hanh',
+    targetAudience: 'Khách sạn, homestay, căn hộ dịch vụ',
+    description: 'Quản lý khách sạn và bất động sản cho thuê: phòng, đặt và nhận/trả phòng, khách hàng, thu chi, báo cáo.',
+    features: ['Quản lý phòng', 'Đặt & nhận/trả phòng', 'Khách hàng, thu chi, báo cáo'],
+    officialLink: { label: 'Trao đổi về DANAVA PMS', href: '/lien-he/?service=tu-van-chuyen-doi-so' },
+    badge: 'Phần mềm quản lý', image: '/assets/presentation/danava-ecosystem.webp',
+    visible: true, statusText: 'Tư vấn theo yêu cầu'
   },
 
-  // 2. NHÓM TRUYỀN THÔNG
+  /* ---------------- Truyền thông ---------------- */
   {
-    id: 'digital',
-    name: 'DANAVA Digital Marketing',
-    shortName: 'Digital Marketing',
-    category: 'truyen-thong',
-    categoryName: 'Truyền thông',
-    categoryKicker: 'TIẾP THỊ SỐ THEO KPI THỰC TẾ',
-    targetAudience: 'Doanh nghiệp SME, phòng tập thể thao, thương hiệu dịch vụ cần khách hàng tiềm năng thực',
-    description: 'Dịch vụ marketing tổng thể từ hoạch định chiến lược, phân tích chân dung khách hàng đến triển khai quảng cáo Meta/Google theo KPI đo lường, chuyển đổi người lạ thành học viên trung thành.',
-    features: [
-      'Quảng cáo Meta & Google Ads có cam kết chi phí lead minh bạch',
-      'Xây dựng phễu chuyển đổi qua Landing page và Zalo Official Account',
-      'Đo lường hiệu quả từng kênh và tối ưu ngân sách theo tuần',
-      'Báo cáo số liệu thực tế, không dùng số liệu ảo hay tương tác rỗng'
-    ],
-    officialLink: {
-      label: 'Xem giải pháp Digital Marketing',
-      href: '/giai-phap/digital-marketing/'
-    },
-    badge: 'Dịch vụ tăng trưởng',
-    image: '/assets/legacy/event-session.webp',
-    visible: true,
-    statusText: 'Đang nhận dự án'
+    id: 'digital', name: 'DANAVA Digital Marketing', shortName: 'Digital', category: 'truyen-thong', categoryName: 'Truyền thông',
+    categoryKicker: 'Marketing tổng thể', stage: 'thu-hut',
+    targetAudience: 'Phòng tập, spa, doanh nghiệp dịch vụ cần kênh số hoạt động đều',
+    description: 'Chiến lược, sản xuất nội dung, vận hành Fanpage & Zalo OA, quảng cáo Meta/Google và báo cáo số liệu lấy từ chính nền tảng.',
+    features: ['Chiến lược & lịch biên tập', 'Fanpage, Zalo OA', 'Quảng cáo Meta/Google, đo lường'],
+    officialLink: { label: 'Xem Digital Marketing', href: '/giai-phap/digital-marketing/' },
+    badge: 'Truyền thông', image: '/assets/legacy/event-session.webp',
+    visible: true, statusText: 'Nhận dự án'
   },
   {
-    id: 'media',
-    name: 'DANAVA Media',
-    shortName: 'Sản xuất nội dung',
-    category: 'truyen-thong',
-    categoryName: 'Truyền thông',
-    categoryKicker: 'SẢN XUẤT MEDIA & VẬN HÀNH KÊNH',
-    targetAudience: 'Thương hiệu cần nâng tầm visual, chụp ảnh cơ sở, quay phim ngắn và chăm sóc Fanpage',
-    description: 'Đội ngũ sáng tạo sản xuất hình ảnh, video ngắn chuẩn format TikTok/Reels, viết nội dung bài đăng định kỳ và vận hành Fanpage/Zalo OA chuyên nghiệp, giữ vững nhịp tương tác mỗi ngày.',
-    features: [
-      'Chụp ảnh không gian phòng tập, thiết bị và chân dung đội ngũ HLV',
-      'Sản xuất video ngắn giới thiệu bài tập, trải nghiệm và feedback học viên',
-      'Lên lịch biên tập nội dung định kỳ, thiết kế banner đồng bộ nhận diện',
-      'Chăm sóc tương tác khách hàng, kịch bản trả lời tin nhắn tự động'
-    ],
-    officialLink: {
-      label: 'Tìm hiểu dịch vụ Media & Fanpage',
-      href: '/giai-phap/su-kien-truyen-thong/'
-    },
-    badge: 'Sản xuất nội dung',
-    image: '/assets/legacy/event-workshop.webp',
-    visible: true,
-    statusText: 'Sẵn sàng phục vụ'
+    id: 'media', name: 'DANAVA Media · Sự kiện & Truyền thông', shortName: 'Media', category: 'truyen-thong', categoryName: 'Truyền thông',
+    categoryKicker: 'Sự kiện & sản xuất', stage: 'thu-hut',
+    targetAudience: 'Doanh nghiệp, thương hiệu bán lẻ cần sự kiện và không gian thương hiệu',
+    description: 'Ý tưởng, thiết kế thi công booth, backdrop, đạo cụ, sân khấu; thiết bị, nhân sự biểu diễn, điều phối và ghi hình sự kiện.',
+    features: ['Thi công booth & không gian', 'Âm thanh, ánh sáng, LED', 'MC, biểu diễn, ghi hình'],
+    officialLink: { label: 'Xem Sự kiện & Truyền thông', href: '/giai-phap/su-kien-truyen-thong/' },
+    badge: 'Sự kiện', image: '/assets/profile/set-stage.webp', screenshot: '/assets/profile/set-stage.webp',
+    visible: true, statusText: 'Nhận dự án'
   },
 
-  // 3. NHÓM DU LỊCH & SỰ KIỆN
+  /* ---------------- Du lịch & Sự kiện ---------------- */
   {
-    id: 'go',
-    name: 'DANAVA Go & Du lịch Trải nghiệm',
-    shortName: 'Du lịch trải nghiệm',
-    category: 'du-lich-su-kien',
-    categoryName: 'Du lịch & Sự kiện',
-    categoryKicker: 'HÀNH TRÌNH TÁI TẠO NĂNG LƯỢNG',
-    targetAudience: 'Cá nhân, gia đình, câu lạc bộ yêu thích du lịch trải nghiệm, tour yoga và retreat nghỉ dưỡng',
-    description: 'Thiết kế các hành trình du lịch kết hợp tập luyện yoga, thiền định và trải nghiệm văn hóa bản địa tại Đà Nẵng, Hội An, Huế và các miền thiên nhiên thanh bình, giúp tái tạo năng lượng trọn vẹn.',
-    features: [
-      'Lịch trình thong thả, không hối hả, hòa mình vào thiên nhiên',
-      'Các buổi tập Yoga đón bình minh cùng huấn luyện viên giàu kinh nghiệm',
-      'Ẩm thực thực dưỡng, tươi ngon từ nông sản địa phương',
-      'Dịch vụ đưa đón chu đáo, lưu trú an lành và riêng tư'
-    ],
-    officialLink: {
-      label: 'Khám phá Du lịch & Sự kiện',
-      href: '/giai-phap/du-lich-su-kien/'
-    },
-    badge: 'Tour trải nghiệm',
-    image: '/assets/legacy/community.webp',
-    visible: true,
-    statusText: 'Đang mở tour định kỳ'
+    id: 'go', name: 'DANAVA GO', shortName: 'GO', category: 'du-lich-su-kien', categoryName: 'Du lịch & Sự kiện',
+    categoryKicker: 'Đặt vé trực tuyến', stage: 'trai-nghiem',
+    targetAudience: 'Hành khách đi xe khách; nhà xe muốn bán vé trực tuyến',
+    description: 'Nền tảng đặt vé xe khách đa nhà xe: tìm chuyến, chọn ghế trên sơ đồ, vé điện tử và cổng quản trị cho từng nhà xe.',
+    features: ['Tìm chuyến, chọn ghế cabin/limousine', 'Vé điện tử', 'Cổng quản trị cho nhà xe'],
+    officialLink: { label: 'Mở danavago.com', href: 'https://danavago.com/', isExternal: true },
+    badge: 'Nền tảng đặt vé', image: '/assets/portfolio/danava-go.webp', screenshot: '/assets/portfolio/danava-go.webp',
+    visible: true, statusText: 'Đang vận hành',
+    live: [{ label: 'danavago.com', href: 'https://danavago.com' }]
   },
   {
-    id: 'events',
-    name: 'DANAVA Events & Workshop',
-    shortName: 'Sự kiện & Workshop',
-    category: 'du-lich-su-kien',
-    categoryName: 'Du lịch & Sự kiện',
-    categoryKicker: 'TỔ CHỨC HỘI THẢO & GALA TEAM BUILDING',
-    targetAudience: 'Doanh nghiệp, hiệp hội nghề nghiệp, tổ chức xã hội cần tổ chức sự kiện chuyên nghiệp',
-    description: 'Tổ chức sự kiện trọn gói từ khâu lên ý tưởng chủ đề, thiết kế visual sân khấu, điều phối âm thanh ánh sáng, quản lý khách mời đến ghi lại phóng sự ảnh và video sự kiện.',
-    features: [
-      'Ý tưởng kịch bản độc đáo, thể hiện đúng thông điệp của tổ chức',
-      'Ekip điều phối chuyên nghiệp, quản lý rủi ro kỹ thuật chặt chẽ',
-      'Chương trình Team building gắn kết năng lượng đồng đội',
-      'Sản xuất tư liệu truyền thông phóng sự ngay sau sự kiện'
-    ],
-    officialLink: {
-      label: 'Xem dịch vụ Tổ chức Sự kiện',
-      href: '/giai-phap/su-kien-truyen-thong/'
-    },
-    badge: 'Sự kiện doanh nghiệp',
-    image: '/assets/legacy/event-group.webp',
-    visible: true,
-    statusText: 'Tiếp nhận yêu cầu'
+    id: 'events', name: 'Du lịch trải nghiệm & Retreat', shortName: 'Du lịch', category: 'du-lich-su-kien', categoryName: 'Du lịch & Sự kiện',
+    categoryKicker: 'Tour & retreat', stage: 'trai-nghiem',
+    targetAudience: 'Trung tâm yoga, câu lạc bộ, nhóm khách riêng',
+    description: 'Tour yoga, retreat kết hợp tập luyện và nghỉ dưỡng; lịch trình, phòng, xe, vé tham quan do một đầu mối sắp xếp.',
+    features: ['Tour yoga & retreat', 'Thiết kế theo nhóm', 'Đặt dịch vụ trọn gói'],
+    officialLink: { label: 'Xem Du lịch trải nghiệm', href: '/giai-phap/du-lich-su-kien/' },
+    badge: 'Trải nghiệm', image: '/assets/legacy/community.webp', screenshot: '/assets/legacy/community.webp',
+    visible: true, statusText: 'Nhận yêu cầu'
   },
 
-  // 4. NHÓM CỘNG ĐỒNG
+  /* ---------------- Cộng đồng ---------------- */
   {
-    id: 'yoga-club',
-    name: 'Yoga Club Vietnam',
-    shortName: 'Yoga Club VN',
-    category: 'cong-dong',
-    categoryName: 'Cộng đồng',
-    categoryKicker: 'MẠNG LƯỚI KẾT NỐI YOGA TOÀN QUỐC',
-    targetAudience: 'Cộng đồng người tập yoga, huấn luyện viên, các câu lạc bộ và những người yêu lối sống khỏe',
-    description: 'Không gian kết nối và chia sẻ tình yêu yoga lành mạnh. Đơn vị tổ chức chuỗi sự kiện Cổng Năng Lượng thường niên, các workshop chuyên đề yoga trị liệu cột sống và giao lưu gắn kết cộng đồng.',
-    features: [
-      'Mạng lưới hàng ngàn thành viên sinh hoạt và học hỏi tích cực',
-      'Chuỗi sự kiện Cổng Năng Lượng quy mô lớn lan tỏa năng lượng tích cực',
-      'Các buổi workshop chuyên môn trị liệu cổ vai gáy và cột sống cùng chuyên gia',
-      'Chia sẻ tài liệu, review trải nghiệm và phong cách sống cân bằng'
-    ],
-    officialLink: {
-      label: 'Đến trang Cộng đồng & Yoga Club',
-      href: '/giai-phap/cong-dong/'
-    },
-    badge: 'Kênh đã duyệt · Cộng đồng',
-    image: '/assets/legacy/community.webp',
-    visible: true,
-    statusText: 'Hoạt động thường xuyên'
+    id: 'yoga-club', name: 'Yoga Club Vietnam', shortName: 'Yoga Club', category: 'cong-dong', categoryName: 'Cộng đồng',
+    categoryKicker: 'Cộng đồng yoga', stage: 'trai-nghiem',
+    targetAudience: 'Người tập yoga, huấn luyện viên, câu lạc bộ yoga',
+    description: 'Cộng đồng yoga tại Đà Nẵng. Đồng hành tổ chức chuỗi sự kiện Cổng Năng Lượng (05/05/2024) và chuỗi Yoga Workshop; có app hội viên và nền tảng học yoga online riêng.',
+    features: ['App hội viên ycv.danava.vn', 'Học yoga online edu-yoga.danava.vn', 'Workshop và sự kiện cộng đồng'],
+    officialLink: { label: 'Xem Cộng đồng & Yoga Club', href: '/giai-phap/cong-dong/' },
+    badge: 'Kênh đã duyệt · Cộng đồng', image: '/assets/legacy/community.webp', screenshot: '/assets/legacy/event-group.webp',
+    visible: true, statusText: 'Hoạt động',
+    live: [{ label: 'App hội viên · ycv.danava.vn', href: 'https://ycv.danava.vn' }, { label: 'edu-yoga.danava.vn', href: 'https://edu-yoga.danava.vn' }]
   },
   {
-    id: 'dong-hanh',
-    name: 'DANAVA Đồng hành Doanh nghiệp',
-    shortName: 'Đồng hành đối tác',
-    category: 'cong-dong',
-    categoryName: 'Cộng đồng',
-    categoryKicker: 'TƯ VẤN KHỞI NGHIỆP & PHÁP LÝ THỂ THAO',
-    targetAudience: 'Các huấn luyện viên chuẩn bị mở phòng tập mới, startup thể thao & chăm sóc sức khỏe',
-    description: 'Đồng hành cùng đối tác từ ý tưởng sơ khởi: khảo sát thị trường, đánh giá mô hình kinh doanh, kết nối chuỗi cung ứng trang thiết bị phòng tập và tư vấn thủ tục pháp lý kinh doanh dịch vụ thể thao.',
-    features: [
-      'Khảo sát hiện trạng và tư vấn bài toán doanh thu - chi phí thực tế',
-      'Hỗ trợ kết nối nhà cung cấp máy tập, thảm yoga và phụ kiện uy tín',
-      'Tư vấn thành lập doanh nghiệp và các quy chuẩn ngành theo thỏa thuận',
-      'Hỗ trợ công nghệ và truyền thông ưu đãi trong giai đoạn đầu thành lập'
-    ],
-    officialLink: {
-      label: 'Tìm hiểu chương trình Đồng hành',
-      href: '/giai-phap/cong-dong/#dong-hanh'
-    },
-    badge: 'Chương trình đồng hành',
-    image: '/assets/legacy/event-session.webp',
-    visible: true,
-    statusText: 'Đồng hành đối tác'
+    id: 'dong-hanh', name: 'Đồng hành doanh nghiệp', shortName: 'Đồng hành', category: 'cong-dong', categoryName: 'Cộng đồng',
+    categoryKicker: 'Hỗ trợ khởi đầu', stage: 'trai-nghiem',
+    targetAudience: 'Doanh nghiệp, cơ sở wellness mới thành lập',
+    description: 'Tư vấn thành lập doanh nghiệp theo thỏa thuận và kết nối nguồn lực trong hệ sinh thái DANAVA phù hợp với nhu cầu.',
+    features: ['Tư vấn thành lập theo thỏa thuận', 'Kết nối nguồn lực trong hệ sinh thái'],
+    officialLink: { label: 'Tìm hiểu chương trình', href: '/giai-phap/cong-dong/#dong-hanh' },
+    badge: 'Đồng hành', image: '/assets/legacy/event-session.webp',
+    visible: true, statusText: 'Theo thỏa thuận'
   }
 ];
 
-/**
- * Lấy danh sách các đơn vị trong hệ sinh thái theo bộ lọc
- * Chỉ lấy các đơn vị có visible: true
- */
+/** Sản phẩm đang chạy trên hạ tầng DANAVA (đã kiểm tra trực tiếp ngày 19/11/2026). */
+export const LIVE_PRODUCTS: { group: string; items: { name: string; host: string; note: string }[] }[] = [
+  { group: 'Nền tảng & phần mềm', items: [
+    { name: 'danava.vn', host: 'danava.vn', note: 'Nền tảng wellness' },
+    { name: 'DANAVA Studio', host: 'studio.danava.vn', note: 'Phần mềm quản lý' },
+    { name: 'Hello DANAVA', host: 'hello.danava.vn', note: 'Báo giá DANAVA Studio' },
+    { name: 'Yoga Club Online', host: 'edu-yoga.danava.vn', note: 'Học yoga online' },
+    { name: 'DANAVA GO', host: 'danavago.com', note: 'Đặt vé xe khách' }
+  ] },
+  { group: 'App hội viên mang tên cơ sở', items: [
+    { name: 'Yoga Club Vietnam', host: 'ycv.danava.vn', note: 'App hội viên' },
+    { name: 'HARIVER GYM', host: 'hariver.danava.vn', note: 'App hội viên' },
+    { name: 'Huế Pilates & Yoga', host: 'hue.danava.vn', note: 'App hội viên' }
+  ] }
+];
+
+/** Lấy các đơn vị đang hiển thị, lọc theo khối năng lực. */
 export function getEcosystemUnits(category: 'all' | EcosystemCategory = 'all'): EcosystemUnit[] {
   const publicUnits = initialEcosystemUnits.filter(unit => unit.visible);
   if (category === 'all') return publicUnits;
   return publicUnits.filter(unit => unit.category === category);
 }
 
-/**
- * Thống kê số lượng đơn vị theo từng nhóm danh mục
- */
+/** Thống kê số đơn vị theo khối năng lực. */
 export function getEcosystemCategoryCounts(): Record<'all' | EcosystemCategory, number> {
   const publicUnits = initialEcosystemUnits.filter(unit => unit.visible);
-  const counts: Record<'all' | EcosystemCategory, number> = {
-    'all': publicUnits.length,
-    'san-pham-so': 0,
-    'truyen-thong': 0,
-    'du-lich-su-kien': 0,
-    'cong-dong': 0
-  };
-
-  publicUnits.forEach(unit => {
-    if (counts[unit.category] !== undefined) {
-      counts[unit.category] += 1;
-    }
-  });
-
+  const counts: Record<'all' | EcosystemCategory, number> = { all: publicUnits.length, 'san-pham-so': 0, 'truyen-thong': 0, 'du-lich-su-kien': 0, 'cong-dong': 0 };
+  publicUnits.forEach(unit => { if (counts[unit.category] !== undefined) counts[unit.category] += 1; });
   return counts;
 }
-

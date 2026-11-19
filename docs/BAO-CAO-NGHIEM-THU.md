@@ -61,3 +61,11 @@ Không bước kiểm thử nào gửi form tới hệ thống thật hay ghi v�
 **Chưa có:** màn hình bên trong app Yoga Club (trang chủ hội viên, gói của tôi, QR check-in) cần đăng nhập. Chưa chụp vì không có tài khoản thử, và không tạo tài khoản trên hệ thống thật. Nhóm “App hội viên” trong thư viện đầy đủ vẫn là ảnh từ bộ hướng dẫn sử dụng (cơ sở demo), đã ghi chú rõ.
 
 **Giới hạn ảnh toàn trang:** thẻ `.s-card` có hiệu ứng hiện dần theo vị trí cuộn, nên trong ảnh toàn trang một số khối gần cuối trông trống. Khi cuộn thật, thẻ hiện bình thường (đã đo độ mờ = 1).
+
+## 6. Cập nhật: trang Hệ sinh thái
+
+- Làm lại /he-sinh-thai/ (server component): sơ đồ hệ sinh thái của chủ sở hữu, hành trình khách hàng 4 bước (Thu hút → Vận hành → Gắn kết → Trải nghiệm), 4 khối năng lực với ảnh sản phẩm thật, bảng sản phẩm đang chạy, 15 đối tác đồng hành.
+- Bổ sung: DANAVA E-learning đang chạy thật tại edu-yoga.danava.vn (Học Yoga online cùng Yoga Club Vietnam), nền tảng danava.vn, DANAVA GO (danavago.com), app hội viên ycv/hariver/hue. 13 tên miền kiểm tra trực tiếp ngày 19/11/2026 (public/assets/ecosystem/sources.json).
+- Gỡ các khẳng định chưa có căn cứ trong dữ liệu cũ: “hàng ngàn thành viên”, “toàn quốc”, “tải trang dưới 1 giây”, “cam kết chi phí lead”, “thường niên”, “iOS & Android”, “mở tour định kỳ”. Có test chặn các cụm này quay lại.
+- DANAVA PMS chưa có sản phẩm công khai để kiểm chứng nên ghi “Tư vấn theo yêu cầu”, không gắn link sản phẩm.
+- Kiểm tra trình duyệt 10/10: 360/390/768/1024/1440px, không tràn, không ảnh hỏng, không lỗi console, liên kết hành trình cuộn đúng, giảm chuyển động. Ảnh: docs/screenshots/he-sinh-thai/.

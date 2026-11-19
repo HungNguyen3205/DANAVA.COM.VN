@@ -1,56 +1,36 @@
-import { seo, jsonLD, siteURL } from '@/lib/seo';
+import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
+import { getContent } from '@/lib/database';
+import { getEcosystemUnits } from '@/lib/ecosystem';
 import { EcosystemPage } from '@/components/site/EcosystemPage';
+import { JsonLd } from '@/components/site/blocks';
 
 export const metadata = seo(
-  "Hệ sinh thái DANAVA",
-  "Khám phá hệ sinh thái toàn diện của DANAVA Solutions: Sản phẩm số, Marketing & Media, Du lịch & Sự kiện, và Cộng đồng Yoga Club Vietnam.",
-  "/he-sinh-thai/",
-  "/assets/presentation/danava-ecosystem.webp"
+  'Hệ sinh thái DANAVA',
+  'Hệ sinh thái DANAVA: phần mềm DANAVA Studio, nền tảng danava.vn, học yoga online, website, digital marketing, sự kiện, đặt vé DANAVA GO và cộng đồng Yoga Club Vietnam.',
+  '/he-sinh-thai/',
+  '/assets/presentation/danava-ecosystem.webp'
 );
 
-export default function Page() {
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Hệ sinh thái DANAVA Solutions',
-    description: 'Các đơn vị thành viên và giải pháp trong hệ sinh thái DANAVA Solutions.',
-    url: `${siteURL}/he-sinh-thai/`,
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'DANAVA Studio',
-        url: `${siteURL}/giai-phap/danava-studio/`
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'DANAVA Digital Marketing',
-        url: `${siteURL}/giai-phap/digital-marketing/`
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: 'Du lịch trải nghiệm & DANAVA Go',
-        url: `${siteURL}/giai-phap/du-lich-su-kien/`
-      },
-      {
-        '@type': 'ListItem',
-        position: 4,
-        name: 'Yoga Club Vietnam',
-        url: `${siteURL}/giai-phap/cong-dong/`
-      }
-    ]
-  };
-
+export default async function Page() {
+  const { data } = await getContent();
+  const units = getEcosystemUnits();
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLD(schema) }}
-      />
-      <EcosystemPage />
+      <JsonLd value={{
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Hệ sinh thái DANAVA Solutions',
+        url: `${siteURL}/he-sinh-thai/`,
+        itemListElement: units.map((u, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: u.name,
+          url: u.officialLink.isExternal ? u.officialLink.href : `${siteURL}${u.officialLink.href.split('?')[0]}`
+        })),
+        publisher: { '@id': ORG_ID }
+      }} />
+      <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Hệ sinh thái', href: '/he-sinh-thai/' }])} />
+      <EcosystemPage data={data} />
     </>
   );
 }
-

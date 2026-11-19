@@ -102,3 +102,15 @@ test('empty unit filtering returns empty array without throwing', () => {
   assert.equal(visibleOnly.length, 0);
 });
 
+
+test('hệ sinh thái: không có khẳng định chưa có căn cứ; mọi đơn vị có vị trí trên hành trình; link sản phẩm là https', async () => {
+  const { JOURNEY_STAGES, LIVE_PRODUCTS } = await import('../lib/ecosystem.ts');
+  const text = JSON.stringify(initialEcosystemUnits).toLowerCase();
+  for (const bad of ['hàng ngàn', 'toàn quốc', 'dưới 1 giây', 'cam kết chi phí', 'thường niên', 'ios & android', 'định kỳ']) assert.ok(!text.includes(bad), bad);
+  const stages = new Set(JOURNEY_STAGES.map(s => s.id));
+  for (const u of getEcosystemUnits()) {
+    assert.ok(u.stage && stages.has(u.stage), u.id + ' thiếu vị trí trên hành trình');
+    for (const l of u.live || []) assert.ok(l.href.startsWith('https://'), l.href);
+  }
+  assert.ok(LIVE_PRODUCTS.flatMap(g => g.items).some(i => i.host === 'edu-yoga.danava.vn'));
+});

@@ -1,112 +1,203 @@
-'use client';
+/**
+ * /he-sinh-thai/ — Hệ sinh thái DANAVA (server component).
+ * Sơ đồ hệ sinh thái → hành trình khách hàng (đơn vị nào giúp ở bước nào) → 4 khối năng lực với ảnh sản phẩm thật
+ * → sản phẩm đang chạy (đã kiểm tra) → đối tác đồng hành → liên hệ.
+ */
 import Link from 'next/link';
-import { useState } from 'react';
-import { ArrowRight, ArrowUpRight, Globe, Hotel, GraduationCap, Megaphone, Plane, Handshake, LayoutDashboard, type LucideIcon } from 'lucide-react';
-import { ECOSYSTEM_CATEGORIES, getEcosystemUnits, getEcosystemCategoryCounts, type EcosystemCategory, type EcosystemUnit } from '@/lib/ecosystem';
-import { PageHead, CtaBand, Visual } from './ui';
-import type { Tone } from './catalog';
+import { ArrowRight, ArrowUpRight, Hotel, Megaphone, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, type LucideIcon } from 'lucide-react';
+import type { SiteData } from '@/lib/content';
+import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, getEcosystemCategoryCounts, getEcosystemUnits, type EcosystemCategory, type EcosystemUnit } from '@/lib/ecosystem';
+import { publicClients, publishedProjects } from '@/lib/site-queries';
+import { Crumbs, CtaBand } from './ui';
+import { BrowserFrame } from './showcase';
 
-/** Ảnh thật chỉ dùng khi khớp nội dung; còn lại dùng minh họa CSS. */
-const UNIT_VISUAL: Record<string, { image?: string; icon: LucideIcon; tone: Tone }> = {
-  studio: { image: '/assets/presentation/studio-dashboard.webp', icon: LayoutDashboard, tone: 'blue' },
-  website: { icon: Globe, tone: 'sky' },
-  pms: { icon: Hotel, tone: 'sky' },
-  elearning: { icon: GraduationCap, tone: 'navy' },
-  digital: { icon: Megaphone, tone: 'orange' },
-  media: { image: '/assets/legacy/event-workshop.webp', icon: Megaphone, tone: 'navy' },
-  go: { icon: Plane, tone: 'green' },
-  events: { image: '/assets/legacy/event-group.webp', icon: Handshake, tone: 'orange' },
-  'yoga-club': { image: '/assets/legacy/community.webp', icon: Handshake, tone: 'green' },
-  'dong-hanh': { icon: Handshake, tone: 'blue' }
+const ICONS: Record<string, LucideIcon> = {
+  studio: LayoutDashboard, platform: Globe, elearning: GraduationCap, website: Globe, pms: Hotel,
+  digital: Megaphone, media: Sparkles, go: Plane, events: Plane, 'yoga-club': Users, 'dong-hanh': Handshake
 };
+const CAT_NO: Record<EcosystemCategory, string> = { 'san-pham-so': '01', 'truyen-thong': '02', 'du-lich-su-kien': '03', 'cong-dong': '04' };
 
-export function EcosystemPage() {
-  const [cat, setCat] = useState<'all' | EcosystemCategory>('all');
-  const counts = getEcosystemCategoryCounts();
-  const units = getEcosystemUnits(cat);
-
+function Unit({ u, flip }: { u: EcosystemUnit; flip: boolean }) {
+  const Icon = ICONS[u.id] || Sparkles;
+  const ext = u.officialLink.isExternal;
   return (
-    <main id="main">
-      <PageHead
-        center
-        eyebrow="Hệ sinh thái DANAVA"
-        title={<>Hệ sinh thái mở, <span className="s-hl">giá trị kết nối</span></>}
-        lead="Bốn khối năng lực bổ trợ cho nhau: sản phẩm số, truyền thông, du lịch & sự kiện và cộng đồng. Phát triển và vận hành bởi DANAVA Solutions."
-      />
-
-      <section className="s-section s-section--flush-top" aria-label="Các đơn vị trong hệ sinh thái">
-        <div className="s-container">
-          <div className="s-row s-row--center s-eco-tabs">
-            <div className="s-tabs" role="tablist" aria-label="Lọc theo khối năng lực">
-              {ECOSYSTEM_CATEGORIES.map(c => (
-                <button key={c.id} type="button" role="tab" className="s-tab" aria-selected={cat === c.id} onClick={() => setCat(c.id)}>
-                  {c.id === 'all' ? 'Tất cả' : c.label}<span className="s-tab__count">{counts[c.id]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="s-center s-muted s-eco-desc" aria-live="polite">{ECOSYSTEM_CATEGORIES.find(c => c.id === cat)?.shortDesc}</p>
-
-          <div className="s-grid s-grid--2">
-            {units.map(u => <UnitCard key={u.id} unit={u} />)}
-          </div>
-        </div>
-      </section>
-
-      <section className="s-section s-section--brand" aria-labelledby="eco-map">
-        <div className="s-container s-split">
-          <div className="s-heading">
-            <p className="s-eyebrow">Toàn cảnh</p>
-            <h2 className="s-h2" id="eco-map">Mỗi mảnh ghép hỗ trợ mảnh ghép còn lại</h2>
-            <p className="s-lead">Phần mềm giúp vận hành, truyền thông mang khách hàng đến, sự kiện và cộng đồng giữ họ ở lại. Doanh nghiệp có thể bắt đầu từ một giải pháp và mở rộng khi cần.</p>
-            <div className="s-row s-stack-m" style={{ marginTop: 28 }}>
-              <Link className="s-btn s-btn--primary" href="/lien-he/">Trao đổi với DANAVA</Link>
-              <Link className="s-btn s-btn--secondary" href="/giai-phap/">Xem giải pháp</Link>
-            </div>
-          </div>
-          <div className="s-frame s-frame--16x10 s-eco-map">
-            <img src="/assets/presentation/danava-ecosystem.webp" alt="Sơ đồ hệ sinh thái DANAVA: Studio, Digital, E-learning, PMS, Media và Go" loading="lazy" />
-          </div>
-        </div>
-      </section>
-
-      <CtaBand />
-    </main>
-  );
-}
-
-function UnitCard({ unit }: { unit: EcosystemUnit }) {
-  const v = UNIT_VISUAL[unit.id] || { icon: Handshake, tone: 'blue' as Tone };
-  const link = unit.officialLink;
-  return (
-    <article id={unit.id} className="s-card s-card--link s-eco-card">
-      <div className="s-card__media">
-        {v.image
-          ? <img src={v.image} alt={unit.name} loading="lazy" />
-          : <Visual icon={v.icon} tone={v.tone} label={unit.shortName} chips={unit.features.map(f => f.split(/[,(]/)[0].trim()).filter(f => f.length < 34)} />}
-        <span className="s-badge s-badge--dark">{unit.categoryName}</span>
+    <article id={u.id} className={`eco-unit${flip ? ' eco-unit--flip' : ''}`} aria-labelledby={`eco-${u.id}`}>
+      <div className="eco-unit__media">
+        {u.screenshot
+          ? (u.screenshot.includes('/profile/') || u.screenshot.includes('/legacy/')
+            ? <figure className="eco-unit__photo"><img src={u.screenshot} alt={u.name} loading="lazy" decoding="async" width={1200} height={750} /></figure>
+            : <BrowserFrame src={u.screenshot} alt={`Giao diện ${u.name}`} url={u.live?.[0]?.href} />)
+          : <div className="eco-unit__icon-panel" aria-hidden="true"><Icon /><span>{u.shortName}</span></div>}
       </div>
-      <div className="s-card__body">
-        <div className="s-row s-eco-card__meta">
-          <span className="s-card__tag">{unit.badge}</span>
-          {unit.statusText && <span className="s-badge s-badge--green">{unit.statusText}</span>}
-        </div>
-        <h3 className="s-card__title">
-          {link.isExternal
-            ? <a className="s-card__cover" href={link.href} target="_blank" rel="noopener noreferrer">{unit.name}</a>
-            : <Link className="s-card__cover" href={link.href}>{unit.name}</Link>}
-        </h3>
-        <p className="s-card__text">{unit.description}</p>
-        <p className="s-small s-muted"><strong>Dành cho:</strong> {unit.targetAudience}</p>
-        <ul className="s-eco-card__features">
-          {unit.features.slice(0, 3).map(f => <li key={f}>{f}</li>)}
-        </ul>
-        <div className="s-card__foot">
-          <span className="s-link">{link.label}</span>
-          <span className="s-card__arrow" aria-hidden="true">{link.isExternal ? <ArrowUpRight /> : <ArrowRight />}</span>
+      <div className="eco-unit__body">
+        <p className="eco-unit__kicker"><span className="eco-unit__ico"><Icon aria-hidden="true" /></span>{u.categoryKicker}</p>
+        <h3 className="eco-unit__name" id={`eco-${u.id}`}>{u.name}</h3>
+        {u.statusText && <p className={`eco-status${u.live?.length ? ' is-live' : ''}`}><i aria-hidden="true" />{u.statusText}</p>}
+        <p className="eco-unit__desc">{u.description}</p>
+        <p className="eco-unit__for"><strong>Dành cho:</strong> {u.targetAudience}</p>
+        <ul className="eco-unit__features">{u.features.map(f => <li key={f}>{f}</li>)}</ul>
+        <div className="eco-unit__links">
+          {ext
+            ? <a className="s-btn s-btn--primary" href={u.officialLink.href} target="_blank" rel="noopener">{u.officialLink.label} <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>
+            : <Link className="s-btn s-btn--primary" href={u.officialLink.href}>{u.officialLink.label} <ArrowRight aria-hidden="true" /></Link>}
+          {u.live?.filter(l => l.href !== u.officialLink.href.replace(/\/$/, '')).map(l => (
+            <a key={l.href} className="eco-live-link" href={l.href} target="_blank" rel="noopener">{l.label} <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>
+          ))}
         </div>
       </div>
     </article>
+  );
+}
+
+export function EcosystemPage({ data }: { data: SiteData }) {
+  const counts = getEcosystemCategoryCounts();
+  const units = getEcosystemUnits();
+  const cats = ECOSYSTEM_CATEGORIES.filter((c): c is { id: EcosystemCategory; label: string; shortDesc: string } => c.id !== 'all');
+  const partners = publicClients(data);
+  const projects = publishedProjects(data);
+
+  return (
+    <main id="main" className="eco">
+      {/* Hero + sơ đồ hệ sinh thái */}
+      <section className="eco-hero" aria-labelledby="eco-title">
+        <span className="eco-hero__glow eco-hero__glow--a" aria-hidden="true" />
+        <span className="eco-hero__glow eco-hero__glow--b" aria-hidden="true" />
+        <div className="s-container eco-hero__grid">
+          <div>
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Hệ sinh thái' }]} />
+            <p className="eco-hero__kicker">Hệ sinh thái DANAVA</p>
+            <h1 className="eco-hero__title" id="eco-title">Hệ sinh thái mở, <em>giá trị kết nối.</em></h1>
+            <p className="eco-hero__lead">Phần mềm giúp vận hành, truyền thông mang khách hàng đến, nền tảng và cộng đồng giữ họ ở lại. Doanh nghiệp bắt đầu từ một giải pháp và mở rộng khi cần, tất cả do DANAVA Solutions phát triển và vận hành.</p>
+            <div className="s-row s-stack-m">
+              <Link className="s-btn s-btn--primary s-btn--lg" href="/lien-he/">Trao đổi với DANAVA</Link>
+              <a className="s-btn s-btn--lg eco-btn-ghost" href="#dang-chay">Sản phẩm đang chạy</a>
+            </div>
+          </div>
+          <figure className="eco-hero__map">
+            <img src="/assets/presentation/danava-ecosystem.webp" alt="Sơ đồ hệ sinh thái DANAVA: Studio, Digital, E-learning, PMS, Media và Go" width={1600} height={1000} fetchPriority="high" />
+          </figure>
+        </div>
+        <nav className="s-container eco-cats" aria-label="Bốn khối năng lực">
+          {cats.map(c => (
+            <a key={c.id} href={`#khoi-${c.id}`}>
+              <span className="eco-cats__no">{CAT_NO[c.id]}</span>
+              <strong>{c.label}</strong>
+              <small>{counts[c.id]} đơn vị · {c.shortDesc}</small>
+            </a>
+          ))}
+        </nav>
+      </section>
+
+      {/* Hành trình khách hàng */}
+      <section className="s-section eco-journey" aria-labelledby="eco-journey-title">
+        <div className="s-container">
+          <div className="eco-head eco-head--center">
+            <p className="eco-head__kicker">Cách các mảnh ghép làm việc cùng nhau</p>
+            <h2 className="eco-head__title" id="eco-journey-title">Một hành trình khách hàng, <em>một đối tác đồng hành.</em></h2>
+          </div>
+          <ol className="eco-journey__rail">
+            {JOURNEY_STAGES.map((st, i) => (
+              <li key={st.id}>
+                <span className="eco-journey__dot" aria-hidden="true">{i + 1}</span>
+                <h3>{st.label}</h3>
+                <p>{st.text}</p>
+                <ul>
+                  {units.filter(u => u.stage === st.id).map(u => (
+                    <li key={u.id}><a href={`#${u.id}`}>{u.shortName}</a></li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* 4 khối năng lực */}
+      {cats.map(c => {
+        const list = units.filter(u => u.category === c.id);
+        if (!list.length) return null;
+        return (
+          <section key={c.id} id={`khoi-${c.id}`} className={`eco-block eco-block--${c.id}`} aria-labelledby={`khoi-${c.id}-title`}>
+            <div className="s-container">
+              <div className="eco-block__head">
+                <span className="eco-block__no" aria-hidden="true">{CAT_NO[c.id]}</span>
+                <div>
+                  <h2 className="eco-head__title" id={`khoi-${c.id}-title`}>{c.label}</h2>
+                  <p className="eco-block__desc">{c.shortDesc}</p>
+                </div>
+              </div>
+              <div className="eco-block__list">
+                {list.map((u, i) => <Unit key={u.id} u={u} flip={i % 2 === 1} />)}
+              </div>
+            </div>
+          </section>
+        );
+      })}
+
+      {/* Sản phẩm đang chạy */}
+      <section className="eco-live" id="dang-chay" aria-labelledby="eco-live-title">
+        <div className="s-container">
+          <div className="eco-head eco-head--center">
+            <p className="eco-head__kicker eco-head__kicker--light">Đang chạy thật</p>
+            <h2 className="eco-head__title eco-head__title--light" id="eco-live-title">Sản phẩm trong hệ sinh thái, <em>mở được ngay.</em></h2>
+            <p className="eco-head__lead">Đã kiểm tra trực tiếp ngày 19/11/2026.</p>
+          </div>
+          {LIVE_PRODUCTS.map(g => (
+            <div key={g.group} className="eco-live__group">
+              <h3>{g.group}</h3>
+              <ul>
+                {g.items.map(it => (
+                  <li key={it.host}>
+                    <a href={`https://${it.host}`} target="_blank" rel="noopener">
+                      <span className="eco-live__dot" aria-hidden="true" />
+                      <span className="eco-live__name">{it.name}</span>
+                      <span className="eco-live__host">{it.host}</span>
+                      <span className="eco-live__note">{it.note}</span>
+                      <ArrowUpRight aria-hidden="true" />
+                      <span className="s-sr">(mở tab mới)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Đối tác đồng hành */}
+      {partners.length > 0 && (
+        <section className="s-section" aria-labelledby="eco-partners-title">
+          <div className="s-container">
+            <div className="eco-head">
+              <p className="eco-head__kicker">Đối tác đồng hành</p>
+              <h2 className="eco-head__title" id="eco-partners-title">Những cơ sở đang cùng phát triển trong hệ sinh thái</h2>
+              <p className="eco-head__lead eco-head__lead--dark">Danh sách theo khối “Đối tác đồng hành” trên danava.vn.</p>
+            </div>
+            <ul className="u-logos">
+              {partners.map(c => {
+                const project = projects.find(p => p.id === c.projectId);
+                const inner = (
+                  <>
+                    <span className="u-logos__img">{c.logo ? <img src={c.logo} alt="" width={360} height={240} loading="lazy" decoding="async" /> : <span className="u-proof__name">{c.name}</span>}</span>
+                    <span className="u-logos__name">{c.name}</span>
+                    {(project || c.role) && <span className="u-logos__role">{project ? 'Case study' : c.role}</span>}
+                  </>
+                );
+                return (
+                  <li key={c.id} className={project ? 'is-case' : undefined}>
+                    {project
+                      ? <Link href={`/du-an/${project.slug}/`} aria-label={`${c.name} — xem case study`}>{inner}</Link>
+                      : c.url ? <a href={c.url} target="_blank" rel="noopener" aria-label={`${c.name} trên danava.vn (mở tab mới)`}>{inner}</a> : <div>{inner}</div>}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      <CtaBand title="Bắt đầu từ một mảnh ghép" lead="Chia sẻ nhu cầu hiện tại, DANAVA đề xuất giải pháp phù hợp và cách kết nối với các phần còn lại khi bạn sẵn sàng." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} secondary={{ href: '/giai-phap/', label: 'Xem giải pháp' }} />
+    </main>
   );
 }
 

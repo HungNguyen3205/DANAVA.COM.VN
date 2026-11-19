@@ -1,0 +1,10 @@
+PASS 1440px: h1="Hệ sinh thái mở, giá trị kết nối.", 11 đơn vị, 8 sản phẩm đang chạy, 15 đối tác, tràn 1440/1440, ảnh hỏng 0, lỗi console 0
+PASS Bấm "E-learning" trên hành trình → cuộn tới đúng đơn vị
+PASS 1024px: h1="Hệ sinh thái mở, giá trị kết nối.", 11 đơn vị, 8 sản phẩm đang chạy, 15 đối tác, tràn 1024/1024, ảnh hỏng 0, lỗi console 0
+PASS 768px: h1="Hệ sinh thái mở, giá trị kết nối.", 11 đơn vị, 8 sản phẩm đang chạy, 15 đối tác, tràn 768/768, ảnh hỏng 0, lỗi console 0
+PASS 390px: h1="Hệ sinh thái mở, giá trị kết nối.", 11 đơn vị, 8 sản phẩm đang chạy, 15 đối tác, tràn 390/390, ảnh hỏng 0, lỗi console 0
+PASS 360px: h1="Hệ sinh thái mở, giá trị kết nối.", 11 đơn vị, 8 sản phẩm đang chạy, 15 đối tác, tràn 360/360, ảnh hỏng 0, lỗi console 0
+PASS 1440px (giảm chuyển động): h1="Hệ sinh thái mở, giá trị kết nối.", 11 đơn vị, 8 sản phẩm đang chạy, 15 đối tác, tràn 1440/1440, ảnh hỏng 0, lỗi console 0
+PASS Giảm chuyển động: tắt hiệu ứng sơ đồ và chấm "đang chạy"
+PASS HTML máy chủ có sản phẩm đang chạy và ngày kiểm tra
+PASS Không còn khẳng định chưa có căn cứ trên trang
