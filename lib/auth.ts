@@ -81,11 +81,8 @@ export async function logout() {
   }
 }
 
-export function sameOrigin(req: Request) {
-  const origin = req.headers.get('origin');
-  const expected = new URL(process.env.SITE_URL || req.url).origin;
-  return origin === expected;
-}
+export { sameOrigin } from './origin';
+import { sameOrigin } from './origin';
 
 export async function authorizedMutation(req: Request) {
   const s = await session();

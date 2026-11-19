@@ -330,3 +330,23 @@
 .s-quick { transition: transform .3s ease, opacity .3s ease; }
 .s-quick.is-dodged { transform: translateX(calc(100% + 24px)); opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .s-quick { transition: none; } }
+
+
+/* ---------- Trang chủ: tường logo khách hàng & đối tác đồng hành ---------- */
+.u-proof { padding: clamp(28px, 4vw, 48px) 0; }
+.u-proof__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; margin-bottom: 18px; }
+.u-proof__sub { margin: 0; font-size: 14px; color: var(--s-muted); }
+.u-logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+@media (max-width: 1024px) { .u-logos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.u-logos a, .u-logos li > div { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 8px 8px 10px; border-radius: 16px; border: 1px solid var(--s-line); background: #fff; color: var(--s-ink); text-decoration: none; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.u-logos a:hover { transform: translateY(-3px); box-shadow: var(--s-shadow); border-color: var(--s-line-strong); }
+.u-logos a:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 2px; }
+.u-logos__img { display: block; overflow: hidden; border-radius: 10px; aspect-ratio: 3 / 2; background: var(--s-soft); }
+.u-logos__img img { width: 100%; height: 100%; object-fit: cover; }
+.u-logos__name { margin-top: 4px; font-size: 13.5px; font-weight: 700; line-height: 1.3; }
+.u-logos__role { font-size: 12px; color: var(--s-muted); }
+.u-logos .is-case .u-logos__role { color: var(--s-blue); font-weight: 700; }
+@media (max-width: 600px) {
+  .u-logos { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 132px; overflow-x: auto; margin-left: calc(var(--s-gutter) * -1); margin-right: calc(var(--s-gutter) * -1); padding: 2px var(--s-gutter) 8px; scrollbar-width: none; }
+  .u-logos::-webkit-scrollbar { display: none; }
+}

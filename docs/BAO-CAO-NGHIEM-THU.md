@@ -1,0 +1,49 @@
+# Báo cáo nghiệm thu — nhánh `feature/danava-seo-upgrade`
+
+Cập nhật: 19/11/2026. Báo cáo này **thay thế** các mô tả “kiểm tra” trong `NANG-CAP-SEO-2026-11.md`, những chỗ đó dùng chữ “production” chưa rõ nghĩa.
+
+## 0. Môi trường — đọc trước
+
+| Thuật ngữ trong báo cáo | Nghĩa |
+|---|---|
+| **Bản build production (local)** | `npm run build` (chế độ production của Next.js) chạy bằng `node server.js` **trên máy làm việc**, database **SQLite bản sao** trong thư mục tạm, `SITE_URL=https://danava.com.vn`. |
+| **Preview `d515c3e`** | Bản build production của đúng commit `d515c3e`, sao chép sang thư mục riêng, chạy tại `http://localhost:3300` với database thử riêng và mật khẩu admin thử riêng (chỉ có trong biến môi trường của tiến trình). Chỉ truy cập được trên máy làm việc. |
+| **Production đã triển khai** | `https://danava.com.vn` trên hosting cPanel + MySQL. **Chưa triển khai** bất kỳ thay đổi nào của nhánh này. Chưa merge vào `main`. |
+
+Không bước kiểm thử nào gửi form tới hệ thống thật hay ghi vào MySQL production.
+
+## 1. Đã kiểm chứng (có bằng chứng)
+
+| # | Nội dung | Môi trường | Bằng chứng |
+|---|---|---|---|
+| 1 | Ảnh **toàn trang** desktop 1440px và mobile 390px: Trang chủ, Digital Marketing, Sự kiện & Truyền thông, Website & Landing Page, Case study Vinhomes | Preview `d515c3e` | `docs/screenshots/preview-d515c3e/` (10 ảnh + `INDEX.txt`) |
+| 2 | **Admin E2E qua giao diện thật** (Chrome headless): đăng nhập; sửa đoạn mở đầu DANAVA Studio → lưu → tải lại → hiện ngoài website → hoàn nguyên; đổi thứ tự portfolio → tải lại → thư viện công khai đổi thứ tự; đổi dự án nổi bật sang GLG (trang Website + trang chủ đổi theo) rồi trả lại; xuất bản/gỡ trang con Gym (200/404, vào/ra sitemap). **39/39 PASS** | Preview `d515c3e`, sitemap bật | `docs/screenshots/admin-e2e/ket-qua-admin-e2e.txt`, 3 ảnh |
+| 3 | **Gỡ xuất bản Vinhomes**: không còn ở khối nổi bật/danh sách trang chủ, trang Website, `/du-an/`, `/giai-phap/`, `/kien-thuc/` (0 lần trong nội dung hiển thị và 0 lần trong payload dữ liệu); case study công khai **404**; ra khỏi sitemap. Admin đã đăng nhập vẫn xem trước được (nhãn Bản nháp + noindex). Xuất bản lại: 200, trở lại khối nổi bật, có lại trong sitemap | Preview `d515c3e` | như mục 2 |
+| 4 | Nghiệm thu giao diện 52 bước: 7 trang × 5 kích thước (360/390/768/1024/1440): 1 H1, không tràn ngang, không ảnh hỏng, không lỗi console; vị trí Vinhomes; bàn phím (Tab + Enter lọc portfolio, viền focus 3px); giảm chuyển động; nút nổi không che CTA. **52/52 PASS** | Bản build production (local) của `d515c3e` **và** của commit mới | `docs/screenshots/identity/ket-qua-nghiem-thu.txt`, `ket-qua-nghiem-thu-commit-moi.txt` |
+| 5 | Đối tác đồng hành: đăng nhập admin trên host staging khi `SITE_URL` là production (lỗi cũ trả 403) → bấm “Bổ sung đối tác từ danava.vn” → lưu → trang chủ hiện **15 logo** → tải lại admin vẫn đủ. 1440/390px không tràn, logo không hỏng. **9/9 PASS** | Bản build production (local), commit mới | `docs/screenshots/doi-tac/` |
+| 6 | Test tự động `npm test`: **83/83**; `tsc --noEmit` sạch; `npm run build` thành công | Máy làm việc | chạy lại bằng `npm run check && npm test && npm run build` |
+
+## 2. Chưa kiểm chứng
+
+- **Production đã triển khai**: chưa deploy nên chưa kiểm tra trên `danava.com.vn`, chưa chạy với MySQL thật, chưa thử trên hosting cPanel (Passenger, glibc cũ).
+- **Dữ liệu production**: chưa đọc nội dung đang lưu trong MySQL. Kết quả trên production phụ thuộc dữ liệu đã lưu (xem `CHECKLIST-CMS-SAU-TRIEN-KHAI.md`).
+- **Thiết bị thật**: mới giả lập trong Chrome. Chưa thử Safari/iOS, Firefox, Android thật. Chưa thử trình đọc màn hình.
+- **Hiệu năng**: chưa đo Lighthouse; chưa có Core Web Vitals người dùng thực.
+- **Upload ảnh trong admin** (sharp) trên hosting: chưa thử (đã ghi trong `BAN-GIAO.md`).
+- **Preview công khai**: chưa có. Môi trường duy nhất là `http://localhost:3300` trên máy làm việc. Repo có thư mục `.vercel`, nhưng chưa xác nhận Vercel còn liên kết với GitHub, và không triển khai lên dịch vụ ngoài khi chưa được đồng ý.
+
+## 3. Lỗi và giới hạn còn tồn tại
+
+| Mức | Mô tả | Trạng thái |
+|---|---|---|
+| Đã sửa (commit mới) | Đăng nhập admin bị **403** trên mọi preview/staging đặt `SITE_URL=https://danava.com.vn`, vì kiểm tra Origin chỉ chấp nhận đúng tên miền đó. Production không bị. Sửa: chấp nhận tên miền chính **hoặc** chính host đang phục vụ request; trang ngoài vẫn bị chặn (có test). | Preview `d515c3e` vẫn mang lỗi này. Muốn thử admin trên preview này phải mở bằng `http://localhost:3300` và không đặt `SITE_URL`. |
+| Đã sửa (commit mới) | Ảnh chia sẻ (Open Graph) trang Liên hệ, Marketing, Du lịch dùng ảnh stock (London Eye, word cloud). Đã thay bằng tư liệu DANAVA. | — |
+| Đã sửa (commit mới) | Khối logo 15 mục bị lẻ 1 ô ở hàng cuối. Đã chuyển sang lưới 5/3 cột. | — |
+| Giới hạn | Ảnh toàn trang: thanh tab dưới và nút nổi (`position: fixed`) bị in một lần ở vị trí màn hình đầu. Đây là giới hạn của cách chụp toàn trang, không phải lỗi giao diện. Ảnh từng màn hình trong `docs/screenshots/identity/*-fold.jpg` cho thấy vị trí thật. | Không sửa |
+| Có từ trước | `npm test` ghi nội dung vào `.data/` local, làm database local lưu sẵn giá trị mặc định (vd. danh sách khách hàng cũ). Không ảnh hưởng production. | Chưa sửa: đổi hành vi test nằm ngoài phạm vi; ghi chú để biết |
+| Cần DANAVA | Tên giải pháp trong dữ liệu đã lưu còn cũ (“Marketing & Truyền thông”, “Du lịch & Sự kiện”). Phạm vi 4 chương trình sự kiện chưa rõ. Phạm vi Vinhomes cần xác nhận. Quyền hiển thị logo 15 đối tác cần xác nhận. | Xem checklist |
+
+## 4. Lịch sử commit trên nhánh
+- `f0615ba` cấu trúc nội dung, CMS, SEO kỹ thuật.
+- `d515c3e` bản sắc từng trang, tách Sự kiện & Truyền thông, Vinhomes nổi bật.
+- commit mới (sau `d515c3e`): đối tác đồng hành từ danava.vn, sửa đăng nhập admin trên staging, thay ảnh stock, báo cáo và checklist.

@@ -7,7 +7,7 @@ export const metadata = seo(
   'Liên hệ tư vấn và báo giá',
   'Trao đổi trực tiếp với DANAVA Solutions qua hotline 0935 91 76 77, email hello@danava.vn hoặc gửi yêu cầu tư vấn số hóa phòng tập và truyền thông trực tuyến.',
   '/lien-he/',
-  '/assets/legacy/travel.webp'
+  '/assets/legacy/event-group.webp'
 );
 
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {

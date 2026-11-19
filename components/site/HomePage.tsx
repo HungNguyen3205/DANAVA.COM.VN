@@ -111,21 +111,34 @@ export default function HomePage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      {/* 2 · Khách hàng tiêu biểu (chỉ dữ liệu được phép công bố) */}
+      {/* 2 · Khách hàng & đối tác đồng hành (chỉ dữ liệu được phép công bố) */}
       {(clients.length > 0 || metrics.length > 0) && (
         <section className="u-proof" aria-labelledby="home-clients">
-          <div className="s-container u-proof__inner">
-            <h2 className="u-proof__title" id="home-clients">Khách hàng đang vận hành cùng DANAVA</h2>
+          <div className="s-container">
+            <div className="u-proof__head">
+              <h2 className="u-proof__title" id="home-clients">Khách hàng & đối tác đồng hành</h2>
+              <p className="u-proof__sub">Phòng tập, studio và cộng đồng wellness đang đồng hành cùng hệ sinh thái DANAVA.</p>
+            </div>
             {clients.length > 0 && (
-              <ul className="u-proof__clients">
+              <ul className="u-logos">
                 {clients.map(c => {
                   const project = publishedProjects(data).find(p => p.id === c.projectId);
-                  const inner = c.logo
-                    ? <img src={c.logo} alt={c.name} height={40} width={140} loading="lazy" />
-                    : <span className="u-proof__name">{c.name}</span>;
+                  const inner = (
+                    <>
+                      <span className="u-logos__img">
+                        {c.logo ? <img src={c.logo} alt="" width={360} height={240} loading="lazy" decoding="async" /> : <span className="u-proof__name">{c.name}</span>}
+                      </span>
+                      <span className="u-logos__name">{c.name}</span>
+                      {(project || c.role) && <span className="u-logos__role">{project ? 'Case study' : c.role}</span>}
+                    </>
+                  );
                   return (
-                    <li key={c.id}>
-                      {project ? <Link href={projectHref(project)} title={`Case study ${c.name}`}>{inner}<small>Xem case study <ArrowRight aria-hidden="true" /></small></Link> : inner}
+                    <li key={c.id} className={project ? 'is-case' : undefined}>
+                      {project
+                        ? <Link href={projectHref(project)} aria-label={`${c.name} — xem case study`}>{inner}</Link>
+                        : c.url
+                          ? <a href={c.url} target="_blank" rel="noopener" aria-label={`${c.name} trên danava.vn (mở tab mới)`}>{inner}</a>
+                          : <div>{inner}</div>}
                     </li>
                   );
                 })}

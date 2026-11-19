@@ -1,0 +1,10 @@
+desktop-trang-chu.jpg  1440×9781px  http://127.0.0.1:3300/
+desktop-digital-marketing.jpg  1440×7172px  http://127.0.0.1:3300/giai-phap/digital-marketing/
+desktop-su-kien-truyen-thong.jpg  1440×9018px  http://127.0.0.1:3300/giai-phap/su-kien-truyen-thong/
+desktop-website-landing-page.jpg  1440×10931px  http://127.0.0.1:3300/giai-phap/thiet-ke-website/
+desktop-case-study-vinhomes.jpg  1440×7365px  http://127.0.0.1:3300/du-an/vinhomes-hai-van-bay-website/
+mobile-trang-chu.jpg  390×12072px  http://127.0.0.1:3300/
+mobile-digital-marketing.jpg  390×9922px  http://127.0.0.1:3300/giai-phap/digital-marketing/
+mobile-su-kien-truyen-thong.jpg  390×10620px  http://127.0.0.1:3300/giai-phap/su-kien-truyen-thong/
+mobile-website-landing-page.jpg  390×15845px  http://127.0.0.1:3300/giai-phap/thiet-ke-website/
+mobile-case-study-vinhomes.jpg  390×7750px  http://127.0.0.1:3300/du-an/vinhomes-hai-van-bay-website/

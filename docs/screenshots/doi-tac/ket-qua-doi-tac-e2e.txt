@@ -1,0 +1,9 @@
+PASS Trước khi bổ sung: trang chủ có 2 logo (database đã lưu danh sách cũ)
+PASS Đăng nhập admin trên host staging khi SITE_URL=https://danava.com.vn (lỗi 403 cũ đã sửa)
+PASS Nút admin: "Bổ sung đối tác từ danava.vn (13 mục còn thiếu)"
+PASS Lưu danh sách đối tác
+PASS Trang chủ sau khi lưu: 15 logo — HARIVER Gym &amp; Fitness Center, Huế Pilates &amp; Yoga, VF Gym, SADHANA PILATES, BỤNG Healing, Sun Moon Yogashala, GLG YOGA SCHOOL, Kiến Gym, Liên Minh Yoga Việt Nam, Fuji Swimming Club DaNang, TAM TAY GYM, Yoga Club Vietnam, DYF, Học Viện Quốc Tế Yoga Ngọc Bích, TIGI YOGA
+PASS Tải lại admin: không còn mục thiếu (đã lưu bền vững)
+PASS Admin hiển thị đủ 15 thẻ khách hàng/đối tác
+PASS 1440px: không tràn ngang, logo không hỏng
+PASS 390px: không tràn ngang, logo không hỏng

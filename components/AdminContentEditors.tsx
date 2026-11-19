@@ -6,6 +6,7 @@
  */
 import { useState } from 'react';
 import MediaPicker from './MediaPicker';
+import { CLIENT_SEEDS } from '@/lib/content-defaults';
 import type { Client, Faq, Feature, Service, ShowcaseItem, SiteData, SubService, Testimonial, Topic } from '@/lib/content';
 
 const uid = () => globalThis.crypto.randomUUID();
@@ -243,16 +244,39 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
     <div className="admin-two">
       <section className="admin-panel">
         <div className="panel-heading">
-          <h2>Khách hàng tiêu biểu</h2>
-          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, clients: [...clients, { id: uid(), name: '', logo: '', url: '', projectId: '', permission: false, published: false, note: '' }] })}>+ Thêm</button>
+          <h2>Khách hàng & đối tác đồng hành</h2>
+          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, clients: [...clients, { id: uid(), name: '', logo: '', url: '', projectId: '', role: '', relation: 'client', permission: false, published: false, note: '' }] })}>+ Thêm</button>
         </div>
         <p className="field-note">Chỉ hiển thị trên trang chủ khi đã bật <b>Có quyền hiển thị</b> và <b>Xuất bản</b>. Ghi nguồn xác nhận quyền vào ghi chú.</p>
+        <button
+          type="button"
+          className="admin-secondary"
+          onClick={() => {
+            // Chỉ THÊM đối tác còn thiếu và điền logo/lĩnh vực còn trống; không xóa, không sửa nội dung đã có.
+            const next = clients.map(c => {
+              const seed = CLIENT_SEEDS.find(x => x.id === c.id);
+              return seed ? { ...c, logo: c.logo || seed.logo, role: c.role || seed.role, relation: c.relation || seed.relation, url: c.url || seed.url } : c;
+            });
+            const added = CLIENT_SEEDS.filter(x => !clients.some(c => c.id === x.id || c.name.trim().toLowerCase() === x.name.toLowerCase())).map(x => structuredClone(x));
+            setDraft({ ...draft, clients: [...next, ...added] });
+          }}
+        >
+          Bổ sung đối tác từ danava.vn ({CLIENT_SEEDS.filter(x => !clients.some(c => c.id === x.id || c.name.trim().toLowerCase() === x.name.toLowerCase())).length} mục còn thiếu)
+        </button>
         {clients.map(c => (
           <details key={c.id} className="adm-card">
             <summary><b>{c.name || 'Khách hàng chưa đặt tên'}</b> · {c.published && c.permission ? 'Đang hiển thị' : 'Ẩn'}</summary>
             <Text label="Tên khách hàng" value={c.name} max={150} onChange={name => setC(c.id, { name })} />
             <MediaPicker label="Logo (để trống nếu chưa có quyền dùng logo)" value={c.logo} onChange={logo => setC(c.id, { logo })} />
-            <Text label="Website khách hàng (https://…)" value={c.url} max={300} onChange={url => setC(c.id, { url })} />
+            <Text label="Liên kết (website hoặc trang trên danava.vn, https://…)" value={c.url} max={300} onChange={url => setC(c.id, { url })} />
+            <Text label="Lĩnh vực (hiện dưới logo)" value={c.role || ''} max={80} onChange={role => setC(c.id, { role })} />
+            <label>
+              Loại quan hệ
+              <select value={c.relation || 'client'} onChange={e => setC(c.id, { relation: e.target.value as 'client' | 'partner' })}>
+                <option value="client">Khách hàng của DANAVA</option>
+                <option value="partner">Đối tác đồng hành (danava.vn)</option>
+              </select>
+            </label>
             {projectSelect(c.projectId, projectId => setC(c.id, { projectId }))}
             <Text label="Ghi chú nguồn / quyền sử dụng (nội bộ)" value={c.note} area max={1000} onChange={note => setC(c.id, { note })} />
             <Toggle label="Có quyền hiển thị tên/logo công khai" checked={c.permission} onChange={permission => setC(c.id, { permission, published: permission && c.published })} />

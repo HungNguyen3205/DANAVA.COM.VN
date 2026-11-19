@@ -1,0 +1,39 @@
+PASS Ban đầu: case study Vinhomes công khai (200)
+PASS Đăng nhập admin bằng mật khẩu thử
+PASS Mục "Portfolio & chương trình" hiện danh sách website
+PASS Đổi thứ tự trong admin: Vinhomes Hải Vân Bay → DANAVA GO → danava.vn → GLG · The Collection  ⇒  Vinhomes Hải Vân Bay → danava.vn → DANAVA GO → GLG · The Collection
+PASS Lưu: đổi thứ tự
+PASS Tải lại admin: thứ tự mới được giữ (lưu bền vững trong database)
+PASS Ngoài website: thư viện portfolio theo thứ tự mới (danava.vn → DANAVA GO → GLG · The Collection)
+PASS Lưu: đổi nổi bật sang GLG
+PASS Ngoài website: khối nổi bật trang Website đổi sang GLG
+PASS Vinhomes (không còn nổi bật) chuyển xuống thư viện
+PASS Ngoài website: khối nổi bật trang chủ đổi sang GLG
+PASS Lưu: trả nổi bật về Vinhomes
+PASS Vinhomes đang bật "Hiển thị công khai"
+PASS Lưu: gỡ xuất bản Vinhomes
+PASS Gỡ xuất bản → /: không còn Vinhomes (hiển thị 0, trong payload 0)
+PASS Gỡ xuất bản → /giai-phap/thiet-ke-website/: không còn Vinhomes (hiển thị 0, trong payload 0)
+PASS Gỡ xuất bản → /du-an/: không còn Vinhomes (hiển thị 0, trong payload 0)
+PASS Gỡ xuất bản → /giai-phap/: không còn Vinhomes (hiển thị 0, trong payload 0)
+PASS Gỡ xuất bản → /kien-thuc/: không còn Vinhomes (hiển thị 0, trong payload 0)
+PASS Gỡ xuất bản → case study công khai trả 404
+PASS Gỡ xuất bản → sitemap không còn Vinhomes
+PASS Admin đã đăng nhập: xem trước case study nháp có nhãn Bản nháp + noindex
+PASS Lưu: xuất bản lại Vinhomes
+PASS Xuất bản lại → case study 200
+PASS Xuất bản lại → Vinhomes trở lại khối nổi bật trang chủ
+PASS Xuất bản lại → có trong sitemap
+PASS Lưu: sửa đoạn mở đầu DANAVA Studio
+PASS Tải lại admin: nội dung sửa vẫn còn
+PASS Ngoài website: trang DANAVA Studio hiển thị nội dung mới
+PASS Lưu: hoàn nguyên đoạn mở đầu
+PASS Hoàn nguyên: website trở lại nội dung cũ
+PASS Lưu: xuất bản trang con Gym
+PASS Xuất bản trang con Gym → 200
+PASS Trang con Gym vào sitemap
+PASS Lưu: gỡ trang con Gym
+PASS Gỡ trang con Gym → 404
+PASS Trang con Gym ra khỏi sitemap
+PASS Lưu: hoàn nguyên thứ tự
+PASS Không có lỗi JavaScript trong admin

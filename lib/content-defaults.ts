@@ -315,7 +315,7 @@ export const SUB_SERVICE_SEEDS: SubService[] = [
       f('Quay chụp tại cơ sở', 'Không gian, đội ngũ và không khí dịch vụ thực tế.'),
       f('Bàn giao file gốc', 'Ảnh, video đã hoàn thiện và file gốc thuộc quyền sở hữu của doanh nghiệp.')
     ],
-    process: PROCESS_MKT, faqs: [SERVICE_SEEDS.marketing.faqs![0]], pricing: SERVICE_SEEDS.marketing.pricing!, image: '/assets/legacy/marketing.webp', published: false, updated: '2026-11-19',
+    process: PROCESS_MKT, faqs: [SERVICE_SEEDS.marketing.faqs![0]], pricing: SERVICE_SEEDS.marketing.pricing!, image: '', published: false, updated: '2026-11-19',
     editorNote: 'Cần bộ ảnh/video thực tế đã thực hiện cho khách hàng (có quyền sử dụng) trước khi xuất bản.'
   },
   {
@@ -410,10 +410,26 @@ const PROJECT_DEFAULTS: Record<string, Pick<Project, 'industry' | 'serviceIds' |
   }
 };
 
-/** Khách hàng đã được DANAVA công bố trong case study trên danava.vn. Chưa có file logo. */
+/**
+ * Khách hàng (có case study) và đối tác đồng hành công bố trên https://danava.vn/.
+ * Logo tải từ danava.vn, nguồn ghi ở public/assets/partners/sources.json.
+ */
 export const CLIENT_SEEDS: Client[] = [
-  { id: 'hariver', name: 'HARIVER Gym & Fitness Center', logo: '', url: '', projectId: 'hariver-studio', permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hariver-gym-fitness-center. Chưa có file logo được phép sử dụng.' },
-  { id: 'hue-pilates', name: 'Huế Pilates & Yoga', logo: '', url: '', projectId: 'hue-studio', permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hue-pilates-yoga. Chưa có file logo được phép sử dụng.' }
+  { id: 'hariver', name: 'HARIVER Gym & Fitness Center', logo: '/assets/partners/hariver-gym-fitness.webp', url: 'https://danava.vn/places/hariver-gym-fitnes-center', projectId: 'hariver-studio', role: 'Gym & Fitness', relation: 'client', permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hariver-gym-fitness-center. Logo theo khối Đối tác đồng hành trên danava.vn.' },
+  { id: 'hue-pilates', name: 'Huế Pilates & Yoga', logo: '/assets/partners/hue-pilates-yoga.webp', url: 'https://danava.vn/places/hue-pilates-yoga', projectId: 'hue-studio', role: 'Pilates & Yoga', relation: 'client', permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hue-pilates-yoga. Logo theo khối Đối tác đồng hành trên danava.vn.' },
+  { id: 'danava-partner-7', name: 'VF Gym', logo: '/assets/partners/vf-gym.webp', url: 'https://danava.vn/places/vf-gym', projectId: '', role: 'Gym & Fitness', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-14', name: 'SADHANA PILATES', logo: '/assets/partners/sadhana-pilates.webp', url: 'https://danava.vn/places/sadhana-pilates', projectId: '', role: 'Pilates', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-15', name: 'BỤNG Healing', logo: '/assets/partners/bung-healing.webp', url: 'https://danava.vn/places/bung-healing', projectId: '', role: 'Breathwork & Hara Voice', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-16', name: 'Sun Moon Yogashala', logo: '/assets/partners/sun-moon-yogashala.webp', url: 'https://danava.vn/places/sunmon-yoga', projectId: '', role: 'Yoga', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-1', name: 'GLG YOGA SCHOOL', logo: '/assets/partners/glg-yoga-school.webp', url: 'https://danava.vn/places/glg-yoga-school', projectId: '', role: 'Yoga & Đào tạo', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-5', name: 'Kiến Gym', logo: '/assets/partners/kien-gym.webp', url: 'https://danava.vn/places/kien-gym-hoa-xuan', projectId: '', role: 'Gym & Fitness', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-3', name: 'Liên Minh Yoga Việt Nam', logo: '/assets/partners/lien-minh-yoga-viet-nam.webp', url: 'https://danava.vn/places/lien-minh-yoga-viet-nam', projectId: '', role: 'Yoga', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-12', name: 'Fuji Swimming Club DaNang', logo: '/assets/partners/fuji-swimming-club-danang.webp', url: 'https://danava.vn/places/fuji-swimming-club-danang', projectId: '', role: 'Câu lạc bộ bơi lội', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-6', name: 'TAM TAY GYM', logo: '/assets/partners/tam-tay-gym.webp', url: 'https://danava.vn/places/tamtay-gym', projectId: '', role: 'Gym & Fitness', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-4', name: 'Yoga Club Vietnam', logo: '/assets/partners/yoga-club-vietnam.webp', url: 'https://danava.vn/places/yoga-club-vietnam', projectId: '', role: 'Yoga cộng đồng', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-2', name: 'DYF', logo: '/assets/partners/dyf.webp', url: 'https://danava.vn/places/lien-doan-yoga-thanh-pho-da-nang', projectId: '', role: 'Yoga & Fitness', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-13', name: 'Học Viện Quốc Tế Yoga Ngọc Bích', logo: '/assets/partners/hoc-vien-quoc-te-yoga-ngoc-bich.webp', url: 'https://danava.vn/places/hoc-vien-quoc-te-yoga-ngoc-bich', projectId: '', role: 'Yoga', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
+  { id: 'danava-partner-11', name: 'TIGI YOGA', logo: '/assets/partners/tigi-yoga.webp', url: 'https://danava.vn/places/tigi-yoga', projectId: '', role: 'Yoga', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
 ];
 
 export const DEFAULT_HERO_TITLE = 'Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ';

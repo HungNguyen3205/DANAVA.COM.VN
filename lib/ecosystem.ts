@@ -99,7 +99,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
       href: '/lien-he/?service=DANAVA+PMS'
     },
     badge: 'Phần mềm quản trị',
-    image: '/assets/legacy/travel.webp',
+    image: '/assets/legacy/community.webp',
     visible: true,
     statusText: 'Đang triển khai theo yêu cầu'
   },
@@ -150,7 +150,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
       href: '/giai-phap/digital-marketing/'
     },
     badge: 'Dịch vụ tăng trưởng',
-    image: '/assets/legacy/marketing.webp',
+    image: '/assets/legacy/event-session.webp',
     visible: true,
     statusText: 'Đang nhận dự án'
   },
@@ -200,7 +200,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
       href: '/giai-phap/du-lich-su-kien/'
     },
     badge: 'Tour trải nghiệm',
-    image: '/assets/legacy/travel.webp',
+    image: '/assets/legacy/community.webp',
     visible: true,
     statusText: 'Đang mở tour định kỳ'
   },

@@ -1,0 +1,142 @@
+{
+  "source": "https://danava.vn/ (khối “Đối tác đồng hành”)",
+  "captured": "2026-11-19",
+  "note": "Danh sách và logo lấy từ dữ liệu công khai của nền tảng danava.vn (PartnersSlider, is_active=true). Logo thu nhỏ 360×240 WebP.",
+  "partners": [
+    {
+      "id": 7,
+      "name": "VF Gym",
+      "role": "Gym & Fitness",
+      "logo": "/assets/partners/vf-gym.webp",
+      "url": "https://danava.vn/places/vf-gym",
+      "originalLogo": "https://api.danava.vn/storage/clubs/2026/09/rH0DyfAgs3F4henFQeUz2qTkCAFw7XW2jgTDJM1m.webp",
+      "updated": "2026-09-05T08:48:25.000000Z"
+    },
+    {
+      "id": 10,
+      "name": "HARIVER GYM & FITNESS",
+      "role": "Gym & Fitness",
+      "logo": "/assets/partners/hariver-gym-fitness.webp",
+      "url": "https://danava.vn/places/hariver-gym-fitnes-center",
+      "originalLogo": "https://api.danava.vn/storage/clubs/2026/07/qnX7fHCaxzTPFE1BnrZB6U64QjGBlBSOjQRTPNXX.webp",
+      "updated": "2026-09-05T08:49:08.000000Z"
+    },
+    {
+      "id": 14,
+      "name": "SADHANA PILATES",
+      "role": "Pilates",
+      "logo": "/assets/partners/sadhana-pilates.webp",
+      "url": "https://danava.vn/places/sadhana-pilates",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/08/x99UGUTcjANymh8ZBb3BSe6nvzGsNmvt0FWjUlDT.webp",
+      "updated": "2026-08-25T14:45:50.000000Z"
+    },
+    {
+      "id": 15,
+      "name": "BỤNG Healing",
+      "role": "Breathwork & Hara Voice",
+      "logo": "/assets/partners/bung-healing.webp",
+      "url": "https://danava.vn/places/bung-healing",
+      "originalLogo": "https://api.danava.vn/storage/clubs/2026/08/WoWsghAyyhwY7EGHHQeRzK4dWgDjoDLfDQTVGNVn.webp",
+      "updated": "2026-08-31T00:24:32.000000Z"
+    },
+    {
+      "id": 16,
+      "name": "Sun Moon Yogashala",
+      "role": "Yoga",
+      "logo": "/assets/partners/sun-moon-yogashala.webp",
+      "url": "https://danava.vn/places/sunmon-yoga",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/09/LW7fplNvwCODuVpRXDmXISquGBdzudkRL324kCSk.webp",
+      "updated": "2026-09-07T11:03:56.000000Z"
+    },
+    {
+      "id": 1,
+      "name": "GLG YOGA SCHOOL",
+      "role": "Yoga & Đào tạo",
+      "logo": "/assets/partners/glg-yoga-school.webp",
+      "url": "https://danava.vn/places/glg-yoga-school",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/j0kVZ6KZs4oOugktbMBJ3QJaCBc3h5ppULeqhTvm.webp",
+      "updated": "2026-09-05T08:48:15.000000Z"
+    },
+    {
+      "id": 5,
+      "name": "Kiến Gym",
+      "role": "Gym & Fitness",
+      "logo": "/assets/partners/kien-gym.webp",
+      "url": "https://danava.vn/places/kien-gym-hoa-xuan",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/D3Ce3LzBuanhXx1uzK57rwaeZisi8mVvGdGfLYre.webp",
+      "updated": "2026-07-30T01:54:45.000000Z"
+    },
+    {
+      "id": 9,
+      "name": "Huế Pilates & Yoga",
+      "role": "Pilates & Yoga",
+      "logo": "/assets/partners/hue-pilates-yoga.webp",
+      "url": "https://danava.vn/places/hue-pilates-yoga",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/UpLpegLrLxUljqlCg37VNvLm7GJFwAg8Hxur70UY.webp",
+      "updated": "2026-09-05T08:44:12.000000Z"
+    },
+    {
+      "id": 3,
+      "name": "Liên Minh Yoga Việt Nam",
+      "role": "Yoga",
+      "logo": "/assets/partners/lien-minh-yoga-viet-nam.webp",
+      "url": "https://danava.vn/places/lien-minh-yoga-viet-nam",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/3EoTZpCkYo0uW8SBzoIsxucEQljPptuNVKdUBLzk.webp",
+      "updated": "2026-07-30T01:55:09.000000Z"
+    },
+    {
+      "id": 12,
+      "name": "Fuji Swimming Club DaNang",
+      "role": "Câu lạc bộ bơi lội",
+      "logo": "/assets/partners/fuji-swimming-club-danang.webp",
+      "url": "https://danava.vn/places/fuji-swimming-club-danang",
+      "originalLogo": "https://api.danava.vn/storage/clubs/2026/08/8WDISkkNPRlNAkDs5KyMiuMiiEELtrwCLF0Mx8oD.webp",
+      "updated": "2026-09-05T08:47:15.000000Z"
+    },
+    {
+      "id": 6,
+      "name": "TAM TAY GYM",
+      "role": "Gym & Fitness",
+      "logo": "/assets/partners/tam-tay-gym.webp",
+      "url": "https://danava.vn/places/tamtay-gym",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/Zt9YbxLyF4fWyTfDv17y1kKDyvYOny9hjZpPClY3.webp",
+      "updated": "2026-07-30T01:55:37.000000Z"
+    },
+    {
+      "id": 4,
+      "name": "Yoga Club Vietnam",
+      "role": "Yoga cộng đồng",
+      "logo": "/assets/partners/yoga-club-vietnam.webp",
+      "url": "https://danava.vn/places/yoga-club-vietnam",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/3gPu3IuUpaoyHHoM35t4mG0mETYsXEeZnQepWNEe.webp",
+      "updated": "2026-07-30T01:55:51.000000Z"
+    },
+    {
+      "id": 2,
+      "name": "DYF",
+      "role": "Yoga & Fitness",
+      "logo": "/assets/partners/dyf.webp",
+      "url": "https://danava.vn/places/lien-doan-yoga-thanh-pho-da-nang",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/07/DEjSsJUGHPOuz202c5S464snvsT8k4IOdyhCv5LG.webp",
+      "updated": "2026-09-05T08:45:23.000000Z"
+    },
+    {
+      "id": 13,
+      "name": "Học Viện Quốc Tế Yoga Ngọc Bích",
+      "role": "Yoga",
+      "logo": "/assets/partners/hoc-vien-quoc-te-yoga-ngoc-bich.webp",
+      "url": "https://danava.vn/places/hoc-vien-quoc-te-yoga-ngoc-bich",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/08/04cwAAVa8tuFgngi7Ta5KKUaKlank6iSc2X0pQBC.webp",
+      "updated": "2026-09-05T08:46:51.000000Z"
+    },
+    {
+      "id": 11,
+      "name": "TIGI YOGA",
+      "role": "Yoga",
+      "logo": "/assets/partners/tigi-yoga.webp",
+      "url": "https://danava.vn/places/tigi-yoga",
+      "originalLogo": "https://api.danava.vn/storage/partners/2026/08/Zd0KaQeW2Aa1wqSJMxdUariWVPUmUtlEYaYu98DG.webp",
+      "updated": "2026-09-05T08:43:57.000000Z"
+    }
+  ]
+}

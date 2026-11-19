@@ -130,6 +130,10 @@ export type ShowcaseItem = {
 /** Khách hàng tiêu biểu — chỉ hiển thị khi published && permission. */
 export type Client = {
   id: string; name: string; logo: string; url: string; projectId: string;
+  /** Lĩnh vực hiển thị dưới logo (vd. Gym & Fitness) */
+  role?: string;
+  /** client = khách hàng của DANAVA; partner = đối tác đồng hành trên nền tảng danava.vn */
+  relation?: 'client' | 'partner';
   /** Đã có quyền/đồng ý hiển thị tên và logo công khai */
   permission: boolean; published: boolean; note: string;
 };
@@ -286,6 +290,7 @@ function validShowcase(x: unknown) {
 
 function validClient(c: unknown) {
   return object(c) && str(c.id, 100) && str(c.name, 150) && safeImage(c.logo) && httpsURL(c.url) && str(c.projectId, 100)
+    && optStr(c.role, 80) && (c.relation === undefined || c.relation === 'client' || c.relation === 'partner')
     && typeof c.permission === 'boolean' && typeof c.published === 'boolean' && str(c.note, 1000)
     // Chỉ xuất bản khi đã có quyền hiển thị
     && (!c.published || (c.permission && (c.name as string).trim() !== ''));

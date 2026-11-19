@@ -2,6 +2,9 @@
 
 Nhánh: `feature/danava-seo-upgrade`. Chưa triển khai production, chưa hợp nhất vào `main`.
 
+> **Lưu ý (cập nhật 19/11/2026):** mọi chỗ ghi “production build” trong tài liệu này là **bản build production chạy trên máy làm việc** (SQLite bản sao), **không phải** website `danava.com.vn` đã triển khai. Nhánh chưa được triển khai hay merge. Phần đã kiểm chứng và chưa kiểm chứng xem tại [BAO-CAO-NGHIEM-THU.md](BAO-CAO-NGHIEM-THU.md); việc cần làm trên CMS xem tại [CHECKLIST-CMS-SAU-TRIEN-KHAI.md](CHECKLIST-CMS-SAU-TRIEN-KHAI.md).
+
+
 ## 1. Những gì đã thay đổi
 
 | Yêu cầu | Triển khai | File chính |
@@ -27,7 +30,7 @@ Nhánh: `feature/danava-seo-upgrade`. Chưa triển khai production, chưa hợp
 
 ## 2. Kiểm tra đã chạy
 - `npm run check` (tsc): sạch. `npm test`: 73/73 pass (thêm `tests/seo-upgrade.test.ts`: tương thích dữ liệu cũ, quan hệ ID, nháp không lộ, quyền công bố, vòng/chuỗi chuyển hướng, lưu qua lớp database với database tạm).
-- `npm run build` + chạy bản standalone (database SQLite bản sao trong thư mục tạm):
+- `npm run build` + chạy bản standalone **trên máy làm việc** (database SQLite bản sao trong thư mục tạm — không phải production đã triển khai):
   - 200: tất cả trang chính; 404 thật: slug sai, dịch vụ con nháp, danh mục < 3 bài, `/kien-thuc/doc/` sai mã; 308: URL WordPress cũ, `/kien-thuc/doc/?id=`.
   - Mỗi trang đúng 1 `<h1>`, canonical tuyệt đối `https://danava.com.vn/...`, JSON-LD có trong HTML máy chủ trả về.
   - Sitemap 54 URL (36 có lastmod từ dữ liệu), không chứa bản nháp/danh mục chưa đủ bài.
@@ -68,7 +71,7 @@ Nhánh: `feature/danava-seo-upgrade`. Chưa triển khai production, chưa hợp
 | Giảm chuyển động | Ken Burns, chồng ảnh, sơ đồ marketing chỉ chạy khi `prefers-reduced-motion: no-preference`; ảnh động thay bằng ảnh tĩnh qua `<picture media>` | `site-identity.css`, `showcase.tsx` |
 | Gọn mã | Gỡ `MarketingStage.tsx` và `site-mkt.css` (~33KB CSS nạp ở mọi trang), `portfolio.ts`, `PortfolioGrid.tsx` | — |
 
-## Nghiệm thu (trình duyệt thật, production build)
+## Nghiệm thu (Chrome headless trên bản build production chạy local — chưa phải production đã triển khai)
 `docs/screenshots/identity/ket-qua-nghiem-thu.txt` — **52/52 PASS**:
 - 7 trang × 5 kích thước (360, 390, 768, 1024, 1440): đúng 1 H1 nói rõ dịch vụ, không tràn ngang, không ảnh hỏng, không lỗi console.
 - Vinhomes: featured đầu khu portfolio trang chủ; ngay sau hero trang Website; không lặp trong thư viện; có CTA case study + website thật.
