@@ -1,0 +1,10 @@
+PASS 1440px: 16 phân hệ, không tràn ngang (1440/1440)
+PASS Bấm "Lịch lớp" → hiện đúng màn hình lịch lớp
+PASS Bàn phím: mũi tên xuống → "Đặt chỗ hôm nay", ảnh đổi theo
+PASS Nút "tiếp theo" → "Lịch hẹn PT"
+PASS Không lỗi console (0)
+PASS 1024px: 16 phân hệ, không tràn ngang (1024/1024)
+PASS 390px: 16 phân hệ, không tràn ngang (390/390)
+PASS 1440px (giảm chuyển động): 16 phân hệ, không tràn ngang (1440/1440)
+PASS Giảm chuyển động: khung không nghiêng, ảnh không hiệu ứng
+PASS HTML máy chủ có đủ nhóm và mô tả từng phân hệ

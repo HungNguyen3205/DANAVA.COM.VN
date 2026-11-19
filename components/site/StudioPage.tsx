@@ -5,7 +5,7 @@
  * chi phí & demo → triển khai → câu hỏi. Ảnh là màn hình thật của phần mềm (dữ liệu mẫu).
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Phone, LayoutDashboard, Users, Package, Ticket, CalendarDays, ClipboardCheck, UserRound, QrCode, Lock, ShoppingCart, BadgeDollarSign, Boxes, IdCard, Percent, BarChart3, Wallet, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Phone, CalendarDays, QrCode } from 'lucide-react';
 import type { Service, SiteData } from '@/lib/content';
 import { postsForService, projectsForService, publicClients, publishedSubServices, subServiceHref, sortServices } from '@/lib/site-queries';
 import { CONTACT, formatPhone } from './catalog';
@@ -14,6 +14,7 @@ import { FaqSection, ProblemsSection, ProcessSection, RelatedPosts, ServiceLinks
 import { STUDIO_GALLERY } from './product-showcase';
 import { ProductGallery } from './ProductGallery';
 import { StudioTour, type TourRole } from './StudioTour';
+import { StudioModules } from './StudioModules';
 import { contactHrefFor } from './ServiceDetailPage';
 
 const S = '/assets/studio/';
@@ -34,11 +35,6 @@ const ROLES: TourRole[] = [
   { id: 'hoi-vien', label: 'Hội viên', device: 'phone', lead: 'App hội viên mang tên và logo câu lạc bộ. Ví dụ thật: app Yoga Club Vietnam tại ycv.danava.vn.', shots: YCV }
 ];
 
-const MODULE_ICONS: Record<string, LucideIcon> = {
-  'Tổng quan': LayoutDashboard, 'Hội viên': Users, 'Gói tập': Package, 'Thẻ tập theo buổi': Ticket, 'Lịch lớp': CalendarDays,
-  'Đặt chỗ hôm nay': ClipboardCheck, 'Lịch hẹn PT': UserRound, 'Check-in': QrCode, 'Tủ đồ': Lock, 'Bán hàng (POS)': ShoppingCart,
-  'Bán gói cho hội viên': BadgeDollarSign, 'Kho hàng': Boxes, 'Nhân sự & HLV': IdCard, 'Hoa hồng nhân viên': Percent, 'Báo cáo': BarChart3, 'Ví câu lạc bộ': Wallet
-};
 
 const MODELS = [
   { title: 'Phòng Gym & Fitness', text: 'Gói tháng, gói buổi, PT 1-1, check-in QR, tủ đồ và bán nước, phụ kiện tại quầy.', sub: 'studio-gym' },
@@ -145,25 +141,17 @@ export function StudioPage({ service, data }: { service: Service; data: SiteData
 
       <ProblemsSection title="Nếu phòng tập của bạn đang thế này" problems={service.problems || []} />
 
-      {/* 5 · Toàn bộ tính năng */}
-      <section className="s-section st-modules" aria-labelledby="st-modules-title">
+      {/* 5 · Toàn bộ tính năng: bảng điều khiển phân hệ với màn hình thật */}
+      <section className="st-modules" aria-labelledby="st-modules-title">
+        <span className="st-modules__glow st-modules__glow--a" aria-hidden="true" />
+        <span className="st-modules__glow st-modules__glow--b" aria-hidden="true" />
         <div className="s-container">
-          <div className="st-head">
-            <p className="st-head__kicker">Tính năng</p>
-            <h2 className="st-head__title" id="st-modules-title">{modules.length} phân hệ, <em>một hệ thống.</em></h2>
+          <div className="st-head st-head--center">
+            <p className="st-head__kicker st-head__kicker--light">Tính năng</p>
+            <h2 className="st-head__title st-head__title--light" id="st-modules-title">{modules.length} phân hệ, <em>một hệ thống.</em></h2>
+            <p className="st-head__lead st-head__lead--light">Chọn một phân hệ để xem màn hình thật của nó. Mọi phân hệ dùng chung một dữ liệu hội viên, gói tập và doanh thu.</p>
           </div>
-          <ul className="st-modules__grid">
-            {modules.map(m => {
-              const Icon = MODULE_ICONS[m.title] || LayoutDashboard;
-              return (
-                <li key={m.src}>
-                  <span className="st-modules__icon"><Icon aria-hidden="true" /></span>
-                  <strong>{m.title}</strong>
-                  <small>{m.text}</small>
-                </li>
-              );
-            })}
-          </ul>
+          <StudioModules modules={modules.map(m => ({ src: m.src, title: m.title, text: m.text || '' }))} />
           <details className="st-gallery">
             <summary>Xem toàn bộ {STUDIO_GALLERY.reduce((n, g) => n + g.shots.length, 0)} màn hình (phần mềm, app, website & khóa học online)</summary>
             <ProductGallery groups={STUDIO_GALLERY} idPrefix="studio" />
