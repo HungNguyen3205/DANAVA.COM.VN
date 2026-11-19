@@ -12,7 +12,7 @@ import type { SiteData } from '@/lib/content';
 import { company } from '@/lib/company';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { defaultPresentation } from '@/lib/presentation';
-import { showcaseFor, splitFeatured, knowledgePosts, publicClients, publicTestimonials, publishedProjects, serviceHref, sortServices, visibleMetrics, projectHref } from '@/lib/site-queries';
+import { showcaseFor, splitFeatured, knowledgePosts, publicPartners, publicTestimonials, publishedProjects, serviceHref, sortServices, visibleMetrics, projectHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, formatDate } from './catalog';
 import { CheckList, IconTile } from './ui';
 import { StudioShowcase } from './StudioShowcase';
@@ -55,7 +55,7 @@ export default function HomePage({ data }: { data: SiteData }) {
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
 
-  const clients = publicClients(data);
+  const clients = publicPartners(data);
   const metrics = visibleMetrics(data);
   const testimonials = publicTestimonials(data);
   const projects = (() => {

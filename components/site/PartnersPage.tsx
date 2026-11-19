@@ -4,16 +4,25 @@
  * Nhóm theo tỉnh/thành; mỗi thẻ: ảnh bìa, logo, lĩnh vực, địa chỉ, giờ mở cửa, tiện ích, giới thiệu, liên kết.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Clock, MapPin, ChevronDown } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BadgeCheck, Clock, MapPin, ChevronDown } from 'lucide-react';
 import type { Client, SiteData } from '@/lib/content';
-import { publicClients, publishedProjects } from '@/lib/site-queries';
+import { publicPartners, publicPlaces, publishedProjects } from '@/lib/site-queries';
+import { PlacesDirectory, type PlaceCard } from './PlacesDirectory';
 import { Crumbs, CtaBand } from './ui';
 
 const cityOf = (c: Client) => (c.city || 'Khác').replace(/^Thừa Thiên /, '').replace(/^Hồ Chí Minh$/, 'TP. Hồ Chí Minh');
 const anchor = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function PartnersPage({ data }: { data: SiteData }) {
-  const partners = publicClients(data);
+  const partners = publicPartners(data);
+  const places = publicPlaces(data);
+  const onDanava = [...partners, ...places].filter(c => c.url.startsWith('https://danava.vn/places/')).length;
+  const allCities = new Set([...partners, ...places].map(cityOf).filter(c => c !== 'Khác'));
+  const short = (t = '') => (t.length > 170 ? t.slice(0, t.lastIndexOf(' ', 165)) + '…' : t);
+  const cards: PlaceCard[] = places.map(c => ({
+    id: c.id, name: c.name, role: c.role || 'Wellness', city: cityOf(c) === 'Khác' ? '' : cityOf(c), address: c.address || '', hours: c.hours || '',
+    logo: c.logo, cover: c.cover || '', url: c.url, verified: !!c.verified, about: short(c.description), amenities: (c.amenities || []).slice(0, 3)
+  }));
   const projects = publishedProjects(data);
   const cities = Array.from(new Set(partners.map(cityOf))).sort((a, b) =>
     (a === 'Đà Nẵng' ? -1 : b === 'Đà Nẵng' ? 1 : partners.filter(p => cityOf(p) === b).length - partners.filter(p => cityOf(p) === a).length));
@@ -30,9 +39,9 @@ export function PartnersPage({ data }: { data: SiteData }) {
               <p className="pt-hero__lead">Phòng tập, studio, trung tâm đào tạo và cộng đồng wellness đang có mặt trên nền tảng danava.vn.</p>
             </div>
             <dl className="pt-hero__facts">
-              <div><dt>Đối tác</dt><dd>{partners.length}</dd></div>
-              <div><dt>Tỉnh/thành</dt><dd>{cities.length}</dd></div>
-              <div><dt>Có case study</dt><dd>{partners.filter(p => projects.some(x => x.id === p.projectId)).length}</dd></div>
+              <div><dt>Đối tác đồng hành</dt><dd>{partners.length}</dd></div>
+              <div><dt>Địa điểm trên danava.vn</dt><dd>{onDanava}</dd></div>
+              <div><dt>Tỉnh/thành</dt><dd>{allCities.size}</dd></div>
             </dl>
           </div>
           <ul className="pt-logos" aria-label="Logo đối tác">
@@ -40,6 +49,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
           </ul>
           <nav className="pt-cities" aria-label="Theo tỉnh/thành">
             {cities.map(city => <a key={city} href={`#tp-${anchor(city)}`}>{city} <span>{partners.filter(p => cityOf(p) === city).length}</span></a>)}
+            {places.length > 0 && <a href="#dia-diem" className="is-alt">Địa điểm khác trên danava.vn <span>{places.length}</span></a>}
           </nav>
           <p className="pt-source">Thông tin lấy từ trang của từng đối tác trên danava.vn, ngày 19/11/2026.</p>
         </div>
@@ -59,6 +69,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
                       {c.cover ? <img src={c.cover} alt={`Ảnh ${c.fullName || c.name}`} width={800} height={500} loading="lazy" decoding="async" /> : <span className="pt-card__nocover" aria-hidden="true" />}
                       {c.logo && <img className="pt-card__logo" src={c.logo} alt="" width={72} height={72} loading="lazy" />}
                       {project && <span className="pt-card__badge">Case study</span>}
+                      {!project && c.verified && <span className="pt-card__badge pt-card__badge--v"><BadgeCheck aria-hidden="true" /> Verified</span>}
                     </div>
                     <div className="pt-card__body">
                       <p className="pt-card__role">{c.role || (c.types || []).join(' · ')}</p>
@@ -94,6 +105,18 @@ export function PartnersPage({ data }: { data: SiteData }) {
           </div>
         </section>
       ))}
+
+      {places.length > 0 && (
+        <section id="dia-diem" className="pd" aria-labelledby="pd-title">
+          <div className="s-container">
+            <p className="pt-hero__kicker">Nền tảng danava.vn</p>
+            <h2 className="pd__title" id="pd-title">Địa điểm wellness trên danava.vn</h2>
+            <p className="pd__lead">Ngoài {partners.length} đối tác đồng hành, danava.vn còn {places.length} địa điểm yoga, pilates, gym và spa đang có trang công khai. Địa điểm có <BadgeCheck aria-label="huy hiệu xác minh" className="pd__badge" /> là địa điểm đã được DANAVA xác minh.</p>
+            <PlacesDirectory places={cards} />
+            <p className="pt-source">Theo danh sách công khai tại danava.vn/places, ngày 19/11/2026.</p>
+          </div>
+        </section>
+      )}
 
       <CtaBand title="Trở thành đối tác trong hệ sinh thái DANAVA" lead="Cơ sở của bạn vận hành bằng DANAVA Studio và có mặt trên nền tảng danava.vn. Trao đổi với DANAVA để bắt đầu." primary={{ href: '/lien-he/?service=danava-studio', label: 'Đăng ký demo' }} secondary={{ href: '/he-sinh-thai/', label: 'Xem hệ sinh thái' }} />
     </main>

@@ -106,6 +106,10 @@ export const findShowcase = (data: SiteData, slug: string) => (data.showcase || 
 /* ---------------------------------------------------------- Bằng chứng */
 export const publicClients = (data: SiteData): Client[] =>
   (data.clients || []).filter(c => c.published && c.permission && c.name.trim());
+/** Khách hàng + đối tác đồng hành (không gồm địa điểm danh bạ danava.vn/places) — dùng cho khối logo. */
+export const publicPartners = (data: SiteData): Client[] => publicClients(data).filter(c => c.relation !== 'place');
+/** Địa điểm công khai trên danava.vn/places (ngoài khối đối tác đồng hành). */
+export const publicPlaces = (data: SiteData): Client[] => publicClients(data).filter(c => c.relation === 'place');
 
 export const publicTestimonials = (data: SiteData, projectId?: string): Testimonial[] =>
   (data.testimonials || []).filter(t => t.published && t.permission && t.quote.trim() && (!projectId || t.projectId === projectId));
@@ -126,7 +130,8 @@ export function publicContent(data: SiteData): SiteData {
     projects: publishedProjects(data),
     subServices: publishedSubServices(data).map(s => ({ ...s, editorNote: undefined })),
     topics: (data.topics || []).filter(t => t.published || t.id === ARCHIVE_TOPIC),
-    clients: publicClients(data).map(c => ({ ...c, note: '' })),
+    // Trình duyệt chỉ cần khối logo: bỏ địa điểm danh bạ và phần mô tả dài
+    clients: publicPartners(data).map(c => ({ ...c, note: '', description: undefined, amenities: undefined, types: undefined })),
     testimonials: publicTestimonials(data),
     // Chỉ trang /du-an/ (client) cần showcase — chỉ gửi mục website đã xuất bản
     showcase: (data.showcase || []).filter(x => x.published && x.serviceId === 'website')

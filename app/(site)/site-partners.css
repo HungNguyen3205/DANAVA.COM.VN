@@ -8,7 +8,7 @@
 .pt-hero__title em { color: var(--s-blue); }
 .pt-hero__lead { margin: 16px 0 0; max-width: 620px; font-size: 17px; line-height: 1.7; color: var(--s-ink-2, #334155); }
 .pt-hero__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
-.pt-hero__facts div { display: flex; flex-direction: column-reverse; padding: 16px; border-radius: 18px; background: #fff; border: 1px solid #eadfcb; }
+.pt-hero__facts div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 4px; padding: 16px; border-radius: 18px; background: #fff; border: 1px solid #eadfcb; }
 .pt-hero__facts dt { font-size: 13px; color: var(--s-muted); }
 .pt-hero__facts dd { margin: 0; font-family: var(--h-serif); font-size: 40px; line-height: 1; color: var(--s-navy); }
 .pt-logos { display: flex; flex-wrap: wrap; gap: 10px; margin: clamp(28px, 4vw, 44px) 0 0; padding: 0; list-style: none; }
@@ -63,3 +63,47 @@
 @media (max-width: 1024px) { .pt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .pt-grid { grid-template-columns: minmax(0, 1fr); } .pt-hero__facts dd { font-size: 32px; } }
 @media (prefers-reduced-motion: reduce) { .pt-card, .pt-logos a, .pt-card__about > summary svg { transition: none; } .pt-card:hover { transform: none; } }
+
+/* Địa điểm trên danava.vn/places (components/site/PlacesDirectory.tsx) */
+.pt-cities a.is-alt { background: #fff; color: var(--s-navy); border: 1px solid var(--s-navy); }
+.pt-cities a.is-alt:hover { background: var(--s-blue-soft); }
+.pt-card__badge--v { display: inline-flex; align-items: center; gap: 4px; background: #fff; color: var(--s-blue); }
+.pt-card__badge--v svg { width: 14px; height: 14px; }
+.pd { margin-top: clamp(48px, 7vw, 88px); padding: clamp(40px, 6vw, 72px) 0; background: var(--s-soft); scroll-margin-top: var(--s-header-h); }
+.pd__title { margin: 0; font-family: var(--h-serif); font-weight: 500; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.12; color: var(--s-navy); }
+.pd__lead { margin: 12px 0 0; max-width: 760px; font-size: 16.5px; line-height: 1.7; color: var(--s-ink-2, #334155); }
+.pd__badge { width: 18px; height: 18px; vertical-align: -3px; color: var(--s-blue); }
+.pd-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 24px; }
+.pd-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pd-chips button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--s-line); background: #fff; color: var(--s-ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.pd-chips button span { min-width: 22px; padding: 1px 6px; border-radius: 999px; background: var(--s-soft); font-size: 12px; text-align: center; }
+.pd-chips button.is-on { background: var(--s-navy); border-color: var(--s-navy); color: #fff; }
+.pd-chips button.is-on span { background: #ffc233; color: var(--s-navy); }
+.pd-chips button:focus-visible, .pd-city select:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 2px; }
+.pd-city select { min-height: 44px; max-width: 100%; padding: 8px 36px 8px 14px; border-radius: 999px; border: 1px solid var(--s-line); background: #fff; font: inherit; font-size: 14px; font-weight: 600; color: var(--s-ink); }
+.pd-count { margin: 14px 0 0; font-size: 14px; color: var(--s-muted); }
+.pd-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 14px 0 0; padding: 0; list-style: none; }
+.pd-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 18px; background: #fff; border: 1px solid var(--s-line); scroll-margin-top: calc(var(--s-header-h) + 16px); transition: transform .25s ease, box-shadow .25s ease; }
+.pd-card:hover { transform: translateY(-3px); box-shadow: var(--s-shadow); }
+.pd-card__cover { position: relative; aspect-ratio: 16 / 9; background: linear-gradient(140deg, #15265a, #2b4294); }
+.pd-card__cover img { width: 100%; height: 100%; object-fit: cover; }
+.pd-card__verified { position: absolute; left: 10px; top: 10px; display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: #fff; color: var(--s-blue); font-size: 11.5px; font-weight: 800; }
+.pd-card__verified svg { width: 14px; height: 14px; }
+.pd-card__body { display: flex; flex-direction: column; flex: 1; padding: 14px; }
+.pd-card__head { display: flex; gap: 10px; align-items: center; }
+.pd-card__logo { width: 48px; height: 48px; flex: none; object-fit: cover; border-radius: 12px; border: 1px solid var(--s-line); }
+.pd-card__role { margin: 0; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--s-orange); }
+.pd-card__name { margin: 2px 0 0; font-size: 17px; font-weight: 800; line-height: 1.3; color: var(--s-navy); overflow-wrap: anywhere; }
+.pd-card__about { margin: 10px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--s-ink-2, #334155); }
+.pd-card__meta { display: grid; gap: 4px; margin: 10px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--s-ink-2, #334155); }
+.pd-card__meta li { display: flex; gap: 6px; align-items: flex-start; }
+.pd-card__meta svg { width: 14px; height: 14px; flex: none; margin-top: 3px; color: var(--s-blue); }
+.pd-card__amen { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0 0; padding: 0; list-style: none; }
+.pd-card__amen li { padding: 3px 8px; border-radius: 999px; background: var(--s-soft); font-size: 12px; font-weight: 600; }
+.pd-card__link { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: auto; padding-top: 8px; font-weight: 700; font-size: 14px; color: var(--s-blue); text-decoration: none; }
+.pd-card__link:hover { text-decoration: underline; }
+.pd-card__link svg { width: 15px; height: 15px; }
+@media (max-width: 1180px) { .pd-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .pd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .pd-grid { grid-template-columns: minmax(0, 1fr); } .pd-city, .pd-city select { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .pd-card { transition: none; } .pd-card:hover { transform: none; } }

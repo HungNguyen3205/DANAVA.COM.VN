@@ -89,3 +89,13 @@ DANAVA không cung cấp Digital Marketing (yêu cầu của chủ sở hữu, 1
 - Fuji Swimming Club DaNang: trang trên danava.vn trả 404 nên không có liên kết và địa chỉ; đối tác được xếp vào Đà Nẵng theo tên.
 - Kiểm tra trình duyệt 11/11 (360/390/768/1024/1440px): không tràn, không ảnh hỏng, không lỗi console; bấm logo cuộn tới đúng thẻ; mở được “Giới thiệu” bằng bàn phím; tôn trọng chế độ giảm chuyển động. Ảnh chụp: `docs/screenshots/doi-tac/`.
 - Kiểm thử tự động: 89/89 đạt.
+
+## 9. Cập nhật: toàn bộ địa điểm trên danava.vn/places
+
+- Kiểm tra lại danava.vn ngày 19/11/2026: khối “Đối tác đồng hành” có đúng 15 mục (đã có). Danh bạ công khai danava.vn/places có 47 địa điểm (khớp sitemap của danava.vn), trong đó 10 địa điểm có huy hiệu DANAVA Verified. Con số “+4.065 địa điểm” trên trang chủ danava.vn không có danh sách công khai tương ứng nên không thể lấy thêm.
+- Bổ sung 32 địa điểm còn lại vào /doi-tac/, mục “Địa điểm wellness trên danava.vn”: logo, ảnh bìa, loại hình, tỉnh/thành, địa chỉ, giờ mở cửa, tiện ích, giới thiệu, huy hiệu Verified, liên kết tới trang trên danava.vn. Có bộ lọc theo loại hình và tỉnh/thành. Không ghi các địa điểm này là “đối tác đồng hành” vì danava.vn chỉ liệt kê họ trong danh bạ.
+- Fuji Swimming Club Da Nang: khối đối tác trên danava.vn liên kết sai (/places/fuji-swimming-club-danang → 404); trang đúng là /places/fuji-swimming-club-da-nang. Đã gắn liên kết đúng và bổ sung địa chỉ, giờ mở cửa, tiện ích.
+- CMS: loại quan hệ mới “Địa điểm trên danava.vn/places” và nút “Có huy hiệu DANAVA Verified”. Dữ liệu đã lưu trên production được bổ sung 32 địa điểm một lần khi đọc. Muốn ẩn địa điểm nào thì tắt “Xuất bản”; danh sách rỗng do quản trị viên chọn được giữ nguyên.
+- Khối logo ở Trang chủ và Hệ sinh thái vẫn chỉ hiện khách hàng và 15 đối tác đồng hành. Danh bạ 32 địa điểm không gửi xuống trình duyệt ở các trang khác.
+- Lưu ý dữ liệu nguồn: 10 địa điểm ghi giờ mở cửa “08:00 - 21:00”, có thể là giá trị mặc định của danava.vn; trang hiển thị đúng như nguồn công bố.
+- Kiểm tra trình duyệt 12/12, kiểm thử tự động 90/90.

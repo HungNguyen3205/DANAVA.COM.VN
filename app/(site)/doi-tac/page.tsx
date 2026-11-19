@@ -1,25 +1,25 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
 import { getContent } from '@/lib/database';
-import { publicClients } from '@/lib/site-queries';
+import { publicPartners, publicPlaces } from '@/lib/site-queries';
 import { PartnersPage } from '@/components/site/PartnersPage';
 import { JsonLd } from '@/components/site/blocks';
 
 export const metadata = seo(
   'Đối tác đồng hành',
-  'Phòng tập, studio yoga, pilates, trung tâm đào tạo và cộng đồng wellness đồng hành cùng hệ sinh thái DANAVA: địa chỉ, giờ mở cửa, dịch vụ và tiện ích.',
+  'Đối tác đồng hành và các địa điểm yoga, pilates, gym, spa trên nền tảng danava.vn: địa chỉ, giờ mở cửa, dịch vụ và tiện ích.',
   '/doi-tac/',
   '/assets/partners/covers/yoga-club-vietnam.webp'
 );
 
 export default async function Page() {
   const { data } = await getContent();
-  const partners = publicClients(data);
+  const partners = [...publicPartners(data), ...publicPlaces(data)];
   return (
     <>
       <JsonLd value={{
         '@context': 'https://schema.org',
         '@type': 'ItemList',
-        name: 'Đối tác đồng hành của DANAVA',
+        name: 'Đối tác đồng hành và địa điểm trên nền tảng danava.vn',
         url: `${siteURL}/doi-tac/`,
         publisher: { '@id': ORG_ID },
         itemListElement: partners.map((c, i) => ({

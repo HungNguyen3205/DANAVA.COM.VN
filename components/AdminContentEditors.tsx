@@ -257,7 +257,7 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
               const seed = CLIENT_SEEDS.find(x => x.id === c.id);
               if (!seed) return c;
               const out = { ...c, logo: c.logo || seed.logo, role: c.role || seed.role, relation: c.relation || seed.relation, url: c.url || seed.url };
-              for (const k of ['fullName', 'description', 'address', 'city', 'hours', 'types', 'amenities', 'cover'] as const) if (out[k] === undefined || (Array.isArray(out[k]) ? !(out[k] as string[]).length : !out[k])) (out as Record<string, unknown>)[k] = seed[k];
+              for (const k of ['fullName', 'description', 'address', 'city', 'hours', 'types', 'amenities', 'cover', 'verified'] as const) if (out[k] === undefined || (Array.isArray(out[k]) ? !(out[k] as string[]).length : !out[k])) (out as Record<string, unknown>)[k] = seed[k];
               return out;
             });
             const added = CLIENT_SEEDS.filter(x => !clients.some(c => c.id === x.id || c.name.trim().toLowerCase() === x.name.toLowerCase())).map(x => structuredClone(x));
@@ -282,11 +282,13 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
             <MediaPicker label="Ảnh bìa" value={c.cover || ''} onChange={cover => setC(c.id, { cover })} />
             <label>
               Loại quan hệ
-              <select value={c.relation || 'client'} onChange={e => setC(c.id, { relation: e.target.value as 'client' | 'partner' })}>
+              <select value={c.relation || 'client'} onChange={e => setC(c.id, { relation: e.target.value as 'client' | 'partner' | 'place' })}>
                 <option value="client">Khách hàng của DANAVA</option>
                 <option value="partner">Đối tác đồng hành (danava.vn)</option>
+                <option value="place">Địa điểm trên danava.vn/places</option>
               </select>
             </label>
+            <Toggle label="Có huy hiệu DANAVA Verified" checked={!!c.verified} onChange={verified => setC(c.id, { verified })} />
             {projectSelect(c.projectId, projectId => setC(c.id, { projectId }))}
             <Text label="Ghi chú nguồn / quyền sử dụng (nội bộ)" value={c.note} area max={1000} onChange={note => setC(c.id, { note })} />
             <Toggle label="Có quyền hiển thị tên/logo công khai" checked={c.permission} onChange={permission => setC(c.id, { permission, published: permission && c.published })} />

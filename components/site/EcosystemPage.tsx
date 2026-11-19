@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Hotel, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, type LucideIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, getEcosystemCategoryCounts, getEcosystemUnits, type EcosystemCategory, type EcosystemUnit } from '@/lib/ecosystem';
-import { publicClients, publishedProjects } from '@/lib/site-queries';
+import { publicPartners, publishedProjects } from '@/lib/site-queries';
 import { Crumbs, CtaBand } from './ui';
 import { BrowserFrame } from './showcase';
 
@@ -55,7 +55,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
   const counts = getEcosystemCategoryCounts();
   const units = getEcosystemUnits();
   const cats = ECOSYSTEM_CATEGORIES.filter((c): c is { id: EcosystemCategory; label: string; shortDesc: string } => c.id !== 'all');
-  const partners = publicClients(data);
+  const partners = publicPartners(data);
   const projects = publishedProjects(data);
 
   return (
