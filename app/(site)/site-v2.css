@@ -73,7 +73,6 @@
 @keyframes s-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
 
 /* Thanh hành động cố định — chỉ mobile */
-.s-mbar { display: none; }
 
 /* ---------------- Mobile ---------------- */
 @media (max-width: 680px) {
@@ -137,13 +136,6 @@
   .s-marquee__item { height: 40px; font-size: 14px; }
   .s-home-hero__trust { font-size: 13.5px; gap: 6px 14px; }
 
-  /* Thanh hành động cố định đáy */
-  .s-mbar { position: fixed; z-index: 85; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: auto 1fr; gap: 8px; padding: 7px; background: rgba(255, 255, 255, .97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 999px; box-shadow: 0 10px 30px rgba(11, 19, 43, .18); transform: translateY(160%); transition: transform .3s ease; }
-  .s-mbar.is-visible { transform: none; }
-  .s-mbar .s-btn { min-height: 46px; }
-  .s-mbar__call { width: 46px; padding: 0 !important; background: var(--s-blue-soft); color: var(--s-blue); }
-  .s-app:has(.s-mbar) .s-footer { padding-bottom: 84px; }
-  .consent-banner { bottom: 84px; }
 }
 @media (prefers-reduced-motion: reduce) { .s-marquee__track { animation: none; } }
 

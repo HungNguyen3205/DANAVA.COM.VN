@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper } from 'lucide-react';
 import { useSite } from './SiteStore';
 import { SERVICE_META, sortServices, CONTACT, formatPhone } from './site/catalog';
 import { IconTile } from './site/ui';
@@ -228,6 +228,16 @@ export function Footer() {
             {/* Link thường (không phải <Link>) để CMS tải lại toàn trang với stylesheet riêng */}
             <a href="/admin/" rel="nofollow">Quản trị</a>
           </div>
+          {/* Logo xác nhận của Bộ Công Thương, trỏ về hồ sơ của danava.com.vn trên online.gov.vn */}
+          <a
+            className="s-footer__bct"
+            href="https://online.gov.vn/nen-tang/1d279d1c-3013-421c-8f27-ef99e3af27f0"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Đã thông báo Bộ Công Thương"
+          >
+            <img src="/assets/bct/da-thong-bao-bct.png" alt="Đã thông báo Bộ Công Thương" width={115} height={43} loading="lazy" />
+          </a>
         </div>
       </div>
       <span className="s-footer__giant" aria-hidden="true">DANAVA</span>
@@ -235,27 +245,60 @@ export function Footer() {
   );
 }
 
-/** Thanh hành động cố định trên mobile: gọi nhanh + nhận tư vấn. Ẩn ở trang Liên hệ. */
+const TABS = [
+  { href: '/', label: 'Trang chủ', icon: Home, match: (p: string) => p === '/' },
+  { href: '/giai-phap/', label: 'Giải pháp', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
+  { href: '/lien-he/', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
+  { href: '/du-an/', label: 'Dự án', icon: Briefcase, match: (p: string) => p.startsWith('/du-an') },
+  { href: '/kien-thuc/', label: 'Bản tin', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
+];
+
+/**
+ * Thanh tab cố định dưới đáy màn hình (điện thoại, máy tính bảng dọc) — điều hướng kiểu ứng dụng:
+ * luôn hiện, vùng bấm lớn trong tầm ngón cái, nút "Tư vấn" nổi ở giữa. Bấm lại tab đang mở để cuộn lên đầu.
+ */
 export function MobileBar() {
   const path = usePathname() || '/';
+  return (
+    <nav className="s-tabbar" aria-label="Điều hướng nhanh">
+      {TABS.map(t => {
+        const on = t.match(path);
+        const Icon = t.icon;
+        return (
+          <Link
+            key={t.href}
+            href={t.href}
+            className={`s-tabbar__item${t.primary ? ' s-tabbar__item--primary' : ''}`}
+            aria-current={on ? 'page' : undefined}
+            onClick={e => {
+              if (on && path === t.href) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            }}
+          >
+            <span className="s-tabbar__icon"><Icon aria-hidden="true" /></span>
+            <span className="s-tabbar__label">{t.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+/** Nút liên hệ nổi góc phải: Zalo + gọi hotline (điện thoại: nằm ngay trên thanh tab). */
+export function QuickContact() {
+  const path = usePathname() || '/';
   const { data } = useSite();
-  const [visible, setVisible] = useState(false);
-  const phone = data.phone || CONTACT.phone;
-
-  useEffect(() => {
-    const update = () => setVisible(window.scrollY > 420);
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    return () => window.removeEventListener('scroll', update);
-  }, []);
-
+  const phone = (data.phone || CONTACT.phone).replace(/\D/g, '');
   if (path.startsWith('/lien-he')) return null;
   return (
-    <div className={`s-mbar${visible ? ' is-visible' : ''}`} aria-hidden={!visible}>
-      <a className="s-btn s-mbar__call" href={`tel:${phone}`} aria-label={`Gọi ${formatPhone(phone)}`} tabIndex={visible ? 0 : -1}>
-        <Phone aria-hidden="true" />
+    <div className="s-quick" aria-label="Liên hệ nhanh">
+      <a className="s-quick__btn s-quick__btn--zalo" href={`https://zalo.me/${phone}`} target="_blank" rel="noopener noreferrer" aria-label="Nhắn Zalo cho DANAVA">
+        Zalo
+        <span className="s-quick__tip">Nhắn Zalo</span>
       </a>
-      <Link className="s-btn s-btn--primary" href="/lien-he/" tabIndex={visible ? 0 : -1}>Nhận tư vấn miễn phí</Link>
+      <a className="s-quick__btn s-quick__btn--call" href={`tel:${phone}`} aria-label={`Gọi ${formatPhone(phone)}`}>
+        <Phone aria-hidden="true" />
+        <span className="s-quick__tip">Gọi {formatPhone(phone)}</span>
+      </a>
     </div>
   );
 }

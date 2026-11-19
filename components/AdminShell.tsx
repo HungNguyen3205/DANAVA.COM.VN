@@ -2,9 +2,18 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Icon } from './AdminIcons';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  ArrowUpRight, Bell, Briefcase, Check, ChevronDown, ChevronRight, ExternalLink, FileText, Globe, Image as ImageIcon,
+  Inbox, Layers, LayoutGrid, LogOut, Menu, PanelLeftClose, PanelLeftOpen, PanelsTopLeft, Presentation, Save,
+  Search, Settings, TrendingUp, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, type LucideIcon,
+} from 'lucide-react';
+import { AdminNavRail, type RailSection } from './AdminNavRail';
 import { adminNav, adminSettings, allAdminItems, sectionInfo, timeAgo, csrfToken, type AdminLead } from './adminData';
+
+/* Khung quản trị theo hệ thống DriveAdmin (DatVeXeONL): thanh bên navy bo góc với nhóm menu gập được,
+   thu gọn thành dải icon có danh sách nổi; topbar gồm tiêu đề trang + breadcrumb, ô "Đi tới trang…",
+   chuông thông báo và menu tài khoản; vùng nội dung nền sáng, khối trắng bo góc. */
 
 type Props = {
   section: string;
@@ -23,6 +32,25 @@ type Props = {
   children: ReactNode;
 };
 
+const ICONS: Record<string, LucideIcon> = {
+  'tong-quan': LayoutGrid,
+  'khach-hang': Inbox,
+  'thong-ke': ChartColumn,
+  'trang-chu': PanelsTopLeft,
+  'trinh-chieu': Presentation,
+  'bai-viet': FileText,
+  'du-an': Briefcase,
+  'giai-phap': Layers,
+  'so-lieu': TrendingUp,
+  'thu-vien': ImageIcon,
+  'nhan-su': Users,
+  'cai-dat': Settings,
+};
+const GROUP_ICONS: Record<string, LucideIcon> = { 'Tổng quan': LayoutGrid, 'Nội dung': FileText, 'Tư liệu': FolderOpen, 'Hệ thống': Wrench };
+
+/** Menu: các nhóm của adminNav + nhóm "Hệ thống" chứa Cài đặt (để dải icon thu gọn cũng có). */
+const SECTIONS = [...adminNav, { group: 'Hệ thống', items: [adminSettings] }];
+
 const read = (key: string) => {
   try {
     return localStorage.getItem(key);
@@ -35,6 +63,15 @@ const write = (key: string, value: string) => {
     localStorage.setItem(key, value);
   } catch {}
 };
+
+/* Gõ không dấu cũng tìm được */
+const fold = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase();
 
 export default function AdminShell({
   section,
@@ -54,24 +91,23 @@ export default function AdminShell({
 }: Props) {
   const router = useRouter();
   const info = sectionInfo(section);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileNav, setMobileNav] = useState(false);
-  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [sideOpen, setSideOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
-  const [userOpen, setUserOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (read('danava-admin-theme') === 'light') setTheme('light');
     if (read('danava-admin-collapsed') === '1') setCollapsed(true);
   }, []);
 
-  // Phím tắt: Ctrl/⌘ + K mở tìm nhanh, Ctrl/⌘ + S lưu
+  // Phím tắt: Ctrl/⌘ + K tới ô "Đi tới trang…", Ctrl/⌘ + S lưu, Esc đóng menu/thông báo
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setPaletteOpen(v => !v);
+        searchRef.current?.focus();
       }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && dirty) {
         e.preventDefault();
@@ -79,13 +115,32 @@ export default function AdminShell({
       }
       if (e.key === 'Escape') {
         setBellOpen(false);
-        setUserOpen(false);
-        setMobileNav(false);
+        setSideOpen(false);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [dirty, onSave]);
+
+  // Bấm ra ngoài thì đóng thông báo
+  useEffect(() => {
+    if (!bellOpen) return;
+    const down = (e: MouseEvent) => {
+      if (!bellRef.current?.contains(e.target as Node)) setBellOpen(false);
+    };
+    document.addEventListener('mousedown', down);
+    return () => document.removeEventListener('mousedown', down);
+  }, [bellOpen]);
+
+  // Ngăn kéo điện thoại mở thì khóa cuộn trang phía sau
+  useEffect(() => {
+    if (!sideOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [sideOpen]);
 
   // Thông báo tự ẩn sau 6 giây
   useEffect(() => {
@@ -96,15 +151,15 @@ export default function AdminShell({
 
   const newLeads = leads.filter(l => (l.status || 'new') === 'new');
 
-  function go(slug: string, e?: { preventDefault(): void }) {
-    if (dirty && !confirm('Bạn có thay đổi chưa lưu. Rời màn hình này?')) {
-      e?.preventDefault();
-      return false;
-    }
-    setMobileNav(false);
-    setPaletteOpen(false);
+  function leave() {
+    if (dirty && !confirm('Bạn có thay đổi chưa lưu. Rời màn hình này?')) return false;
+    setSideOpen(false);
     setBellOpen(false);
+    setQuery('');
     return true;
+  }
+  function navigate(slug: string) {
+    if (leave()) router.push(`/admin/${slug}/`);
   }
 
   async function logout() {
@@ -113,147 +168,215 @@ export default function AdminShell({
     location.reload();
   }
 
-  const navLink = (item: { slug: string; icon: string; label: string }) => {
-    const count = counts[item.slug];
-    return (
-      <Link
-        key={item.slug}
-        href={`/admin/${item.slug}/`}
-        className="adm-nav-link"
-        aria-current={section === item.slug ? 'page' : undefined}
-        title={collapsed ? item.label : undefined}
-        onClick={e => go(item.slug, e)}
-      >
-        <Icon name={item.icon} />
-        <span className="adm-nav-label">{item.label}</span>
-        {count !== undefined && count > 0 && (
-          <span className={`adm-count ${item.slug === 'khach-hang' ? 'is-hot' : ''}`}>{count}</span>
-        )}
-      </Link>
-    );
-  };
+  const toggleCollapsed = () =>
+    setCollapsed(v => {
+      write('danava-admin-collapsed', v ? '0' : '1');
+      return !v;
+    });
+
+  const railSections: RailSection[] = SECTIONS.map(g => ({
+    group: g.group,
+    icon: GROUP_ICONS[g.group] || LayoutGrid,
+    items: g.items.map(i => ({
+      slug: i.slug,
+      label: i.label,
+      icon: ICONS[i.slug] || FileText,
+      count: i.slug === 'khach-hang' ? counts[i.slug] : undefined,
+    })),
+  }));
+
+  const words = fold(query).split(/\s+/).filter(Boolean);
+  const hits = words.length
+    ? allAdminItems.filter(i => {
+        const hay = fold(`${i.label} ${i.group} ${i.desc}`);
+        return words.every(w => hay.includes(w));
+      }).slice(0, 8)
+    : [];
 
   return (
-    <div className={`adm ${collapsed ? 'is-collapsed' : ''} ${mobileNav ? 'nav-open' : ''}`} data-theme={theme}>
-      <div className="adm-backdrop" aria-hidden="true" />
-      <button className="adm-scrim" aria-label="Đóng menu" tabIndex={-1} onClick={() => setMobileNav(false)} />
+    <div className="adm ds-root" data-theme="light">
+      {sideOpen && <div className="ds-sidebar-backdrop" onClick={() => setSideOpen(false)} aria-hidden="true" />}
 
       {/* ---------- Thanh bên ---------- */}
-      <aside className="adm-sidebar" aria-label="Menu quản trị">
-        <div className="adm-brand">
-          <Link href="/admin/tong-quan/" className="adm-logo" onClick={e => go('tong-quan', e)} aria-label="Tổng quan quản trị">
-            D
-          </Link>
-          <div className="adm-brand-text">
-            <strong>DANAVA</strong>
-            <small>Quản trị website</small>
-          </div>
-          <button
-            className="adm-icon-btn adm-collapse"
-            aria-label={collapsed ? 'Mở rộng thanh bên' : 'Thu gọn thanh bên'}
-            title={collapsed ? 'Mở rộng' : 'Thu gọn'}
-            onClick={() => {
-              setCollapsed(!collapsed);
-              write('danava-admin-collapsed', collapsed ? '0' : '1');
+      <aside className={'ds-sidebar' + (sideOpen ? ' open' : '') + (collapsed ? ' collapsed' : '')} aria-label="Menu quản trị">
+        <div className="ds-sidebar-header-row">
+          <Link
+            className="ds-wordmark"
+            href="/admin/tong-quan/"
+            title="DANAVA · Quản trị website"
+            onClick={e => {
+              if (!leave()) e.preventDefault();
             }}
           >
-            <Icon name="panel" />
+            <img src="/assets/danava-mark.png" alt="" className="ds-brand-mark" width={158} height={158} />
+            <span className="ds-brand-text">
+              <strong>DANAVA</strong>
+              <small>Quản trị website</small>
+            </span>
+          </Link>
+          <button
+            type="button"
+            className="ds-rail-toggle"
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
+            aria-expanded={!collapsed}
+            title={collapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
+          >
+            {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
+          </button>
+          <button type="button" className="ds-sidebar-close-btn" onClick={() => setSideOpen(false)} aria-label="Đóng menu">
+            <X size={18} />
           </button>
         </div>
 
-        <nav className="adm-nav">
-          {adminNav.map(g => (
-            <div className="adm-nav-group" key={g.group}>
-              <p className="adm-nav-title">{g.group}</p>
-              {g.items.map(navLink)}
-            </div>
+        <div className="ds-workspace">
+          <div className="ws-trigger ws-trigger--static">
+            <span className="ws-avatar">D</span>
+            <span className="ws-trigger-text">
+              <small>Đang quản lý</small>
+              <strong>danava.com.vn</strong>
+            </span>
+          </div>
+        </div>
+
+        <AdminNavRail sections={railSections} active={section} onNavigate={navigate} />
+
+        <nav className="ds-nav-full" aria-label="Quản trị DANAVA">
+          {SECTIONS.map(g => (
+            <details key={g.group} className="ds-nav-group" open>
+              <summary>
+                <span>{g.group}</span>
+                <ChevronRight size={13} />
+              </summary>
+              <div className="ds-nav-group-items">
+                {g.items.map(item => {
+                  const Icon = ICONS[item.slug] || FileText;
+                  const on = section === item.slug;
+                  const count = counts[item.slug];
+                  return (
+                    <Link
+                      key={item.slug}
+                      href={`/admin/${item.slug}/`}
+                      className={on ? 'active' : undefined}
+                      aria-current={on ? 'page' : undefined}
+                      title={item.label}
+                      onClick={e => {
+                        if (!leave()) e.preventDefault();
+                      }}
+                    >
+                      <span className="ds-nav-icon-badge">
+                        <Icon size={16} />
+                      </span>
+                      <span className="ds-nav-label">{item.label}</span>
+                      {count !== undefined && count > 0 && (
+                        <span className={'ds-count' + (item.slug === 'khach-hang' ? ' is-hot' : '')}>{count}</span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </details>
           ))}
         </nav>
 
-        <div className="adm-sidebar-foot">
-          {navLink(adminSettings)}
-          <Link href="/" target="_blank" className="adm-nav-link" title={collapsed ? 'Xem website' : undefined}>
-            <Icon name="globe" />
-            <span className="adm-nav-label">Xem website</span>
-            <Icon name="external" size={14} className="adm-nav-trail" />
-          </Link>
-          <div className="adm-user">
-            <span className="adm-avatar">
-              QT
-              <i aria-hidden="true" />
-            </span>
-            <div className="adm-user-text">
-              <strong>Quản trị viên</strong>
-              <small>Phiên bảo mật · 8 giờ</small>
-            </div>
-            <button className="adm-icon-btn" aria-label="Tùy chọn tài khoản" aria-expanded={userOpen} onClick={() => setUserOpen(!userOpen)}>
-              <Icon name="more" />
-            </button>
-            {userOpen && (
-              <div className="adm-popover adm-user-menu" role="menu">
-                <button role="menuitem" onClick={logout}>
-                  <Icon name="logout" /> Đăng xuất
-                </button>
-              </div>
-            )}
-          </div>
+        <div className="ds-footer-nav">
+          <a className="ds-footer-btn" href="/" target="_blank" rel="noopener noreferrer" title="Xem website">
+            <Globe size={16} />
+            <span>Xem website</span>
+            <ExternalLink size={13} className="ds-footer-trail" />
+          </a>
         </div>
       </aside>
 
       {/* ---------- Vùng chính ---------- */}
-      <div className="adm-main">
-        <header className="adm-topbar">
-          <button className="adm-icon-btn adm-menu-btn" aria-label="Mở menu" aria-expanded={mobileNav} onClick={() => setMobileNav(true)}>
-            <Icon name="menu" />
-          </button>
-          <nav className="adm-crumbs" aria-label="Vị trí">
-            <span>DANAVA</span>
-            <Icon name="chevron" size={14} />
-            <span>{info.group}</span>
-            {info.group !== info.label && (
-              <>
-                <Icon name="chevron" size={14} />
-                <b>{info.label}</b>
-              </>
-            )}
-          </nav>
-          <div className="adm-top-actions">
-            <button className="adm-search" onClick={() => setPaletteOpen(true)} aria-label="Tìm nhanh (Ctrl + K)">
-              <Icon name="search" />
-              <span>Tìm nhanh…</span>
-              <kbd>Ctrl K</kbd>
-            </button>
-            <button
-              className="adm-icon-btn"
-              aria-label={theme === 'dark' ? 'Chuyển giao diện sáng' : 'Chuyển giao diện tối'}
-              title={theme === 'dark' ? 'Giao diện sáng' : 'Giao diện tối'}
-              onClick={() => {
-                const next = theme === 'dark' ? 'light' : 'dark';
-                setTheme(next);
-                write('danava-admin-theme', next);
-              }}
-            >
-              <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
-            </button>
-            <div className="adm-bell">
+      <div className={'ds-main' + (collapsed ? ' collapsed' : '')}>
+        <header className="ds-topbar">
+          <div className="ds-topbar-left">
+            <div className="ds-topbar-title-row">
+              <button type="button" className="ds-mobile-menu" aria-label="Mở menu" aria-expanded={sideOpen} onClick={() => setSideOpen(true)}>
+                <Menu size={18} />
+              </button>
+              {heading ? (
+                <p key={section} className="ds-topbar-page-title">{info.label}</p>
+              ) : (
+                <h1 key={section} className="ds-topbar-page-title">{info.label}</h1>
+              )}
+            </div>
+            <div className="ds-topbar-breadcrumb-wrap" role="navigation" aria-label="Vị trí">
+              <span>DANAVA</span>
+              <span aria-hidden="true">&gt;</span>
+              {info.group !== info.label && (
+                <>
+                  <span>{info.group}</span>
+                  <span aria-hidden="true">&gt;</span>
+                </>
+              )}
+              <span className="current">{info.label}</span>
+            </div>
+          </div>
+
+          <div className="ds-topbar-right">
+            <div className="ds-topbar-search-pill">
+              <Search size={15} />
+              <input
+                ref={searchRef}
+                aria-label="Đi tới trang (Ctrl + K)"
+                placeholder="Đi tới trang…"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Escape') setQuery('');
+                  if (e.key === 'Enter' && hits[0]) navigate(hits[0].slug);
+                }}
+              />
+              {query.trim() && (
+                <div className="ds-search-popover-results">
+                  {hits.length ? (
+                    hits.map(n => (
+                      <button key={n.slug} type="button" onClick={() => navigate(n.slug)}>
+                        <span className="ds-search-hit">
+                          <b>{n.label}</b>
+                          <small>{n.group}</small>
+                        </span>
+                        <ArrowUpRight size={13} />
+                      </button>
+                    ))
+                  ) : (
+                    <p className="ds-search-empty">
+                      Không tìm thấy trang nào cho “{query.trim()}”. Thử gõ: bài viết, khách hàng, dự án, ảnh…
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="ds-bell" ref={bellRef}>
               <button
-                className="adm-icon-btn"
+                type="button"
+                className="ds-topbar-bell-btn"
                 aria-label={`Thông báo: ${newLeads.length} khách hàng mới`}
                 aria-expanded={bellOpen}
-                onClick={() => setBellOpen(!bellOpen)}
+                onClick={() => setBellOpen(v => !v)}
               >
-                <Icon name="bell" />
-                {newLeads.length > 0 && <span className="adm-dot">{newLeads.length > 9 ? '9+' : newLeads.length}</span>}
+                <Bell size={18} />
+                {newLeads.length > 0 && <span className="ds-bell-dot-indicator" />}
               </button>
               {bellOpen && (
-                <div className="adm-popover adm-bell-menu">
-                  <p className="adm-popover-title">
+                <div className="ds-bell-pop" role="dialog" aria-label="Khách hàng mới">
+                  <h4>
                     Khách hàng mới <span>{newLeads.length}</span>
-                  </p>
-                  {newLeads.length === 0 && <p className="adm-empty-mini">Không có yêu cầu mới. Mọi khách hàng đã được xử lý.</p>}
+                  </h4>
+                  {newLeads.length === 0 && <p className="ds-bell-empty">Không có yêu cầu mới. Mọi khách hàng đã được xử lý.</p>}
                   {newLeads.slice(0, 5).map(l => (
-                    <Link key={l.id} href="/admin/khach-hang/" className="adm-bell-item" onClick={e => go('khach-hang', e)}>
-                      <span className="adm-avatar sm">{initials(l.name)}</span>
+                    <Link
+                      key={l.id}
+                      href="/admin/khach-hang/"
+                      className="ds-bell-item"
+                      onClick={e => {
+                        if (!leave()) e.preventDefault();
+                      }}
+                    >
+                      <span className="ds-bell-avatar">{initials(l.name)}</span>
                       <span>
                         <b>{l.name}</b>
                         <small>
@@ -262,24 +385,35 @@ export default function AdminShell({
                       </span>
                     </Link>
                   ))}
-                  <Link href="/admin/khach-hang/" className="adm-popover-foot" onClick={e => go('khach-hang', e)}>
-                    Xem tất cả khách hàng <Icon name="arrow" size={14} />
+                  <Link
+                    href="/admin/khach-hang/"
+                    className="ds-bell-foot"
+                    onClick={e => {
+                      if (!leave()) e.preventDefault();
+                    }}
+                  >
+                    Xem tất cả khách hàng <ArrowUpRight size={13} />
                   </Link>
                 </div>
               )}
             </div>
-            <button className="adm-btn adm-btn-primary" onClick={onSave} disabled={!ready || !dirty || saving}>
-              <Icon name={dirty ? 'save' : 'check'} />
+
+            <button type="button" className="ds-save-btn" onClick={onSave} disabled={!ready || !dirty || saving}>
+              {dirty ? <Save size={16} /> : <Check size={16} />}
               <span>{saving ? 'Đang lưu…' : dirty ? 'Lưu thay đổi' : 'Đã lưu'}</span>
             </button>
+
+            <AccountMenu onLogout={logout} onSettings={() => navigate('cai-dat')} />
           </div>
         </header>
 
-        <main id="main" className="adm-content">
-          <div className="adm-heading">
-            <div>{heading || <><h1>{info.label}</h1><p>{info.desc}</p></>}</div>
-            {actions && <div className="adm-heading-actions">{actions}</div>}
-          </div>
+        <main id="main" className="ds-content" key={section}>
+          {(heading || actions || info.desc) && (
+            <div className="ds-page-head">
+              <div className="ds-page-head-text">{heading || <p>{info.desc}</p>}</div>
+              {actions && <div className="ds-page-head-actions">{actions}</div>}
+            </div>
+          )}
           {children}
         </main>
       </div>
@@ -289,31 +423,94 @@ export default function AdminShell({
         <span className="adm-savebar-dot" aria-hidden="true" />
         <span>Bạn có thay đổi chưa lưu</span>
         <button className="adm-btn adm-btn-ghost" onClick={onDiscard} tabIndex={dirty ? 0 : -1}>
-          <Icon name="undo" /> Hoàn tác
+          <Undo2 size={16} /> Hoàn tác
         </button>
         <button className="adm-btn adm-btn-primary" onClick={onSave} disabled={saving} tabIndex={dirty ? 0 : -1}>
-          <Icon name="save" /> {saving ? 'Đang lưu…' : 'Lưu thay đổi'}
+          <Save size={16} /> {saving ? 'Đang lưu…' : 'Lưu thay đổi'}
         </button>
       </div>
 
       {/* ---------- Thông báo ---------- */}
       {(notice || error) && (
         <div className={`adm-toast ${error ? 'is-error' : ''}`} role="status">
-          <Icon name={error ? 'x' : 'check'} />
+          {error ? <X size={18} /> : <Check size={18} />}
           <span>{error || notice}</span>
           <button className="adm-icon-btn" aria-label="Đóng thông báo" onClick={onDismissNotice}>
-            <Icon name="x" size={16} />
+            <X size={16} />
           </button>
         </div>
       )}
+    </div>
+  );
+}
 
-      {paletteOpen && (
-        <CommandPalette
-          onClose={() => setPaletteOpen(false)}
-          onPick={slug => {
-            if (go(slug)) router.push(`/admin/${slug}/`);
-          }}
-        />
+/** Nút tài khoản góc phải: ai đang đăng nhập, lối tắt và Đăng xuất. */
+function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSettings: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const down = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', down);
+    document.addEventListener('keydown', key);
+    return () => {
+      document.removeEventListener('mousedown', down);
+      document.removeEventListener('keydown', key);
+    };
+  }, [open]);
+
+  return (
+    <div className="am" ref={ref}>
+      <button type="button" className="ds-topbar-user-profile am-trigger" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)}>
+        <span className="ds-topbar-user-avatar">QT</span>
+        <span className="ds-topbar-user-meta">
+          <span className="ds-topbar-user-name">Quản trị viên</span>
+          <span className="ds-topbar-user-role">Quản trị website</span>
+        </span>
+        <ChevronDown size={14} className="ds-topbar-user-chevron" />
+      </button>
+      {open && (
+        <div className="am-pop" role="menu" aria-label="Tài khoản">
+          <div className="am-card">
+            <div className="am-avatar">QT</div>
+            <div>
+              <strong>Quản trị viên</strong>
+              <span>Quản trị website</span>
+              <small>Phiên bảo mật · 8 giờ</small>
+            </div>
+          </div>
+          <p className="am-where">
+            <Globe size={15} /> Đang quản lý <b>danava.com.vn</b>
+          </p>
+          <a role="menuitem" href="/" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
+            <ExternalLink size={17} /> Xem website
+          </a>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onSettings();
+            }}
+          >
+            <Settings size={17} /> Cài đặt
+          </button>
+          <div className="am-sep" />
+          <button
+            type="button"
+            role="menuitem"
+            className="am-logout"
+            onClick={() => {
+              setOpen(false);
+              onLogout();
+            }}
+          >
+            <LogOut size={17} /> Đăng xuất
+          </button>
+        </div>
       )}
     </div>
   );
@@ -322,70 +519,4 @@ export default function AdminShell({
 export function initials(name: string) {
   const parts = name.trim().split(/\s+/);
   return ((parts[0]?.[0] || '') + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase() || '?';
-}
-
-/* Tìm nhanh màn hình quản trị — gõ không dấu cũng tìm được */
-const fold = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/Đ/g, 'D')
-    .toLowerCase();
-
-function CommandPalette({ onClose, onPick }: { onClose: () => void; onPick: (slug: string) => void }) {
-  const [q, setQ] = useState('');
-  const [index, setIndex] = useState(0);
-  const input = useRef<HTMLInputElement>(null);
-  const results = useMemo(
-    () => allAdminItems.filter(i => fold(`${i.label} ${i.group} ${i.desc}`).includes(fold(q.trim()))),
-    [q],
-  );
-  useEffect(() => input.current?.focus(), []);
-  useEffect(() => setIndex(0), [q]);
-
-  return (
-    <div className="adm-palette-wrap" onMouseDown={e => e.target === e.currentTarget && onClose()}>
-      <div className="adm-palette" role="dialog" aria-modal="true" aria-label="Tìm nhanh">
-        <div className="adm-palette-input">
-          <Icon name="search" />
-          <input
-            ref={input}
-            value={q}
-            placeholder="Đi tới… (ví dụ: bai viet, khach hang)"
-            aria-label="Tìm màn hình quản trị"
-            onChange={e => setQ(e.target.value)}
-            onKeyDown={e => {
-              if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                setIndex(i => Math.min(results.length - 1, i + 1));
-              }
-              if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                setIndex(i => Math.max(0, i - 1));
-              }
-              if (e.key === 'Enter' && results[index]) onPick(results[index].slug);
-              if (e.key === 'Escape') onClose();
-            }}
-          />
-          <kbd>Esc</kbd>
-        </div>
-        <ul>
-          {results.map((r, i) => (
-            <li key={r.slug}>
-              <button className={i === index ? 'is-active' : ''} onMouseEnter={() => setIndex(i)} onClick={() => onPick(r.slug)}>
-                <Icon name={r.icon} />
-                <span>
-                  <b>{r.label}</b>
-                  <small>{r.desc}</small>
-                </span>
-                <em>{r.group}</em>
-              </button>
-            </li>
-          ))}
-          {!results.length && <li className="adm-empty-mini">Không tìm thấy màn hình phù hợp.</li>}
-        </ul>
-      </div>
-    </div>
-  );
 }

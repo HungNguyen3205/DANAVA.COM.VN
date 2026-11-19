@@ -256,7 +256,6 @@
 .cine-rail button.is-current:not(:hover):not(:focus-visible) span { opacity: 0; }
 
 /* Trong lúc xem phim: ẩn thanh hành động nổi trên mobile */
-html.is-cine .s-mbar { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {

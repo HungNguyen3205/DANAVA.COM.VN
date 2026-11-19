@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
-  Phone, Mail, MapPin, Clock, CheckCircle2, AlertCircle, ArrowRight, MessageCircle,
-  ThumbsUp, PlayCircle, Building2, LifeBuoy
+  Phone, Mail, MapPin, CheckCircle2, AlertCircle, ArrowRight, MessageCircle,
+  ThumbsUp, PlayCircle, Clock, LifeBuoy
 } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { VALID_BUSINESS_TYPES, VALID_CONTACT_SERVICES, isValidPhoneNumber } from '@/lib/contact-services';
@@ -37,9 +37,6 @@ function validate(f: Fields): Errors {
   else if (msg.length > 5000) e.message = 'Nội dung tối đa 5.000 ký tự.';
   return e;
 }
-
-/** Nhãn ngắn cho nút chọn dịch vụ: phần trước dấu "—" hoặc cả nhãn. */
-const shortLabel = (label: string) => label.split(' — ')[0].split(' & ')[0];
 
 export function ContactPage({ initialService }: { initialService: string }) {
   const { data } = useSite();
@@ -105,202 +102,176 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const err = (k: keyof Fields) => errors[k] && <span id={`contact-${k}-err`} className="s-error">{errors[k]}</span>;
 
   return (
-    <main id="main">
-      {/* Hero */}
+    <main id="main" className="c-page">
+      {/* Hero: tiêu đề bên trái, lưới kênh liên hệ bên phải */}
       <section className="c-hero">
+        <div className="c-gridbg" aria-hidden="true" />
         <div className="s-container">
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
-          <p className="c-hero__eyebrow">Liên hệ</p>
-          <h1 className="c-hero__title">Liên hệ DANAVA Solutions — <em>tư vấn miễn phí</em>, không ràng buộc</h1>
-          <p className="c-hero__lead">
-            Chia sẻ bài toán của bạn, từ quản lý phòng tập, website đến truyền thông và sự kiện. Chuyên viên DANAVA sẽ gọi lại để tư vấn giải pháp và báo giá phù hợp.
-          </p>
-          <div className="c-hero__actions">
-            <a className="s-btn s-btn--primary s-btn--lg" href={`tel:${phone}`}><Phone aria-hidden="true" />Gọi ngay {formatPhone(phone)}</a>
-            <a className="s-btn s-btn--outline-light s-btn--lg" href="#dang-ky-tu-van">Gửi yêu cầu tư vấn <ArrowRight aria-hidden="true" /></a>
-          </div>
-        </div>
-      </section>
+          <div className="c-hero__grid">
+            <div className="c-hero__copy">
+              <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />Contact · DANAVA</p>
+              <h1 className="c-hero__title">Liên hệ <span className="c-grad">DANAVA Solutions</span></h1>
+              <p className="c-hero__lead">
+                DANAVA luôn lắng nghe mọi ý kiến của khách hàng. Hãy liên hệ để nhận tư vấn miễn phí và báo giá chi tiết cho phần mềm quản lý phòng tập, website, truyền thông và sự kiện.
+              </p>
+              <p className="c-badge">
+                <span className="c-badge__mark" aria-hidden="true">D</span>
+                <span>Đơn vị chuyển đổi số cho <b>Gym · Yoga · Spa</b><i>Đà Nẵng · Toàn quốc</i></span>
+              </p>
+            </div>
 
-      {/* 4 kênh liên hệ */}
-      <div className="s-container">
-        <div className="c-channels">
-          <a className="c-channel c-channel--amber" href={`tel:${phone}`}>
-            <span className="c-channel__icon" aria-hidden="true"><Phone /></span>
-            <span><span className="c-channel__label">Hotline</span><br /><span className="c-channel__value">{formatPhone(phone)}</span></span>
-            <span className="c-channel__more">Gọi ngay <ArrowRight aria-hidden="true" /></span>
-          </a>
-          <a className="c-channel" href={`mailto:${email}`}>
-            <span className="c-channel__icon" aria-hidden="true"><Mail /></span>
-            <span><span className="c-channel__label">Email</span><br /><span className="c-channel__value">{email}</span></span>
-            <span className="c-channel__more">Gửi email <ArrowRight aria-hidden="true" /></span>
-          </a>
-          <a className="c-channel c-channel--sky" href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer">
-            <span className="c-channel__icon" aria-hidden="true"><ThumbsUp /></span>
-            <span><span className="c-channel__label">Fanpage</span><br /><span className="c-channel__value">DANAVA Solutions</span></span>
-            <span className="c-channel__more">Theo dõi <ArrowRight aria-hidden="true" /></span>
-          </a>
-          <a className="c-channel c-channel--red" href={SOCIAL.youtube} target="_blank" rel="noopener noreferrer">
-            <span className="c-channel__icon" aria-hidden="true"><PlayCircle /></span>
-            <span><span className="c-channel__label">YouTube</span><br /><span className="c-channel__value">@danavasolutions</span></span>
-            <span className="c-channel__more">Đăng ký kênh <ArrowRight aria-hidden="true" /></span>
-          </a>
-        </div>
-      </div>
-
-      {/* 01 / Liên hệ */}
-      <section className="c-section" id="dang-ky-tu-van" aria-labelledby="c-form-heading">
-        <div className="s-container">
-          <p className="c-label"><b>01</b> / Liên hệ</p>
-          <h2 className="c-heading">Kể cho chúng tôi về dự án của bạn — DANAVA phản hồi trong giờ làm việc</h2>
-
-          <div className="c-grid">
-            <aside className="c-direct" aria-label="Thông tin liên hệ trực tiếp">
-              <h3>Liên hệ trực tiếp</h3>
-              <div className="c-direct__list">
-                <div className="c-direct__item">
-                  <Phone aria-hidden="true" />
-                  <div><p>Hotline · Zalo</p><a href={`tel:${phone}`}>{formatPhone(phone)}</a></div>
-                </div>
-                <div className="c-direct__item">
-                  <Mail aria-hidden="true" />
-                  <div><p>Email tư vấn</p><a href={`mailto:${email}`}>{email}</a></div>
-                </div>
-                <div className="c-direct__item">
-                  <LifeBuoy aria-hidden="true" />
-                  <div><p>Hỗ trợ kỹ thuật</p><a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>{SERVICE_POLICY_METADATA.supportEmail}</a></div>
-                </div>
-                <div className="c-direct__item">
-                  <Clock aria-hidden="true" />
-                  <div><p>Giờ làm việc</p><span>{HOURS}</span></div>
+            <div className="c-tiles">
+              <div className="c-tile c-tile--dark">
+                <span className="c-tile__icon" aria-hidden="true"><Phone /></span>
+                <p className="c-tile__label">Hotline · Zalo</p>
+                <div className="c-tile__row">
+                  <a href={`tel:${phone}`}>{formatPhone(phone)}</a>
+                  <a href={SOCIAL.zalo} target="_blank" rel="noopener noreferrer">Chat Zalo <span aria-hidden="true">→</span></a>
                 </div>
               </div>
-
-              <div className="c-direct__chat">
-                <a className="s-btn s-btn--primary" href={SOCIAL.zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Chat Zalo</a>
-                <a className="s-btn s-btn--outline-light" href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer">Nhắn Fanpage</a>
+              <div className="c-tile c-tile--wide">
+                <span className="c-tile__icon" aria-hidden="true"><Mail /></span>
+                <p className="c-tile__label">Email</p>
+                <a href={`mailto:${email}`}>{email}</a>
               </div>
-
-              <div className="c-direct__legal">
-                <strong>{SERVICE_POLICY_METADATA.companyName}</strong>
-                Đại diện: {SERVICE_POLICY_METADATA.representative}<br />
-                Trụ sở: {SERVICE_POLICY_METADATA.address}
+              <div className="c-tile">
+                <span className="c-tile__icon c-tile__icon--sky" aria-hidden="true"><ThumbsUp /></span>
+                <p className="c-tile__label">Fanpage</p>
+                <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer">Theo dõi <span aria-hidden="true">→</span></a>
               </div>
-            </aside>
-
-            <div className="c-form">
-              <h3 id="c-form-heading">Đăng ký tư vấn</h3>
-              <p className="c-form__sub">Các trường có dấu <span className="s-req">*</span> là bắt buộc. Thông tin chỉ dùng để liên hệ tư vấn.</p>
-
-              <form className="s-form" onSubmit={submit} noValidate>
-                <div className="s-honeypot" aria-hidden="true">
-                  <label htmlFor="contact-website-trap">Website</label>
-                  <input id="contact-website-trap" name="website_trap" tabIndex={-1} autoComplete="off" value={trap} onChange={e => setTrap(e.target.value)} />
-                </div>
-
-                <fieldset className="c-chips">
-                  <legend>Bạn quan tâm dịch vụ nào?</legend>
-                  {VALID_CONTACT_SERVICES.map(s => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      className="c-chip"
-                      aria-pressed={fields.service === s.label}
-                      title={s.label}
-                      onClick={() => setFields(prev => ({ ...prev, service: s.label }))}
-                    >
-                      {shortLabel(s.label)}
-                    </button>
-                  ))}
-                </fieldset>
-
-                <div className="s-form-grid">
-                  <div className="s-field">
-                    <label htmlFor="contact-name">Họ và tên <span className="s-req">*</span></label>
-                    <input id="contact-name" className="s-input" name="name" autoComplete="name" maxLength={150} value={fields.name} onChange={set('name')} {...invalid('name')} />
-                    {err('name')}
-                  </div>
-                  <div className="s-field">
-                    <label htmlFor="contact-phone">Số điện thoại <span className="s-req">*</span></label>
-                    <input id="contact-phone" className="s-input" name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={25} value={fields.phone} onChange={set('phone')} {...invalid('phone')} />
-                    {err('phone')}
-                  </div>
-                </div>
-
-                <div className="s-form-grid">
-                  <div className="s-field">
-                    <label htmlFor="contact-email">Email</label>
-                    <input id="contact-email" className="s-input" name="email" type="email" autoComplete="email" maxLength={200} value={fields.email} onChange={set('email')} {...invalid('email')} />
-                    {err('email')}
-                  </div>
-                  <div className="s-field">
-                    <label htmlFor="contact-businessType">Loại hình kinh doanh</label>
-                    <select id="contact-businessType" className="s-select" name="businessType" value={fields.businessType} onChange={set('businessType')}>
-                      <option value="">Chọn loại hình</option>
-                      {VALID_BUSINESS_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="s-field">
-                  <label htmlFor="contact-message">Nhu cầu của bạn <span className="s-req">*</span></label>
-                  <textarea id="contact-message" className="s-textarea" name="message" maxLength={5000} placeholder="Ví dụ: Phòng tập 300 hội viên, cần quản lý gói tập và check-in QR…" value={fields.message} onChange={set('message')} {...invalid('message')} />
-                  {err('message')}
-                </div>
-
-                {status === 'error' && (
-                  <div className="s-alert s-alert--err" role="alert">
-                    <AlertCircle aria-hidden="true" />
-                    <span>{feedback}</span>
-                  </div>
-                )}
-
-                <button type="submit" className="s-btn s-btn--primary s-btn--lg s-btn--block" disabled={status === 'sending'}>
-                  {status === 'sending' ? 'Đang gửi…' : 'Đăng ký tư vấn'}
-                </button>
-                <p className="s-xs s-muted">
-                  Bằng việc gửi biểu mẫu, bạn đồng ý với <Link className="s-textlink" href="/chinh-sach-rieng-tu/">chính sách riêng tư</Link> của DANAVA.
-                </p>
-              </form>
+              <div className="c-tile">
+                <span className="c-tile__icon c-tile__icon--red" aria-hidden="true"><PlayCircle /></span>
+                <p className="c-tile__label">YouTube</p>
+                <a href={SOCIAL.youtube} target="_blank" rel="noopener noreferrer">Đăng ký kênh <span aria-hidden="true">→</span></a>
+              </div>
+              <div className="c-tile">
+                <span className="c-tile__icon c-tile__icon--amber" aria-hidden="true"><LifeBuoy /></span>
+                <p className="c-tile__label">Hỗ trợ</p>
+                <a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>Kỹ thuật <span aria-hidden="true">→</span></a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 02 / Văn phòng */}
-      <section className="c-section" aria-labelledby="c-office-heading">
+      {/* 01 / Liên hệ: nền tối, thông tin bên trái, form bên phải */}
+      <section className="c-contact" id="dang-ky-tu-van" aria-labelledby="c-contact-heading">
+        <div className="c-gridbg c-gridbg--dark" aria-hidden="true" />
+        <div className="s-container c-contact__grid">
+          <div>
+            <p className="c-tag"><b>01</b> / Liên hệ</p>
+            <h2 className="c-contact__heading" id="c-contact-heading">
+              Bạn đã sẵn sàng số hóa và tăng trưởng doanh thu?
+              <span className="c-grad c-grad--light">Hãy để DANAVA tư vấn cho bạn</span>
+            </h2>
+
+            <dl className="c-info">
+              <div><dt>Liên hệ trực tiếp</dt><dd><a href={`tel:${phone}`}>Hotline · Zalo: {formatPhone(phone)}</a></dd></div>
+              <div><dt>Email</dt><dd><a href={`mailto:${email}`}>{email}</a><br /><a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>{SERVICE_POLICY_METADATA.supportEmail}</a> (hỗ trợ kỹ thuật)</dd></div>
+              <div><dt>Giờ làm việc</dt><dd>{HOURS}</dd></div>
+              <div><dt>Pháp nhân</dt><dd>{SERVICE_POLICY_METADATA.companyName} · Đại diện: {SERVICE_POLICY_METADATA.representative}</dd></div>
+              <div><dt>Trụ sở</dt><dd>{SERVICE_POLICY_METADATA.address}</dd></div>
+            </dl>
+          </div>
+
+          <div className="c-form">
+            <h3>Đăng ký tư vấn</h3>
+            <form className="c-form__grid" onSubmit={submit} noValidate>
+              <div className="s-honeypot" aria-hidden="true">
+                <label htmlFor="contact-website-trap">Website</label>
+                <input id="contact-website-trap" name="website_trap" tabIndex={-1} autoComplete="off" value={trap} onChange={e => setTrap(e.target.value)} />
+              </div>
+
+              <div className="c-field">
+                <label className="c-sr" htmlFor="contact-name">Họ và tên (bắt buộc)</label>
+                <input id="contact-name" name="name" autoComplete="name" maxLength={150} placeholder="Họ và tên *" value={fields.name} onChange={set('name')} {...invalid('name')} />
+                {err('name')}
+              </div>
+              <div className="c-field">
+                <label className="c-sr" htmlFor="contact-phone">Số điện thoại (bắt buộc)</label>
+                <input id="contact-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={25} placeholder="Số điện thoại *" value={fields.phone} onChange={set('phone')} {...invalid('phone')} />
+                {err('phone')}
+              </div>
+              <div className="c-field">
+                <label className="c-sr" htmlFor="contact-email">Email</label>
+                <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={200} placeholder="E-mail" value={fields.email} onChange={set('email')} {...invalid('email')} />
+                {err('email')}
+              </div>
+              <div className="c-field">
+                <label className="c-sr" htmlFor="contact-businessType">Loại hình kinh doanh</label>
+                <select id="contact-businessType" name="businessType" value={fields.businessType} onChange={set('businessType')}>
+                  <option value="">Loại hình kinh doanh</option>
+                  {VALID_BUSINESS_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div className="c-field c-field--full">
+                <label className="c-sr" htmlFor="contact-service">Dịch vụ quan tâm</label>
+                <select id="contact-service" name="service" value={fields.service} onChange={set('service')}>
+                  {VALID_CONTACT_SERVICES.map(s => <option key={s.id} value={s.label}>{s.label}</option>)}
+                </select>
+              </div>
+              <div className="c-field c-field--full">
+                <label className="c-sr" htmlFor="contact-message">Nhu cầu của bạn (bắt buộc)</label>
+                <textarea id="contact-message" name="message" rows={5} maxLength={5000} placeholder="Lời nhắn * — ví dụ: phòng tập 300 hội viên, cần quản lý gói tập và check-in QR…" value={fields.message} onChange={set('message')} {...invalid('message')} />
+                {err('message')}
+              </div>
+
+              {status === 'error' && (
+                <div className="s-alert s-alert--err c-field--full" role="alert">
+                  <AlertCircle aria-hidden="true" />
+                  <span>{feedback}</span>
+                </div>
+              )}
+
+              <button type="submit" className="c-submit c-field--full" disabled={status === 'sending'}>
+                {status === 'sending' ? 'Đang gửi…' : <>Đăng ký tư vấn <ArrowRight aria-hidden="true" /></>}
+              </button>
+              <p className="c-form__note c-field--full">
+                Trường có dấu * là bắt buộc. Bằng việc gửi biểu mẫu, bạn đồng ý với <Link href="/chinh-sach-rieng-tu/">chính sách riêng tư</Link> của DANAVA.
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* 02 / Văn phòng: thẻ có bản đồ nằm ngay trong thẻ */}
+      <section className="c-offices-sec" aria-labelledby="c-office-heading">
         <div className="s-container">
-          <p className="c-label"><b>02</b> / Văn phòng</p>
-          <h2 className="c-heading" id="c-office-heading">Gặp DANAVA tại Đà Nẵng</h2>
+          <p className="c-tag"><b>02</b> / Văn phòng</p>
+          <h2 className="c-offices-sec__heading" id="c-office-heading">Đà Nẵng · <span className="c-grad">Phục vụ toàn quốc</span></h2>
 
           <div className="c-offices">
-            <div className="c-office">
-              <span className="c-office__icon" aria-hidden="true"><Building2 /></span>
-              <h3>Trụ sở Đà Nẵng</h3>
-              <p>{SERVICE_POLICY_METADATA.address}</p>
-              <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer">Chỉ đường trên Google Maps →</a>
+            <div className="c-office c-office--main">
+              <div className="c-office__body">
+                <span className="c-office__city">Đà Nẵng</span>
+                <h3><MapPin aria-hidden="true" />Trụ sở chính</h3>
+                <p>{SERVICE_POLICY_METADATA.address}</p>
+                <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer">Chỉ đường trên Google Maps →</a>
+              </div>
+              <iframe
+                title={`Bản đồ văn phòng DANAVA: ${SERVICE_POLICY_METADATA.address}`}
+                src={MAP_EMBED}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
             <div className="c-office">
-              <span className="c-office__icon" aria-hidden="true"><Clock /></span>
-              <h3>Giờ làm việc</h3>
-              <p>{HOURS}</p>
-              <p className="s-small s-muted">Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.</p>
+              <div className="c-office__body">
+                <span className="c-office__city">Giờ làm việc</span>
+                <h3><Clock aria-hidden="true" />{HOURS}</h3>
+                <p>Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.</p>
+                <a href={SOCIAL.zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
+              </div>
             </div>
             <div className="c-office">
-              <span className="c-office__icon" aria-hidden="true"><LifeBuoy /></span>
-              <h3>Khách hàng đang sử dụng dịch vụ</h3>
-              <p>Cần hỗ trợ kỹ thuật hoặc bảo hành?</p>
-              <Link href="/chinh-sach-dich-vu/#kenh-tiep-nhan">Xem kênh hỗ trợ kỹ thuật →</Link>
+              <div className="c-office__body">
+                <span className="c-office__city">Khách hàng hiện tại</span>
+                <h3><LifeBuoy aria-hidden="true" />Hỗ trợ kỹ thuật &amp; bảo hành</h3>
+                <p>Đang sử dụng dịch vụ của DANAVA và cần hỗ trợ?</p>
+                <Link href="/chinh-sach-dich-vu/#kenh-tiep-nhan">Xem kênh hỗ trợ kỹ thuật →</Link>
+              </div>
             </div>
-          </div>
-
-          <div className="c-map">
-            <iframe
-              title={`Bản đồ văn phòng DANAVA: ${SERVICE_POLICY_METADATA.address}`}
-              src={MAP_EMBED}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
           </div>
         </div>
       </section>
@@ -310,8 +281,8 @@ export function ContactPage({ initialService }: { initialService: string }) {
         <div className="c-modal" role="dialog" aria-modal="true" aria-labelledby="c-modal-title" onClick={e => { if (e.target === e.currentTarget) setStatus('idle'); }}>
           <div className="c-modal__box">
             <span className="c-modal__icon" aria-hidden="true"><CheckCircle2 /></span>
-            <h2 id="c-modal-title">Đã gửi thông tin thành công!</h2>
-            <p>{feedback}</p>
+            <h2 id="c-modal-title">Thông báo</h2>
+            <p>{feedback} DANAVA sẽ liên hệ lại với bạn trong thời gian sớm nhất.</p>
             <p className="s-small s-muted">Cần gấp? Gọi <a className="s-textlink" href={`tel:${phone}`}>{formatPhone(phone)}</a></p>
             <button ref={confirmRef} type="button" className="s-btn s-btn--primary s-btn--block" onClick={() => setStatus('idle')}>Xác nhận</button>
           </div>

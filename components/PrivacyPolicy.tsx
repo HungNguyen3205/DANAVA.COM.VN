@@ -127,22 +127,22 @@ export function PrivacyPolicy() {
                     </thead>
                     <tbody>
                       <tr>
-                        <td><strong>Dữ liệu liên hệ (Leads)</strong></td>
-                        <td>Cơ sở dữ liệu SQLite trên máy chủ, phân vùng độc lập</td>
-                        <td>Theo chu kỳ chăm sóc khách hàng (hoặc xóa theo yêu cầu)</td>
-                        <td>Chỉ quản trị viên đã đăng nhập phiên xác thực</td>
+                        <td data-label="Loại dữ liệu"><strong>Dữ liệu liên hệ (Leads)</strong></td>
+                        <td data-label="Cơ chế lưu trữ">Cơ sở dữ liệu SQLite trên máy chủ, phân vùng độc lập</td>
+                        <td data-label="Thời gian lưu trữ">Theo chu kỳ chăm sóc khách hàng (hoặc xóa theo yêu cầu)</td>
+                        <td data-label="Phân quyền truy cập">Chỉ quản trị viên đã đăng nhập phiên xác thực</td>
                       </tr>
                       <tr>
-                        <td><strong>Nhật ký đo lường (Visits)</strong></td>
-                        <td>Mã băm SHA-256 ẩn danh, không có địa chỉ IP</td>
-                        <td><strong>Tối đa 90 ngày</strong> (tự động dọn dẹp hằng ngày)</td>
-                        <td>Báo cáo thống kê nội bộ tổng hợp</td>
+                        <td data-label="Loại dữ liệu"><strong>Nhật ký đo lường (Visits)</strong></td>
+                        <td data-label="Cơ chế lưu trữ">Mã băm SHA-256 ẩn danh, không có địa chỉ IP</td>
+                        <td data-label="Thời gian lưu trữ"><strong>Tối đa 90 ngày</strong> (tự động dọn dẹp hằng ngày)</td>
+                        <td data-label="Phân quyền truy cập">Báo cáo thống kê nội bộ tổng hợp</td>
                       </tr>
                       <tr>
-                        <td><strong>Phiên quản trị (Sessions)</strong></td>
-                        <td>Session token &amp; bảo vệ CSRF</td>
-                        <td>Hết hạn tự động sau mỗi phiên làm việc</td>
-                        <td>Quản trị viên DANAVA</td>
+                        <td data-label="Loại dữ liệu"><strong>Phiên quản trị (Sessions)</strong></td>
+                        <td data-label="Cơ chế lưu trữ">Session token &amp; bảo vệ CSRF</td>
+                        <td data-label="Thời gian lưu trữ">Hết hạn tự động sau mỗi phiên làm việc</td>
+                        <td data-label="Phân quyền truy cập">Quản trị viên DANAVA</td>
                       </tr>
                     </tbody>
                   </table>

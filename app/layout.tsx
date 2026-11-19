@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { SiteStore } from '@/components/SiteStore';
 import { getContent, publicContent } from '@/lib/database';
 import Analytics from '@/components/Analytics';
@@ -16,7 +16,20 @@ export const metadata: Metadata = {
     default: 'DANAVA Solutions — Cùng bạn phát triển',
     template: '%s | DANAVA Solutions'
   },
-  description: 'Kết nối công nghệ, truyền thông, trải nghiệm và cộng đồng cùng DANAVA Solutions.'
+  description: 'Kết nối công nghệ, truyền thông, trải nghiệm và cộng đồng cùng DANAVA Solutions.',
+  applicationName: 'DANAVA',
+  // Mở từ màn hình chính iOS: toàn màn hình, thanh trạng thái hòa vào header trắng
+  appleWebApp: { capable: true, title: 'DANAVA', statusBarStyle: 'default' },
+  icons: { apple: '/icons/apple-touch-icon.png' },
+  formatDetection: { telephone: false }
+};
+
+// viewport-fit=cover để dùng env(safe-area-inset-*) cho thanh tab dưới đáy trên máy có tai thỏ / home bar
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#ffffff'
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {

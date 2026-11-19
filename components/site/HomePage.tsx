@@ -15,6 +15,8 @@ import { defaultPresentation } from '@/lib/presentation';
 import { sortServices, formatDate, excerpt, type Tone } from './catalog';
 import { SectionHeading, CheckList, CtaBand, Visual, ArrowLink, IconTile } from './ui';
 import { StudioShowcase } from './StudioShowcase';
+import { PORTFOLIO, HOME_LIMIT } from './portfolio';
+import { PortfolioGrid } from './PortfolioGrid';
 
 const PF = '/assets/profile/';
 
@@ -105,6 +107,7 @@ export default function HomePage() {
       </section>
 
       <Moments />
+      <Portfolio />
       <Metrics />
       <Projects />
       <News />
@@ -391,6 +394,32 @@ function Moments() {
             </figure>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 07 Sản phẩm số (dữ liệu: components/site/portfolio.ts) ---------- */
+function Portfolio() {
+  if (!PORTFOLIO.length) return null;
+  return (
+    <section className="h-sec h-sec--cream h-works" aria-labelledby="home-works">
+      <div className="s-container">
+        <div className="h-works__head" data-reveal>
+          <div>
+            <p className="h-chapter"><span>07</span>Sản phẩm số</p>
+            <h2 className="h-title" id="home-works">Những nền tảng <em>DANAVA đã xây dựng.</em></h2>
+          </div>
+          <p className="h-works__lead">Từ nền tảng đặt vé, quản trị công việc đến website và landing page, phần lớn đang chạy thật trên tên miền riêng.</p>
+        </div>
+        <PortfolioGrid items={PORTFOLIO.slice(0, HOME_LIMIT)} reveal />
+        {PORTFOLIO.length > HOME_LIMIT && (
+          <div className="h-works__more" data-reveal>
+            <Link className="h-link" href="/giai-phap/thiet-ke-website/#du-an-web">
+              Xem tất cả {PORTFOLIO.length} dự án website & landing page <ArrowRight aria-hidden="true" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

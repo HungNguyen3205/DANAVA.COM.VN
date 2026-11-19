@@ -8,6 +8,11 @@ import { SERVICE_DETAILS } from './service-content';
 import { PageHead, SectionHeading, CheckList, CtaBand, Visual, IconTile, Crumbs, SwipeHint } from './ui';
 import { MarketingFilm } from './MarketingStage';
 import { StudioShowcase } from './StudioShowcase';
+import { ProductGallery } from './ProductGallery';
+import { DanavaGoShowcase } from './DanavaGoShowcase';
+import { PortfolioGrid } from './PortfolioGrid';
+import { PORTFOLIO } from './portfolio';
+import { STUDIO_GALLERY } from './product-showcase';
 
 /* ==========================================================================
    /giai-phap/
@@ -177,6 +182,39 @@ export function ServiceDetail({ service }: { service: Service }) {
           </div>
         </div>
       </section>}
+
+      {/* DANAVA Studio: ảnh giao diện thật */}
+      {service.id === 'studio' && (
+        <section className="s-section" id="giao-dien" aria-labelledby="studio-ui-title">
+          <div className="s-container">
+            <SectionHeading
+              eyebrow="Giao diện thực tế"
+              title={<span id="studio-ui-title">Xem DANAVA Studio <span className="s-hl">hoạt động thế nào</span></span>}
+              lead="Ảnh chụp màn hình thật của phần mềm quản lý, app hội viên và website. Bấm vào ảnh để xem lớn."
+            />
+            <ProductGallery groups={STUDIO_GALLERY} idPrefix="studio" />
+          </div>
+        </section>
+      )}
+
+      {/* Website & Landing Page: các website, landing page và nền tảng đã làm (components/site/portfolio.ts) */}
+      {service.id === 'website' && PORTFOLIO.length > 0 && (
+        <section className="s-section h-works" id="du-an-web" aria-labelledby="web-works-title">
+          <div className="s-container">
+            <div className="h-works__head">
+              <div>
+                <p className="h-chapter"><span>{String(PORTFOLIO.length).padStart(2, '0')}</span>Dự án đã thực hiện</p>
+                <h2 className="h-title" id="web-works-title">Website & landing page <em>DANAVA đã xây dựng.</em></h2>
+              </div>
+              <p className="h-works__lead">Nền tảng đặt vé, website thương hiệu, landing page sự kiện, bất động sản và bán hàng. Bấm vào thẻ để mở website đang chạy.</p>
+            </div>
+            <PortfolioGrid items={PORTFOLIO} />
+          </div>
+        </section>
+      )}
+
+      {/* Du lịch & Sự kiện: nền tảng đặt vé DANAVA GO */}
+      {service.id === 'travel' && <DanavaGoShowcase />}
 
       {/* Khối nội dung chi tiết */}
       {!isMkt && d?.blocks.map((b, bi) => (

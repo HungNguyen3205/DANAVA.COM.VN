@@ -1,0 +1,219 @@
+/* ==========================================================================
+   ĐĂNG NHẬP QUẢN TRỊ — theo màn đăng nhập DANAVA WORK (dự án Trello)
+   Thẻ lớn chia đôi: trái bầu trời + mặt trời/mặt trăng + đồi núi, phải form trắng.
+   Có chế độ ngày/đêm (lưu trong trình duyệt), vệt sáng theo chuột, nút cam ánh lướt.
+   ========================================================================== */
+.wl {
+  --wl-bg: #f5f7fb;
+  --wl-ink: #18234f;
+  --wl-blue: #2b4294;
+  --wl-blue-soft: #eaeefb;
+  --wl-sky: #53a5db;
+  --wl-text: #2d3654;
+  --wl-muted: #64748b;
+  --wl-line: #e4e8f2;
+  --wl-field: #fbfcff;
+  --wl-grad-cta: linear-gradient(135deg, #ffbf3f 0%, #f5ae1b 40%, #f2850e 100%);
+  --wl-ease: cubic-bezier(.22, .8, .24, 1);
+  --wl-spring: cubic-bezier(.3, 1.45, .5, 1);
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 32px);
+  overflow: hidden;
+  background: var(--wl-bg);
+  color: var(--wl-text);
+  font-family: var(--font-bvp), 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  transition: background-color 1s ease;
+}
+.wl * { box-sizing: border-box; }
+.wl.is-dark { background: #0f172a; }
+
+/* Quầng sáng phía sau thẻ */
+.wl-halo {
+  position: absolute; z-index: -1; pointer-events: none; border-radius: 50%; filter: blur(120px);
+  width: 70vw; height: 70vw; top: -20%; left: -10%; background: rgba(251, 191, 36, .2);
+  transition: all 1s ease-in-out;
+}
+.wl.is-dark .wl-halo { width: 60vw; height: 60vw; top: -10%; left: auto; right: -10%; background: rgba(79, 70, 229, .1); }
+
+/* Thẻ chính */
+.wl-card {
+  position: relative; z-index: 1;
+  display: flex; width: 100%; max-width: 1024px; height: 600px;
+  overflow: hidden; border-radius: 24px; border: 1px solid var(--wl-line);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, .25);
+  animation: wl-rise .6s var(--wl-ease) both;
+  transition: border-color 1s, box-shadow 1s;
+}
+.wl.is-dark .wl-card { border-color: rgba(51, 65, 85, .5); box-shadow: 0 25px 50px -12px rgba(49, 46, 129, .2); }
+@keyframes wl-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Bên trái: tranh phong cảnh ---------- */
+.wl-art { position: relative; flex: 0 0 50%; overflow: hidden; display: flex; flex-direction: column; }
+.wl-sky { position: absolute; inset: 0; background: linear-gradient(180deg, #7dd3fc 0%, #e0f2fe 50%, #fff 100%); transition: opacity 1s; }
+.wl-sky::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); opacity: 0; transition: opacity 1s ease-in-out; }
+.wl.is-dark .wl-sky::after { opacity: 1; }
+
+.wl-stars { position: absolute; inset: 0; opacity: 0; transition: opacity 1s; }
+.wl.is-dark .wl-stars { opacity: 1; }
+.wl-stars i { position: absolute; border-radius: 50%; background: #fff; animation: wl-twinkle 3s ease-in-out infinite; }
+@keyframes wl-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Mặt trời ↔ mặt trăng */
+.wl-orb { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.wl-orb::before {
+  content: ''; position: absolute; border-radius: 50%;
+  width: 128px; height: 128px; top: 35%; right: 10%;
+  background: #fbbf24; box-shadow: 0 0 60px 20px rgba(251, 191, 36, .6);
+  transition: all 1s cubic-bezier(.34, 1.56, .64, 1);
+}
+.wl.is-dark .wl-orb::before { width: 96px; height: 96px; top: 25%; right: 15%; background: #f1f5f9; box-shadow: 0 0 50px 10px rgba(255, 255, 255, .3); }
+/* Miệng núi lửa trên mặt trăng */
+.wl-orb i { position: absolute; border-radius: 50%; background: rgba(203, 213, 225, .5); opacity: 0; transform: scale(0); transition: all 1s; }
+.wl-orb i:first-child { width: 20px; height: 20px; top: calc(25% + 19px); right: calc(15% + 19px); }
+.wl-orb i:last-child { width: 12px; height: 12px; top: calc(25% + 38px); right: calc(15% + 62px); }
+.wl.is-dark .wl-orb i { opacity: 1; transform: none; }
+
+/* Ba lớp đồi */
+.wl-hills { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; z-index: 2; pointer-events: none; }
+.wl-hill { position: absolute; border-radius: 100%; transition: background-color 1s; }
+.wl-hill--3 { bottom: -10%; right: -20%; width: 120%; height: 80%; transform: rotate(-5deg); background: rgba(6, 95, 70, .2); }
+.wl-hill--2 { bottom: -20%; left: -20%; width: 80%; height: 100%; transform: rotate(10deg); background: rgba(5, 150, 105, .3); }
+.wl-hill--1 { bottom: -30%; left: -10%; width: 120%; height: 90%; transform: rotate(-8deg); background: rgba(16, 185, 129, .4); }
+.wl.is-dark .wl-hill--3 { background: rgba(30, 27, 75, .4); }
+.wl.is-dark .wl-hill--2 { background: rgba(49, 46, 129, .4); }
+.wl.is-dark .wl-hill--1 { background: rgba(15, 23, 42, .9); }
+
+.wl-brand { position: relative; z-index: 3; padding: 40px; }
+.wl-brand-row, .wl-mobile-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.wl-logo { display: block; width: auto; height: 40px; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .08)); transition: filter 1s; }
+.wl.is-dark .wl-logo { filter: brightness(0) invert(1); }
+.wl-badge {
+  display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px;
+  background: var(--wl-blue-soft); color: var(--wl-blue);
+  font-size: .78rem; font-weight: 700; letter-spacing: .04em; line-height: 1.3;
+}
+.wl.is-dark .wl-badge { background: rgba(99, 102, 241, .18); color: #c7d2fe; }
+.wl-brand p { max-width: 24rem; margin: 0; font-size: 1.05rem; font-weight: 500; line-height: 1.65; color: var(--wl-text); text-shadow: 0 1px 2px rgba(255, 255, 255, .4); transition: color 1s; }
+.wl.is-dark .wl-brand p { color: rgba(199, 210, 254, .8); text-shadow: none; }
+
+/* ---------- Bên phải: form ---------- */
+.wl-form-side {
+  position: relative; flex: 0 0 50%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px; background: #fff; transition: background-color 1s;
+}
+.wl.is-dark .wl-form-side { background: rgba(15, 23, 42, .95); }
+.wl-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(400px circle at var(--gx, -999px) var(--gy, -999px), rgba(99, 102, 241, .04), transparent 40%);
+}
+.wl.is-dark .wl-glow { background: radial-gradient(400px circle at var(--gx, -999px) var(--gy, -999px), rgba(99, 102, 241, .09), transparent 40%); }
+
+.wl-theme {
+  position: absolute; top: 24px; right: 24px; z-index: 5;
+  display: grid; place-items: center; width: 40px; height: 40px; padding: 0;
+  border: 1px solid #e2e8f0; border-radius: 50%; background: #f8fafc; color: #475569;
+  cursor: pointer; transition: background .3s, color .3s;
+}
+.wl-theme:hover { background: #f1f5f9; }
+.wl-theme svg { position: absolute; transition: all .5s ease-in-out; }
+.wl-theme-sun { opacity: 1; transform: rotate(0) scale(1); }
+.wl-theme-moon { opacity: 0; transform: rotate(-90deg) scale(.5); }
+.wl-theme:hover .wl-theme-sun { color: #f59e0b; }
+.wl.is-dark .wl-theme { background: #1e293b; border-color: #1e293b; color: #cbd5e1; }
+.wl.is-dark .wl-theme:hover { background: #334155; }
+.wl.is-dark .wl-theme-sun { opacity: 0; transform: rotate(90deg) scale(.5); }
+.wl.is-dark .wl-theme-moon { opacity: 1; transform: rotate(0) scale(1); color: #a5b4fc; }
+
+.wl-form { position: relative; z-index: 1; width: 100%; max-width: 384px; }
+.wl-mobile-brand { display: none; }
+.wl-head { margin-bottom: 32px; }
+.wl-head h1 {
+  margin: 0; font-family: inherit; font-size: clamp(2rem, 3.4vw, 2.6rem); font-weight: 800;
+  line-height: 1.1; letter-spacing: -.02em; color: var(--wl-blue); transition: color 1s;
+}
+.wl.is-dark .wl-head h1 { color: #fff; }
+.wl-head p { margin: 8px 0 0; font-size: 14px; color: var(--wl-muted); transition: color 1s; }
+.wl.is-dark .wl-head p { color: #94a3b8; }
+
+.wl-error {
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; padding: 12px 14px;
+  border-radius: 14px; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 14px;
+}
+.wl-error > span:first-child { display: grid; place-items: center; flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(238, 49, 50, .15); font-weight: 800; }
+.wl.is-dark .wl-error { background: rgba(239, 68, 68, .1); border-color: rgba(239, 68, 68, .25); color: #f87171; }
+
+.wl-fields { display: grid; gap: 20px; margin: 0; }
+.wl-field { display: grid; gap: 6px; }
+.wl-field > span:first-child { font-size: 14px; font-weight: 600; color: var(--wl-ink); transition: color 1s; }
+.wl.is-dark .wl-field > span:first-child { color: #cbd5e1; }
+.wl-input { position: relative; display: block; }
+.wl-input input {
+  width: 100%; height: 48px; padding: 0 48px 0 14px;
+  border: 1.5px solid var(--wl-line); border-radius: 14px; background: var(--wl-field); color: var(--wl-ink);
+  font: inherit; font-size: 16px; outline: none; transition: all .3s;
+}
+.wl-input:hover input { border-color: #cdd5ea; }
+.wl-input input:focus, .wl-input input.is-shown { border-color: var(--wl-sky); box-shadow: 0 0 0 4px rgba(83, 165, 219, .15); }
+.wl.is-dark .wl-input input { border-color: #334155; background: rgba(30, 41, 59, .5); color: #fff; }
+.wl.is-dark .wl-input:hover input { border-color: rgba(99, 102, 241, .5); }
+.wl-eye {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  display: grid; place-items: center; padding: 4px; border: 0; border-radius: 6px;
+  background: none; color: #94a3b8; cursor: pointer; transition: color .3s;
+}
+.wl-eye:hover { color: #475569; }
+.wl-eye.is-on { color: var(--wl-sky); }
+
+.wl-cta {
+  position: relative; overflow: hidden; width: 100%; min-height: 50px; margin-top: 8px; padding: 13px 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 999px; background: var(--wl-grad-cta); color: #fff;
+  font: inherit; font-weight: 700; cursor: pointer;
+  box-shadow: 0 10px 24px -10px rgba(242, 133, 14, .8);
+  transition: transform .3s var(--wl-spring), box-shadow .25s var(--wl-ease);
+}
+.wl-cta:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 16px 30px -12px rgba(242, 133, 14, .9); }
+.wl-cta:active:not(:disabled) { transform: translateY(-1px); }
+.wl-cta:disabled { opacity: .7; pointer-events: none; }
+.wl-cta:focus-visible { outline: 3px solid rgba(83, 165, 219, .6); outline-offset: 3px; }
+.wl-cta-label { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+.wl-arrow { transition: transform .3s var(--wl-spring); }
+.wl-cta:hover .wl-arrow { transform: translateX(4px); }
+.wl-shimmer {
+  position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .2), transparent);
+}
+.wl-cta:hover .wl-shimmer { animation: wl-shimmer 1.5s infinite; }
+@keyframes wl-shimmer { to { transform: translateX(100%); } }
+
+.wl-note { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; color: var(--wl-muted); line-height: 1.6; }
+.wl-note code { padding: 1px 6px; border-radius: 6px; background: #eef2f7; font-size: .9em; }
+.wl-spin { animation: wl-spin 1s linear infinite; }
+@keyframes wl-spin { to { transform: rotate(360deg); } }
+.wl-back { display: inline-block; margin-top: 24px; font-size: 13.5px; font-weight: 600; color: var(--wl-muted); text-decoration: none; }
+.wl-back:hover { color: var(--wl-blue); }
+.wl.is-dark .wl-back:hover { color: #c7d2fe; }
+
+/* ---------- Điện thoại & máy tính bảng dọc: chỉ còn form ---------- */
+@media (max-width: 767px) {
+  .wl { align-items: flex-start; padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
+  .wl-card { height: auto; min-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .wl-art { display: none; }
+  .wl-form-side { flex-basis: 100%; padding: 72px 24px 32px; }
+  .wl-theme { top: 16px; right: 16px; }
+  .wl-mobile-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 32px; }
+  .wl-head { text-align: center; }
+  .wl-back { display: block; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl *, .wl *::before, .wl *::after, .wl-card { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

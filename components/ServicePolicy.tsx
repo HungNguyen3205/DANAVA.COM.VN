@@ -162,16 +162,16 @@ export function ServicePolicy() {
                     <tbody>
                       {SLA_MATRIX.map(sla => (
                         <tr key={sla.level}>
-                          <td>
+                          <td data-label="Mức độ">
                             <span className={`s-policy-sla s-policy-sla--${sla.level}`}>{sla.priorityText}</span>
                             <strong>{sla.levelLabel}</strong>
                           </td>
-                          <td>
+                          <td data-label="Tình huống">
                             {sla.scenario}
                             <span className="s-policy-table__sub">Cam kết xử lý: <strong>{sla.resolutionTime}</strong></span>
                           </td>
-                          <td><strong>{sla.firstResponseTime}</strong></td>
-                          <td>{sla.contactChannel}</td>
+                          <td data-label="Phản hồi đầu tiên"><strong>{sla.firstResponseTime}</strong></td>
+                          <td data-label="Kênh tiếp nhận">{sla.contactChannel}</td>
                         </tr>
                       ))}
                     </tbody>

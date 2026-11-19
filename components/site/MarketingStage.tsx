@@ -100,13 +100,19 @@ export function MarketingFilm({ title, contactHref, cta, phone, phoneLabel, emai
     const el = root.current;
     if (!el) return;
     const nodes = Array.from(el.querySelectorAll<HTMLElement>('.cine-scene'));
+    // Chữ/ảnh trong cảnh hiện khi cảnh lọt ≥ 55% HOẶC chiếm ≥ 25% màn hình, và chỉ ẩn lại khi cảnh ra hẳn
+    // khỏi màn hình. Trước đây ngưỡng cứng 55%: cảnh cao (khối dịch vụ xếp chồng trên điện thoại) hoặc cảnh
+    // đang trôi giữa hai điểm dừng thì nội dung vẫn mờ (opacity 0) dù đang nằm trong tầm nhìn.
     const io = new IntersectionObserver(entries => {
       for (const e of entries) {
         const n = e.target as HTMLElement;
-        if (e.isIntersecting) { n.classList.add('is-in'); setCur(nodes.indexOf(n)); }
-        else n.classList.remove('is-in');
+        if (!e.isIntersecting) { n.classList.remove('is-in'); continue; }
+        if (e.intersectionRatio >= 0.55 || e.intersectionRect.height >= window.innerHeight * 0.25) {
+          n.classList.add('is-in');
+          setCur(nodes.indexOf(n));
+        }
       }
-    }, { threshold: 0.55 });
+    }, { threshold: Array.from({ length: 21 }, (_, i) => i / 20) });
     nodes.forEach(n => io.observe(n));
     setReady(true);
 

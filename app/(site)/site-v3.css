@@ -73,7 +73,6 @@
 .s-marquee__item .s-icon { background: var(--s-yellow); color: var(--s-ink); }
 
 /* ---------- Thanh hành động mobile ---------- */
-.s-mbar__call { background: var(--s-ink) !important; color: var(--s-yellow) !important; }
 
 /* ---------- Link chữ: gạch chân vàng khi hover ---------- */
 .s-link:hover { text-decoration-color: var(--s-yellow-deep); text-decoration-thickness: 2px; }
