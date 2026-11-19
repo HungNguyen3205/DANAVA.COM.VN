@@ -14,6 +14,7 @@ import { Crumbs, CtaBand, SectionHeading, Visual } from './ui';
 import { WebsitePage } from './WebsitePage';
 import { MarketingPage } from './MarketingPage';
 import { EventsPage } from './EventsPage';
+import { StudioPage } from './StudioPage';
 import { StudioShowcase } from './StudioShowcase';
 import { ProductGallery } from './ProductGallery';
 import { DanavaGoShowcase } from './DanavaGoShowcase';
@@ -29,6 +30,7 @@ export function ServiceDetailPage({ service, data }: { service: Service; data: S
   if (service.id === 'website') return <WebsitePage service={service} data={data} />;
   if (service.id === 'marketing') return <MarketingPage service={service} data={data} />;
   if (service.id === 'events') return <EventsPage service={service} data={data} />;
+  if (service.id === 'studio') return <StudioPage service={service} data={data} />;
   return <StandardServicePage service={service} data={data} />;
 }
 

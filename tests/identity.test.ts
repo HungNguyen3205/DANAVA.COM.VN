@@ -92,3 +92,16 @@ test('hiệu ứng mới có nhánh giảm chuyển động', () => {
   const sc = fs.readFileSync('components/site/showcase.tsx', 'utf8');
   assert.ok(sc.includes('media="(prefers-reduced-motion: reduce)"'), 'ảnh động có ảnh tĩnh thay thế');
 });
+
+test('4 dự án đã gỡ không hiện kể cả khi database đã lưu chúng', async () => {
+  const { REMOVED_SHOWCASE_IDS } = await import('../lib/content-defaults.ts');
+  const saved = structuredClone(initial);
+  saved.showcase = [
+    ...normalizeContent(structuredClone(initial)).showcase!,
+    { ...normalizeContent(structuredClone(initial)).showcase![1], id: 'web-omachi', slug: 'omachi', name: 'Omachi' }
+  ];
+  const n = normalizeContent(saved);
+  assert.ok(!n.showcase!.some(x => REMOVED_SHOWCASE_IDS.includes(x.id)));
+  const names = showcaseFor(norm(), 'website').map(x => x.name);
+  for (const bad of ['Bước Chạy Nhịp Sống', 'Omachi', 'AURUM', 'DriveRent']) assert.ok(!names.includes(bad), bad);
+});

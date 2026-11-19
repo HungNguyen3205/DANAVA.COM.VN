@@ -432,6 +432,12 @@ export const CLIENT_SEEDS: Client[] = [
   { id: 'danava-partner-11', name: 'TIGI YOGA', logo: '/assets/partners/tigi-yoga.webp', url: 'https://danava.vn/places/tigi-yoga', projectId: '', role: 'Yoga', relation: 'partner', permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).' },
 ];
 
+/**
+ * Mục trưng bày đã được chủ sở hữu yêu cầu gỡ khỏi website (19/11/2026).
+ * Lọc ra cả khi database đã lưu chúng từ trước, để không còn hiện ở bất kỳ đâu.
+ */
+export const REMOVED_SHOWCASE_IDS = ['web-buoc-chay', 'web-omachi', 'web-aurum', 'web-driverent'];
+
 export const DEFAULT_HERO_TITLE = 'Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ';
 
 /* ------------------------------------------------------------- Chuẩn hóa */
@@ -449,7 +455,7 @@ export function normalizeContent(data: SiteData): SiteData {
   return {
     ...data,
     heroTitle: fill(data.heroTitle, DEFAULT_HERO_TITLE),
-    showcase: fill(data.showcase, structuredClone(SHOWCASE_SEEDS)),
+    showcase: fill(data.showcase, structuredClone(SHOWCASE_SEEDS)).filter(x => !REMOVED_SHOWCASE_IDS.includes(x.id)),
     services: services.map(s => {
       const seed = SERVICE_SEEDS[s.id] || {};
       return {

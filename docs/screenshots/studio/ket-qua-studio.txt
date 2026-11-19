@@ -1,0 +1,14 @@
+PASS /: không còn Bước Chạy Nhịp Sống, Omachi, AURUM, DriveRent
+PASS /giai-phap/thiet-ke-website/: không còn Bước Chạy Nhịp Sống, Omachi, AURUM, DriveRent
+PASS /du-an/: không còn Bước Chạy Nhịp Sống, Omachi, AURUM, DriveRent
+PASS 1440px Studio: h1="DANAVA Studio", tràn 1440/1440, ảnh hỏng 0, lỗi console 0
+PASS 390px Studio: h1="DANAVA Studio", tràn 390/390, ảnh hỏng 0, lỗi console 0
+PASS 768px Studio: h1="DANAVA Studio", tràn 768/768, ảnh hỏng 0, lỗi console 0
+PASS 360px Studio: h1="DANAVA Studio", tràn 360/360, ảnh hỏng 0, lỗi console 0
+PASS Bàn phím: mũi tên phải chuyển sang tab "Lễ tân", panel hiện
+PASS Bàn phím: End → tab "Hội viên" (khung điện thoại)
+PASS Vai trò Hội viên, bước 3 → màn hình thật app Yoga Club (tiếng Anh)
+PASS Mọi ảnh app ở hero, vai trò Hội viên và khối app đều là màn hình thật của Yoga Club Vietnam
+PASS Mở "Xem toàn bộ màn hình": 16 ảnh nhóm đang chọn, 3 nhóm (Phần mềm quản lý16 / App hội viên14 / Website & Khóa học online12)
+PASS HTML máy chủ chứa nội dung mọi vai trò, khách hàng đang dùng, link báo giá
+PASS Giảm chuyển động: tắt hiệu ứng hero Studio

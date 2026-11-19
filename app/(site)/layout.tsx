@@ -9,6 +9,7 @@ import './site-theme.css';
 import './site-app.css';
 import './site-upgrade.css';
 import './site-identity.css';
+import './site-studio.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 import { siteFont } from '@/lib/site-font';
 

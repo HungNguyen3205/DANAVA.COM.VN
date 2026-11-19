@@ -37,7 +37,7 @@ export const STUDIO_GALLERY: ShotGroup[] = [
     id: 'app-hoi-vien',
     label: 'App hội viên',
     device: 'phone',
-    lead: 'Hội viên tự đăng ký, gia hạn, thanh toán và check-in trên điện thoại.',
+    lead: 'Hội viên tự đăng ký, gia hạn, thanh toán và check-in trên điện thoại. Ảnh từ bộ hướng dẫn sử dụng, chụp trên cơ sở demo với dữ liệu mẫu.',
     shots: [
       { src: `${S}/app-01-trang-chu.webp`, title: 'Trang chủ', text: 'Gói đang dùng, check-in nhanh, ví và điểm thưởng.' },
       { src: `${S}/app-05-chon-phong-tap.webp`, title: 'Chọn phòng tập', text: 'Tìm phòng tập theo tên hoặc khu vực.' },

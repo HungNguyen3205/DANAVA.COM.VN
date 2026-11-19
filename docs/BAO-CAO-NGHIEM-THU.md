@@ -47,3 +47,17 @@ Không bước kiểm thử nào gửi form tới hệ thống thật hay ghi v�
 - `f0615ba` cấu trúc nội dung, CMS, SEO kỹ thuật.
 - `d515c3e` bản sắc từng trang, tách Sự kiện & Truyền thông, Vinhomes nổi bật.
 - commit mới (sau `d515c3e`): đối tác đồng hành từ danava.vn, sửa đăng nhập admin trên staging, thay ảnh stock, báo cáo và checklist.
+
+## 5. Cập nhật: gỡ 4 dự án, trang DANAVA Studio mới, giao diện app Yoga Club thật
+
+| Nội dung | Môi trường | Bằng chứng |
+|---|---|---|
+| Gỡ **Bước Chạy Nhịp Sống, Omachi, AURUM, DriveRent** khỏi dữ liệu mặc định và xóa ảnh. Danh sách `REMOVED_SHOWCASE_IDS` lọc 4 mục này cả khi database đã lưu chúng. Trang chủ, trang Website, `/du-an/` không còn 4 dự án | Bản build production (local) | `docs/screenshots/studio/ket-qua-studio.txt`, test `identity.test.ts` |
+| Trang **DANAVA Studio** bố cục riêng: hero sản phẩm (dashboard + app), “Đang vận hành tại” (HARIVER, Huế Pilates & Yoga), tham quan theo vai trò (Chủ cơ sở / Lễ tân / HLV / Hội viên), khối app hội viên, 16 phân hệ, thư viện 42 màn hình, mô hình, case study, báo giá, FAQ. 14/14 PASS (360/390/768/1440, bàn phím mũi tên/End, giảm chuyển động) | Bản build production (local) | `docs/screenshots/studio/` |
+| **App hội viên dùng giao diện thật của Yoga Club Vietnam** (ycv.danava.vn): màn hình chào (VI/EN) và đăng nhập, chụp từ app đang chạy, chỉ màn hình công khai. Hero, vai trò “Hội viên” và khối app chỉ dùng các ảnh này | ycv.danava.vn (đọc công khai) | `public/assets/studio/ycv/sources.json` |
+
+**Phát hiện trên app Yoga Club đang chạy:** màn hình “Chọn gói tập” công khai đang hiện gói **“TEST GÓI TRẢI NGHIỆM 3 BUỔI” giá 2.000đ**, khiến các nhóm Yoga, Breathwork, Spa ghi “từ 2.000đ”. Tôi không đưa màn hình này lên website. Cần ẩn gói test trong admin của app; sau đó có thể chụp thêm màn hình chọn gói.
+
+**Chưa có:** màn hình bên trong app Yoga Club (trang chủ hội viên, gói của tôi, QR check-in) cần đăng nhập. Chưa chụp vì không có tài khoản thử, và không tạo tài khoản trên hệ thống thật. Nhóm “App hội viên” trong thư viện đầy đủ vẫn là ảnh từ bộ hướng dẫn sử dụng (cơ sở demo), đã ghi chú rõ.
+
+**Giới hạn ảnh toàn trang:** thẻ `.s-card` có hiệu ứng hiện dần theo vị trí cuộn, nên trong ảnh toàn trang một số khối gần cuối trông trống. Khi cuộn thật, thẻ hiện bình thường (đã đo độ mờ = 1).
