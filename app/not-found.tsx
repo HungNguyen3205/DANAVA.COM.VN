@@ -17,6 +17,7 @@ import './(site)/site-upgrade.css';
 import './(site)/site-identity.css';
 import './(site)/site-studio.css';
 import './(site)/site-ecosystem.css';
+import './(site)/site-partners.css';
 
 /**
  * 404 toàn cục (URL không khớp route nào): nằm ngoài nhóm (site) nên tự nạp stylesheet và khung website.
@@ -84,7 +85,7 @@ export function NotFoundContent() {
           <Link href="/giai-phap/" className="exit-card">
             <span className="s-icon" aria-hidden="true"><LayoutGrid /></span>
             <span className="exit-card__title">Các Giải pháp Số</span>
-            <span className="exit-card__text">Phần mềm DANAVA Studio, website, marketing và sự kiện.</span>
+            <span className="exit-card__text">Phần mềm DANAVA Studio, website, sự kiện và du lịch.</span>
             <span className="s-link">Xem giải pháp <ArrowRight aria-hidden="true" /></span>
           </Link>
           <Link href="/lien-he/" className="exit-card">

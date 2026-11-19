@@ -4,7 +4,7 @@
  * → sản phẩm đang chạy (đã kiểm tra) → đối tác đồng hành → liên hệ.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Hotel, Megaphone, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Hotel, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, type LucideIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, getEcosystemCategoryCounts, getEcosystemUnits, type EcosystemCategory, type EcosystemUnit } from '@/lib/ecosystem';
 import { publicClients, publishedProjects } from '@/lib/site-queries';
@@ -13,9 +13,11 @@ import { BrowserFrame } from './showcase';
 
 const ICONS: Record<string, LucideIcon> = {
   studio: LayoutDashboard, platform: Globe, elearning: GraduationCap, website: Globe, pms: Hotel,
-  digital: Megaphone, media: Sparkles, go: Plane, events: Plane, 'yoga-club': Users, 'dong-hanh': Handshake
+  media: Sparkles, go: Plane, events: Plane, 'yoga-club': Users, 'dong-hanh': Handshake
 };
-const CAT_NO: Record<EcosystemCategory, string> = { 'san-pham-so': '01', 'truyen-thong': '02', 'du-lich-su-kien': '03', 'cong-dong': '04' };
+/** Đơn vị hiện trên sơ đồ quanh logo DANAVA. */
+const ORBIT = ['studio', 'website', 'elearning', 'pms', 'media', 'go'];
+const CAT_NO: Record<EcosystemCategory, string> = { 'san-pham-so': '01', 'du-lich-su-kien': '02', 'cong-dong': '03', 'truyen-thong': '' };
 
 function Unit({ u, flip }: { u: EcosystemUnit; flip: boolean }) {
   const Icon = ICONS[u.id] || Sparkles;
@@ -67,14 +69,25 @@ export function EcosystemPage({ data }: { data: SiteData }) {
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Hệ sinh thái' }]} />
             <p className="eco-hero__kicker">Hệ sinh thái DANAVA</p>
             <h1 className="eco-hero__title" id="eco-title">Hệ sinh thái mở, <em>giá trị kết nối.</em></h1>
-            <p className="eco-hero__lead">Phần mềm giúp vận hành, truyền thông mang khách hàng đến, nền tảng và cộng đồng giữ họ ở lại. Doanh nghiệp bắt đầu từ một giải pháp và mở rộng khi cần, tất cả do DANAVA Solutions phát triển và vận hành.</p>
+            <p className="eco-hero__lead">Phần mềm và website giúp vận hành, sự kiện và trải nghiệm tạo dấu ấn, nền tảng và cộng đồng giữ khách hàng ở lại. Doanh nghiệp bắt đầu từ một giải pháp và mở rộng khi cần, tất cả do DANAVA Solutions phát triển và vận hành.</p>
             <div className="s-row s-stack-m">
               <Link className="s-btn s-btn--primary s-btn--lg" href="/lien-he/">Trao đổi với DANAVA</Link>
               <a className="s-btn s-btn--lg eco-btn-ghost" href="#dang-chay">Sản phẩm đang chạy</a>
             </div>
           </div>
-          <figure className="eco-hero__map">
-            <img src="/assets/presentation/danava-ecosystem.webp" alt="Sơ đồ hệ sinh thái DANAVA: Studio, Digital, E-learning, PMS, Media và Go" width={1600} height={1000} fetchPriority="high" />
+          <figure className="eco-orbit" aria-label="Sơ đồ hệ sinh thái DANAVA">
+            <div className="eco-orbit__core"><img src="/assets/danava-mark.png" alt="" width={72} height={72} /><strong>DANAVA</strong><small>Solutions</small></div>
+            <ul>
+              {units.filter(u => ORBIT.includes(u.id)).sort((a, b) => ORBIT.indexOf(a.id) - ORBIT.indexOf(b.id)).map((u, i) => {
+                const Icon = ICONS[u.id] || Sparkles;
+                return (
+                  <li key={u.id} style={{ ['--i' as string]: i }}>
+                    <a href={`#${u.id}`}><span className="eco-orbit__ico"><Icon aria-hidden="true" /></span><span><strong>{u.name.replace(' · Sự kiện & Truyền thông', '')}</strong><small>{u.categoryKicker}</small></span></a>
+                  </li>
+                );
+              })}
+            </ul>
+            <figcaption>Phát triển và vận hành bởi DANAVA Solutions</figcaption>
           </figure>
         </div>
         <nav className="s-container eco-cats" aria-label="Bốn khối năng lực">
@@ -171,7 +184,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
             <div className="eco-head">
               <p className="eco-head__kicker">Đối tác đồng hành</p>
               <h2 className="eco-head__title" id="eco-partners-title">Những cơ sở đang cùng phát triển trong hệ sinh thái</h2>
-              <p className="eco-head__lead eco-head__lead--dark">Danh sách theo khối “Đối tác đồng hành” trên danava.vn.</p>
+              <p className="eco-head__lead eco-head__lead--dark">Danh sách theo khối “Đối tác đồng hành” trên danava.vn. <Link href="/doi-tac/">Xem địa chỉ, giờ mở cửa và dịch vụ của từng đối tác</Link>.</p>
             </div>
             <ul className="u-logos">
               {partners.map(c => {
@@ -187,7 +200,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
                   <li key={c.id} className={project ? 'is-case' : undefined}>
                     {project
                       ? <Link href={`/du-an/${project.slug}/`} aria-label={`${c.name} — xem case study`}>{inner}</Link>
-                      : c.url ? <a href={c.url} target="_blank" rel="noopener" aria-label={`${c.name} trên danava.vn (mở tab mới)`}>{inner}</a> : <div>{inner}</div>}
+                      : <Link href={`/doi-tac/#${c.id}`} aria-label={`${c.name} — thông tin đối tác`}>{inner}</Link>}
                   </li>
                 );
               })}

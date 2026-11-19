@@ -35,10 +35,8 @@ test('resolveValidService gracefully maps URL parameters and handles unexpected 
     resolveValidService('website'),
     'Thiết kế Website & Landing Page chuyển đổi cao'
   );
-  assert.equal(
-    resolveValidService('marketing'),
-    'Marketing & Vận hành truyền thông tổng thể'
-  );
+  // DANAVA không cung cấp Digital Marketing
+  assert.equal(resolveValidService('marketing'), '');
   assert.equal(
     resolveValidService('travel'),
     'Tổ chức Du lịch trải nghiệm, Retreat & Sự kiện Wellness'

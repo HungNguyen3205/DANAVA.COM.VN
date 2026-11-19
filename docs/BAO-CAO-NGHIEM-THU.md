@@ -69,3 +69,23 @@ Không bước kiểm thử nào gửi form tới hệ thống thật hay ghi v�
 - Gỡ các khẳng định chưa có căn cứ trong dữ liệu cũ: “hàng ngàn thành viên”, “toàn quốc”, “tải trang dưới 1 giây”, “cam kết chi phí lead”, “thường niên”, “iOS & Android”, “mở tour định kỳ”. Có test chặn các cụm này quay lại.
 - DANAVA PMS chưa có sản phẩm công khai để kiểm chứng nên ghi “Tư vấn theo yêu cầu”, không gắn link sản phẩm.
 - Kiểm tra trình duyệt 10/10: 360/390/768/1024/1440px, không tràn, không ảnh hỏng, không lỗi console, liên kết hành trình cuộn đúng, giảm chuyển động. Ảnh: docs/screenshots/he-sinh-thai/.
+
+## 7. Cập nhật: gỡ toàn bộ Digital Marketing
+
+DANAVA không cung cấp Digital Marketing (yêu cầu của chủ sở hữu, 19/11/2026). Đã gỡ:
+- Giải pháp “Digital Marketing” cùng các dịch vụ con mkt-*, chủ đề kiến thức `marketing`, khối “DANAVA DIGITAL” trên trang Hệ sinh thái và Trình chiếu, lựa chọn “Digital Marketing” trên form liên hệ.
+- 5 bài viết thuộc mảng này (`marketing`, `wp-13086`, `wp-12101`, `wp-11869`, `wp-11219`) bị gỡ khỏi website, sitemap và dữ liệu gửi xuống trình duyệt.
+- Dữ liệu đã lưu trên production được lọc khi đọc (`normalizeContent`): giải pháp, chủ đề, bài viết, khối DIGITAL và cụm “Chiến dịch marketing” cũ không còn hiển thị, kể cả khi chưa sửa trong CMS.
+- URL cũ chuyển hướng 308: `/giai-phap/digital-marketing/*` → `/giai-phap/`; `/kien-thuc/chu-de/digital-marketing/`, 5 bài viết và URL WordPress cũ của chúng → `/kien-thuc/`.
+- Kiểm chứng: quét 50 URL trong sitemap trên bản build cục bộ, không trang nào còn “Digital Marketing”, “DANAVA DIGITAL” hay “Chiến dịch marketing” (trừ 1 câu trong bài cũ về tên miền, mục 3 bên dưới). Có test chặn nội dung này quay lại.
+- Còn lại cần chủ sở hữu quyết định: chức danh “Marketing Director” của anh Trần Văn Nam (giữ nguyên vì là chức danh thật); câu “chiến dịch marketing online” trong bài “Tầm quan trọng của việc đăng ký tên miền”.
+
+## 8. Cập nhật: trang Đối tác đồng hành `/doi-tac/`
+
+- Thông tin của 15 đối tác lấy từ trang công khai của từng đối tác trên danava.vn ngày 19/11/2026 (JSON-LD và mục hỏi đáp): tên đầy đủ, địa chỉ, tỉnh/thành, giờ mở cửa, loại hình, dịch vụ và tiện ích, giới thiệu, ảnh bìa. Dữ liệu gốc lưu tại `public/assets/partners/sources.json`, ảnh bìa tại `public/assets/partners/covers/`.
+- Trang mới nhóm đối tác theo tỉnh/thành và có JSON-LD ItemList + BreadcrumbList; trang đã được thêm vào sitemap. Logo đối tác ở Trang chủ và Hệ sinh thái giờ dẫn tới thẻ đối tác tương ứng; chân trang có thêm liên kết “Đối tác đồng hành”.
+- CMS (Bằng chứng → Đối tác) có thêm các trường chi tiết. Nút “Bổ sung đối tác” điền những trường còn trống mà không ghi đè dữ liệu đã sửa.
+- Không hiển thị số điện thoại của đối tác.
+- Fuji Swimming Club DaNang: trang trên danava.vn trả 404 nên không có liên kết và địa chỉ; đối tác được xếp vào Đà Nẵng theo tên.
+- Kiểm tra trình duyệt 11/11 (360/390/768/1024/1440px): không tràn, không ảnh hỏng, không lỗi console; bấm logo cuộn tới đúng thẻ; mở được “Giới thiệu” bằng bàn phím; tôn trọng chế độ giảm chuyển động. Ảnh chụp: `docs/screenshots/doi-tac/`.
+- Kiểm thử tự động: 89/89 đạt.

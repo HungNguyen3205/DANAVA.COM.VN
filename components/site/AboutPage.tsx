@@ -118,7 +118,7 @@ export default function AboutPage() {
       {/* Khoảnh khắc */}
       <section className="s-section" aria-labelledby="about-moments">
         <div className="s-container">
-          <SectionHeading eyebrow="Dấu ấn" title={<span id="about-moments">Những chương trình <span className="s-hl">DANAVA đã cùng thực hiện</span></span>} lead="Hình ảnh từ hồ sơ năng lực của DANAVA." action={<ArrowLink href="/giai-phap/digital-marketing/">Xem hồ sơ chương trình</ArrowLink>} />
+          <SectionHeading eyebrow="Dấu ấn" title={<span id="about-moments">Những chương trình <span className="s-hl">DANAVA đã cùng thực hiện</span></span>} lead="Hình ảnh từ hồ sơ năng lực của DANAVA." action={<ArrowLink href="/giai-phap/su-kien-truyen-thong/">Xem các chương trình sự kiện</ArrowLink>} />
           <div className="u-moments">
             {MOMENTS.map(m => (
               <figure key={m.src}>

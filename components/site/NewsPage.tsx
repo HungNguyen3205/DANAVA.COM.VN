@@ -65,7 +65,7 @@ export default function NewsPage({ data }: { data: SiteData }) {
       <PageHead
         eyebrow="Kiến thức"
         title="Kiến thức & tin hoạt động từ DANAVA"
-        lead="Bài viết về vận hành phòng tập, website, digital marketing, du lịch và những hoạt động cộng đồng DANAVA đồng hành."
+        lead="Bài viết về vận hành phòng tập, website, yoga, du lịch và những hoạt động cộng đồng DANAVA đồng hành."
         crumbs={[{ href: '/', label: 'Trang chủ' }, { label: 'Kiến thức' }]}
       />
 

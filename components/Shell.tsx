@@ -212,6 +212,7 @@ export function Footer() {
               <li><Link href="/ve-danava/">Về DANAVA</Link></li>
               <li><Link href="/doi-ngu/">Đội ngũ</Link></li>
               <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
+              <li><Link href="/doi-tac/">Đối tác đồng hành</Link></li>
               <li><Link href="/du-an/">Dự án</Link></li>
               <li><Link href="/kien-thuc/">Kiến thức</Link></li>
             </ul>

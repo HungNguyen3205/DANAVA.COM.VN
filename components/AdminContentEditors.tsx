@@ -255,7 +255,10 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
             // Chỉ THÊM đối tác còn thiếu và điền logo/lĩnh vực còn trống; không xóa, không sửa nội dung đã có.
             const next = clients.map(c => {
               const seed = CLIENT_SEEDS.find(x => x.id === c.id);
-              return seed ? { ...c, logo: c.logo || seed.logo, role: c.role || seed.role, relation: c.relation || seed.relation, url: c.url || seed.url } : c;
+              if (!seed) return c;
+              const out = { ...c, logo: c.logo || seed.logo, role: c.role || seed.role, relation: c.relation || seed.relation, url: c.url || seed.url };
+              for (const k of ['fullName', 'description', 'address', 'city', 'hours', 'types', 'amenities', 'cover'] as const) if (out[k] === undefined || (Array.isArray(out[k]) ? !(out[k] as string[]).length : !out[k])) (out as Record<string, unknown>)[k] = seed[k];
+              return out;
             });
             const added = CLIENT_SEEDS.filter(x => !clients.some(c => c.id === x.id || c.name.trim().toLowerCase() === x.name.toLowerCase())).map(x => structuredClone(x));
             setDraft({ ...draft, clients: [...next, ...added] });
@@ -270,6 +273,13 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
             <MediaPicker label="Logo (để trống nếu chưa có quyền dùng logo)" value={c.logo} onChange={logo => setC(c.id, { logo })} />
             <Text label="Liên kết (website hoặc trang trên danava.vn, https://…)" value={c.url} max={300} onChange={url => setC(c.id, { url })} />
             <Text label="Lĩnh vực (hiện dưới logo)" value={c.role || ''} max={80} onChange={role => setC(c.id, { role })} />
+            <Text label="Tên đầy đủ" value={c.fullName || ''} max={200} onChange={fullName => setC(c.id, { fullName })} />
+            <Text label="Địa chỉ" value={c.address || ''} max={300} onChange={address => setC(c.id, { address })} />
+            <Text label="Tỉnh/thành (dùng để nhóm trên trang Đối tác)" value={c.city || ''} max={100} onChange={city => setC(c.id, { city })} />
+            <Text label="Giờ mở cửa" value={c.hours || ''} max={200} onChange={hours => setC(c.id, { hours })} />
+            <Lines label="Dịch vụ & tiện ích (mỗi dòng một mục)" value={c.amenities || []} rows={3} onChange={amenities => setC(c.id, { amenities })} />
+            <Text label="Giới thiệu" value={c.description || ''} area rows={4} max={2000} onChange={description => setC(c.id, { description })} />
+            <MediaPicker label="Ảnh bìa" value={c.cover || ''} onChange={cover => setC(c.id, { cover })} />
             <label>
               Loại quan hệ
               <select value={c.relation || 'client'} onChange={e => setC(c.id, { relation: e.target.value as 'client' | 'partner' })}>

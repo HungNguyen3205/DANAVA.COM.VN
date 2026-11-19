@@ -28,6 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...data.services.map(s => entry(`/giai-phap/${s.slug}/`, s.updated)),
     ...publishedSubServices(data).map(s => entry(subServiceHref(data, s), s.updated)).filter(e => e.url !== siteURL),
     entry('/he-sinh-thai/'),
+    entry('/doi-tac/'),
     entry('/du-an/', latest(...projects.map(p => p.updated))),
     ...projects.map(p => entry(`/du-an/${p.slug}/`, p.updated)),
     ...showcaseCaseStudies(data).map(x => entry(`/du-an/${x.slug}/`, x.updated)),

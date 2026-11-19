@@ -15,10 +15,10 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   metadataBase: new URL(siteURL),
   title: {
-    default: 'DANAVA Solutions — Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ',
+    default: 'DANAVA Solutions — Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ',
     template: `%s | ${BRAND}`
   },
-  description: 'Phần mềm quản lý DANAVA Studio, thiết kế website, marketing và tổ chức sự kiện cho doanh nghiệp dịch vụ.',
+  description: 'Phần mềm quản lý DANAVA Studio, thiết kế website, tổ chức sự kiện và du lịch trải nghiệm cho doanh nghiệp dịch vụ.',
   applicationName: 'DANAVA',
   // Bản preview/staging: chặn lập chỉ mục toàn site (production: cho phép).
   ...(indexable ? {} : { robots: { index: false, follow: false } }),

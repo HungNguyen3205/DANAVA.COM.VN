@@ -236,14 +236,14 @@ export function getStaffDetail(person: Person): StaffDetail {
     return {
       departmentId: 'truyen-thong',
       departmentName: 'Truyền thông',
-      departmentKicker: 'TIẾP THỊ SỐ & TĂNG TRƯỞNG',
-      expertise: ['Digital Marketing tổng thể', 'Vận hành Fanpage & Zalo OA', 'Quảng cáo Meta & Google theo KPI'],
-      bio: 'Hoạch định chiến lược tăng trưởng khách hàng tiềm năng, xây dựng nội dung thương hiệu và trực tiếp tối ưu các chiến dịch quảng cáo đa kênh theo KPI đo lường thực tế.',
+      departmentKicker: 'SỰ KIỆN & TRUYỀN THÔNG',
+      expertise: ['Truyền thông sự kiện', 'Nội dung & hình ảnh thương hiệu', 'Kết nối cộng đồng'],
+      bio: 'Phụ trách truyền thông cho sự kiện và các hoạt động cộng đồng của DANAVA.',
       portfolio: [
         {
-          title: 'Giải pháp Marketing & Media',
-          href: '/giai-phap/digital-marketing/',
-          desc: 'Chiến lược nội dung, sản xuất media và chuyển đổi khách hàng tiềm năng',
+          title: 'Sự kiện & Truyền thông',
+          href: '/giai-phap/su-kien-truyen-thong/',
+          desc: 'Sự kiện, không gian thương hiệu và truyền thông sự kiện',
           badge: 'Giải pháp dịch vụ'
         },
         {
@@ -520,21 +520,15 @@ export function getStaffProfile(person: Person, allProjects: Project[]): StaffFu
       projects,
       personalProducts: [
         {
-          title: 'Studio Growth Acquisition Framework',
-          description: 'Bộ khung chiến dịch quảng cáo đa kênh tối ưu hóa chi phí thu hút học viên mới cho phòng tập.',
-          badge: 'Chiến lược tiếp thị',
-          link: '/giai-phap/digital-marketing/'
-        },
-        {
           title: 'Yoga Club Vietnam Community Hub',
-          description: 'Mạng lưới kết nối và tổ chức chuỗi sự kiện cộng đồng yoga quy mô toàn quốc.',
+          description: 'Cộng đồng yoga và chuỗi sự kiện, workshop tại Đà Nẵng.',
           badge: 'Cộng đồng',
           link: '/giai-phap/cong-dong/'
         }
       ],
       verifiedLinks: [
         { label: 'hello@danava.vn', url: 'mailto:hello@danava.vn', type: 'email' },
-        { label: 'Tư vấn kế hoạch Marketing', url: '/lien-he/?service=Marketing&ref=nam', type: 'internal' }
+        { label: 'Trao đổi về sự kiện & truyền thông', url: '/lien-he/?service=su-kien-truyen-thong&ref=nam', type: 'internal' }
       ]
     };
   }

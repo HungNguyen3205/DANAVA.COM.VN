@@ -9,11 +9,11 @@ import {
   type EcosystemUnit
 } from '../lib/ecosystem.ts';
 
-test('ecosystem categories contain all 4 active core groups', () => {
+test('ecosystem categories contain the 3 active core groups', () => {
   const catIds = ECOSYSTEM_CATEGORIES.map(c => c.id);
   assert.ok(catIds.includes('all'));
   assert.ok(catIds.includes('san-pham-so'));
-  assert.ok(catIds.includes('truyen-thong'));
+  assert.ok(!catIds.includes('truyen-thong'), 'DANAVA không còn khối truyền thông số');
   assert.ok(catIds.includes('du-lich-su-kien'));
   assert.ok(catIds.includes('cong-dong'));
 });
@@ -60,12 +60,12 @@ test('Yoga Club Vietnam card has verified channel link to approved community rou
 test('filtering by category returns correct subset and category counts are consistent', () => {
   const all = getEcosystemUnits('all');
   const software = getEcosystemUnits('san-pham-so');
-  const media = getEcosystemUnits('truyen-thong');
+  const media = getEcosystemUnits('truyen-thong'); // khối đã gỡ → rỗng
   const travel = getEcosystemUnits('du-lich-su-kien');
   const community = getEcosystemUnits('cong-dong');
 
   assert.ok(software.length >= 2, 'Software category should have at least 2 units');
-  assert.ok(media.length >= 2, 'Media category should have at least 2 units');
+  assert.equal(media.length, 0, 'Không còn đơn vị truyền thông số');
   assert.ok(travel.length >= 2, 'Travel category should have at least 2 units');
   assert.ok(community.length >= 2, 'Community category should have at least 2 units');
 
@@ -113,4 +113,8 @@ test('hệ sinh thái: không có khẳng định chưa có căn cứ; mọi đ�
     for (const l of u.live || []) assert.ok(l.href.startsWith('https://'), l.href);
   }
   assert.ok(LIVE_PRODUCTS.flatMap(g => g.items).some(i => i.host === 'edu-yoga.danava.vn'));
+});
+
+test('không còn Digital Marketing trong hệ sinh thái', () => {
+  assert.ok(!getEcosystemUnits().some(u => u.id === 'digital' || /digital marketing/i.test(u.name + u.description)));
 });

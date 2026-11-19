@@ -7,7 +7,7 @@
  * Khối bằng chứng (khách hàng, nhận xét, số liệu) chỉ hiện khi có dữ liệu được phép công bố trong CMS.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, ChevronDown, Cpu, Megaphone, PartyPopper, Phone, Mail, MapPin, Clock, MessageCircle, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ChevronDown, Cpu, Globe, PartyPopper, Phone, Mail, MapPin, Clock, MessageCircle, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { company } from '@/lib/company';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
@@ -32,15 +32,14 @@ const SLIDES = [
 ];
 
 const PILLARS = [
-  { icon: Cpu, title: 'Công nghệ', text: 'Phần mềm DANAVA Studio, website & landing page.', href: '/giai-phap/danava-studio/' },
-  { icon: Megaphone, title: 'Marketing', text: 'Chiến lược, nội dung, Fanpage, quảng cáo, đo lường.', href: '/giai-phap/digital-marketing/' },
+  { icon: Cpu, title: 'Phần mềm', text: 'DANAVA Studio và app hội viên mang tên cơ sở.', href: '/giai-phap/danava-studio/' },
+  { icon: Globe, title: 'Website', text: 'Website & landing page thiết kế riêng.', href: '/giai-phap/thiet-ke-website/' },
   { icon: PartyPopper, title: 'Sự kiện', text: 'Sân khấu, không gian thương hiệu, truyền thông sự kiện.', href: '/giai-phap/su-kien-truyen-thong/' }
 ];
 
 const ECO_IMAGES: Record<string, string> = {
   studio: '/assets/presentation/studio-dashboard.webp',
   website: '/assets/portfolio/vinhomes/desktop-hero.webp',
-  marketing: '/assets/legacy/event-session.webp',
   events: `${PF}set-stage.webp`,
   travel: '/assets/legacy/community.webp',
   community: '/assets/legacy/community.webp'
@@ -78,7 +77,7 @@ export default function HomePage({ data }: { data: SiteData }) {
 
   // FAQ trang chủ: tái sử dụng câu hỏi đã có ở từng dịch vụ.
   const pick = (id: string, i: number) => data.services.find(s => s.id === id)?.faqs?.[i];
-  const faqs = [pick('studio', 0), pick('website', 1), pick('marketing', 2), pick('travel', 1)].filter((f): f is NonNullable<typeof f> => !!f);
+  const faqs = [pick('studio', 0), pick('website', 1), pick('events', 0), pick('travel', 1)].filter((f): f is NonNullable<typeof f> => !!f);
 
   return (
     <main id="main" className="h-home">
@@ -92,7 +91,7 @@ export default function HomePage({ data }: { data: SiteData }) {
           <p className="h-hero__eyebrow">DANAVA Solutions · Đà Nẵng · Từ 2021</p>
           <h1 className="h-hero__title u-hero-title" id="home-title">{data.heroTitle}</h1>
           <p className="u-hero-brand">{data.headline || 'Cùng bạn phát triển.'}</p>
-          <p className="h-hero__lead">Phần mềm quản lý DANAVA Studio cho Gym, Yoga, Pilates, Spa; thiết kế website; marketing và tổ chức sự kiện. Một đầu mối cho công nghệ, truyền thông và trải nghiệm khách hàng.</p>
+          <p className="h-hero__lead">Phần mềm quản lý DANAVA Studio cho Gym, Yoga, Pilates, Spa; thiết kế website; tổ chức sự kiện và du lịch trải nghiệm. Một đầu mối cho công nghệ và trải nghiệm khách hàng.</p>
           <div className="h-hero__cta">
             <Link className="s-btn s-btn--primary s-btn--lg" href="/lien-he/">Nhận tư vấn</Link>
             <a className="s-btn s-btn--lg h-btn-glass" href="#giai-phap">Xem giải pháp <ChevronDown aria-hidden="true" /></a>
@@ -117,7 +116,7 @@ export default function HomePage({ data }: { data: SiteData }) {
           <div className="s-container">
             <div className="u-proof__head">
               <h2 className="u-proof__title" id="home-clients">Khách hàng & đối tác đồng hành</h2>
-              <p className="u-proof__sub">Phòng tập, studio và cộng đồng wellness đang đồng hành cùng hệ sinh thái DANAVA.</p>
+              <p className="u-proof__sub">Phòng tập, studio và cộng đồng wellness đang đồng hành cùng hệ sinh thái DANAVA. <Link href="/doi-tac/">Xem tất cả đối tác</Link></p>
             </div>
             {clients.length > 0 && (
               <ul className="u-logos">
@@ -136,9 +135,7 @@ export default function HomePage({ data }: { data: SiteData }) {
                     <li key={c.id} className={project ? 'is-case' : undefined}>
                       {project
                         ? <Link href={projectHref(project)} aria-label={`${c.name} — xem case study`}>{inner}</Link>
-                        : c.url
-                          ? <a href={c.url} target="_blank" rel="noopener" aria-label={`${c.name} trên danava.vn (mở tab mới)`}>{inner}</a>
-                          : <div>{inner}</div>}
+                        : <Link href={`/doi-tac/#${c.id}`} aria-label={`${c.name} — thông tin đối tác`}>{inner}</Link>}
                     </li>
                   );
                 })}

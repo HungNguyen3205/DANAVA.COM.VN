@@ -23,7 +23,7 @@ test('dữ liệu cũ (chưa có trường mới) vẫn hợp lệ và được 
   assert.equal(validateContent(legacy), true);
   const n = normalizeContent(legacy);
   assert.equal(validateContent(n), true);
-  assert.equal(n.heroTitle, 'Giải pháp công nghệ và marketing cho doanh nghiệp dịch vụ');
+  assert.equal(n.heroTitle, 'Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ');
   assert.equal(n.subServices!.length, SUB_SERVICE_SEEDS.length);
   assert.ok(n.services.every(s => Array.isArray(s.faqs)));
   // 30 bài cũ đều có danh mục
@@ -34,13 +34,13 @@ test('chuẩn hóa không ghi đè lựa chọn của quản trị viên', () =>
   const d = structuredClone(initial);
   d.heroTitle = 'Tiêu đề riêng';
   d.services[0].faqs = [];
-  d.posts[0].topicId = 'marketing';
+  d.posts[0].topicId = 'website';
   d.projects![0].serviceIds = [];
   d.clients = [];
   const n = normalizeContent(d);
   assert.equal(n.heroTitle, 'Tiêu đề riêng');
   assert.deepEqual(n.services[0].faqs, []);
-  assert.equal(n.posts[0].topicId, 'marketing');
+  assert.equal(n.posts[0].topicId, 'website');
   assert.deepEqual(n.projects![0].serviceIds, []);
   assert.deepEqual(n.clients, []);
   assert.deepEqual(normalizeContent(n), n, 'chuẩn hóa lặp lại không đổi dữ liệu');
@@ -66,17 +66,17 @@ test('quan hệ dịch vụ ↔ dự án ↔ bài viết đi theo ID, không the
   const d = structuredClone(n);
   d.projects![0].serviceIds = [];
   assert.equal(q.projectsForService(d, 'studio').length, 1);
-  assert.ok(q.postsForService(n, 'marketing').length > 0);
+  assert.ok(q.postsForService(n, 'travel').length > 0);
   const archived = n.posts.find(p => p.topicId === 'luu-tru')!;
   assert.ok(!q.knowledgePosts(n).includes(archived), 'bài lưu trữ không vào gợi ý kiến thức');
-  const post = n.posts.find(p => p.id === 'wp-13086')!;
+  const post = n.posts.find(p => p.id === 'wp-13491')!;
   assert.ok(q.relatedPosts(n, post).every(p => p.topicId !== 'luu-tru' && p.id !== post.id));
 });
 
 test('danh mục chỉ có trang riêng khi đủ bài', () => {
   const n = norm();
   const pages = (n.topics || []).filter(t => q.topicHasPage(n, t)).map(t => t.id).sort();
-  assert.deepEqual(pages, ['marketing', 'tin-hoat-dong']);
+  assert.deepEqual(pages, ['tin-hoat-dong']);
 });
 
 test('dữ liệu gửi xuống trình duyệt không chứa bản nháp, ghi chú nội bộ hay toàn văn bài', () => {

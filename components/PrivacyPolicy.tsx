@@ -75,7 +75,7 @@ export function PrivacyPolicy() {
                   <li><strong>Số điện thoại:</strong> kênh liên lạc chính để chuyên viên khảo sát nhu cầu và phản hồi giải pháp.</li>
                   <li><strong>Email</strong> (tùy chọn): để gửi hồ sơ năng lực, tài liệu demo và đề xuất báo giá.</li>
                   <li><strong>Loại hình kinh doanh</strong> (Gym, Yoga, Pilates, Spa, Khách sạn…): giúp chuẩn bị đúng tài liệu nghiệp vụ.</li>
-                  <li><strong>Dịch vụ quan tâm:</strong> giải pháp bạn đang tìm hiểu (DANAVA Studio, Website, Marketing, Sự kiện, Media).</li>
+                  <li><strong>Dịch vụ quan tâm:</strong> giải pháp bạn đang tìm hiểu (DANAVA Studio, Website, Sự kiện & Truyền thông, Du lịch).</li>
                   <li><strong>Nội dung trao đổi:</strong> hiện trạng, quy mô hoặc bài toán bạn cần giải quyết.</li>
                   <li><strong>Trang nguồn (Referrer):</strong> trang bạn đang xem trước khi bấm liên hệ, để hiểu ngữ cảnh yêu cầu.</li>
                 </ul>

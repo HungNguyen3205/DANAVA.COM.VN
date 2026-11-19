@@ -12,7 +12,8 @@ test('15 đối tác đồng hành từ danava.vn: đủ, không trùng, có log
   assert.equal(new Set(CLIENT_SEEDS.map(c => c.name.toLowerCase())).size, 15);
   for (const c of CLIENT_SEEDS) {
     assert.ok(fs.existsSync('public' + c.logo), c.logo);
-    assert.ok(c.url.startsWith('https://danava.vn/places/'), c.url);
+    // Trang đối tác trên danava.vn bị 404 thì không gắn link, nhưng phải ghi rõ lý do
+    assert.ok(c.url.startsWith('https://danava.vn/places/') || (c.url === '' && c.note.includes('404')), c.name + ': ' + c.url);
     assert.ok(c.permission && c.published && c.note.includes('danava.vn'));
   }
   assert.equal(CLIENT_SEEDS.filter(c => c.relation === 'client').length, 2, 'HARIVER, Huế Pilates & Yoga là khách hàng có case study');
@@ -37,4 +38,14 @@ test('chống CSRF: chấp nhận tên miền chính hoặc host đang phục v�
   assert.equal(sameOrigin(req('http://localhost:3000', 'localhost:3000')), true);
   assert.equal(sameOrigin(req('https://evil.example', 'danava.com.vn')), false);
   assert.equal(sameOrigin(req(null, 'danava.com.vn')), false);
+});
+
+test('thông tin chi tiết đối tác lấy từ danava.vn: địa chỉ, giờ mở cửa, tiện ích, ảnh bìa cục bộ', () => {
+  const withDetail = CLIENT_SEEDS.filter(c => c.address || c.description);
+  assert.ok(withDetail.length >= 13, `có ${withDetail.length} đối tác có thông tin chi tiết`);
+  for (const c of CLIENT_SEEDS) if (c.cover) assert.ok(fs.existsSync('public' + c.cover), c.cover);
+  const ycv = CLIENT_SEEDS.find(c => c.name === 'Yoga Club Vietnam')!;
+  assert.ok(ycv.address?.includes('1081 Ngô Quyền') && ycv.hours && (ycv.amenities || []).length > 0);
+  const src = JSON.parse(fs.readFileSync('public/assets/partners/sources.json', 'utf8'));
+  assert.ok(src.partners.every((p: { pageStatus: number }) => typeof p.pageStatus === 'number'));
 });

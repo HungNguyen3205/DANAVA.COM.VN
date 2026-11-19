@@ -1,0 +1,11 @@
+PASS 1440px: 15 đối tác, 6 tỉnh/thành, 3 cột, tràn 1440/1440, ảnh hỏng 0, lỗi console 0
+PASS Bấm logo → cuộn tới đúng thẻ #danava-partner-16 (có viền nổi bật)
+PASS Bàn phím: Enter mở "Giới thiệu", có viền focus
+PASS 1024px: 15 đối tác, 6 tỉnh/thành, 2 cột, tràn 1024/1024, ảnh hỏng 0, lỗi console 0
+PASS 768px: 15 đối tác, 6 tỉnh/thành, 2 cột, tràn 768/768, ảnh hỏng 0, lỗi console 0
+PASS 390px: 15 đối tác, 6 tỉnh/thành, 1 cột, tràn 390/390, ảnh hỏng 0, lỗi console 0
+PASS 360px: 15 đối tác, 6 tỉnh/thành, 1 cột, tràn 360/360, ảnh hỏng 0, lỗi console 0
+PASS 1440px (giảm chuyển động): 15 đối tác, 6 tỉnh/thành, 3 cột, tràn 1440/1440, ảnh hỏng 0, lỗi console 0
+PASS Giảm chuyển động: tắt hiệu ứng thẻ (1e-05s)
+PASS HTML máy chủ có đủ thẻ đối tác, giờ mở cửa và JSON-LD ItemList
+PASS Không còn "Digital Marketing" trong trang

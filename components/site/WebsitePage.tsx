@@ -119,7 +119,7 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
       )}
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
       <RelatedPosts posts={postsForService(data, service.id, 3)} data={data} title="Kiến thức về website & tên miền" />
-      <ServiceLinks services={sortServices(data.services).filter(s => ['marketing', 'studio', 'events'].includes(s.id))} title="Kết hợp cùng website" />
+      <ServiceLinks services={sortServices(data.services).filter(s => ['studio', 'events', 'travel'].includes(s.id))} title="Kết hợp cùng website" />
       <CtaBand title="Bắt đầu website của bạn" lead="Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá." primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
     </main>
   );

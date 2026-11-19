@@ -32,7 +32,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/nganh-digital-marketing-la-gi-xu-huong-va-co-hoi-nghe-nghiep/",
-    "destination": "/kien-thuc/digital-marketing/",
+    "destination": "/kien-thuc/",
     "permanent": true
   },
   {
@@ -42,7 +42,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi/",
-    "destination": "/kien-thuc/tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi/",
+    "destination": "/kien-thuc/",
     "permanent": true
   },
   {
@@ -67,7 +67,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch/",
-    "destination": "/kien-thuc/doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch/",
+    "destination": "/kien-thuc/",
     "permanent": true
   },
   {
@@ -102,7 +102,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/top-10-website-tai-anh-chat-luong-cao-mien-phi/",
-    "destination": "/kien-thuc/top-10-website-tai-anh-chat-luong-cao-mien-phi/",
+    "destination": "/kien-thuc/",
     "permanent": true
   },
   {
@@ -127,7 +127,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/",
-    "destination": "/kien-thuc/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/",
+    "destination": "/kien-thuc/",
     "permanent": true
   },
   {
@@ -182,7 +182,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/digital-marketing/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/",
     "permanent": true
   },
   {
@@ -222,17 +222,17 @@ export const legacyRedirects=[
   },
   {
     "source": "/dich-vu/digital-marketing/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/",
     "permanent": true
   },
   {
     "source": "/marketing/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/",
     "permanent": true
   },
   {
     "source": "/dich-vu/marketing/",
-    "destination": "/giai-phap/digital-marketing/",
+    "destination": "/giai-phap/",
     "permanent": true
   },
   {

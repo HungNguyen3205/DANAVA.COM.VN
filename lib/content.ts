@@ -134,6 +134,16 @@ export type Client = {
   role?: string;
   /** client = khách hàng của DANAVA; partner = đối tác đồng hành trên nền tảng danava.vn */
   relation?: 'client' | 'partner';
+  /** Thông tin công khai của đối tác (theo trang của họ trên danava.vn) */
+  fullName?: string;
+  description?: string;
+  address?: string;
+  city?: string;
+  hours?: string;
+  types?: string[];
+  amenities?: string[];
+  /** Ảnh bìa (đường dẫn nội bộ) */
+  cover?: string;
   /** Đã có quyền/đồng ý hiển thị tên và logo công khai */
   permission: boolean; published: boolean; note: string;
 };
@@ -165,6 +175,16 @@ export type SiteData = {
   showcase?: ShowcaseItem[];
 };
 
+/**
+ * Giải pháp đã ngừng (DANAVA không cung cấp Digital Marketing — yêu cầu chủ sở hữu 19/11/2026).
+ * Vẫn chấp nhận khi ĐỌC dữ liệu cũ đã lưu (để website không lỗi), nhưng bị lọc khỏi mọi nơi hiển thị
+ * trong normalizeContent() và không còn trong dữ liệu mặc định.
+ */
+export const RETIRED_SERVICES = [{ id: 'marketing', slug: 'digital-marketing' }];
+const knownService = (id: unknown, slug?: unknown) =>
+  initial.services.some(x => x.id === id && (slug === undefined || x.slug === slug))
+  || RETIRED_SERVICES.some(x => x.id === id && (slug === undefined || x.slug === slug));
+
 /** Đường dẫn bài viết không được trùng các trang tĩnh trong /kien-thuc/. */
 export const RESERVED_POST_SLUGS = ['chu-de', 'doc'];
 
@@ -191,7 +211,6 @@ export const initial: SiteData = {
   services: [
     { id: 'website', slug: 'thiet-ke-website', title: 'Website & Landing Page', description: 'Một không gian số thể hiện đúng bản sắc và mục tiêu của doanh nghiệp.', items: ['Website doanh nghiệp, cá nhân, bán hàng và cộng đồng', 'Landing page giới thiệu dịch vụ và chiến dịch', 'Giao diện thích ứng điện thoại', 'Tổ chức nội dung và hành trình liên hệ'] },
     { id: 'studio', slug: 'danava-studio', title: 'DANAVA Studio', description: 'Phần mềm quản trị dành cho Gym, Yoga, Pilates, bể bơi và Spa.', items: ['Quản lý hội viên và gói dịch vụ', 'Lịch lớp, đặt chỗ và check-in', 'Theo dõi hạn gói và gia hạn', 'Báo cáo và phân quyền theo phạm vi gói'] },
-    { id: 'marketing', slug: 'digital-marketing', title: 'Digital Marketing', description: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng.', items: ['Digital marketing và truyền thông tổng thể', 'Chăm sóc fanpage', 'Sản xuất nội dung, quay phim và chụp hình', 'Tư vấn kế hoạch theo mục tiêu'] },
     { id: 'events', slug: 'su-kien-truyen-thong', title: 'Sự kiện & Truyền thông', description: 'Ý tưởng, không gian, sân khấu, thi công và điều phối cho sự kiện của doanh nghiệp.', items: ['Lễ ra mắt sản phẩm, họp báo, triển lãm, lễ kỷ niệm, gala dinner', 'Thiết kế, thi công booth, backdrop, đạo cụ và không gian sự kiện', 'Thiết bị âm thanh, ánh sáng, màn hình LED và nhân sự kỹ thuật', 'MC, DJ, ca sĩ, band nhạc, vũ đoàn và nhân sự biểu diễn', 'Roadshow, activation, sampling và truyền thông sự kiện'] },
     { id: 'travel', slug: 'du-lich-su-kien', title: 'Du lịch trải nghiệm', description: 'Tour trải nghiệm, retreat yoga và hành trình thiết kế riêng cho từng nhóm.', items: ['Du lịch trải nghiệm và tour yoga', 'Retreat kết hợp tập luyện và nghỉ dưỡng', 'Workshop và team building cho nhóm', 'Đặt tour, phòng, xe và vé tham quan'] },
     { id: 'community', slug: 'cong-dong', title: 'Cộng đồng & Đồng hành', description: 'Kết nối cộng đồng yoga và đồng hành cùng doanh nghiệp.', items: ['Yoga Club Vietnam', 'Workshop và giao lưu cộng đồng', 'Review và chia sẻ trải nghiệm', 'Tư vấn thành lập doanh nghiệp theo thỏa thuận'] }
@@ -250,7 +269,7 @@ function validPost(p: unknown) {
 
 function validService(s: unknown) {
   return object(s) && str(s.id, 100) && str(s.slug, 150)
-    && initial.services.some(expected => expected.id === s.id && expected.slug === s.slug)
+    && knownService(s.id, s.slug)
     && str(s.title, 200) && str(s.description, 2000) && strList(s.items, 50)
     && optStr(s.heroLead, 1000) && optStrList(s.audience, 12, 120) && optStrList(s.problems, 12, 500)
     && (s.process === undefined || featureList(s.process)) && (s.faqs === undefined || faqList(s.faqs))
@@ -259,7 +278,7 @@ function validService(s: unknown) {
 }
 
 function validSubService(s: unknown) {
-  return object(s) && str(s.id, 100) && slug(s.slug) && initial.services.some(x => x.id === s.parentId)
+  return object(s) && str(s.id, 100) && slug(s.slug) && knownService(s.parentId)
     && str(s.title, 200) && str(s.description, 1000) && str(s.heroLead, 1000)
     && strList(s.audience, 12, 120) && strList(s.problems, 12, 500) && featureList(s.features) && featureList(s.process) && faqList(s.faqs)
     && str(s.pricing, 2000) && safeImage(s.image) && typeof s.published === 'boolean' && validDate(s.updated)
@@ -274,7 +293,7 @@ function validTopic(t: unknown) {
 }
 
 function validShowcase(x: unknown) {
-  return object(x) && str(x.id, 100) && slug(x.slug) && initial.services.some(s => s.id === x.serviceId)
+  return object(x) && str(x.id, 100) && slug(x.slug) && knownService(x.serviceId)
     && str(x.name, 150) && (x.name as string).trim() !== '' && str(x.kind, 120) && str(x.category, 80) && str(x.description, 1000)
     && safeImage(x.image) && safeImage(x.mobileImage) && safeImage(x.motion) && safeImage(x.motionPoster)
     && Array.isArray(x.gallery) && x.gallery.length <= 24 && x.gallery.every(g => object(g) && safeImage(g.src) && g.src !== '' && str(g.caption, 300))
@@ -291,6 +310,8 @@ function validShowcase(x: unknown) {
 function validClient(c: unknown) {
   return object(c) && str(c.id, 100) && str(c.name, 150) && safeImage(c.logo) && httpsURL(c.url) && str(c.projectId, 100)
     && optStr(c.role, 80) && (c.relation === undefined || c.relation === 'client' || c.relation === 'partner')
+    && optStr(c.fullName, 200) && optStr(c.description, 2000) && optStr(c.address, 300) && optStr(c.city, 100) && optStr(c.hours, 200)
+    && optStrList(c.types, 12, 120) && optStrList(c.amenities, 20, 150) && (c.cover === undefined || safeImage(c.cover))
     && typeof c.permission === 'boolean' && typeof c.published === 'boolean' && str(c.note, 1000)
     // Chỉ xuất bản khi đã có quyền hiển thị
     && (!c.published || (c.permission && (c.name as string).trim() !== ''));

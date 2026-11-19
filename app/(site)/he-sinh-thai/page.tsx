@@ -6,9 +6,9 @@ import { JsonLd } from '@/components/site/blocks';
 
 export const metadata = seo(
   'Hệ sinh thái DANAVA',
-  'Hệ sinh thái DANAVA: phần mềm DANAVA Studio, nền tảng danava.vn, học yoga online, website, digital marketing, sự kiện, đặt vé DANAVA GO và cộng đồng Yoga Club Vietnam.',
+  'Hệ sinh thái DANAVA: phần mềm DANAVA Studio, nền tảng danava.vn, học yoga online, website, sự kiện, đặt vé DANAVA GO và cộng đồng Yoga Club Vietnam.',
   '/he-sinh-thai/',
-  '/assets/presentation/danava-ecosystem.webp'
+  '/assets/presentation/studio-dashboard.webp'
 );
 
 export default async function Page() {

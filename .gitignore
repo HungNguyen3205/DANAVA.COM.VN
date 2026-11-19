@@ -14,3 +14,6 @@ dist/
 work/
 
 !.env.example
+
+# Cấu hình Claude Code cá nhân (quyền chạy lệnh) — không commit
+.claude/settings.local.json

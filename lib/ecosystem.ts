@@ -3,6 +3,7 @@
  * Chỉ ghi điều có căn cứ: nội dung giải pháp đã có trên website, sơ đồ hệ sinh thái do chủ sở hữu cung cấp,
  * và các sản phẩm đang chạy đã được kiểm tra trực tiếp ngày 19/11/2026 (public/assets/ecosystem/sources.json).
  * Không ghi số liệu thành viên, cam kết hiệu quả hay tốc độ chưa đo.
+ * DANAVA không cung cấp Digital Marketing (19/11/2026) nên không có đơn vị/khối truyền thông số.
  */
 export type EcosystemCategory = 'san-pham-so' | 'truyen-thong' | 'du-lich-su-kien' | 'cong-dong';
 
@@ -33,10 +34,9 @@ export interface EcosystemUnit {
 }
 
 export const ECOSYSTEM_CATEGORIES: { id: 'all' | EcosystemCategory; label: string; shortDesc: string }[] = [
-  { id: 'all', label: 'Tất cả hệ sinh thái', shortDesc: 'Bốn khối năng lực: Sản phẩm số, Truyền thông, Du lịch & Sự kiện và Cộng đồng.' },
+  { id: 'all', label: 'Tất cả hệ sinh thái', shortDesc: 'Ba khối năng lực: Sản phẩm số, Sự kiện & Du lịch và Cộng đồng.' },
   { id: 'san-pham-so', label: 'Sản phẩm số', shortDesc: 'Phần mềm và nền tảng do DANAVA xây dựng, vận hành.' },
-  { id: 'truyen-thong', label: 'Truyền thông', shortDesc: 'Digital marketing, sự kiện và sản xuất nội dung cho doanh nghiệp.' },
-  { id: 'du-lich-su-kien', label: 'Du lịch & Sự kiện', shortDesc: 'Đặt vé trực tuyến, tour trải nghiệm và retreat yoga.' },
+  { id: 'du-lich-su-kien', label: 'Sự kiện & Du lịch', shortDesc: 'Sự kiện doanh nghiệp, đặt vé trực tuyến, tour trải nghiệm và retreat yoga.' },
   { id: 'cong-dong', label: 'Cộng đồng', shortDesc: 'Cộng đồng yoga và đồng hành cùng doanh nghiệp mới.' }
 ];
 
@@ -99,23 +99,12 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
     description: 'Quản lý khách sạn và bất động sản cho thuê: phòng, đặt và nhận/trả phòng, khách hàng, thu chi, báo cáo.',
     features: ['Quản lý phòng', 'Đặt & nhận/trả phòng', 'Khách hàng, thu chi, báo cáo'],
     officialLink: { label: 'Trao đổi về DANAVA PMS', href: '/lien-he/?service=tu-van-chuyen-doi-so' },
-    badge: 'Phần mềm quản lý', image: '/assets/presentation/danava-ecosystem.webp',
+    badge: 'Phần mềm quản lý', image: '/assets/danava-mark.png',
     visible: true, statusText: 'Tư vấn theo yêu cầu'
   },
 
-  /* ---------------- Truyền thông ---------------- */
   {
-    id: 'digital', name: 'DANAVA Digital Marketing', shortName: 'Digital', category: 'truyen-thong', categoryName: 'Truyền thông',
-    categoryKicker: 'Marketing tổng thể', stage: 'thu-hut',
-    targetAudience: 'Phòng tập, spa, doanh nghiệp dịch vụ cần kênh số hoạt động đều',
-    description: 'Chiến lược, sản xuất nội dung, vận hành Fanpage & Zalo OA, quảng cáo Meta/Google và báo cáo số liệu lấy từ chính nền tảng.',
-    features: ['Chiến lược & lịch biên tập', 'Fanpage, Zalo OA', 'Quảng cáo Meta/Google, đo lường'],
-    officialLink: { label: 'Xem Digital Marketing', href: '/giai-phap/digital-marketing/' },
-    badge: 'Truyền thông', image: '/assets/legacy/event-session.webp',
-    visible: true, statusText: 'Nhận dự án'
-  },
-  {
-    id: 'media', name: 'DANAVA Media · Sự kiện & Truyền thông', shortName: 'Media', category: 'truyen-thong', categoryName: 'Truyền thông',
+    id: 'media', name: 'DANAVA Media · Sự kiện & Truyền thông', shortName: 'Sự kiện', category: 'du-lich-su-kien', categoryName: 'Sự kiện & Du lịch',
     categoryKicker: 'Sự kiện & sản xuất', stage: 'thu-hut',
     targetAudience: 'Doanh nghiệp, thương hiệu bán lẻ cần sự kiện và không gian thương hiệu',
     description: 'Ý tưởng, thiết kế thi công booth, backdrop, đạo cụ, sân khấu; thiết bị, nhân sự biểu diễn, điều phối và ghi hình sự kiện.',
@@ -127,7 +116,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
 
   /* ---------------- Du lịch & Sự kiện ---------------- */
   {
-    id: 'go', name: 'DANAVA GO', shortName: 'GO', category: 'du-lich-su-kien', categoryName: 'Du lịch & Sự kiện',
+    id: 'go', name: 'DANAVA GO', shortName: 'GO', category: 'du-lich-su-kien', categoryName: 'Sự kiện & Du lịch',
     categoryKicker: 'Đặt vé trực tuyến', stage: 'trai-nghiem',
     targetAudience: 'Hành khách đi xe khách; nhà xe muốn bán vé trực tuyến',
     description: 'Nền tảng đặt vé xe khách đa nhà xe: tìm chuyến, chọn ghế trên sơ đồ, vé điện tử và cổng quản trị cho từng nhà xe.',
@@ -138,7 +127,7 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
     live: [{ label: 'danavago.com', href: 'https://danavago.com' }]
   },
   {
-    id: 'events', name: 'Du lịch trải nghiệm & Retreat', shortName: 'Du lịch', category: 'du-lich-su-kien', categoryName: 'Du lịch & Sự kiện',
+    id: 'events', name: 'Du lịch trải nghiệm & Retreat', shortName: 'Du lịch', category: 'du-lich-su-kien', categoryName: 'Sự kiện & Du lịch',
     categoryKicker: 'Tour & retreat', stage: 'trai-nghiem',
     targetAudience: 'Trung tâm yoga, câu lạc bộ, nhóm khách riêng',
     description: 'Tour yoga, retreat kết hợp tập luyện và nghỉ dưỡng; lịch trình, phòng, xe, vé tham quan do một đầu mối sắp xếp.',

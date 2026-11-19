@@ -74,27 +74,6 @@ export const SERVICE_DETAILS: Record<string, ServiceDetail> = {
     relatedEcosystem: ['website', 'digital', 'studio']
   },
 
-  marketing: {
-    blocks: [{
-      id: 'dich-vu-media',
-      eyebrow: 'Dịch vụ',
-      title: 'Ba trụ cột cho truyền thông hiệu quả',
-      features: [
-        { title: 'Nhận diện & sản xuất nội dung', text: 'Quay phim, chụp ảnh trực tiếp tại cơ sở, thiết kế ấn phẩm và hình ảnh thương hiệu nhất quán. Bàn giao file gốc.' },
-        { title: 'Vận hành kênh & cộng đồng', text: 'Chăm sóc Fanpage, Zalo OA theo lịch biên tập, phản hồi tin nhắn và giữ nhịp tương tác đều đặn.' },
-        { title: 'Quảng cáo & thu khách hàng tiềm năng', text: 'Chiến dịch Meta/Google cho khu vực của bạn, kết nối với form và hệ thống quản lý để không bỏ sót khách hàng.' }
-      ]
-    }],
-    promises: [
-      { title: 'Bạn nắm tài khoản quảng cáo', text: 'Doanh nghiệp đứng tên và thanh toán trực tiếp cho Meta/Google, toàn quyền kiểm soát chi tiêu.' },
-      { title: 'Hình ảnh thật', text: 'Nội dung được sản xuất tại chính cơ sở của bạn để khách hàng có cảm nhận chân thực.' },
-      { title: 'Tài sản thuộc về bạn', text: 'Fanpage, Zalo OA, kho ảnh/video gốc và tệp khách hàng thuộc quyền sở hữu của doanh nghiệp.' }
-    ],
-    contactService: 'digital-marketing',
-    primaryCta: 'Nhận tư vấn marketing',
-    relatedEcosystem: ['digital', 'media', 'website']
-  },
-
   travel: {
     blocks: [
       {

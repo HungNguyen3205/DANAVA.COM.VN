@@ -23,12 +23,6 @@ export const VALID_CONTACT_SERVICES: ValidContactService[] = [
     category: 'Không gian số'
   },
   {
-    id: 'digital-marketing',
-    label: 'Marketing & Vận hành truyền thông tổng thể',
-    slug: 'digital-marketing',
-    category: 'Truyền thông'
-  },
-  {
     id: 'su-kien-truyen-thong',
     label: 'Tổ chức sự kiện, thi công không gian & truyền thông sự kiện',
     slug: 'su-kien-truyen-thong',
@@ -96,9 +90,6 @@ export function resolveValidService(queryParam?: string | null): string {
   }
   if (needle.includes('web') || needle.includes('landing')) {
     return byId('thiet-ke-website');
-  }
-  if (needle.includes('marketing') || needle.includes('quang-cao') || needle.includes('fanpage')) {
-    return byId('digital-marketing');
   }
   if (needle.includes('media') || needle.includes('video') || needle.includes('tvc') || needle.includes('anh')) {
     return byId('media-production');

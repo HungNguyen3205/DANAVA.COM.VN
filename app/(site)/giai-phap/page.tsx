@@ -3,8 +3,8 @@ import { JsonLd } from '@/components/site/blocks';
 import { ServicesIndex } from '@/components/site/ServicesPages';
 
 export const metadata = seo(
-  'Giải pháp: phần mềm quản lý, website, marketing và sự kiện',
-  'Phần mềm quản lý phòng tập DANAVA Studio, thiết kế website, marketing & truyền thông, du lịch, sự kiện và cộng đồng: chọn đúng giải pháp cho bài toán của doanh nghiệp.',
+  'Giải pháp: phần mềm quản lý, website, sự kiện và du lịch',
+  'Phần mềm quản lý phòng tập DANAVA Studio, thiết kế website, sự kiện & truyền thông, du lịch và cộng đồng: chọn đúng giải pháp cho bài toán của doanh nghiệp.',
   '/giai-phap/'
 );
 

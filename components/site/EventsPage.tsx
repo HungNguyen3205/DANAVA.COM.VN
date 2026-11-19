@@ -144,10 +144,10 @@ export function EventsPage({ service, data }: { service: Service; data: SiteData
         <div className="s-container ev-after">
           <div>
             <p className="s-eyebrow">Sau sự kiện</p>
-            <h2 className="s-h3" id="ev-after">Sự kiện kết thúc, câu chuyện tiếp tục trên mạng</h2>
-            <p className="s-text">Hình ảnh, video ghi tại chương trình trở thành nội dung cho Fanpage, website và quảng cáo. Xem dịch vụ Digital Marketing nếu bạn cần vận hành kênh sau sự kiện.</p>
+            <h2 className="s-h3" id="ev-after">Hình ảnh và video được bàn giao đầy đủ</h2>
+            <p className="s-text">Hình ảnh, video ghi tại chương trình được bàn giao để doanh nghiệp dùng cho website và các kênh của mình.</p>
           </div>
-          <Link className="s-btn s-btn--secondary s-btn--lg" href="/giai-phap/digital-marketing/">Digital Marketing <ArrowRight aria-hidden="true" /></Link>
+          <Link className="s-btn s-btn--secondary s-btn--lg" href="/lien-he/?service=su-kien-truyen-thong">Gửi yêu cầu <ArrowRight aria-hidden="true" /></Link>
         </div>
       </section>
 
