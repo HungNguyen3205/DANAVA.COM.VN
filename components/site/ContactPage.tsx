@@ -197,7 +197,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <div className="c-namecard__back" aria-hidden="true"><span>D</span></div>
                 <div className="c-namecard__face">
                   <div className="c-namecard__top">
-                    <span className="c-namecard__logo"><img src="/assets/danava-logo.png" alt="DANAVA Solutions" width={709} height={352} /></span>
+                    <span className="c-namecard__logo"><img src="/assets/danava-logo-light.png" alt="DANAVA Solutions" width={554} height={135} /></span>
                     <span className="c-namecard__chip" aria-hidden="true" />
                   </div>
                   <p className="c-namecard__label">Hotline · Zalo</p>
