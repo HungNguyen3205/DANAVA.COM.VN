@@ -229,3 +229,14 @@
   .hx-head--center .hx-kicker::before { display: none; }
   .hx-stats dt { font-size: 10.5px; letter-spacing: .08em; }
 }
+
+/* Logo nhỏ trên thẻ đối tác: ô bo tròn lớn hơn, logo vuông (đã cắt viền) phủ kín ô */
+.hx-pcard__logo { left: 16px; bottom: -26px; width: 60px; height: 60px; padding: 3px; box-sizing: border-box; border-radius: 18px; background: #fff; box-shadow: 0 0 0 3px var(--hx-paper), 0 12px 22px -12px rgba(19, 36, 79, .55); }
+.hx-pcard__logo img { width: 100%; height: 100%; padding: 6px; border-radius: 14px; object-fit: contain; }
+.hx-pcard__logo.is-mark img { padding: 0; object-fit: cover; }
+.hx-pcard__media:has(.hx-pcard__logo) + .hx-pcard__body { padding-top: 38px; }
+@media (max-width: 560px) {
+  .hx-pcard__logo { left: 12px; bottom: -22px; width: 50px; height: 50px; border-radius: 15px; }
+  .hx-pcard__logo img { border-radius: 12px; }
+  .hx-pcard__media:has(.hx-pcard__logo) + .hx-pcard__body { padding-top: 32px; }
+}
