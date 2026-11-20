@@ -18,6 +18,7 @@ import './(site)/site-identity.css';
 import './(site)/site-studio.css';
 import './(site)/site-ecosystem.css';
 import './(site)/site-partners.css';
+import './(site)/site-mobile.css';
 
 /**
  * 404 toàn cục (URL không khớp route nào): nằm ngoài nhóm (site) nên tự nạp stylesheet và khung website.

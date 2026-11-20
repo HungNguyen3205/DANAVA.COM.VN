@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   ArrowUpRight, Bell, Briefcase, Check, ChevronDown, ChevronRight, ExternalLink, FileText, Globe, Image as ImageIcon,
   Inbox, Layers, LayoutGrid, LogOut, Menu, PanelLeftClose, PanelLeftOpen, PanelsTopLeft, Presentation, Save,
-  Search, Settings, TrendingUp, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, type LucideIcon,
+  Search, Settings, TrendingUp, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, GalleryHorizontalEnd, FolderTree, Handshake, type LucideIcon,
 } from 'lucide-react';
 import { AdminNavRail, type RailSection } from './AdminNavRail';
 import { adminNav, adminSettings, allAdminItems, sectionInfo, timeAgo, csrfToken, type AdminLead } from './adminData';
@@ -40,6 +40,9 @@ const ICONS: Record<string, LucideIcon> = {
   'trinh-chieu': Presentation,
   'bai-viet': FileText,
   'du-an': Briefcase,
+  'trung-bay': GalleryHorizontalEnd,
+  'chu-de': FolderTree,
+  'bang-chung': Handshake,
   'giai-phap': Layers,
   'so-lieu': TrendingUp,
   'thu-vien': ImageIcon,

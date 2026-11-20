@@ -1,0 +1,20 @@
+/* ==========================================================================
+   Điện thoại: vùng bấm đủ lớn cho ngón tay và chữ không tràn màn hình.
+   Nạp sau cùng (app/(site)/layout.tsx, app/not-found.tsx).
+   ========================================================================== */
+
+/* Liên kết dài (URL trong mục lục, nội dung bài viết cũ) tự xuống dòng */
+.s-article-toc a, .s-article-toc__sub, .s-prose a { overflow-wrap: anywhere; }
+
+/* Thanh chấm chuyển ảnh ở hero trang chủ: giữ nét mảnh, mở rộng vùng bấm */
+.h-hero__dots button { position: relative; }
+.h-hero__dots button::after { content: ''; position: absolute; inset: -14px -4px; }
+
+@media (max-width: 760px) {
+  /* Liên kết đứng riêng: cao tối thiểu 44px */
+  :is(.s-link, .h-link, .s-footer a, .s-proj-facts a, .c-tile a, .c-office__body a, .c-info a, .s-policy-channel__value, a.s-badge, .s-article-foot a) {
+    display: inline-flex; align-items: center; min-height: 44px;
+  }
+  /* Breadcrumb: đủ 32px, không đẩy giãn bố cục */
+  .s-crumbs a { display: inline-flex; align-items: center; min-height: 32px; }
+}

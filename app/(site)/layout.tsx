@@ -13,6 +13,7 @@ import './site-identity.css';
 import './site-studio.css';
 import './site-ecosystem.css';
 import './site-partners.css';
+import './site-mobile.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {

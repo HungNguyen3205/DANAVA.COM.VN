@@ -109,3 +109,41 @@ DANAVA không cung cấp Digital Marketing (yêu cầu của chủ sở hữu, 1
 - Hai phông đều được next/font tự phục vụ khi build (đủ bộ ký tự tiếng Việt) và preload; trình duyệt không gọi Google Fonts. Đã xoá 15 file phông cũ trong `public/fonts/`.
 - Sửa kèm: khối app hội viên trên trang DANAVA Studio bị cắt chữ trên điện thoại (cột lưới rộng 458px trong màn 390px).
 - Kiểm tra: 16 trang × 3 khổ (1440/390/360px) đạt 48/48. Không trang nào tràn ngang, mọi h1 dùng Playfair, nội dung dùng Be Vietnam Pro. Kết quả: `docs/screenshots/phong-chu/`.
+
+## 11. Cập nhật: giao diện điện thoại và phạm vi chỉnh sửa trong CMS
+
+### Điện thoại (50 URL sitemap + 404 + trang đăng nhập CMS, khổ 360 và 390px)
+- Không trang nào tràn ngang, không chữ ra ngoài màn hình, không ảnh hỏng, không chữ nhỏ hơn 11px.
+- Đã sửa:
+  - mục lục bài viết có đường link dài bị tràn (tự xuống dòng);
+  - chữ 10px ở tâm sơ đồ Hệ sinh thái (nâng lên 11.5px);
+  - vùng bấm cho link chân trang, breadcrumb, các link "Xem…", link trên trang Liên hệ, Chính sách, Dự án (cao tối thiểu 44px trên điện thoại), và chấm chuyển ảnh ở hero;
+  - khối app hội viên trên trang Studio bị cắt chữ (mục 10).
+- Lỗi console duy nhất là ở trang 404: đó là thông báo mã 404 của chính trang, đúng như thiết kế.
+
+### CMS: đã sửa
+- Thanh bên: 3 mục trước đây dùng chung một biểu tượng nay có biểu tượng riêng; rút gọn tên "Portfolio" và "Đối tác & nhận xét" (trước bị cắt chữ); có dấu hiệu còn mục bên dưới khi menu dài hơn màn hình.
+- Danh sách 47 khách hàng, đối tác và địa điểm có thêm ô tìm kiếm, bộ lọc (Khách hàng / Đối tác / Địa điểm / Đang ẩn), logo, loại, tỉnh/thành, huy hiệu Verified và trạng thái hiển thị.
+- Ô nhập nhiều dòng tự giãn theo nội dung, không còn thanh cuộn nhỏ bên trong.
+- Hotline sửa trong Cài đặt nay áp dụng cả cho nút Zalo và dữ liệu có cấu trúc của trang Liên hệ (trước đây hai chỗ này dùng số cố định trong mã nguồn).
+- Kiểm tra E2E: sửa tiêu đề H1, mô tả giải pháp, giờ mở cửa đối tác, chức danh nhân sự và hotline trong CMS → lưu → cả 5 nội dung hiện đúng trên website.
+
+### Phạm vi chỉnh sửa
+| Nội dung trên website | Sửa trong CMS? |
+|---|---|
+| Trang chủ: tiêu đề H1, thông điệp, mô tả, số liệu | Có (Trang chủ, Số liệu) |
+| Giải pháp: tên, mô tả, đối tượng, vấn đề, phạm vi, quy trình, FAQ, chi phí, SEO; trang dịch vụ con | Có (Giải pháp) |
+| Bài viết, danh mục kiến thức | Có |
+| Dự án, portfolio website, chương trình sự kiện, case study, mục nổi bật, thứ tự | Có (Dự án, Portfolio) |
+| Khách hàng, đối tác, địa điểm danava.vn, nhận xét | Có (Đối tác & nhận xét) |
+| Nhân sự: họ tên, chức danh, ảnh, ẩn/hiện, thứ tự | Có (Nhân sự) |
+| Email, hotline | Có (Cài đặt) |
+| Trình chiếu mở đầu, sơ đồ hệ sinh thái trong trình chiếu | Có (Trình chiếu) |
+| Hồ sơ chi tiết nhân sự (giới thiệu, kinh nghiệm, kỹ năng) | **Chưa**: nằm trong `lib/staff.ts` |
+| Địa chỉ văn phòng, giờ làm việc, link Facebook/YouTube | **Chưa**: nằm trong `lib/company.ts` |
+| Trang Hệ sinh thái (đơn vị, hành trình, sản phẩm đang chạy) | **Chưa**: nằm trong `lib/ecosystem.ts` |
+| Trang Về DANAVA (lịch sử, giá trị, văn phòng) | **Chưa**: `components/site/company-content.ts` |
+| Màn hình app và 16 module trên trang Studio; khối nhận diện riêng của trang Website, Sự kiện | **Chưa**: trong mã nguồn |
+| Chữ tiêu đề và câu dẫn của các khối trên trang (hero từng trang, dải CTA) | **Chưa**: trong mã nguồn |
+| Chính sách bảo mật, điều khoản dịch vụ | **Chưa**: trong mã nguồn |
+| Menu, chân trang | **Chưa**: trong mã nguồn |

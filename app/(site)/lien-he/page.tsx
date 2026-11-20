@@ -2,6 +2,7 @@ import { seo, jsonLD, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
 import { CONTACT } from '@/lib/company';
 import { ContactPage } from '@/components/site/ContactPage';
 import { resolveValidService } from '@/lib/contact-services';
+import { getContent } from '@/lib/database';
 
 export const metadata = seo(
   'Liên hệ tư vấn và báo giá',
@@ -13,6 +14,8 @@ export const metadata = seo(
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = (await searchParams).service;
   const initialService = resolveValidService(Array.isArray(raw) ? raw[0] : raw);
+  // Hotline/email sửa trong CMS (Cài đặt) → dùng cho dữ liệu có cấu trúc, giống nội dung hiển thị
+  const { data } = await getContent();
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
@@ -27,8 +30,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       parentOrganization: { '@id': ORG_ID },
       url: `${siteURL}/`,
       image: `${siteURL}/assets/danava-logo.png`,
-      telephone: CONTACT.phone,
-      email: CONTACT.email,
+      telephone: data.phone || CONTACT.phone,
+      email: data.email || CONTACT.email,
       address: { '@type': 'PostalAddress', streetAddress: CONTACT.street, addressLocality: CONTACT.city, addressCountry: 'VN' },
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '18:00' }]
     }

@@ -19,7 +19,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Kênh chính thức của DANAVA (lấy từ trang Liên hệ trên website cũ). */
 const SOCIAL = {
-  zalo: `https://zalo.me/${CONTACT.phone}`,
   facebook: 'https://www.facebook.com/danava.com.vn',
   youtube: 'https://www.youtube.com/@danavasolutions'
 };
@@ -127,7 +126,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <p className="c-tile__label">Hotline · Zalo</p>
                 <div className="c-tile__row">
                   <a href={`tel:${phone}`}>{formatPhone(phone)}</a>
-                  <a href={SOCIAL.zalo} target="_blank" rel="noopener noreferrer">Chat Zalo <span aria-hidden="true">→</span></a>
+                  <a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">Chat Zalo <span aria-hidden="true">→</span></a>
                 </div>
               </div>
               <div className="c-tile c-tile--wide">
@@ -262,7 +261,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <span className="c-office__city">Giờ làm việc</span>
                 <h3><Clock aria-hidden="true" />{HOURS}</h3>
                 <p>Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.</p>
-                <a href={SOCIAL.zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
+                <a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
               </div>
             </div>
             <div className="c-office">

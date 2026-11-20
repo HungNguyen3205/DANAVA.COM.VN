@@ -230,6 +230,22 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
   const projects = draft.projects || [];
   const setC = (id: string, patch: Partial<Client>) => setDraft({ ...draft, clients: clients.map(c => (c.id === id ? { ...c, ...patch } : c)) });
   const setT = (id: string, patch: Partial<Testimonial>) => setDraft({ ...draft, testimonials: tests.map(t => (t.id === id ? { ...t, ...patch } : t)) });
+  // Danh sách dài (khách hàng + 15 đối tác + địa điểm danava.vn): tìm và lọc theo loại quan hệ
+  const [q, setQ] = useState('');
+  const [rel, setRel] = useState<'all' | 'client' | 'partner' | 'place' | 'hidden'>('all');
+  const relOf = (c: Client) => c.relation || 'client';
+  const REL_LABEL = { client: 'Khách hàng', partner: 'Đối tác đồng hành', place: 'Địa điểm danava.vn' } as const;
+  const isShown = (c: Client) => c.published && c.permission;
+  const tabs = [
+    { id: 'all', label: 'Tất cả', n: clients.length },
+    { id: 'client', label: 'Khách hàng', n: clients.filter(c => relOf(c) === 'client').length },
+    { id: 'partner', label: 'Đối tác', n: clients.filter(c => relOf(c) === 'partner').length },
+    { id: 'place', label: 'Địa điểm', n: clients.filter(c => relOf(c) === 'place').length },
+    { id: 'hidden', label: 'Đang ẩn', n: clients.filter(c => !isShown(c)).length }
+  ] as const;
+  const needle = q.trim().toLowerCase();
+  const shownClients = clients.filter(c => (rel === 'all' || (rel === 'hidden' ? !isShown(c) : relOf(c) === rel))
+    && (!needle || [c.name, c.fullName, c.city, c.role].some(v => (v || '').toLowerCase().includes(needle))));
   const projectSelect = (value: string, onChange: (v: string) => void) => (
     <label>
       Dự án liên quan
@@ -245,7 +261,7 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
       <section className="admin-panel">
         <div className="panel-heading">
           <h2>Khách hàng & đối tác đồng hành</h2>
-          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, clients: [...clients, { id: uid(), name: '', logo: '', url: '', projectId: '', role: '', relation: 'client', permission: false, published: false, note: '' }] })}>+ Thêm</button>
+          <button type="button" className="admin-secondary" onClick={() => { setQ(''); setRel('all'); setDraft({ ...draft, clients: [{ id: uid(), name: '', logo: '', url: '', projectId: '', role: '', relation: 'client', permission: false, published: false, note: '' }, ...clients] }); }}>+ Thêm</button>
         </div>
         <p className="field-note">Chỉ hiển thị trên trang chủ khi đã bật <b>Có quyền hiển thị</b> và <b>Xuất bản</b>. Ghi nguồn xác nhận quyền vào ghi chú.</p>
         <button
@@ -266,9 +282,24 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
         >
           Bổ sung đối tác từ danava.vn ({CLIENT_SEEDS.filter(x => !clients.some(c => c.id === x.id || c.name.trim().toLowerCase() === x.name.toLowerCase())).length} mục còn thiếu)
         </button>
-        {clients.map(c => (
-          <details key={c.id} className="adm-card">
-            <summary><b>{c.name || 'Khách hàng chưa đặt tên'}</b> · {c.published && c.permission ? 'Đang hiển thị' : 'Ẩn'}</summary>
+        <div className="adm-listbar">
+          <input type="search" className="adm-listbar__search" placeholder="Tìm theo tên, tỉnh/thành, lĩnh vực…" value={q} onChange={e => setQ(e.target.value)} aria-label="Tìm khách hàng, đối tác" />
+          <div className="adm-tabs" role="tablist" aria-label="Lọc theo loại">
+            {tabs.map(t => <button key={t.id} type="button" role="tab" aria-selected={rel === t.id} className={rel === t.id ? 'is-on' : ''} onClick={() => setRel(t.id)}>{t.label} <span>{t.n}</span></button>)}
+          </div>
+        </div>
+        {shownClients.length === 0 && <p className="adm-empty">Không có mục nào khớp bộ lọc.</p>}
+        {shownClients.map(c => (
+          <details key={c.id} className="adm-card adm-entity">
+            <summary>
+              <span className="adm-entity__logo">{c.logo ? <img src={c.logo} alt="" width={40} height={40} loading="lazy" /> : (c.name || '?').slice(0, 1)}</span>
+              <span className="adm-entity__main">
+                <b>{c.name || 'Chưa đặt tên'}</b>
+                <small>{[REL_LABEL[relOf(c)], c.role, c.city].filter(Boolean).join(' · ')}</small>
+              </span>
+              {c.verified && <span className="adm-pill adm-pill--blue">Verified</span>}
+              <span className={`adm-pill ${isShown(c) ? 'adm-pill--green' : 'adm-pill--muted'}`}>{isShown(c) ? 'Đang hiển thị' : 'Đang ẩn'}</span>
+            </summary>
             <Text label="Tên khách hàng" value={c.name} max={150} onChange={name => setC(c.id, { name })} />
             <MediaPicker label="Logo (để trống nếu chưa có quyền dùng logo)" value={c.logo} onChange={logo => setC(c.id, { logo })} />
             <Text label="Liên kết (website hoặc trang trên danava.vn, https://…)" value={c.url} max={300} onChange={url => setC(c.id, { url })} />
