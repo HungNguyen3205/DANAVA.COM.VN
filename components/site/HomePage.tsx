@@ -1,13 +1,13 @@
 /**
  * Trang chủ (server component). Thứ tự theo hành trình của khách hàng doanh nghiệp:
  *  1 Hero định vị + CTA → 2 Khách hàng tiêu biểu → 3 Giải pháp chính → 4 DANAVA Studio →
- *  5 Dự án/case study → 6 Lý do chọn DANAVA → 7 Quy trình hợp tác → 8 Giới thiệu & đội ngũ →
+ *  5 Dự án/case study → 6 Lý do chọn DANAVA → 7 Quy trình hợp tác → 8 Về DANAVA (theo danava.vn/about) →
  *  9 Blogs → 10 FAQ & liên hệ.
  * Phần kể chuyện đầy đủ (mục tiêu, hành trình, khoảnh khắc) nằm ở /ve-danava/.
  * Khối bằng chứng (khách hàng, nhận xét, số liệu) chỉ hiện khi có dữ liệu được phép công bố trong CMS.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, ChevronDown, Cpu, Globe, PartyPopper, Phone, Mail, MapPin, Clock, MessageCircle, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, Cpu, Eye, X, Globe, PartyPopper, Phone, Mail, MapPin, Clock, MessageCircle, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { defaultPresentation } from '@/lib/presentation';
@@ -18,7 +18,8 @@ import { StudioShowcase } from './StudioShowcase';
 import { FeaturedShowcase, ShowcaseStrip } from './showcase';
 import { StaffAvatar } from './TeamPage';
 import { ProjectTile, PostTile, Testimonials, JsonLd, faqLD } from './blocks';
-import { HeroSlides, SolutionsExplorer, Reveal, type SolutionItem } from './HomeClient';
+import { HeroSlides, SolutionsExplorer, Reveal, CountUp, type SolutionItem } from './HomeClient';
+import { ABOUT_DANAVA } from '@/lib/about-danava';
 import { block } from '@/lib/blocks';
 
 const PF = '/assets/profile/';
@@ -264,22 +265,106 @@ export default function HomePage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      {/* 8 · Giới thiệu ngắn & đội ngũ */}
-      <section className="h-sec h-sec--cream" aria-labelledby="home-about">
-        <div className="s-container s-split s-split--top">
-          <div className="s-stack-lg" data-reveal>
-            <div>
-              <p className="h-chapter">Về DANAVA</p>
-              <h2 className="h-title" id="home-about">Cùng bạn phát triển. <em>Công nghệ tạo khả năng, con người tạo giá trị.</em></h2>
+      {/* 8 · Về DANAVA — theo hồ sơ công ty trên danava.vn/about: số liệu, nhà sáng lập, sứ mệnh, câu chuyện, trước/sau, giá trị, đội ngũ */}
+      <section className="ha" id="ve-danava" aria-labelledby="home-about">
+        <div className="ha-top">
+          <div className="s-container">
+            <div className="ha-top__head" data-reveal>
+              <p className="ha-kicker">Về DANAVA</p>
+              <h2 className="ha-title" id="home-about">DANAVA – Nền tảng hệ sinh thái số <em>dành riêng cho ngành Wellness.</em></h2>
             </div>
-            <p className="h-body">{co.overview}</p>
-            <div className="s-row">
+            <ul className="ha-fields" aria-label="Lĩnh vực">
+              {ABOUT_DANAVA.fields.map(f => <li key={f}>{f}</li>)}
+            </ul>
+            <dl className="ha-stats">
+              {ABOUT_DANAVA.stats.map(st => (
+                <div key={st.label} data-reveal>
+                  <dd><CountUp value={st.value} /></dd>
+                  <dt>{st.label}</dt>
+                </div>
+              ))}
+            </dl>
+            <p className="ha-src">Số liệu trên nền tảng danava.vn, cập nhật {ABOUT_DANAVA.checked}.</p>
+          </div>
+        </div>
+
+        <div className="s-container ha-founder">
+          <figure className="ha-founder__photo" data-reveal>
+            <img src={ABOUT_DANAVA.founder.image} alt={`${ABOUT_DANAVA.founder.name}, ${ABOUT_DANAVA.founder.title}`} width={1200} height={885} loading="lazy" decoding="async" />
+            <figcaption><strong>{ABOUT_DANAVA.founder.name}</strong><small>{ABOUT_DANAVA.founder.title}</small></figcaption>
+          </figure>
+          <div className="ha-founder__body" data-reveal>
+            <p className="ha-kicker ha-kicker--dark">Thông điệp nhà sáng lập</p>
+            <blockquote className="ha-quote"><p>{ABOUT_DANAVA.founder.quote}</p></blockquote>
+            <div className="ha-mv">
+              <div><span className="ha-mv__ico" aria-hidden="true"><Compass /></span><h3>Sứ mệnh</h3><p>{ABOUT_DANAVA.mission}</p></div>
+              <div><span className="ha-mv__ico" aria-hidden="true"><Eye /></span><h3>Tầm nhìn</h3><p>{ABOUT_DANAVA.vision}</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="ha-story">
+          <div className="s-container ha-story__grid">
+            <div>
+              <p className="ha-kicker ha-kicker--dark">Câu chuyện DANAVA</p>
+              <h3 className="ha-h3">Từ trải nghiệm thực tế <em>đến giải pháp công nghệ.</em></h3>
+              <ol className="ha-time">
+                {ABOUT_DANAVA.story.map(st => (
+                  <li key={st.year} data-reveal>
+                    <span className="ha-time__year">{st.year}</span>
+                    <div><h4>{st.title}</h4><p>{st.text}</p></div>
+                  </li>
+                ))}
+              </ol>
+              <p className="ha-story__close">{ABOUT_DANAVA.storyClose}</p>
+            </div>
+            <figure className="ha-story__art" data-reveal>
+              <img src="/assets/about/ecosystem.webp" alt="Hệ sinh thái DANAVA: công nghệ, AI, marketing, du lịch, sức khỏe, giáo dục, cộng đồng" width={1100} height={824} loading="lazy" decoding="async" />
+            </figure>
+          </div>
+        </div>
+
+        <div className="s-container ha-ba" data-reveal>
+          <div className="ha-ba__col ha-ba__col--before">
+            <h3>Trước</h3>
+            <ul>{ABOUT_DANAVA.before.map(x => <li key={x}><X aria-hidden="true" />{x}</li>)}</ul>
+          </div>
+          <span className="ha-ba__arrow" aria-hidden="true"><ArrowRight /></span>
+          <div className="ha-ba__col ha-ba__col--after">
+            <h3>Sau khi triển khai cùng DANAVA</h3>
+            <ul>{ABOUT_DANAVA.after.map(x => <li key={x}><Check aria-hidden="true" />{x}</li>)}</ul>
+          </div>
+        </div>
+
+        <div className="s-container ha-values">
+          <div className="ha-values__head">
+            <p className="ha-kicker ha-kicker--dark">Vì sao chọn DANAVA</p>
+            <h3 className="ha-h3">Sáu giá trị <em>cốt lõi.</em></h3>
+          </div>
+          <ol className="ha-values__grid">
+            {ABOUT_DANAVA.values.map((v, i) => (
+              <li key={v.title} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
+                <span className="ha-values__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h4>{v.title}</h4>
+                <p>{v.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="s-container ha-team">
+          <div className="ha-team__head">
+            <div>
+              <p className="ha-kicker ha-kicker--dark">Ban lãnh đạo & đội ngũ</p>
+              <h3 className="ha-h3">Cùng bạn phát triển. <em>Công nghệ tạo khả năng, con người tạo giá trị.</em></h3>
+            </div>
+            <div className="ha-team__links">
               <Link className="h-link" href="/ve-danava/">Câu chuyện DANAVA <ArrowRight aria-hidden="true" /></Link>
               <Link className="h-link" href="/doi-ngu/">Gặp đội ngũ <ArrowRight aria-hidden="true" /></Link>
             </div>
           </div>
           {staff.length > 0 && (
-            <ul className="u-team" data-reveal aria-label="Đội ngũ DANAVA">
+            <ul className="u-team ha-team__list" aria-label="Đội ngũ DANAVA">
               {staff.map(p => (
                 <li key={p.id}>
                   <Link href={`/doi-ngu/${p.id}/`}>
@@ -290,6 +375,7 @@ export default function HomePage({ data }: { data: SiteData }) {
               ))}
             </ul>
           )}
+          <p className="ha-company">{ABOUT_DANAVA.company}</p>
         </div>
       </section>
 

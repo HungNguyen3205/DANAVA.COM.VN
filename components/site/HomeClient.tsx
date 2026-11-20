@@ -4,7 +4,7 @@
  * JS chỉ đổi ảnh nền, ảnh minh họa giải pháp và hiệu ứng hiện dần.
  */
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
 export type Slide = { src: string; caption: string };
@@ -90,4 +90,30 @@ export function Reveal({ root = 'main.h-home' }: { root?: string }) {
     return () => io.disconnect();
   }, [root]);
   return null;
+}
+
+/** Số đếm dần khi cuộn tới. HTML ban đầu đã có số cuối (đọc được khi tắt JS / bot); tôn trọng giảm chuyển động. */
+export function CountUp({ value, suffix = '+' }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [n, setN] = useState(value);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    setN(0);
+    let raf = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now(), dur = 1600;
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - t0) / dur);
+        setN(Math.round(value * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, [value]);
+  return <span ref={ref}>{n.toLocaleString('vi-VN')}{suffix}</span>;
 }
