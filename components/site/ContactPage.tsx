@@ -13,6 +13,7 @@ import { Crumbs } from './ui';
 import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
 import { rich } from './rich';
+import { CuteChat, CuteFacebook, CuteMail, CuteMoon, CutePhone, CuteSun, CuteSupport, CuteYoutube } from './CuteIcons';
 
 type Fields = { name: string; phone: string; email: string; businessType: string; service: string; message: string };
 type Errors = Partial<Record<keyof Fields, string>>;
@@ -170,20 +171,20 @@ export function ContactPage({ initialService }: { initialService: string }) {
               </p>
               <p className="c-hero__lead">{copy.lead}</p>
               <div className="c-dock">
-                <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><Phone aria-hidden="true" /><span><small>Gọi ngay</small>{formatPhone(phone)}</span></a>
-                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" /><span><small>Nhắn tin</small>Chat Zalo</span><span className="c-sr"> (mở tab mới)</span></a>
-                <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><Mail aria-hidden="true" /><span><small>Gửi email</small>{email}</span></a>
+                <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><CutePhone /><span><small>Gọi ngay</small>{formatPhone(phone)}</span></a>
+                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><CuteChat /><span><small>Nhắn tin</small>Chat Zalo</span><span className="c-sr"> (mở tab mới)</span></a>
+                <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><CuteMail /><span><small>Gửi email</small>{email}</span></a>
               </div>
               <div className="c-meta">
                 {isOpen !== null && (
                   <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
-                    <i aria-hidden="true" />{isOpen ? 'Đang trong giờ làm việc' : 'Ngoài giờ làm việc · DANAVA gọi lại vào ngày làm việc kế tiếp'}<span>{co.hours}</span>
+                    {isOpen ? <CuteSun /> : <CuteMoon />}{isOpen ? 'Đang trong giờ làm việc' : 'Ngoài giờ làm việc · DANAVA gọi lại vào ngày làm việc kế tiếp'}<span>{co.hours}</span>
                   </p>
                 )}
                 <p className="c-alt">
-                  <a href={co.facebook} target="_blank" rel="noopener noreferrer"><ThumbsUp aria-hidden="true" />Fanpage<span className="c-sr"> (mở tab mới)</span></a>
-                  <a href={co.youtube} target="_blank" rel="noopener noreferrer"><PlayCircle aria-hidden="true" />YouTube<span className="c-sr"> (mở tab mới)</span></a>
-                  <a href={`mailto:${co.supportEmail}`}><LifeBuoy aria-hidden="true" />Hỗ trợ kỹ thuật</a>
+                  <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />Fanpage<span className="c-sr"> (mở tab mới)</span></a>
+                  <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />YouTube<span className="c-sr"> (mở tab mới)</span></a>
+                  <a href={`mailto:${co.supportEmail}`}><CuteSupport />Hỗ trợ kỹ thuật</a>
                 </p>
               </div>
             </div>
@@ -196,7 +197,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <div className="c-namecard__back" aria-hidden="true"><span>D</span></div>
                 <div className="c-namecard__face">
                   <div className="c-namecard__top">
-                    <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
+                    <span className="c-namecard__logo"><img src="/assets/danava-logo.png" alt="DANAVA Solutions" width={709} height={352} /></span>
                     <span className="c-namecard__chip" aria-hidden="true" />
                   </div>
                   <p className="c-namecard__label">Hotline · Zalo</p>
@@ -392,7 +393,15 @@ export function ContactPage({ initialService }: { initialService: string }) {
             </ul>
           </div>
           <div className="s-container c-moments__cta">
-            <a className="c-dock__btn c-dock__btn--call" href="#dang-ky-tu-van"><MessageCircle aria-hidden="true" /><span><small>Bắt đầu ngay</small>Gửi lời chào tới DANAVA</span></a>
+            <p className="c-start__ask">Câu chuyện tiếp theo có thể là của bạn.</p>
+            <div className="c-start">
+              <a className="c-start__btn c-start__btn--main" href="#dang-ky-tu-van">
+                <CuteChat /><span><small>Bắt đầu ngay</small>Gửi lời chào tới DANAVA</span><ArrowRight className="c-start__arrow" aria-hidden="true" />
+              </a>
+              <a className="c-start__btn" href={`tel:${phone}`}>
+                <CutePhone /><span><small>Hoặc gọi</small>{formatPhone(phone)}</span>
+              </a>
+            </div>
           </div>
         </section>
       )}
