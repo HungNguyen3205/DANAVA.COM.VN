@@ -207,12 +207,12 @@ export function PostTile({ post, data }: { post: Post; data: SiteData }) {
   );
 }
 
-export function RelatedPosts({ posts, data, title = 'Kiến thức liên quan', id = 'rel-posts', soft }: { posts: Post[]; data: SiteData; title?: string; id?: string; soft?: boolean }) {
+export function RelatedPosts({ posts, data, title = 'Bài viết liên quan', id = 'rel-posts', soft }: { posts: Post[]; data: SiteData; title?: string; id?: string; soft?: boolean }) {
   if (!posts.length) return null;
   return (
     <section className={`s-section${soft ? ' s-section--soft' : ' s-section--line'}`} aria-labelledby={id}>
       <div className="s-container">
-        <SectionHeading eyebrow="Kiến thức" title={<span id={id}>{title}</span>} action={<Link className="s-link" href="/kien-thuc/">Xem mục Kiến thức <ArrowRight aria-hidden="true" /></Link>} />
+        <SectionHeading eyebrow="Blogs" title={<span id={id}>{title}</span>} action={<Link className="s-link" href="/kien-thuc/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>} />
         <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
           {posts.map(p => <PostTile key={p.id} post={p} data={data} />)}
         </div>

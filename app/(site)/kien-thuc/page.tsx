@@ -4,7 +4,7 @@ import NewsPage from '@/components/site/NewsPage';
 import { JsonLd } from '@/components/site/blocks';
 
 export const metadata = seo(
-  'Kiến thức — vận hành phòng tập, website, yoga và sự kiện',
+  'Blogs DANAVA — vận hành phòng tập, website, yoga và sự kiện',
   'Bài viết về vận hành phòng tập, website, yoga, du lịch và hoạt động cộng đồng từ DANAVA Solutions.',
   '/kien-thuc/',
   '/assets/legacy/event-session.webp'
@@ -17,12 +17,12 @@ export default async function Page() {
       <JsonLd value={{
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
-        name: 'Kiến thức DANAVA',
+        name: 'Blogs DANAVA',
         description: 'Bài viết về vận hành phòng tập, website, yoga, du lịch và hoạt động cộng đồng.',
         url: `${siteURL}/kien-thuc/`,
         publisher: { '@id': ORG_ID }
       }} />
-      <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Kiến thức', href: '/kien-thuc/' }])} />
+      <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Blogs', href: '/kien-thuc/' }])} />
       <NewsPage data={data} />
     </>
   );

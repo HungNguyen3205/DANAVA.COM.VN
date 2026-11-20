@@ -2,7 +2,7 @@
  * Trang chủ (server component). Thứ tự theo hành trình của khách hàng doanh nghiệp:
  *  1 Hero định vị + CTA → 2 Khách hàng tiêu biểu → 3 Giải pháp chính → 4 DANAVA Studio →
  *  5 Dự án/case study → 6 Lý do chọn DANAVA → 7 Quy trình hợp tác → 8 Giới thiệu & đội ngũ →
- *  9 Kiến thức hữu ích → 10 FAQ & liên hệ.
+ *  9 Blogs → 10 FAQ & liên hệ.
  * Phần kể chuyện đầy đủ (mục tiêu, hành trình, khoảnh khắc) nằm ở /ve-danava/.
  * Khối bằng chứng (khách hàng, nhận xét, số liệu) chỉ hiện khi có dữ liệu được phép công bố trong CMS.
  */
@@ -293,16 +293,16 @@ export default function HomePage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      {/* 9 · Kiến thức hữu ích */}
+      {/* 9 · Blogs */}
       {posts.length > 0 && (
         <section className="s-section s-section--line" aria-labelledby="home-news">
           <div className="s-container">
             <div className="u-head-row s-mb">
               <div className="s-heading">
-                <p className="s-eyebrow">Kiến thức</p>
-                <h2 className="s-h2" id="home-news">Kiến thức hữu ích <span className="s-hl">từ DANAVA</span></h2>
+                <p className="s-eyebrow">Blogs</p>
+                <h2 className="s-h2" id="home-news">Bài viết mới <span className="s-hl">từ DANAVA</span></h2>
               </div>
-              <Link className="s-link" href="/kien-thuc/">Xem mục Kiến thức <ArrowRight aria-hidden="true" /></Link>
+              <Link className="s-link" href="/kien-thuc/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>
             </div>
             <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
               {posts.map(p => <PostTile key={p.id} post={p} data={data} />)}

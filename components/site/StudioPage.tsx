@@ -227,7 +227,7 @@ export function StudioPage({ service, data }: { service: Service; data: SiteData
 
       <ProcessSection steps={service.process || []} title="Từ buổi khảo sát đến ngày vận hành" />
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
-      <RelatedPosts posts={postsForService(data, 'studio', 3)} data={data} title="Kiến thức vận hành phòng tập" />
+      <RelatedPosts posts={postsForService(data, 'studio', 3)} data={data} title="Bài viết về vận hành phòng tập" />
       <ServiceLinks services={sortServices(data.services).filter(s => ['website', 'events'].includes(s.id))} title="Kết hợp cùng DANAVA Studio" />
       <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Đăng ký demo' }} />
     </main>

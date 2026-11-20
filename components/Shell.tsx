@@ -34,7 +34,7 @@ const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
   { href: '/du-an/', label: 'Dự án' },
   { href: '/ve-danava/', label: 'Về chúng tôi' },
-  { href: '/kien-thuc/', label: 'Kiến thức' }
+  { href: '/kien-thuc/', label: 'Blogs' }
 ];
 
 export function Header() {
@@ -229,7 +229,7 @@ export function Footer() {
               <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
               <li><Link href="/doi-tac/">Đối tác đồng hành</Link></li>
               <li><Link href="/du-an/">Dự án</Link></li>
-              <li><Link href="/kien-thuc/">Kiến thức</Link></li>
+              <li><Link href="/kien-thuc/">Blogs</Link></li>
             </ul>
           </div>
 
@@ -273,7 +273,7 @@ const TABS = [
   { href: '/giai-phap/', label: 'Giải pháp', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
   { href: '/lien-he/', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
   { href: '/du-an/', label: 'Dự án', icon: Briefcase, match: (p: string) => p.startsWith('/du-an') },
-  { href: '/kien-thuc/', label: 'Kiến thức', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
+  { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
 ];
 
 /**

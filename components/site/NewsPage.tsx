@@ -1,27 +1,30 @@
 /**
- * /kien-thuc/ — mục Kiến thức (server component; mọi liên kết có trong HTML).
- * Bài được nhóm theo danh mục thực tế (data.topics). Danh mục đủ bài có trang riêng /kien-thuc/chu-de/[slug]/.
- * Bài lưu trữ từ website cũ (ngoài chủ đề dịch vụ) vẫn giữ URL, gom ở cuối trang.
+ * /kien-thuc/ — trang Blogs (server component; mọi liên kết có trong HTML).
+ * Bìa tạp chí → bài tiêu điểm + "Mới cập nhật" → lưới bài có bộ lọc chủ đề (BlogExplorer) →
+ * cập nhật từ Fanpage & YouTube → lưu trữ từ website cũ chia theo năm.
+ * Chủ đề đủ bài có trang riêng /kien-thuc/chu-de/[slug]/.
  */
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import type { Post, SiteData, Topic } from '@/lib/content';
+import { ArrowRight, Clock } from 'lucide-react';
+import type { Post, SiteData } from '@/lib/content';
 import { ARCHIVE_TOPIC } from '@/lib/content-defaults';
 import { getPublicSocialPosts } from '@/lib/social-feed';
-import { knowledgePosts, postHref, postsForTopic, publishedPosts, topicHasPage, topicHref } from '@/lib/site-queries';
-import { PageHead, SectionHeading, CtaBand } from './ui';
+import { knowledgePosts, postHref, postsForTopic, publishedPosts, topicHasPage, topicHref, topicOf } from '@/lib/site-queries';
+import { Crumbs, CtaBand } from './ui';
 import { formatDate, excerpt } from './catalog';
-import { postCover, PostTile } from './blocks';
+import { postCover } from './blocks';
 import { pageCopy } from '@/lib/blocks';
 import { rich } from './rich';
+import { BlogExplorer, type BlogCard, type BlogTopic } from './BlogExplorer';
 
-const PER_TOPIC = 6;
+/** Ước lượng thời gian đọc (~220 từ/phút) */
+const minutesOf = (p: Post) => Math.max(1, Math.round((p.body || '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length / 220));
 
 export function TopicNav({ data, current }: { data: SiteData; current?: string }) {
   const topics = (data.topics || []).filter(t => t.published && postsForTopic(data, t.id).length > 0);
   if (!topics.length) return null;
   return (
-    <nav className="u-topics" aria-label="Danh mục kiến thức">
+    <nav className="u-topics" aria-label="Chủ đề blog">
       <Link className={`s-tab${!current ? ' is-active' : ''}`} href="/kien-thuc/" aria-current={!current ? 'page' : undefined}>Tất cả</Link>
       {topics.map(t => {
         const n = postsForTopic(data, t.id).length;
@@ -36,114 +39,141 @@ export function TopicNav({ data, current }: { data: SiteData; current?: string }
   );
 }
 
-function TopicSection({ data, topic, posts }: { data: SiteData; topic: Topic; posts: Post[] }) {
-  const page = topicHasPage(data, topic);
-  return (
-    <section className="s-section u-topic-sec" id={`chu-de-${topic.slug}`} aria-labelledby={`t-${topic.slug}`}>
-      <div className="s-container">
-        <SectionHeading
-          title={<span id={`t-${topic.slug}`}>{topic.name}</span>}
-          lead={topic.description}
-          action={page ? <Link className="s-link" href={topicHref(topic)}>Xem tất cả {posts.length} bài <ArrowRight aria-hidden="true" /></Link> : undefined}
-        />
-        <div className={`s-grid ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'} s-list-m`}>
-          {posts.slice(0, PER_TOPIC).map(p => <PostTile key={p.id} post={p} data={data} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function NewsPage({ data }: { data: SiteData }) {
   const copy = pageCopy(data, 'kien-thuc');
   const posts = knowledgePosts(data);
   const featured = posts.find(p => postCover(p)) || posts[0];
-  const topics = (data.topics || []).filter(t => t.published && t.id !== ARCHIVE_TOPIC);
-  const untopiced = posts.filter(p => p !== featured && !topics.some(t => t.id === p.topicId));
+  const fresh = posts.filter(p => p !== featured).slice(0, 4);
+  const topicList = (data.topics || []).filter(t => t.published && t.id !== ARCHIVE_TOPIC && posts.some(p => p.topicId === t.id));
+  const topics: BlogTopic[] = topicList.map((t, i) => ({
+    id: t.id, name: t.name, slug: t.slug, tone: i % 6,
+    count: posts.filter(p => p.topicId === t.id).length,
+    page: topicHasPage(data, t) ? topicHref(t) : undefined
+  }));
+  const cards: BlogCard[] = posts.map(p => ({
+    id: p.id, href: postHref(p), title: p.title, excerpt: excerpt(p.excerpt || p.body, 150), cover: postCover(p),
+    date: p.date || '', dateLabel: p.date ? formatDate(p.date) : '', minutes: minutesOf(p), topic: p.topicId || ''
+  }));
   const archive = publishedPosts(data).filter(p => p.topicId === ARCHIVE_TOPIC);
+  const years = Array.from(new Set(archive.map(p => (p.date || '').slice(0, 4) || 'Khác'))).sort((a, b) => b.localeCompare(a));
   const social = getPublicSocialPosts();
+  const latest = posts.map(p => p.date || '').sort().pop();
+  const collage = posts.filter(p => postCover(p)).slice(0, 3);
 
   return (
-    <main id="main">
-      <PageHead
-        eyebrow={copy.kicker}
-        title={rich(copy.title)}
-        lead={copy.lead}
-        crumbs={[{ href: '/', label: 'Trang chủ' }, { label: 'Kiến thức' }]}
-      />
-
-      <div className="s-container"><TopicNav data={data} /></div>
+    <main id="main" className="bl">
+      <section className="bl-hero" aria-labelledby="bl-title">
+        <div className="s-container bl-hero__grid">
+          <div className="bl-hero__copy">
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Blogs' }]} />
+            <p className="bl-hero__kicker">{copy.kicker || 'DANAVA Blogs'}</p>
+            <h1 className="bl-hero__title" id="bl-title">{rich(copy.title)}</h1>
+            <p className="bl-hero__lead">{copy.lead}</p>
+            <dl className="bl-hero__stats">
+              <div><dt>Bài viết</dt><dd>{posts.length}</dd></div>
+              <div><dt>Chủ đề</dt><dd>{topics.length}</dd></div>
+              {latest && <div><dt>Mới nhất</dt><dd>{formatDate(latest)}</dd></div>}
+            </dl>
+          </div>
+          <div className="bl-hero__collage" aria-hidden="true">
+            {collage.map((p, i) => (
+              <figure key={p.id} className={`bl-polaroid bl-polaroid--${i}`}>
+                <img src={postCover(p)} alt="" {...(i === 0 ? { fetchPriority: 'high' as const } : { loading: 'lazy' as const })} />
+                <figcaption>{topicOf(data, p)?.name || 'DANAVA'}</figcaption>
+              </figure>
+            ))}
+            <span className="bl-hero__stamp">Blogs<br /><small>DANAVA</small></span>
+          </div>
+        </div>
+      </section>
 
       {featured && (
-        <section className="s-section--flush-top s-news-featured-wrap" aria-label="Bài viết tiêu điểm">
-          <div className="s-container">
-            <article className="s-card s-card--link s-news-featured">
-              <div className="s-news-featured__media">
-                {postCover(featured) && <img src={postCover(featured)} alt="" fetchPriority="high" />}
-              </div>
-              <div className="s-news-featured__body">
-                <div className="s-row">
-                  <span className="s-badge s-badge--orange">Mới nhất</span>
-                  <span className="s-muted s-small">{featured.date ? formatDate(featured.date) : ''}</span>
-                </div>
-                <h2 className="s-h2 s-news-featured__title">
-                  <Link className="s-card__cover" href={postHref(featured)}>{featured.title}</Link>
-                </h2>
-                <p className="s-lead s-news-featured__lead">{excerpt(featured.excerpt || featured.body, 220)}</p>
-                <span className="s-link">Đọc bài viết <ArrowRight aria-hidden="true" /></span>
+        <section className="bl-feature" aria-labelledby="bl-feature-title">
+          <div className="s-container bl-feature__grid">
+            <article className="bl-cover">
+              {postCover(featured) && <img src={postCover(featured)} alt="" decoding="async" />}
+              <div className="bl-cover__body">
+                <p className="bl-card__meta"><span className="bl-pill bl-pill--light">Tiêu điểm · {topicOf(data, featured)?.name || 'Bài viết'}</span>{featured.date && <time dateTime={featured.date}>{formatDate(featured.date)}</time>}</p>
+                <h2 className="bl-cover__title" id="bl-feature-title"><Link className="bl-card__link" href={postHref(featured)}>{featured.title}</Link></h2>
+                <p className="bl-cover__text">{excerpt(featured.excerpt || featured.body, 180)}</p>
+                <p className="bl-card__foot"><span><Clock aria-hidden="true" />{minutesOf(featured)} phút đọc</span><span className="bl-card__go">Đọc bài <ArrowRight aria-hidden="true" /></span></p>
               </div>
             </article>
+            {fresh.length > 0 && (
+              <aside className="bl-fresh" aria-labelledby="bl-fresh-title">
+                <h2 className="bl-fresh__title" id="bl-fresh-title">Mới cập nhật</h2>
+                <ol>
+                  {fresh.map((p, i) => (
+                    <li key={p.id}>
+                      <span className="bl-fresh__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                      <div>
+                        <p className="bl-fresh__meta">{topicOf(data, p)?.name || 'Bài viết'}{p.date ? ` · ${formatDate(p.date)}` : ''}</p>
+                        <Link className="bl-fresh__link" href={postHref(p)}>{p.title}</Link>
+                      </div>
+                      {postCover(p) && <img src={postCover(p)} alt="" loading="lazy" decoding="async" />}
+                    </li>
+                  ))}
+                </ol>
+              </aside>
+            )}
           </div>
         </section>
       )}
 
-      {topics.map(t => {
-        const list = postsForTopic(data, t.id).filter(p => p !== featured);
-        return list.length ? <TopicSection key={t.id} data={data} topic={t} posts={list} /> : null;
-      })}
-
-      {untopiced.length > 0 && (
-        <section className="s-section" aria-labelledby="t-khac">
-          <div className="s-container">
-            <SectionHeading title={<span id="t-khac">Bài viết khác</span>} />
-            <div className="s-grid s-grid--3 s-list-m">{untopiced.map(p => <PostTile key={p.id} post={p} data={data} />)}</div>
+      <section className="bl-sec" aria-labelledby="bl-all-title">
+        <div className="s-container">
+          <div className="bl-head">
+            <p className="bl-head__kicker">Đọc theo chủ đề</p>
+            <h2 className="bl-head__title" id="bl-all-title">Mỗi bài, <em>một góc nhìn.</em></h2>
           </div>
-        </section>
-      )}
+          <BlogExplorer cards={cards} topics={topics} featuredId={featured?.id} />
+        </div>
+      </section>
 
       {social.length > 1 && (
-        <section className="s-section s-section--soft" aria-labelledby="s-news-social">
+        <section className="bl-sec bl-sec--soft" aria-labelledby="bl-social-title">
           <div className="s-container">
-            <SectionHeading id="s-news-social" eyebrow="Từ kênh chính thức" title="Cập nhật từ Fanpage & YouTube" />
-            <div className="s-grid s-grid--3 s-snap">
-              {social.slice(0, 6).map(s => (
-                <article key={s.id} className="s-card s-card--link">
-                  <div className="s-card__media"><img src={s.image} alt="" loading="lazy" /><span className="s-badge s-badge--dark">{s.platformLabel}</span></div>
-                  <div className="s-card__body">
-                    <div className="s-card__meta"><span>{s.channelName}</span><time dateTime={s.date}>{formatDate(s.date)}</time></div>
-                    <h3 className="s-card__title"><a className="s-card__cover" href={s.originalUrl} target="_blank" rel="noopener">{s.title}</a></h3>
-                    <p className="s-card__text">{excerpt(s.content, 140)}</p>
-                  </div>
-                </article>
-              ))}
+            <div className="bl-head">
+              <p className="bl-head__kicker">Từ kênh chính thức</p>
+              <h2 className="bl-head__title" id="bl-social-title">Cập nhật từ <em>Fanpage & YouTube.</em></h2>
             </div>
+            <ul className="bl-social">
+              {social.slice(0, 6).map(s => (
+                <li key={s.id}>
+                  <div className="bl-social__media"><img src={s.image} alt="" loading="lazy" /><span>{s.platformLabel}</span></div>
+                  <p className="bl-fresh__meta">{s.channelName} · <time dateTime={s.date}>{formatDate(s.date)}</time></p>
+                  <a className="bl-fresh__link" href={s.originalUrl} target="_blank" rel="noopener">{s.title}<span className="s-sr"> (mở tab mới)</span></a>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       )}
 
       {archive.length > 0 && (
-        <section className="s-section s-section--line" aria-labelledby="t-archive">
-          <div className="s-container s-container--narrow">
-            <h2 className="s-h3" id="t-archive">Lưu trữ từ website cũ</h2>
-            <p className="s-text s-muted">Các bài viết trước đây của DANAVA, ngoài nhóm chủ đề dịch vụ hiện tại. Giữ nguyên đường dẫn để bạn đọc cũ vẫn truy cập được.</p>
-            <ul className="u-linklist u-linklist--dates">
-              {archive.map(p => (
-                <li key={p.id}>
-                  <Link href={postHref(p)}>{p.title}</Link>
-                  {p.date && <time dateTime={p.date}>{formatDate(p.date)}</time>}
-                </li>
+        <section className="bl-sec bl-archive" aria-labelledby="bl-archive-title">
+          <div className="s-container">
+            <div className="bl-head">
+              <p className="bl-head__kicker">Lưu trữ</p>
+              <h2 className="bl-head__title" id="bl-archive-title">Từ website cũ <em>của DANAVA.</em></h2>
+              <p className="bl-head__lead">Các bài viết trước đây, giữ nguyên đường dẫn để bạn đọc cũ vẫn truy cập được.</p>
+            </div>
+            <div className="bl-archive__years">
+              {years.map(y => (
+                <div key={y} className="bl-year">
+                  <p className="bl-year__n" aria-hidden="true">{y}</p>
+                  <h3 className="s-sr">Năm {y}</h3>
+                  <ul>
+                    {archive.filter(p => ((p.date || '').slice(0, 4) || 'Khác') === y).map(p => (
+                      <li key={p.id}>
+                        <Link href={postHref(p)}>{p.title}</Link>
+                        {p.date && <time dateTime={p.date}>{formatDate(p.date).slice(0, 5)}</time>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </section>
       )}
@@ -152,4 +182,3 @@ export default function NewsPage({ data }: { data: SiteData }) {
     </main>
   );
 }
-

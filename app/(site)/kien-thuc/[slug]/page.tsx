@@ -47,7 +47,7 @@ export default async function Page({ params }: Params) {
   const cover = postCover(p);
   const crumbs = [
     { label: 'Trang chủ', href: '/' },
-    { label: 'Kiến thức', href: '/kien-thuc/' },
+    { label: 'Blogs', href: '/kien-thuc/' },
     ...(topic && topicHasPage(data, topic) ? [{ label: topic.name, href: topicHref(topic) }] : []),
     { label: p.title, href: `/kien-thuc/${p.slug}/` }
   ];

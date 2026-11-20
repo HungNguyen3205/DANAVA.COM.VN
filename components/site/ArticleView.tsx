@@ -122,7 +122,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
       <article>
         <header className="s-article-head">
           <div className="s-container s-container--narrow">
-            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Kiến thức' }, topicCrumb]} />
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Blogs' }, topicCrumb]} />
             <p className="s-eyebrow s-article-cat">{topic?.name || post.category}</p>
             <h1 className="s-h1 s-article-title">{post.title}</h1>
             {post.excerpt && <p className="s-lead">{post.excerpt}</p>}

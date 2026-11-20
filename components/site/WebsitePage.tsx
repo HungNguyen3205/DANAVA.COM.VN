@@ -121,7 +121,7 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
         </section>
       )}
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
-      <RelatedPosts posts={postsForService(data, service.id, 3)} data={data} title="Kiến thức về website & tên miền" />
+      <RelatedPosts posts={postsForService(data, service.id, 3)} data={data} title="Bài viết về website & tên miền" />
       <ServiceLinks services={sortServices(data.services).filter(s => ['studio', 'events', 'travel'].includes(s.id))} title="Kết hợp cùng website" />
       <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
     </main>

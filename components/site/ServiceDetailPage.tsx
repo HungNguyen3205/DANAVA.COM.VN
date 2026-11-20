@@ -154,7 +154,7 @@ function StandardServicePage({ service, data }: { service: Service; data: SiteDa
 
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
 
-      <RelatedPosts posts={posts} data={data} title={`Kiến thức về ${service.title}`} />
+      <RelatedPosts posts={posts} data={data} title={`Bài viết về ${service.title}`} />
 
       <ServiceLinks services={others} title="Giải pháp khác của DANAVA" />
 

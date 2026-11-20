@@ -346,6 +346,16 @@ export const legacyRedirects=[
     "permanent": true
   },
   {
+    "source": "/blogs/",
+    "destination": "/kien-thuc/",
+    "permanent": false
+  },
+  {
+    "source": "/blog/",
+    "destination": "/kien-thuc/",
+    "permanent": false
+  },
+  {
     "source": "/ho-tro/",
     "destination": "/chinh-sach-dich-vu/",
     "permanent": true

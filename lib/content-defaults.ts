@@ -128,7 +128,7 @@ export const SERVICE_SEEDS: Record<string, ServiceSeed> = {
     problems: [],
     process: [],
     faqs: [
-      { q: 'Làm sao để tham gia các hoạt động cộng đồng?', a: 'Theo dõi mục Kiến thức của DANAVA hoặc liên hệ trực tiếp để nhận thông tin về sự kiện sắp diễn ra.' },
+      { q: 'Làm sao để tham gia các hoạt động cộng đồng?', a: 'Theo dõi mục Blogs của DANAVA hoặc liên hệ trực tiếp để nhận thông tin về sự kiện sắp diễn ra.' },
       { q: 'Chương trình đồng hành doanh nghiệp áp dụng thế nào?', a: 'Phạm vi hỗ trợ được thống nhất theo thỏa thuận cụ thể với từng doanh nghiệp.' }
     ],
     pricing: ''

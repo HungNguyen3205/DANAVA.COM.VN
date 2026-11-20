@@ -21,7 +21,7 @@ async function load(slug: string) {
 export async function generateMetadata({ params }: Params) {
   const r = await load((await params).topic);
   if (!r) return notFoundMeta;
-  return seo(r.topic.seoTitle || `${r.topic.name} — Kiến thức`, r.topic.seoDescription || r.topic.description, topicHref(r.topic));
+  return seo(r.topic.seoTitle || `${r.topic.name} — Blogs DANAVA`, r.topic.seoDescription || r.topic.description, topicHref(r.topic));
 }
 
 export default async function Page({ params }: Params) {
@@ -29,7 +29,7 @@ export default async function Page({ params }: Params) {
   if (!r) notFound();
   const { data, topic, posts } = r;
   const services = sortServices(data.services.filter(s => topic.serviceIds.includes(s.id)));
-  const crumbs = [{ label: 'Trang chủ', href: '/' }, { label: 'Kiến thức', href: '/kien-thuc/' }, { label: topic.name, href: topicHref(topic) }];
+  const crumbs = [{ label: 'Trang chủ', href: '/' }, { label: 'Blogs', href: '/kien-thuc/' }, { label: topic.name, href: topicHref(topic) }];
   return (
     <>
       <JsonLd value={{
@@ -46,7 +46,7 @@ export default async function Page({ params }: Params) {
       }} />
       <JsonLd value={breadcrumbLD(crumbs)} />
       <main id="main">
-        <PageHead eyebrow="Kiến thức" title={topic.name} lead={topic.description} crumbs={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Kiến thức' }, { label: topic.name }]} />
+        <PageHead eyebrow="Blogs" title={topic.name} lead={topic.description} crumbs={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Blogs' }, { label: topic.name }]} />
         <div className="s-container"><TopicNav data={data} current={topic.id} /></div>
         <section className="s-section s-section--flush-top" aria-label={`Bài viết ${topic.name}`}>
           <div className="s-container">

@@ -133,7 +133,7 @@ export function MarketingPage({ service, data }: { service: Service; data: SiteD
           </div>
         </section>
       )}
-      <RelatedPosts posts={posts} data={data} title="Kiến thức Digital Marketing" soft />
+      <RelatedPosts posts={posts} data={data} title="Bài viết về Digital Marketing" soft />
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
       <CtaBand title="Lập kế hoạch marketing cho quý tới" lead="Gửi hiện trạng kênh và mục tiêu, DANAVA đề xuất phạm vi phù hợp với đội ngũ và ngân sách." primary={{ href: contactHref, label: 'Nhận tư vấn marketing' }} />
     </main>

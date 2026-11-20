@@ -9,7 +9,7 @@ const COMMON: Record<string, string> = {
 
 export const PAGE_NAMES: Record<string, string> = {
   'mac-dinh': 'Dải kêu gọi mặc định (các trang không có chữ riêng)',
-  've-danava': 'Về DANAVA', 'giai-phap': 'Giải pháp (trang tổng hợp)', 'du-an': 'Dự án', 'kien-thuc': 'Kiến thức',
+  've-danava': 'Về DANAVA', 'giai-phap': 'Giải pháp (trang tổng hợp)', 'du-an': 'Dự án', 'kien-thuc': 'Blogs',
   'he-sinh-thai': 'Hệ sinh thái', 'doi-tac': 'Đối tác đồng hành', 'doi-ngu': 'Đội ngũ', 'lien-he': 'Liên hệ',
   studio: 'DANAVA Studio (dải cuối trang)', website: 'Website & Landing Page (dải cuối trang)', 'case-study': 'Case study website (dải cuối trang)'
 };
