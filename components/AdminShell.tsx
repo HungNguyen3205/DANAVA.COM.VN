@@ -44,6 +44,7 @@ const ICONS: Record<string, LucideIcon> = {
   'chu-de': FolderTree,
   'bang-chung': Handshake,
   'cong-ty': Building2,
+  'menu-giai-phap': PanelsTopLeft,
   'chu-tren-trang': Type,
   've-danava': Info,
   'he-sinh-thai': Network,

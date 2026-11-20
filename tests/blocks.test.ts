@@ -72,3 +72,18 @@ test('hồ sơ nhân sự: thêm người mới sau khi đã lưu hồ sơ → v
   const list = block(d, 'staff');
   assert.deepEqual(list.map(s => s.id), d.staff.map(p => p.id));
 });
+
+test('menu Giải pháp: 3 cột mặc định; chặn đường dẫn không an toàn', () => {
+  const d = structuredClone(initial);
+  const m = block(d, 'menu');
+  assert.deepEqual(m.columns.map(c => c.title), ['Nền tảng số DANAVA', 'Digital Marketing', 'Khác']);
+  const work = m.columns[0].items.find(i => i.label === 'DANAVA Work')!;
+  assert.equal(work.href, '', 'DANAVA Work chỉ hiển thị ảnh, không có đường dẫn');
+  assert.ok(work.image);
+  const bad = structuredClone(blockDefaults().menu);
+  bad.columns[0].items[0].href = 'javascript:alert(1)';
+  assert.equal(validBlocks({ menu: bad }), false);
+  const ok = structuredClone(blockDefaults().menu);
+  ok.columns[2].items.push({ label: 'Hệ sinh thái', desc: '', href: '/he-sinh-thai/', badge: 'Mới', image: '' });
+  assert.equal(validBlocks({ menu: ok }), true);
+});

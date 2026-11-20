@@ -585,7 +585,7 @@ function AdminWorkspace({ section }: { section: string }) {
         {section === 'chu-de' && <TopicsEditor draft={draft} setDraft={setDraft} />}
         {section === 'bang-chung' && <ProofEditor draft={draft} setDraft={setDraft} />}
         {section === 'trung-bay' && <ShowcaseEditor draft={draft} setDraft={setDraft} />}
-        {(['cong-ty', 'chu-tren-trang', 've-danava', 'he-sinh-thai', 'ho-so-nhan-su'] as const).includes(section as 'cong-ty') && blockPanel(({ 'cong-ty': 'company', 'chu-tren-trang': 'pages', 've-danava': 'about', 'he-sinh-thai': 'ecosystem', 'ho-so-nhan-su': 'staff' } as Record<string, BlockKey>)[section])}
+        {(['cong-ty', 'menu-giai-phap', 'chu-tren-trang', 've-danava', 'he-sinh-thai', 'ho-so-nhan-su'] as const).includes(section as 'cong-ty') && blockPanel(({ 'cong-ty': 'company', 'menu-giai-phap': 'menu', 'chu-tren-trang': 'pages', 've-danava': 'about', 'he-sinh-thai': 'ecosystem', 'ho-so-nhan-su': 'staff' } as Record<string, BlockKey>)[section])}
         {section === 'chinh-sach' && <div className="blk-stack">{blockPanel('privacy')}{blockPanel('servicePolicy')}</div>}
         {section === 'cai-dat' && (
           <div className="admin-two">

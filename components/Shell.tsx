@@ -2,12 +2,30 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper } from 'lucide-react';
 import { useSite } from './SiteStore';
-import { SERVICE_META, sortServices, CONTACT, formatPhone } from './site/catalog';
-import { IconTile } from './site/ui';
-import { publishedSubServices, subServiceHref } from '@/lib/site-queries';
-import { block } from '@/lib/blocks';
+import { sortServices, CONTACT, formatPhone } from './site/catalog';
+import { block, safeHref } from '@/lib/blocks';
+
+type MenuItemData = { label: string; desc: string; href: string; badge: string; image: string };
+/** Một mục menu Giải pháp: trang trong website → Link; https → tab mới; không có đường dẫn → chỉ hiển thị. */
+function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: () => void; compact?: boolean }) {
+  const external = it.href.startsWith('https://');
+  const body = (
+    <>
+      {it.image && !compact && <img className="s-mega__thumb" src={it.image} alt={`Giao diện ${it.label}`} width={640} height={375} loading="lazy" decoding="async" />}
+      <span className="s-mega__label">
+        {it.label}
+        {it.badge && <span className="s-mega__badge">{it.badge}</span>}
+        {external && <ArrowUpRight aria-hidden="true" />}
+      </span>
+      {it.desc && !compact && <span className="s-mega__sub">{it.desc}</span>}
+    </>
+  );
+  if (!it.href || !safeHref(it.href)) return <div className="s-mega__link is-static">{body}</div>;
+  if (external) return <a className="s-mega__link" href={it.href} target="_blank" rel="noopener" onClick={onPick}>{body}<span className="s-sr"> (mở tab mới)</span></a>;
+  return <Link className="s-mega__link" href={it.href} onClick={onPick}>{body}</Link>;
+}
 
 const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
@@ -25,8 +43,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const megaRef = useRef<HTMLLIElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const services = sortServices(data.services);
-  const subs = publishedSubServices(data);
+  const menu = block(data, 'menu');
   const phone = data.phone || CONTACT.phone;
 
   useEffect(() => {
@@ -76,7 +93,7 @@ export function Header() {
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/" aria-current={path === '/' ? 'page' : undefined}>Trang chủ</Link>
               </li>
-              <li ref={megaRef} className={`s-nav__item${mega ? ' is-open' : ''}`} onMouseEnter={enter} onMouseLeave={leave}>
+              <li ref={megaRef} className={`s-nav__item s-nav__item--mega${mega ? ' is-open' : ''}`} onMouseEnter={enter} onMouseLeave={leave}>
                 <button
                   type="button"
                   className="s-nav__link"
@@ -87,29 +104,23 @@ export function Header() {
                 >
                   Giải pháp <ChevronDown aria-hidden="true" />
                 </button>
-                <div className="s-mega" id="s-mega-solutions">
-                  {services.map(s => {
-                    const m = SERVICE_META[s.id];
-                    return (
-                      <Link key={s.id} href={`/giai-phap/${s.slug}/`} className="s-mega__item" onClick={() => setMega(false)}>
-                        {m && <IconTile icon={m.icon} tone={m.tone} />}
-                        <span>
-                          <span className="s-mega__title">{s.title}</span>
-                          <span className="s-mega__desc" style={{ display: 'block' }}>{s.description}</span>
-                        </span>
-                      </Link>
-                    );
-                  })}
-                  {subs.length > 0 && (
-                    <div className="s-mega__subs">
-                      <span>Theo mô hình:</span>
-                      {subs.map(x => <Link key={x.id} href={subServiceHref(data, x)} onClick={() => setMega(false)}>{x.title}</Link>)}
+                <div className="s-mega s-mega--cols" id="s-mega-solutions">
+                  <div className="s-mega__cols" style={menu.columns.length === 3 ? undefined : { gridTemplateColumns: `repeat(${menu.columns.length}, minmax(0, 1fr))` }}>
+                    {menu.columns.map((col, ci) => (
+                      <div key={ci} className="s-mega__col">
+                        <p className="s-mega__head">{col.title}</p>
+                        <ul>
+                          {col.items.map((it, ii) => <li key={ii}><MenuItem it={it} onPick={() => setMega(false)} /></li>)}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  {menu.footLabel && (
+                    <div className="s-mega__foot">
+                      <span>{menu.footText}</span>
+                      <Link className="s-link" href={safeHref(menu.footHref) && menu.footHref ? menu.footHref : '/giai-phap/'} onClick={() => setMega(false)}>{menu.footLabel} <ArrowRight aria-hidden="true" /></Link>
                     </div>
                   )}
-                  <div className="s-mega__foot">
-                    <span>Chưa chắc giải pháp nào phù hợp?</span>
-                    <Link className="s-link" href="/giai-phap/" onClick={() => setMega(false)}>Xem tất cả giải pháp <ArrowRight aria-hidden="true" /></Link>
-                  </div>
                 </div>
               </li>
               {NAV.map(item => (
@@ -145,16 +156,14 @@ export function Header() {
         </div>
         <div className="s-drawer__group">
           <p className="s-drawer__label">Giải pháp</p>
-          <div className="s-drawer__sub">
-            {services.map(s => {
-              const m = SERVICE_META[s.id];
-              return (
-                <Link key={s.id} href={`/giai-phap/${s.slug}/`}>
-                  {m && <IconTile icon={m.icon} tone={m.tone} />}{s.title}
-                </Link>
-              );
-            })}
-          </div>
+          {menu.columns.map((col, ci) => (
+            <div key={ci} className="s-drawer__col">
+              <p className="s-drawer__colhead">{col.title}</p>
+              <ul className="s-drawer__menu">
+                {col.items.map((it, ii) => <li key={ii}><MenuItem it={it} compact /></li>)}
+              </ul>
+            </div>
+          ))}
         </div>
         <div className="s-drawer__group">
           {NAV.map(item => (

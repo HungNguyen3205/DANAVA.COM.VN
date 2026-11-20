@@ -18,3 +18,36 @@
   /* Breadcrumb: đủ 32px, không đẩy giãn bố cục */
   .s-crumbs a { display: inline-flex; align-items: center; min-height: 32px; }
 }
+
+/* ==========================================================================
+   Menu "Giải pháp" 3 cột (components/Shell.tsx, nội dung từ CMS: Menu Giải pháp)
+   Neo theo thanh đầu trang và căn giữa để không tràn ở màn 1081–1280px.
+   ========================================================================== */
+.s-header__bar { position: relative; }
+.s-nav__item--mega { position: static; }
+.s-mega--cols { display: block; left: 50%; top: calc(100% - 6px); width: min(1040px, calc(100vw - 48px)); padding: 22px 18px 14px; transform: translate(-50%, -6px); }
+.s-nav__item.is-open .s-mega--cols { transform: translate(-50%, 0); }
+.s-mega__cols { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .8fr); }
+.s-mega__col { min-width: 0; padding: 0 18px; border-left: 1px solid var(--s-line); }
+.s-mega__col:first-child { border-left: 0; padding-left: 4px; }
+.s-mega__head { margin: 0 0 8px; padding: 0 12px; font-size: 11.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--s-orange); }
+.s-mega__col ul { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.s-mega__link { display: block; padding: 10px 12px; border-radius: 12px; color: var(--s-ink); text-decoration: none; transition: background-color .15s; }
+a.s-mega__link:hover { background: var(--s-soft); }
+a.s-mega__link:hover .s-mega__label { color: var(--s-blue); }
+a.s-mega__link:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 1px; }
+.s-mega__link.is-static { cursor: default; }
+.s-mega__label { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--s-navy); transition: color .15s; }
+.s-mega__label svg { width: 14px; height: 14px; color: var(--s-muted); }
+.s-mega__badge { padding: 2px 8px; border-radius: 999px; background: var(--s-blue-soft); color: var(--s-blue); font-size: 11px; font-weight: 800; letter-spacing: .02em; }
+.s-mega__sub { display: block; margin-top: 3px; font-size: 13px; line-height: 1.45; color: var(--s-muted); }
+.s-mega__thumb { display: block; width: 100%; max-width: 260px; aspect-ratio: 640 / 375; object-fit: cover; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--s-line); box-shadow: 0 8px 20px -14px rgba(11, 19, 43, .45); }
+.s-mega--cols .s-mega__foot { margin-top: 14px; }
+@media (prefers-reduced-motion: reduce) { .s-mega--cols, .s-nav__item.is-open .s-mega--cols { transform: translate(-50%, 0); } }
+
+/* Menu điện thoại: các cột thành nhóm */
+.s-drawer__col + .s-drawer__col { margin-top: 10px; }
+.s-drawer__colhead { margin: 6px 0 2px; font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--s-orange); }
+.s-drawer__menu { display: grid; margin: 0; padding: 0; list-style: none; }
+.s-drawer__menu .s-mega__link { display: flex; align-items: center; min-height: 48px; padding: 8px 4px; border-radius: 10px; }
+.s-drawer__menu .s-mega__label { font-size: 15.5px; font-weight: 650; }

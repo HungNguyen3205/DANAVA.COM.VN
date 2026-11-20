@@ -25,6 +25,14 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
       long: ['overview', 'mission']
     }
   },
+  menu: {
+    title: 'Menu Giải pháp',
+    desc: 'Các cột trong menu "Giải pháp" trên đầu trang (máy tính) và trong menu điện thoại. Mục để trống đường dẫn chỉ hiển thị, không bấm được (vd. công cụ nội bộ). Đường dẫn: /trang-trong-website/ hoặc https://…',
+    config: {
+      labels: { ...COMMON, columns: 'Các cột', items: 'Mục trong cột', label: 'Tên', desc: 'Mô tả ngắn', href: 'Đường dẫn (để trống = chỉ hiển thị)', badge: 'Nhãn nhỏ (vd. Mới, Nội bộ)',
+        image: 'Ảnh (tùy chọn, hiện thành thẻ ảnh)', footText: 'Dòng cuối menu', footLabel: 'Chữ liên kết cuối menu', footHref: 'Đường dẫn cuối menu' }
+    }
+  },
   pages: {
     title: 'Chữ trên các trang',
     desc: 'Dòng chữ nhỏ phía trên, tiêu đề, câu dẫn đầu trang và dải kêu gọi liên hệ cuối trang. Đặt *dấu sao* quanh phần muốn nhấn mạnh (vd. Câu chuyện *triển khai thực tế*). Để trống một ô để dùng lại chữ mặc định.',

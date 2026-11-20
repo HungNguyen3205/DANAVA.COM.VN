@@ -48,6 +48,39 @@ const PAGES = {
   'case-study': { ctaTitle: 'Bạn cần một website có bản sắc riêng?', ctaLead: 'Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá.' }
 };
 
+/** Menu "Giải pháp" (mega menu 3 cột). Mục không có đường dẫn chỉ hiển thị (vd. công cụ nội bộ). */
+const MENU = {
+  columns: [
+    {
+      title: 'Nền tảng số DANAVA',
+      items: [
+        { label: 'DANAVA Studio', desc: 'Phần mềm quản lý Gym, Yoga, Pilates, bể bơi và Spa', href: '/giai-phap/danava-studio/', badge: '', image: '' },
+        { label: 'DANAVA GO', desc: 'Đặt vé xe khách trực tuyến cao cấp', href: 'https://danavago.com/', badge: '', image: '' },
+        { label: 'Hello DANAVA', desc: 'Bảng giá, so sánh gói và nhận báo giá DANAVA Studio', href: 'https://hello.danava.vn/', badge: '', image: '' },
+        { label: 'DANAVA Work', desc: 'Nền tảng quản trị công việc nhóm', href: '', badge: 'Nội bộ', image: '/assets/menu/danava-work.webp' }
+      ]
+    },
+    {
+      title: 'Digital Marketing',
+      items: [
+        { label: 'Sự kiện', desc: 'Ý tưởng, sân khấu, thi công và điều phối sự kiện doanh nghiệp', href: '/giai-phap/su-kien-truyen-thong/', badge: '', image: '' },
+        { label: 'Truyền thông', desc: 'Quay phim, chụp ảnh và nội dung cho thương hiệu', href: '/giai-phap/su-kien-truyen-thong/#hang-muc', badge: '', image: '' },
+        { label: 'Marketing', desc: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng', href: '/giai-phap/digital-marketing/', badge: '', image: '' }
+      ]
+    },
+    {
+      title: 'Khác',
+      items: [
+        { label: 'Đối tác', desc: 'Các cơ sở đồng hành trong hệ sinh thái DANAVA', href: '/doi-tac/', badge: '', image: '' },
+        { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '' }
+      ]
+    }
+  ],
+  footText: 'Chưa chắc giải pháp nào phù hợp?',
+  footLabel: 'Xem tất cả giải pháp',
+  footHref: '/giai-phap/'
+};
+
 const ABOUT = {
   goals: GOALS.map(g => ({ ...g })),
   milestones: MILESTONES.map(m => ({ ...m })),
@@ -148,6 +181,7 @@ const SERVICE_POLICY = {
 export function blockDefaults(staff: Person[] = []) {
   return {
     company: COMPANY,
+    menu: MENU,
     pages: PAGES,
     about: ABOUT,
     ecosystem: ECOSYSTEM,
@@ -159,7 +193,7 @@ export function blockDefaults(staff: Person[] = []) {
 export type BlockDefaults = ReturnType<typeof blockDefaults>;
 export type BlockKey = keyof BlockDefaults;
 export type Blocks = { [K in BlockKey]?: BlockDefaults[K] };
-export const BLOCK_KEYS: BlockKey[] = ['company', 'pages', 'about', 'ecosystem', 'staff', 'privacy', 'servicePolicy'];
+export const BLOCK_KEYS: BlockKey[] = ['company', 'menu', 'pages', 'about', 'ecosystem', 'staff', 'privacy', 'servicePolicy'];
 
 /* ------------------------------------------------------------ Đọc */
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -259,8 +293,15 @@ export function validBlocks(v: unknown): boolean {
   return Object.entries(v).every(([k, x]) => {
     const t = tpl[k as BlockKey];
     if (!t) return false;
-    return fits(x, k === 'pages' || k === 'company' ? relax(t) : t);
+    return fits(x, k === 'pages' || k === 'company' ? relax(t) : t) && (k !== 'menu' || safeMenu(x));
   });
+}
+/** Đường dẫn menu chỉ được là trang trong website (/…), https://…, hoặc để trống. */
+export const safeHref = (h: string) => h === '' || /^\/(?!\/)[^\s]*$/.test(h) || /^https:\/\/[^\s"'<>]+$/.test(h);
+function safeMenu(v: unknown): boolean {
+  const m = v as { columns?: { items?: { href?: string }[] }[]; footHref?: string };
+  return (m.columns || []).length <= 6 && (m.columns || []).every(c => (c.items || []).length <= 12 && (c.items || []).every(i => safeHref(i.href ?? '')))
+    && safeHref(m.footHref ?? '');
 }
 function relax(t: Tpl): Tpl {
   if (t.kind === 'obj') return { kind: 'obj', keys: Object.fromEntries(Object.entries(t.keys).map(([k, x]) => [k, relax(x)])), required: new Set() };
