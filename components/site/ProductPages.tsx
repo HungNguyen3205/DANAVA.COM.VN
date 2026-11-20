@@ -126,13 +126,13 @@ export function GoPage(_: { data: SiteData }) {
             })}
           </ol>
           <div className="pgo-studio__grid">
-            <BrowserFrame src="/assets/products/go/studio-login.webp" alt="Trang đăng nhập DANAVA GO Studio" url={GO.studioUrl} />
+            <BrowserFrame src="/assets/products/go/studio-overview.webp" alt="Bảng Tổng quan của DANAVA GO Studio: doanh thu, vé, chuyến hôm nay, tỉ lệ lấp đầy ghế và đội xe" url={GO.studioUrl} />
             <div className="pgo-studio__side">
               <h3><Gauge aria-hidden="true" />Ai dùng Studio?</h3>
               <p>Nhà xe đăng nhập bằng số điện thoại hoặc email. Trên app DANAVA GO, nhân viên nhà xe cũng có lối đăng nhập riêng:</p>
               <ul>{GO.studio.staff.map(x => <li key={x}>{x}</li>)}</ul>
               <a className="pgo-btn pgo-btn--primary" href={GO.studioUrl} {...ext}>Mở DANAVA GO Studio <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
-              <small>Đăng nhập bằng tài khoản nhà xe do DANAVA cấp.</small>
+              <small>Đăng nhập bằng tài khoản nhà xe do DANAVA cấp. Ảnh chụp bản demo, dữ liệu mẫu.</small>
             </div>
           </div>
         </div>

@@ -68,9 +68,16 @@ export const GO = {
       { src: '/assets/products/go/app-account.webp', title: 'Tài khoản hành khách', text: 'Tên đăng nhập là số điện thoại đặt vé; chủ xe, tài xế, lơ xe có lối đăng nhập riêng.' },
       { src: '/assets/products/go/app-promos.webp', title: 'Ưu đãi & khuyến mãi', text: 'Mã giảm giá do nhà xe tạo; bấm "Dùng mã" để mã tự điền khi đặt vé.' }
     ] },
-    { id: 'nha-xe', label: 'Nhà xe & quản trị', device: 'desktop' as const, lead: 'Mỗi nhà xe có trang riêng trên danavago.com và điều hành bằng DANAVA GO Studio.', shots: [
+    { id: 'nha-xe', label: 'Trang nhà xe', device: 'desktop' as const, lead: 'Mỗi nhà xe có trang riêng trên danavago.com và cổng đăng nhập DANAVA GO Studio.', shots: [
       { src: '/assets/products/go/operator-page.webp', title: 'Trang nhà xe', text: 'Ảnh xe, số tuyến, chuyến mỗi ngày, giá từ, hỏi đáp và danh sách tuyến theo lịch 7 ngày.' },
-      { src: '/assets/products/go/studio-login.webp', title: 'DANAVA GO Studio', text: 'Cổng quản trị của nhà xe: đội xe, lịch chuyến, ghế & vé, doanh thu.' }
+      { src: '/assets/products/go/studio-login.webp', title: 'Đăng nhập Studio', text: 'Nhà xe đăng nhập bằng số điện thoại hoặc email để vào bảng điều khiển.' }
+    ] },
+    { id: 'quan-tri', label: 'Quản trị Studio', device: 'desktop' as const, lead: 'Bên trong DANAVA GO Studio: ảnh chụp bản demo với nhà xe Cửa Ông Limousine, dữ liệu mẫu.', shots: [
+      { src: '/assets/products/go/studio-overview.webp', title: 'Tổng quan', text: 'Doanh thu, vé và chuyến hôm nay, tỉ lệ lấp đầy ghế, việc cần làm và tình trạng đội xe.' },
+      { src: '/assets/products/go/studio-trips.webp', title: 'Xe, tuyến & chuyến', text: 'Xe & sơ đồ ghế → tuyến & điểm đón → giờ chạy → chuyến đang bán → lịch tháng; nhập nhanh bằng 1 file Excel.' },
+      { src: '/assets/products/go/studio-seatmap.webp', title: 'Sơ đồ xe & bán vé tại quầy', text: 'Ghế cập nhật trực tiếp với app khách: trống, đang giữ, đã bán; chọn ghế, nhập khách, thu tiền ngay.' },
+      { src: '/assets/products/go/studio-orders.webp', title: 'Đơn vé', text: 'Tổng đơn, chưa thu, đã thu, đã hủy; tìm theo mã vé, tên khách hoặc số điện thoại và thu tiền từng đơn.' },
+      { src: '/assets/products/go/studio-apps.webp', title: 'App & tên miền nhà xe', text: 'Bật app đặt vé riêng cho từng nhà xe, với tên miền dạng tennhaxe.danavago.com và logo riêng.' }
     ] }
   ],
   operatorNote: 'Lịch trình, giá và tồn ghế do nhà xe quản lý (dữ liệu qua API). Thanh toán theo hướng dẫn của nhà xe.',
