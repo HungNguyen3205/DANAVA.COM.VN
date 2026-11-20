@@ -70,7 +70,7 @@ const MENU = {
       ]
     },
     {
-      title: 'Khác',
+      title: 'Cộng đồng',
       items: [
         { label: 'Đối tác', desc: 'Các cơ sở đồng hành trong hệ sinh thái DANAVA', href: '/doi-tac/', badge: '', image: '' },
         { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '' }
