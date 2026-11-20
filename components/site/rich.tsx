@@ -9,7 +9,8 @@ import { Info } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export function rich(text: string, className?: string): ReactNode {
-  const parts = text.split(/\*([^*]+)\*/g);
+  // Tên thương hiệu không bị ngắt dòng giữa "DANAVA" và "Solutions"
+  const parts = text.replace(/DANAVA Solutions/g, 'DANAVA\u00a0Solutions').split(/\*([^*]+)\*/g);
   if (parts.length === 1) return text;
   return parts.map((p, i) => (i % 2 ? (className ? <span key={i} className={className}>{p}</span> : <em key={i}>{p}</em>) : p));
 }

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   Phone, Mail, MapPin, CheckCircle2, AlertCircle, ArrowRight, MessageCircle,
-  ThumbsUp, PlayCircle, Clock, LifeBuoy
+  ThumbsUp, PlayCircle, Clock, LifeBuoy, Globe, Copy, Check, UserPlus
 } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { VALID_BUSINESS_TYPES, VALID_CONTACT_SERVICES, isValidPhoneNumber } from '@/lib/contact-services';
@@ -19,6 +19,31 @@ type Errors = Partial<Record<keyof Fields, string>>;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+
+/** Tên ngắn cho nút chọn nhanh dịch vụ trên form. */
+const CHIP: Record<string, string> = {
+  'danava-studio': 'DANAVA Studio', 'thiet-ke-website': 'Website', 'digital-marketing': 'Marketing',
+  'su-kien-truyen-thong': 'Sự kiện', 'media-production': 'Video & hình ảnh', 'du-lich-su-kien': 'Du lịch', 'tu-van-chuyen-doi-so': 'Tư vấn chuyển đổi số'
+};
+
+/**
+ * Đang trong giờ làm việc? Đọc chuỗi giờ làm việc trong CMS (vd. "Thứ Hai – Thứ Bảy, 08:00 – 18:00").
+ * Chỉ trả lời khi đọc được chắc chắn; ngược lại trả null để không hiển thị trạng thái sai.
+ */
+function openNow(hours: string): boolean | null {
+  const t = hours.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+  if (!t) return null;
+  const DAY: Record<string, number> = { 'chủ nhật': 0, 'thứ hai': 1, 'thứ ba': 2, 'thứ tư': 3, 'thứ năm': 4, 'thứ sáu': 5, 'thứ bảy': 6 };
+  const d = hours.toLowerCase().match(/(thứ hai|thứ ba|thứ tư|thứ năm|thứ sáu|thứ bảy|chủ nhật)\s*[–-]\s*(thứ hai|thứ ba|thứ tư|thứ năm|thứ sáu|thứ bảy|chủ nhật)/);
+  if (!d) return null;
+  const from = DAY[d[1]], to = DAY[d[2]] === 0 ? 7 : DAY[d[2]];
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Ho_Chi_Minh', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+  const wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.find(x => x.type === 'weekday')!.value);
+  const day = wd === 0 ? 7 : wd;
+  const mins = Number(parts.find(x => x.type === 'hour')!.value) * 60 + Number(parts.find(x => x.type === 'minute')!.value);
+  const open = Number(t[1]) * 60 + Number(t[2]), close = Number(t[3]) * 60 + Number(t[4]);
+  return day >= (from === 0 ? 7 : from) && day <= to && mins >= open && mins < close;
+}
 
 function validate(f: Fields): Errors {
   const e: Errors = {};
@@ -48,6 +73,35 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [feedback, setFeedback] = useState('');
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean | null>(null);
+  const [copied, setCopied] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const zalo = `https://zalo.me/${phone.replace(/\D/g, '')}`;
+
+  // Trạng thái giờ làm việc tính trên trình duyệt (tránh lệch khi render máy chủ)
+  useEffect(() => { setIsOpen(openNow(co.hours)); }, [co.hours]);
+
+  /** Danh thiếp nghiêng theo con trỏ (tắt khi người dùng bật giảm chuyển động — xem CSS). */
+  const tilt = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = cardRef.current; if (!el || e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--rx', `${((e.clientY - r.top) / r.height - .5) * -10}deg`);
+    el.style.setProperty('--ry', `${((e.clientX - r.left) / r.width - .5) * 14}deg`);
+  };
+  const untilt = () => { cardRef.current?.style.setProperty('--rx', '0deg'); cardRef.current?.style.setProperty('--ry', '0deg'); };
+
+  /** Lưu danh bạ: tạo tệp vCard từ thông tin công ty trong CMS. */
+  const saveContact = () => {
+    const tel = phone.replace(/\D/g, '').replace(/^0/, '+84');
+    const vcf = ['BEGIN:VCARD', 'VERSION:3.0', 'FN:DANAVA Solutions', `ORG:${co.companyName}`, `TEL;TYPE=WORK,VOICE:${tel}`, `EMAIL;TYPE=WORK:${email}`,
+      `ADR;TYPE=WORK:;;${co.street};${co.city};;;Việt Nam`, 'URL:https://danava.com.vn', 'END:VCARD'].join('\r\n');
+    const url = URL.createObjectURL(new Blob([vcf], { type: 'text/vcard;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = 'DANAVA-Solutions.vcf'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  const copyPhone = async () => {
+    try { await navigator.clipboard.writeText(formatPhone(phone)); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* trình duyệt chặn: bỏ qua */ }
+  };
 
   // Hộp xác nhận: đưa focus vào nút, đóng bằng Esc.
   useEffect(() => {
@@ -100,50 +154,57 @@ export function ContactPage({ initialService }: { initialService: string }) {
 
   return (
     <main id="main" className="c-page">
-      {/* Hero: tiêu đề bên trái, lưới kênh liên hệ bên phải */}
-      <section className="c-hero">
+      {/* Hero "Hãy nói xin chào": lời mời + nút liên hệ nhanh bên trái, danh thiếp DANAVA Solutions bên phải */}
+      <section className="c-hero c-hero--hello">
         <div className="c-gridbg" aria-hidden="true" />
         <div className="s-container">
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
           <div className="c-hero__grid">
             <div className="c-hero__copy">
               <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />{copy.kicker}</p>
-              <h1 className="c-hero__title">{rich(copy.title, 'c-grad')}</h1>
+              <h1 className="c-hero__title c-hero__title--hello">{rich(copy.title, 'c-grad c-brand')}</h1>
               <p className="c-hero__lead">{copy.lead}</p>
-              <p className="c-badge">
-                <span className="c-badge__mark" aria-hidden="true">D</span>
-                <span>Đơn vị chuyển đổi số cho <b>Gym · Yoga · Spa</b><i>Đà Nẵng · Toàn quốc</i></span>
-              </p>
+              {isOpen !== null && (
+                <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
+                  <b><i aria-hidden="true" />{isOpen ? 'Đang trong giờ làm việc · gọi là có người nghe máy' : 'Ngoài giờ làm việc · để lại lời nhắn, DANAVA gọi lại vào ngày làm việc kế tiếp'}</b>
+                  <span>{co.hours}</span>
+                </p>
+              )}
+              <div className="c-dock">
+                <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><Phone aria-hidden="true" /><span><small>Gọi ngay</small>{formatPhone(phone)}</span></a>
+                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" /><span><small>Nhắn tin</small>Chat Zalo</span><span className="c-sr"> (mở tab mới)</span></a>
+                <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><Mail aria-hidden="true" /><span><small>Gửi email</small>{email}</span></a>
+              </div>
+              <ul className="c-socials" aria-label="Kênh khác">
+                <li><a href={co.facebook} target="_blank" rel="noopener noreferrer"><ThumbsUp aria-hidden="true" />Fanpage<span className="c-sr"> (mở tab mới)</span></a></li>
+                <li><a href={co.youtube} target="_blank" rel="noopener noreferrer"><PlayCircle aria-hidden="true" />YouTube<span className="c-sr"> (mở tab mới)</span></a></li>
+                <li><a href={`mailto:${co.supportEmail}`}><LifeBuoy aria-hidden="true" />Hỗ trợ kỹ thuật</a></li>
+                <li><a href="#dang-ky-tu-van"><ArrowRight aria-hidden="true" />Gửi yêu cầu tư vấn</a></li>
+              </ul>
             </div>
 
-            <div className="c-tiles">
-              <div className="c-tile c-tile--dark">
-                <span className="c-tile__icon" aria-hidden="true"><Phone /></span>
-                <p className="c-tile__label">Hotline · Zalo</p>
-                <div className="c-tile__row">
-                  <a href={`tel:${phone}`}>{formatPhone(phone)}</a>
-                  <a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">Chat Zalo <span aria-hidden="true">→</span></a>
+            <div className="c-cardzone">
+              <span className="c-orbit c-orbit--a" aria-hidden="true" />
+              <span className="c-orbit c-orbit--b" aria-hidden="true" />
+              <div className="c-namecard" ref={cardRef} onPointerMove={tilt} onPointerLeave={untilt}>
+                <div className="c-namecard__face">
+                  <div className="c-namecard__top">
+                    <img src="/assets/danava-logo-trim.png" alt="" width={554} height={135} />
+                    <span className="c-namecard__chip" aria-hidden="true" />
+                  </div>
+                  <p className="c-namecard__brand">DANAVA&nbsp;Solutions</p>
+                  <p className="c-namecard__motto">{data.headline || 'Cùng bạn phát triển.'}</p>
+                  <ul className="c-namecard__lines">
+                    <li><Phone aria-hidden="true" /><a href={`tel:${phone}`}>{formatPhone(phone)}</a></li>
+                    <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{email}</a></li>
+                    <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener noreferrer">{co.address}</a></li>
+                    <li><Globe aria-hidden="true" /><span>danava.com.vn</span></li>
+                  </ul>
                 </div>
               </div>
-              <div className="c-tile c-tile--wide">
-                <span className="c-tile__icon" aria-hidden="true"><Mail /></span>
-                <p className="c-tile__label">Email</p>
-                <a href={`mailto:${email}`}>{email}</a>
-              </div>
-              <div className="c-tile">
-                <span className="c-tile__icon c-tile__icon--sky" aria-hidden="true"><ThumbsUp /></span>
-                <p className="c-tile__label">Fanpage</p>
-                <a href={co.facebook} target="_blank" rel="noopener noreferrer">Theo dõi <span aria-hidden="true">→</span></a>
-              </div>
-              <div className="c-tile">
-                <span className="c-tile__icon c-tile__icon--red" aria-hidden="true"><PlayCircle /></span>
-                <p className="c-tile__label">YouTube</p>
-                <a href={co.youtube} target="_blank" rel="noopener noreferrer">Đăng ký kênh <span aria-hidden="true">→</span></a>
-              </div>
-              <div className="c-tile">
-                <span className="c-tile__icon c-tile__icon--amber" aria-hidden="true"><LifeBuoy /></span>
-                <p className="c-tile__label">Hỗ trợ</p>
-                <a href={`mailto:${co.supportEmail}`}>Kỹ thuật <span aria-hidden="true">→</span></a>
+              <div className="c-cardacts">
+                <button type="button" className="c-cardacts__btn" onClick={saveContact}><UserPlus aria-hidden="true" />Lưu vào danh bạ</button>
+                <button type="button" className="c-cardacts__btn" onClick={copyPhone} aria-live="polite">{copied ? <><Check aria-hidden="true" />Đã sao chép</> : <><Copy aria-hidden="true" />Sao chép số</>}</button>
               </div>
             </div>
           </div>
@@ -157,8 +218,8 @@ export function ContactPage({ initialService }: { initialService: string }) {
           <div>
             <p className="c-tag"><b>01</b> / Liên hệ</p>
             <h2 className="c-contact__heading" id="c-contact-heading">
-              Bạn đã sẵn sàng số hóa và tăng trưởng doanh thu?
-              <span className="c-grad c-grad--light">Hãy để DANAVA tư vấn cho bạn</span>
+              Kể cho chúng tôi nghe về doanh nghiệp của bạn.
+              <span className="c-grad c-grad--light">DANAVA sẽ gọi lại để tư vấn.</span>
             </h2>
 
             <dl className="c-info">
@@ -199,6 +260,15 @@ export function ContactPage({ initialService }: { initialService: string }) {
                   <option value="">Loại hình kinh doanh</option>
                   {VALID_BUSINESS_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
+              </div>
+              <div className="c-field c-field--full">
+                <p className="c-chips__label" id="c-chips-label">Bạn quan tâm đến</p>
+                <div className="c-chips" role="group" aria-labelledby="c-chips-label">
+                  {VALID_CONTACT_SERVICES.filter(x => CHIP[x.id]).map(x => (
+                    <button key={x.id} type="button" className={fields.service === x.label ? 'is-on' : ''} aria-pressed={fields.service === x.label}
+                      onClick={() => setFields(prev => ({ ...prev, service: prev.service === x.label ? '' : x.label }))}>{CHIP[x.id]}</button>
+                  ))}
+                </div>
               </div>
               <div className="c-field c-field--full">
                 <label className="c-sr" htmlFor="contact-service">Dịch vụ quan tâm</label>
@@ -257,7 +327,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <span className="c-office__city">Giờ làm việc</span>
                 <h3><Clock aria-hidden="true" />{co.hours}</h3>
                 <p>Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.</p>
-                <a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
+                <a href={zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
               </div>
             </div>
             <div className="c-office">
