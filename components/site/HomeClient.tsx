@@ -81,13 +81,23 @@ export function Reveal({ root = 'main.h-home' }: { root?: string }) {
     const el = document.querySelector(root);
     if (!el) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-    const els = el.querySelectorAll<HTMLElement>('[data-reveal]');
     el.classList.add('is-motion');
     const io = new IntersectionObserver(es => es.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-    }), { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
-    els.forEach(x => io.observe(x));
-    return () => io.disconnect();
+    }), { rootMargin: '0px 0px -6% 0px', threshold: 0 });
+    const watch = (scope: ParentNode) => scope.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in)').forEach(x => {
+      // Khối đã nằm trong màn hình (hoặc phía trên) thì hiện ngay, không đợi cuộn
+      if (x.getBoundingClientRect().top < window.innerHeight) x.classList.add('is-in'); else io.observe(x);
+    });
+    watch(el);
+    // Theo dõi cả khối mới xuất hiện sau khi trang đã tải (cập nhật nội dung, hot reload khi chạy dev)
+    const mo = new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
+      if (!(n instanceof HTMLElement)) return;
+      if (n.matches('[data-reveal]') && !n.classList.contains('is-in')) io.observe(n);
+      watch(n);
+    })));
+    mo.observe(el, { childList: true, subtree: true });
+    return () => { io.disconnect(); mo.disconnect(); };
   }, [root]);
   return null;
 }
