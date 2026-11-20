@@ -63,6 +63,29 @@ export const SERVICE_SEEDS: Record<string, ServiceSeed> = {
     ],
     pricing: 'Báo giá dựa trên số lượng trang, tính năng đặc thù (đặt lịch, bán gói, nhiều ngôn ngữ…) và mức độ chuẩn bị nội dung, hình ảnh. Chi phí duy trì chủ yếu là tên miền và máy chủ theo giá nhà cung cấp. DANAVA gửi đề xuất phạm vi và tiến độ trước khi bắt đầu.'
   },
+  marketing: {
+    heroLead: 'Chiến lược, nội dung, quay chụp và quảng cáo được kết nối thành một kế hoạch. Thương hiệu của bạn đến gần khách hàng hơn, với số liệu minh bạch.',
+    audience: ['Phòng tập & studio', 'Spa & wellness', 'Doanh nghiệp dịch vụ', 'Cơ sở đào tạo'],
+    problems: [
+      'Đăng bài không đều, hình ảnh mỗi kênh một kiểu nên thương hiệu thiếu nhất quán.',
+      'Chạy quảng cáo nhưng không rõ khách đến từ đâu, tin nhắn và đăng ký dễ bị bỏ sót.',
+      'Thiếu hình ảnh, video thật về cơ sở và đội ngũ để khách hàng tin tưởng.',
+      'Fanpage hoặc tài khoản quảng cáo do người khác giữ, doanh nghiệp khó kiểm soát chi tiêu.'
+    ],
+    process: [
+      { title: 'Đánh giá hiện trạng', text: 'Phân tích kênh, đối thủ trong khu vực và thống nhất mục tiêu ưu tiên.' },
+      { title: 'Lập kế hoạch', text: 'Trục nội dung, lịch biên tập, kịch bản quay chụp và ngân sách dự kiến.' },
+      { title: 'Sản xuất & kích hoạt', text: 'Quay chụp tại cơ sở, hoàn thiện bài đăng và chạy chiến dịch.' },
+      { title: 'Báo cáo & tối ưu', text: 'Báo cáo số liệu từ nền tảng, bàn giao file gốc và đề xuất cho chu kỳ tiếp theo.' }
+    ],
+    faqs: [
+      { q: 'Doanh nghiệp có cần tự chuẩn bị hình ảnh, video không?', a: 'Không bắt buộc. Đội ngũ DANAVA có thể đến cơ sở để quay chụp không gian, đội ngũ và không khí dịch vụ thực tế.' },
+      { q: 'Ngân sách quảng cáo được quản lý thế nào?', a: 'Doanh nghiệp đứng tên tài khoản và thanh toán trực tiếp cho nền tảng quảng cáo theo hóa đơn thực tế. DANAVA thu phí dịch vụ theo thỏa thuận.' },
+      { q: 'Kết thúc hợp đồng, các kênh truyền thông thuộc về ai?', a: 'Toàn bộ Fanpage, Zalo OA, tài khoản quảng cáo, tệp khách hàng và file ảnh/video gốc thuộc về doanh nghiệp. DANAVA bàn giao đầy đủ quyền quản trị.' },
+      { q: 'Vì sao nên kết hợp Fanpage và Zalo OA?', a: 'Fanpage giúp tiếp cận khách hàng mới qua nội dung và quảng cáo. Zalo OA phù hợp để chăm sóc và giữ liên lạc với khách hàng đã quan tâm.' }
+    ],
+    pricing: 'Phí dịch vụ được thỏa thuận theo phạm vi công việc: số kênh, tần suất nội dung, số buổi quay chụp. Ngân sách quảng cáo do doanh nghiệp thanh toán trực tiếp cho nền tảng theo hóa đơn thực tế.'
+  },
   events: {
     heroLead: 'DANAVA kết nối ý tưởng, nguồn lực và triển khai để tạo nên những sự kiện mang dấu ấn riêng của doanh nghiệp: từ kịch bản, không gian, sân khấu đến điều phối và biểu diễn.',
     audience: ['Doanh nghiệp', 'Thương hiệu bán lẻ', 'Hiệp hội & câu lạc bộ', 'Chuỗi dịch vụ'],

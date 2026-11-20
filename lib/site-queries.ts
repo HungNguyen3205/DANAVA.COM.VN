@@ -10,7 +10,7 @@ import { ARCHIVE_TOPIC } from './content-defaults.ts';
 export const TOPIC_PAGE_MIN_POSTS = 3;
 
 /** Thứ tự ưu tiên hiển thị giải pháp: sản phẩm chủ lực trước. */
-export const SERVICE_ORDER = ['studio', 'website', 'events', 'travel', 'community'];
+export const SERVICE_ORDER = ['studio', 'website', 'marketing', 'events', 'travel', 'community'];
 export const sortServices = (list: Service[]) =>
   [...list].sort((a, b) => (SERVICE_ORDER.indexOf(a.id) + 99) % 99 - (SERVICE_ORDER.indexOf(b.id) + 99) % 99);
 

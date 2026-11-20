@@ -23,8 +23,6 @@ const config: NextConfig = {
     return [
       ...legacyRedirects,
       { source: '/favicon.ico', destination: '/icon.png', permanent: true },
-      // DANAVA không cung cấp Digital Marketing: URL cũ của giải pháp chuyển về trang tổng hợp giải pháp
-      { source: '/giai-phap/digital-marketing/:path*', destination: '/giai-phap/', permanent: true },
       { source: '/kien-thuc/chu-de/digital-marketing/', destination: '/kien-thuc/', permanent: true },
       // Bài digital marketing đã gỡ (lib/content-defaults.ts REMOVED_POST_IDS)
       ...['digital-marketing', 'tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi', 'doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch',

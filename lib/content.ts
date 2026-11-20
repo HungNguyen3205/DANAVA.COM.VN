@@ -181,11 +181,11 @@ export type SiteData = {
 };
 
 /**
- * Giải pháp đã ngừng (DANAVA không cung cấp Digital Marketing — yêu cầu chủ sở hữu 19/11/2026).
+ * Giải pháp đã ngừng (hiện không có; Digital Marketing được khôi phục theo yêu cầu chủ sở hữu 20/11/2026).
  * Vẫn chấp nhận khi ĐỌC dữ liệu cũ đã lưu (để website không lỗi), nhưng bị lọc khỏi mọi nơi hiển thị
  * trong normalizeContent() và không còn trong dữ liệu mặc định.
  */
-export const RETIRED_SERVICES = [{ id: 'marketing', slug: 'digital-marketing' }];
+export const RETIRED_SERVICES: { id: string; slug: string }[] = [];
 const knownService = (id: unknown, slug?: unknown) =>
   initial.services.some(x => x.id === id && (slug === undefined || x.slug === slug))
   || RETIRED_SERVICES.some(x => x.id === id && (slug === undefined || x.slug === slug));
@@ -216,6 +216,7 @@ export const initial: SiteData = {
   services: [
     { id: 'website', slug: 'thiet-ke-website', title: 'Website & Landing Page', description: 'Một không gian số thể hiện đúng bản sắc và mục tiêu của doanh nghiệp.', items: ['Website doanh nghiệp, cá nhân, bán hàng và cộng đồng', 'Landing page giới thiệu dịch vụ và chiến dịch', 'Giao diện thích ứng điện thoại', 'Tổ chức nội dung và hành trình liên hệ'] },
     { id: 'studio', slug: 'danava-studio', title: 'DANAVA Studio', description: 'Phần mềm quản trị dành cho Gym, Yoga, Pilates, bể bơi và Spa.', items: ['Quản lý hội viên và gói dịch vụ', 'Lịch lớp, đặt chỗ và check-in', 'Theo dõi hạn gói và gia hạn', 'Báo cáo và phân quyền theo phạm vi gói'] },
+    { id: 'marketing', slug: 'digital-marketing', title: 'Digital Marketing', description: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng.', items: ['Digital marketing và truyền thông tổng thể', 'Chăm sóc fanpage', 'Sản xuất nội dung, quay phim và chụp hình', 'Tư vấn kế hoạch theo mục tiêu'] },
     { id: 'events', slug: 'su-kien-truyen-thong', title: 'Sự kiện & Truyền thông', description: 'Ý tưởng, không gian, sân khấu, thi công và điều phối cho sự kiện của doanh nghiệp.', items: ['Lễ ra mắt sản phẩm, họp báo, triển lãm, lễ kỷ niệm, gala dinner', 'Thiết kế, thi công booth, backdrop, đạo cụ và không gian sự kiện', 'Thiết bị âm thanh, ánh sáng, màn hình LED và nhân sự kỹ thuật', 'MC, DJ, ca sĩ, band nhạc, vũ đoàn và nhân sự biểu diễn', 'Roadshow, activation, sampling và truyền thông sự kiện'] },
     { id: 'travel', slug: 'du-lich-su-kien', title: 'Du lịch trải nghiệm', description: 'Tour trải nghiệm, retreat yoga và hành trình thiết kế riêng cho từng nhóm.', items: ['Du lịch trải nghiệm và tour yoga', 'Retreat kết hợp tập luyện và nghỉ dưỡng', 'Workshop và team building cho nhóm', 'Đặt tour, phòng, xe và vé tham quan'] },
     { id: 'community', slug: 'cong-dong', title: 'Cộng đồng & Đồng hành', description: 'Kết nối cộng đồng yoga và đồng hành cùng doanh nghiệp.', items: ['Yoga Club Vietnam', 'Workshop và giao lưu cộng đồng', 'Review và chia sẻ trải nghiệm', 'Tư vấn thành lập doanh nghiệp theo thỏa thuận'] }

@@ -17,7 +17,7 @@ test('dữ liệu production cũ (5 giải pháp, chưa có showcase) được b
   const n = normalizeContent(legacy);
   assert.equal(validateContent(n), true);
   assert.ok(n.services.some(s => s.id === 'events' && s.slug === 'su-kien-truyen-thong'));
-  assert.deepEqual(sortServices(n.services).map(s => s.id), ['studio', 'website', 'events', 'travel', 'community']);
+  assert.deepEqual(sortServices(n.services).map(s => s.id), ['studio', 'website', 'marketing', 'events', 'travel', 'community']);
   assert.ok((n.showcase || []).length > 10);
 });
 
@@ -65,21 +65,21 @@ test('mục showcase: không công khai khi thiếu ảnh, case study cần nộ
   assert.ok(n.showcase!.filter(x => x.published).every(x => x.image), 'không có khung giữ chỗ trên trang công khai');
 });
 
-test('chương trình sự kiện chỉ gắn phạm vi khi có dữ liệu; không còn trang Digital Marketing', () => {
+test('chương trình sự kiện chỉ gắn phạm vi khi có dữ liệu; Digital Marketing có trang riêng', () => {
   const n = norm();
   const ev = showcaseFor(n, 'events');
   assert.ok(ev.filter(x => x.scope.length).length >= 3);
   assert.ok(ev.some(x => !x.scope.length), 'chương trình chưa rõ phạm vi vẫn được giữ, chỉ hiện như hình ảnh');
   assert.equal(showcaseFor(n, 'marketing').length, 0);
   assert.ok(!fs.existsSync('components/site/MarketingStage.tsx'));
-  assert.ok(!fs.existsSync('components/site/MarketingPage.tsx'), 'Đã gỡ trang Digital Marketing');
+  assert.ok(fs.existsSync('components/site/MarketingPage.tsx'), 'Trang Digital Marketing được khôi phục (20/11/2026)');
 });
 
 test('URL truyền thông/media cũ chuyển tới trang Sự kiện & Truyền thông, không có chuỗi chuyển hướng', () => {
   const map = new Map(legacyRedirects.map(r => [r.source, r.destination]));
   assert.equal(map.get('/media/'), '/giai-phap/su-kien-truyen-thong/');
   assert.equal(map.get('/truyen-thong/'), '/giai-phap/su-kien-truyen-thong/');
-  assert.equal(map.get('/digital-marketing/'), '/giai-phap/', 'URL marketing cũ về trang Giải pháp');
+  assert.equal(map.get('/digital-marketing/'), '/giai-phap/digital-marketing/', 'URL marketing cũ về trang Digital Marketing');
   for (const d of map.values()) assert.ok(!map.has(d));
   assert.equal(resolveValidService('su-kien-truyen-thong'), 'Tổ chức sự kiện, thi công không gian & truyền thông sự kiện');
 });
@@ -105,26 +105,23 @@ test('4 dự án đã gỡ không hiện kể cả khi database đã lưu chúng
   for (const bad of ['Bước Chạy Nhịp Sống', 'Omachi', 'AURUM', 'DriveRent']) assert.ok(!names.includes(bad), bad);
 });
 
-test('Digital Marketing bị gỡ khỏi dữ liệu, kể cả khi database production đã lưu', async () => {
-  const { RETIRED_SERVICES } = await import('../lib/content.ts');
+test('Digital Marketing khôi phục: giải pháp và trang riêng; chủ đề và bài viết marketing cũ vẫn gỡ', () => {
   const saved = structuredClone(initial) as typeof initial;
-  saved.services = [...saved.services, { id: 'marketing', slug: 'digital-marketing', title: 'Marketing', description: 'x', items: ['x'] }];
   saved.posts[0].topicId = 'marketing';
-  assert.equal(validateContent(saved), true, 'dữ liệu cũ vẫn đọc được');
+  assert.equal(validateContent(saved), true);
   const n = normalizeContent(saved);
-  assert.ok(!n.services.some(s => RETIRED_SERVICES.some(r => r.id === s.id)));
+  const mk = n.services.find(s => s.id === 'marketing');
+  assert.ok(mk && mk.slug === 'digital-marketing' && (mk.faqs || []).length > 0, 'giải pháp có nội dung mặc định');
   assert.ok(!(n.topics || []).some(t => t.id === 'marketing'));
-  assert.ok(!(n.subServices || []).some(x => x.parentId === 'marketing'));
   assert.equal(n.posts[0].topicId, 'luu-tru');
-  assert.ok(n.posts.every(p => !(p.serviceIds || []).includes('marketing')));
   assert.ok(!/marketing/i.test(n.heroTitle || ''));
+  const config = fs.readFileSync('next.config.ts', 'utf8');
+  assert.ok(!config.includes("source: '/giai-phap/digital-marketing/"), 'không còn chuyển hướng trang giải pháp');
 });
 
-test('không còn nội dung Digital Marketing: bài viết bị gỡ, URL cũ chuyển về /kien-thuc/', () => {
+test('bài viết digital marketing cũ vẫn gỡ, URL cũ chuyển về /kien-thuc/', () => {
   const n = norm();
   assert.equal(validateContent(n), true);
-  const text = JSON.stringify({ ...n, posts: n.posts.map(p => ({ ...p, body: '' })) });
-  assert.doesNotMatch(text, /digital marketing/i);
   for (const id of ['marketing', 'wp-13086', 'wp-12101', 'wp-11869', 'wp-11219']) assert.ok(!n.posts.some(p => p.id === id), id);
   const saved = structuredClone(initial);
   saved.presentation = { ...saved.presentation!, ecosystem: [...saved.presentation!.ecosystem, { id: 'digital', name: 'DANAVA DIGITAL', description: 'Marketing tổng thể cho doanh nghiệp', features: '', visible: true }] };

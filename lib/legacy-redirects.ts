@@ -182,7 +182,7 @@ export const legacyRedirects=[
   },
   {
     "source": "/digital-marketing/",
-    "destination": "/giai-phap/",
+    "destination": "/giai-phap/digital-marketing/",
     "permanent": true
   },
   {
@@ -222,17 +222,17 @@ export const legacyRedirects=[
   },
   {
     "source": "/dich-vu/digital-marketing/",
-    "destination": "/giai-phap/",
+    "destination": "/giai-phap/digital-marketing/",
     "permanent": true
   },
   {
     "source": "/marketing/",
-    "destination": "/giai-phap/",
+    "destination": "/giai-phap/digital-marketing/",
     "permanent": true
   },
   {
     "source": "/dich-vu/marketing/",
-    "destination": "/giai-phap/",
+    "destination": "/giai-phap/digital-marketing/",
     "permanent": true
   },
   {

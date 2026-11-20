@@ -12,6 +12,7 @@ import { serviceMeta, CONTACT, formatPhone, excerpt } from './catalog';
 import { SERVICE_DETAILS } from './service-content';
 import { Crumbs, CtaBand, SectionHeading, Visual } from './ui';
 import { WebsitePage } from './WebsitePage';
+import { MarketingPage } from './MarketingPage';
 import { EventsPage } from './EventsPage';
 import { StudioPage } from './StudioPage';
 import { StudioShowcase } from './StudioShowcase';
@@ -27,6 +28,7 @@ export function contactHrefFor(service: Service) {
 /** Mỗi giải pháp chính có bố cục riêng; các giải pháp còn lại dùng bố cục chuẩn bên dưới. */
 export function ServiceDetailPage({ service, data }: { service: Service; data: SiteData }) {
   if (service.id === 'website') return <WebsitePage service={service} data={data} />;
+  if (service.id === 'marketing') return <MarketingPage service={service} data={data} />;
   if (service.id === 'events') return <EventsPage service={service} data={data} />;
   if (service.id === 'studio') return <StudioPage service={service} data={data} />;
   return <StandardServicePage service={service} data={data} />;

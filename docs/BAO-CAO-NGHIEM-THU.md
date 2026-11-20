@@ -170,3 +170,18 @@ Nhóm menu mới **"Trang & thông tin"** trong CMS gồm 6 mục. Nội dung m�
   - So sánh chữ hiển thị của 18 trang trước và sau thay đổi: không khác.
   - E2E trên giao diện quản trị 18/18: sửa ở cả 6 mục → lưu → hiện đúng trên website; "Khôi phục mặc định" đưa nội dung về như cũ.
 - **Còn trong mã nguồn (ít khi cần sửa):** màn hình app và 16 module trên trang Studio, khối nhận diện riêng trang Website/Sự kiện, menu chính và chân trang (cấu trúc liên kết), trang 404.
+
+## 13. Cập nhật: menu Giải pháp 3 cột và khôi phục trang Digital Marketing (20/11/2026)
+
+- **Menu "Giải pháp" mới (máy tính và điện thoại), có 3 cột:**
+  - **Nền tảng số DANAVA:** DANAVA Studio, DANAVA GO (danavago.com), Hello DANAVA (hello.danava.vn, bảng giá và nhận báo giá Studio), DANAVA Work. DANAVA Work là công cụ nội bộ tại workspace.danava.com.vn nên chỉ hiện ảnh chụp màn hình thật, không có liên kết.
+  - **Digital Marketing:** Sự kiện, Truyền thông, Marketing.
+  - **Khác:** Đối tác, Đội ngũ.
+- Menu sửa được trong CMS ở mục "Menu Giải pháp": thêm, xóa, đổi thứ tự cột và mục; mỗi mục có mô tả, nhãn nhỏ, ảnh tùy chọn. Mục để trống đường dẫn chỉ hiển thị. Đường dẫn chỉ nhận trang trong website hoặc https.
+- **Theo lựa chọn của chủ sở hữu, khôi phục trang giải pháp Digital Marketing:**
+  - trang /giai-phap/digital-marketing/ cùng nội dung mặc định cũ;
+  - lựa chọn "Marketing" trên form liên hệ;
+  - các URL cũ /digital-marketing/, /marketing/, /dich-vu/(digital-)marketing/ chuyển hướng về trang này.
+- Vẫn giữ gỡ: 5 bài viết marketing cũ, chủ đề kiến thức "marketing", khối "DANAVA DIGITAL" trên trang Hệ sinh thái.
+- **Website & Landing Page, Du lịch trải nghiệm, Cộng đồng** không có trong menu mới theo đúng mô tả của chủ sở hữu. Các trang này vẫn có ở "Xem tất cả giải pháp", chân trang, và có thể thêm vào menu trong CMS.
+- **Kiểm tra:** kiểm thử tự động 98/98; menu nằm gọn ở 1440px và 1100px; menu điện thoại không tràn ngang; trang Digital Marketing không tràn ở 1440/390/360px và không có ảnh hỏng. Ảnh chụp: docs/screenshots/menu/.
