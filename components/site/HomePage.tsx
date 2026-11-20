@@ -89,7 +89,7 @@ export default function HomePage({ data }: { data: SiteData }) {
         <HeroSlides slides={SLIDES} />
         <div className="h-hero__shade" aria-hidden="true" />
         <div className="s-container h-hero__inner">
-          <p className="h-hero__eyebrow">DANAVA Solutions · Đà Nẵng · Từ 2021</p>
+          <p className="h-hero__eyebrow">DANAVA Solutions · Since 2016</p>
           <h1 className="h-hero__title u-hero-title" id="home-title">{data.heroTitle}</h1>
           <p className="u-hero-brand">{data.headline || 'Cùng bạn phát triển.'}</p>
           <p className="h-hero__lead">Phần mềm quản lý DANAVA Studio cho Gym, Yoga, Pilates, Spa; thiết kế website; tổ chức sự kiện và du lịch trải nghiệm. Một đầu mối cho công nghệ và trải nghiệm khách hàng.</p>
