@@ -6,7 +6,7 @@
  * Dữ liệu từ khối CMS "ecosystem" (lib/blocks.ts → ecosystemFor), không thêm số liệu ngoài dữ liệu đó.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Hotel, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, Ticket, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BadgeCheck, Hotel, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, Ticket, type LucideIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import type { EcosystemCategory, EcosystemUnit } from '@/lib/ecosystem';
 import { ecosystemFor } from '@/lib/blocks';
@@ -223,34 +223,42 @@ export function EcosystemPage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      {/* Đối tác đồng hành */}
+      {/* Đối tác đồng hành — lưới thẻ như khối “Đối tác đồng hành” trên danava.vn */}
       {partners.length > 0 && (
         <section className="hx-sec hx-partners" aria-labelledby="hx-partners-title">
           <div className="s-container">
-            <div className="hx-head">
-              <p className="hx-kicker hx-kicker--dark">Đối tác đồng hành</p>
-              <h2 className="hx-h2" id="hx-partners-title">Những cơ sở đang cùng <em>phát triển trong hệ sinh thái.</em></h2>
-              <p className="hx-head__lead hx-head__lead--dark">Danh sách theo khối “Đối tác đồng hành” trên danava.vn. <Link href="/doi-tac/">Xem địa chỉ, giờ mở cửa và dịch vụ của từng đối tác</Link>.</p>
+            <div className="hx-partners__head">
+              <div className="hx-head">
+                <p className="hx-kicker hx-kicker--dark">Đối tác đồng hành</p>
+                <h2 className="hx-h2" id="hx-partners-title">Những cơ sở đang cùng <em>phát triển trong hệ sinh thái.</em></h2>
+                <p className="hx-head__lead hx-head__lead--dark">{partners.length} cơ sở gym, yoga, pilates, bơi lội và wellness theo khối “Đối tác đồng hành” trên danava.vn.</p>
+              </div>
+              <Link className="hx-btn" href="/doi-tac/">Xem tất cả đối tác <ArrowRight aria-hidden="true" /></Link>
             </div>
-          </div>
-          <div className="hx-marquee">
-            {[0, 1].map(copyNo => (
-              <ul key={copyNo} className="hx-marquee__track" aria-hidden={copyNo === 1 ? true : undefined}>
-                {partners.map(c => {
-                  const project = projects.find(p => p.id === c.projectId);
-                  const href = project ? `/du-an/${project.slug}/` : `/doi-tac/#${c.id}`;
-                  return (
-                    <li key={c.id}>
-                      <Link href={href} tabIndex={copyNo === 1 ? -1 : undefined} aria-label={`${c.name}${project ? ' — xem case study' : ' — thông tin đối tác'}`}>
-                        <span className="hx-logo">{c.logo ? <img src={c.logo} alt="" width={360} height={240} loading="lazy" decoding="async" /> : <b>{c.name}</b>}</span>
-                        <span className="hx-logo__name">{c.name}</span>
-                        {project && <span className="hx-logo__case">Case study</span>}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            ))}
+            <ul className="hx-pgrid">
+              {partners.map(c => {
+                const project = projects.find(p => p.id === c.projectId);
+                const href = project ? `/du-an/${project.slug}/` : `/doi-tac/#${c.id}`;
+                const photo = c.cover || c.logo;
+                return (
+                  <li key={c.id} className="hx-pcard">
+                    <div className={`hx-pcard__media${c.cover ? '' : ' is-logo'}`}>
+                      {photo ? <img src={photo} alt="" loading="lazy" decoding="async" width={640} height={420} /> : <span className="hx-pcard__ph" aria-hidden="true">{c.name.charAt(0)}</span>}
+                      {c.cover && c.logo && <span className="hx-pcard__logo"><img src={c.logo} alt="" loading="lazy" decoding="async" width={96} height={96} /></span>}
+                      {project && <span className="hx-pcard__tag">Case study</span>}
+                    </div>
+                    <div className="hx-pcard__body">
+                      <h3><Link className="hx-pcard__link" href={href}>{c.name}</Link></h3>
+                      <p className="hx-pcard__meta">
+                        {c.role && <span className="hx-pcard__role">{c.role}</span>}
+                        {c.city && <span>{c.city.replace(/^Thừa Thiên /, '')}</span>}
+                      </p>
+                      {c.verified && <p className="hx-pcard__ok"><BadgeCheck aria-hidden="true" />Đã xác minh<span className="s-sr"> trên danava.vn</span></p>}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </section>
       )}

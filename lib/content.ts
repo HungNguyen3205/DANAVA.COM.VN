@@ -174,6 +174,8 @@ export type SiteData = {
   subServices?: SubService[];
   topics?: Topic[];
   clients?: Client[];
+  /** Các đợt bổ sung dữ liệu mẫu đã chạy (để không thêm lại thứ quản trị viên đã xoá) */
+  seeded?: string[];
   testimonials?: Testimonial[];
   showcase?: ShowcaseItem[];
   /** Khối nội dung chỉnh sửa được (lib/blocks.ts): công ty, chữ trên trang, Về DANAVA, hệ sinh thái, hồ sơ nhân sự, chính sách */
@@ -345,6 +347,7 @@ export function validateContent(v: unknown): v is SiteData {
     || !uniqueBy(v.subServices as SubService[], s => s.id) || !uniqueBy(v.subServices as SubService[], s => s.parentId + '/' + s.slug))) return false;
   if (v.topics !== undefined && (!Array.isArray(v.topics) || v.topics.length > 50 || !v.topics.every(validTopic)
     || !uniqueBy(v.topics as Topic[], t => t.id) || !uniqueBy(v.topics as Topic[], t => t.slug))) return false;
+  if (v.seeded !== undefined && (!Array.isArray(v.seeded) || v.seeded.length > 50 || !v.seeded.every(x => str(x, 60)))) return false;
   if (v.clients !== undefined && (!Array.isArray(v.clients) || v.clients.length > 100 || !v.clients.every(validClient) || !uniqueBy(v.clients as Client[], c => c.id))) return false;
   if (v.showcase !== undefined && (!Array.isArray(v.showcase) || v.showcase.length > 200 || !v.showcase.every(validShowcase)
     || !uniqueBy(v.showcase as ShowcaseItem[], x => x.id) || !uniqueBy(v.showcase as ShowcaseItem[], x => x.slug)

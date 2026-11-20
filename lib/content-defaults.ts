@@ -369,6 +369,12 @@ const PROJECT_DEFAULTS: Record<string, Pick<Project, 'industry' | 'serviceIds' |
  * Khách hàng (có case study) và đối tác đồng hành công bố trên https://danava.vn/.
  * Logo tải từ danava.vn, nguồn ghi ở public/assets/partners/sources.json.
  */
+/** Đợt bổ sung 13 đối tác đồng hành từ danava.vn (20/11/2026) */
+export const PARTNER_SEED = 'partners-danava-vn-2026-11';
+const PARTNER_PREFIX = 'danava-partner-';
+/** Dữ liệu đã lưu chưa từng nhận đợt đối tác này và cũng chưa có đối tác nào loại này */
+const needsPartnerSeed = (data: SiteData) => !!data.clients?.length && !(data.seeded || []).includes(PARTNER_SEED) && !data.clients.some(c => c.id.startsWith(PARTNER_PREFIX));
+
 export const CLIENT_SEEDS: Client[] = [
   { id: 'hariver', name: 'HARIVER Gym & Fitness Center', logo: '/assets/partners/hariver-gym-fitness.webp', url: 'https://danava.vn/places/hariver-gym-fitnes-center', projectId: 'hariver-studio', role: 'Gym & Fitness', relation: 'client', verified: true, permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hariver-gym-fitness-center. Logo theo khối Đối tác đồng hành trên danava.vn.', fullName: 'HARIVER GYM & FITNESS CENTER', description: 'Phòng tập hỗ trợ sức khoẻ cho cộng đồng thông qua câu lạc bộ Gym tốt nhất khu vực Hoà Khánh.', address: '214 Phạm Như Xương, P. Hoà Khánh, TP. Đà Nẵng', city: 'Đà Nẵng', hours: 'Thứ 2 - Thứ 7 (5:00 - 20:00)', types: ['Gym'], amenities: ['Trang thiết bị hiện đại', 'Huấn luyện viên chuyên nghiệp', 'Đa dạng khu vực tập luyện', 'Không gian rộng rãi', 'Phòng tắm & tủ khóa tiện nghi', 'Bãi đỗ xe rộng rãi', 'an toàn'], cover: '/assets/partners/covers/hariver-gym-fitness-center.webp' },
   { id: 'hue-pilates', name: 'Huế Pilates & Yoga', logo: '/assets/partners/hue-pilates-yoga.webp', url: 'https://danava.vn/places/hue-pilates-yoga', projectId: 'hue-studio', role: 'Pilates & Yoga', relation: 'client', verified: true, permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hue-pilates-yoga. Logo theo khối Đối tác đồng hành trên danava.vn.', fullName: 'Huế Pilates & Yoga', description: 'Huế Pilates & Yoga là không gian luyện tập chuyên nghiệp, nơi kết hợp hài hòa giữa Yoga và Pilates nhằm nâng cao sức khỏe thể chất, cân bằng tinh thần và cải thiện chất lượng cuộc sống. Với đội ngũ huấn luyện viên tận tâm cùng các chương trình tập luyện phù hợp cho mọi độ tuổi, Huế Pilates & Yoga mang đến môi trường tập luyện thân thiện, giúp học viên tăng cường sức mạnh cơ thể, cải thiện vóc dáng, giảm căng thẳng và xây dựng lối sống khỏe mạnh mỗi ngày.', address: '38 Nguyễn Khuyến, Phường Thuận Hoá, Tp. Huế', city: 'Thừa Thiên Huế', hours: 'Thứ 2 - Chủ Nhật (05h00 - 20h00)', types: ['Pilates'], amenities: ['Nước uống miễn phí', 'Khăn tập miễn phí', 'Máy Reformer hiện đại', 'Máy Cadillac chuyên nghiệp', 'Wunda Chair cao cấp', 'Ladder Barrel hỗ trợ tập luyện hiệu quả'], cover: '/assets/partners/covers/hue-pilates-yoga.webp' },
@@ -472,16 +478,20 @@ export function normalizeContent(data: SiteData): SiteData {
     subServices: fill(data.subServices, structuredClone(SUB_SERVICE_SEEDS)).filter(x => !RETIRED_IDS.includes(x.parentId)),
     topics,
     clients: [...fill(data.clients, structuredClone(CLIENT_SEEDS)), // Dữ liệu cũ chưa có mục “địa điểm” nào → bổ sung một lần; danh sách rỗng là lựa chọn của quản trị viên nên giữ nguyên
-      ...(data.clients?.length && !data.clients.some(c => c.relation === 'place') ? structuredClone(CLIENT_SEEDS.filter(x => x.relation === 'place')) : [])].map(c => {
+      ...(data.clients?.length && !data.clients.some(c => c.relation === 'place') ? structuredClone(CLIENT_SEEDS.filter(x => x.relation === 'place')) : []),
+      // Dữ liệu lưu trước khi có 13 “đối tác đồng hành” lấy từ danava.vn → bổ sung đúng một lần (đánh dấu trong `seeded`)
+      ...(needsPartnerSeed(data) ? structuredClone(CLIENT_SEEDS.filter(x => x.id.startsWith(PARTNER_PREFIX))) : [])].map(c => {
       const seed = CLIENT_SEEDS.find(x => x.id === c.id);
       if (!seed) return c;
       const out = { ...c };
       if (c.id === 'danava-partner-12' && !c.url) out.url = seed.url;
+      if (!out.logo && seed.logo) out.logo = seed.logo;
       for (const k of ['fullName', 'description', 'address', 'city', 'hours', 'types', 'amenities', 'cover', 'verified'] as const) {
         if (out[k] === undefined && seed[k] !== undefined) (out as Record<string, unknown>)[k] = structuredClone(seed[k]);
       }
       return out;
     }),
+    seeded: Array.from(new Set([...(data.seeded || []), PARTNER_SEED])),
     testimonials: fill(data.testimonials, []),
     posts: data.posts.filter(p => !REMOVED_POST_IDS.includes(p.id)).map(p => {
       const saved = fill(p.topicId, POST_TOPICS[p.id] || '');

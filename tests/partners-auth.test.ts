@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { initial, validateContent } from '../lib/content.ts';
-import { normalizeContent, CLIENT_SEEDS } from '../lib/content-defaults.ts';
+import { normalizeContent, CLIENT_SEEDS, PARTNER_SEED } from '../lib/content-defaults.ts';
 import { publicPartners, publicPlaces, publicContent } from '../lib/site-queries.ts';
 
 test('15 đối tác đồng hành từ danava.vn: đủ, không trùng, có logo cục bộ và nguồn', () => {
@@ -45,11 +45,16 @@ test('32 địa điểm còn lại trên danava.vn/places: đủ thông tin, có
 test('dữ liệu khách hàng đã lưu trên production không bị thay bằng danh sách mới', () => {
   const saved = structuredClone(initial);
   saved.clients = [CLIENT_SEEDS[0]];
-  const n = normalizeContent(saved).clients!;
+  // Dữ liệu cũ chưa từng nhận đợt đối tác danava.vn → được bổ sung một lần
+  const first = normalizeContent(saved);
+  assert.equal(first.clients!.filter(c => c.id.startsWith('danava-partner-')).length, 13, 'dữ liệu cũ nhận 13 đối tác đồng hành');
+  assert.ok(first.seeded!.includes(PARTNER_SEED), 'đánh dấu đã bổ sung');
+  // Sau khi đã đánh dấu, quản trị viên xoá đối tác thì không thêm lại
+  const n = normalizeContent({ ...saved, seeded: [PARTNER_SEED] }).clients!;
   assert.equal(n.filter(c => c.relation !== 'place').length, 1, 'không thêm lại đối tác đã xoá');
   assert.equal(n.filter(c => c.relation === 'place').length, 32, 'dữ liệu cũ được bổ sung địa điểm một lần');
   saved.clients = [CLIENT_SEEDS[0], { ...CLIENT_SEEDS.find(c => c.relation === 'place')! }];
-  assert.equal(normalizeContent(saved).clients!.length, 2, 'đã có địa điểm thì giữ nguyên lựa chọn');
+  assert.equal(normalizeContent({ ...saved, seeded: [PARTNER_SEED] }).clients!.length, 2, 'đã có địa điểm thì giữ nguyên lựa chọn');
 });
 
 test('chống CSRF: chấp nhận tên miền chính hoặc host đang phục vụ, chặn trang ngoài', async () => {
