@@ -219,8 +219,7 @@ export function HelloPage(_: { data: SiteData }) {
             <a className="phl-btn phl-btn--primary" href={HELLO.url} {...ext}>Nhận báo giá trên Hello DANAVA <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
           </div>
           <div className="phl-quote__shots">
-            <BrowserFrame src="/assets/products/hello-quote.webp" alt="Bước tùy chọn bổ sung và dự toán trên Hello DANAVA" url={HELLO.url} />
-            <figure className="phl-phone"><img src="/assets/products/hello-mobile.webp" alt="Hello DANAVA trên điện thoại" width={390} height={844} loading="lazy" /></figure>
+            <BrowserFrame src="/assets/products/hello-quote.webp" alt="Form nhận báo giá trên Hello DANAVA: chọn gói, tùy chọn bổ sung, thông tin liên hệ và dự toán" url={HELLO.url} />
           </div>
         </div>
       </section>

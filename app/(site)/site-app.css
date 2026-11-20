@@ -108,7 +108,6 @@
 
 @media (max-width: 680px) {
   /* Footer gọn hơn: chữ DANAVA khổng lồ nhỏ lại, bớt khoảng trắng */
-  .s-footer__giant { font-size: 26vw; margin-bottom: -0.25em; }
   .s-footer__top { gap: 28px 20px; }
   .s-footer__bottom { gap: 12px; }
 

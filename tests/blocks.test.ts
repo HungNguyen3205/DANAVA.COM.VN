@@ -76,10 +76,11 @@ test('hồ sơ nhân sự: thêm người mới sau khi đã lưu hồ sơ → v
 test('menu Giải pháp: 3 cột mặc định; chặn đường dẫn không an toàn', () => {
   const d = structuredClone(initial);
   const m = block(d, 'menu');
-  assert.deepEqual(m.columns.map(c => c.title), ['Nền tảng số DANAVA', 'Digital Marketing', 'Khác']);
+  assert.deepEqual(m.columns.map(c => c.title), ['Vận hành DANAVA', 'Marketing', 'Khác']);
+  assert.deepEqual(m.columns[1].items.map(i => i.label), ['Sự kiện', 'Truyền thông', 'Marketing', 'Landing page']);
   const work = m.columns[0].items.find(i => i.label === 'DANAVA Work')!;
   assert.equal(work.href, '/giai-phap/danava-work/', 'DANAVA Work dẫn tới trang giới thiệu (nút trên trang mở workspace)');
-  assert.ok(work.image);
+  assert.ok(m.columns.every(c => c.items.every(i => i.image === '')), 'menu chỉ chữ, không ảnh');
   const bad = structuredClone(blockDefaults().menu);
   bad.columns[0].items[0].href = 'javascript:alert(1)';
   assert.equal(validBlocks({ menu: bad }), false);

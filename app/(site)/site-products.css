@@ -196,7 +196,9 @@
 .phl-steps span { grid-row: span 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--hl-blue); color: #fff; font-weight: 900; }
 .phl-steps b { font-size: 17px; }
 .phl-steps p { margin: 0; color: #6b7590; }
-.phl-quote__shots { position: relative; padding-right: clamp(0px, 7vw, 100px); }
+.phl-quote__shots { position: relative; }
+.phl-quote__shots .sc-browser img { height: auto; aspect-ratio: auto; object-fit: contain; }
+.phl-quote { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
 .phl-phone { bottom: -40px; width: clamp(110px, 14vw, 180px); }
 .phl-final { padding: 0 0 clamp(56px, 8vw, 96px); }
 .phl-final__box { padding: clamp(32px, 5vw, 60px); border-radius: 32px; text-align: center; background: radial-gradient(60% 80% at 100% 0%, rgba(246, 162, 31, .35), transparent 60%), linear-gradient(135deg, #3553c4, var(--hl-blue)); color: #e8edff; }

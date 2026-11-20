@@ -178,7 +178,6 @@ body:has(.s-app) { background: var(--s-bg); }
 .s-footer__list a:hover, .s-footer__legal a:hover { color: #ffd27a; }
 .s-footer__contact svg { color: var(--s-amber); }
 .s-footer__bottom { border-top-color: rgba(255, 255, 255, .14); color: #a9b6e6; }
-.s-footer__giant { display: block; margin: -0.12em 0 -0.2em; font-family: var(--s-display); font-size: clamp(5rem, 22vw, 20rem); font-weight: 600; line-height: 1; letter-spacing: -.04em; text-align: center; white-space: nowrap; color: transparent; background: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, 0) 85%); -webkit-background-clip: text; background-clip: text; user-select: none; pointer-events: none; }
 
 
 /* ---------- Hiện dần khi cuộn tới (CSS thuần; trình duyệt chưa hỗ trợ thì hiện ngay) ---------- */

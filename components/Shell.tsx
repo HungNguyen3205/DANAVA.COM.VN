@@ -11,20 +11,23 @@ type MenuItemData = { label: string; desc: string; href: string; badge: string; 
 /** Một mục menu Giải pháp: trang trong website → Link; https → tab mới; không có đường dẫn → chỉ hiển thị. */
 function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: () => void; compact?: boolean }) {
   const external = it.href.startsWith('https://');
+  // Menu chỉ dùng chữ (yêu cầu chủ sở hữu 20/11/2026): trường ảnh trong dữ liệu được bỏ qua
   const body = (
     <>
-      {it.image && !compact && <img className="s-mega__thumb" src={it.image} alt={`Giao diện ${it.label}`} width={640} height={375} loading="lazy" decoding="async" />}
-      <span className="s-mega__label">
-        {it.label}
-        {it.badge && <span className="s-mega__badge">{it.badge}</span>}
-        {external && <ArrowUpRight aria-hidden="true" />}
+      <span className="s-mega__txt">
+        <span className="s-mega__label">
+          {it.label}
+          {it.badge && <span className="s-mega__badge">{it.badge}</span>}
+          {external && <ArrowUpRight aria-hidden="true" />}
+        </span>
+        {it.desc && !compact && <span className="s-mega__sub">{it.desc}</span>}
       </span>
-      {it.desc && !compact && <span className="s-mega__sub">{it.desc}</span>}
     </>
   );
-  if (!it.href || !safeHref(it.href)) return <div className="s-mega__link is-static">{body}</div>;
-  if (external) return <a className="s-mega__link" href={it.href} target="_blank" rel="noopener" onClick={onPick}>{body}<span className="s-sr"> (mở tab mới)</span></a>;
-  return <Link className="s-mega__link" href={it.href} onClick={onPick}>{body}</Link>;
+  const cls = 's-mega__link';
+  if (!it.href || !safeHref(it.href)) return <div className={`${cls} is-static`}>{body}</div>;
+  if (external) return <a className={cls} href={it.href} target="_blank" rel="noopener" onClick={onPick}>{body}<span className="s-sr"> (mở tab mới)</span></a>;
+  return <Link className={cls} href={it.href} onClick={onPick}>{body}</Link>;
 }
 
 const NAV = [
@@ -261,7 +264,6 @@ export function Footer() {
           </a>
         </div>
       </div>
-      <span className="s-footer__giant" aria-hidden="true">DANAVA</span>
     </footer>
   );
 }

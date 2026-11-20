@@ -208,3 +208,13 @@ Ba trang mới, mỗi trang một phong cách theo đúng tinh thần sản ph�
   - Bảng so sánh lọc đúng 13/16 module khác nhau.
   - Kiểm thử tự động 100/100.
   - Ảnh chụp: `docs/screenshots/san-pham/`.
+
+## 15. Cập nhật: menu chỉ chữ, đổi tên cột, chân trang, ảnh Hello (20/11/2026)
+
+- **Menu Giải pháp:**
+  - chỉ còn chữ, không hiển thị ảnh, và trong CMS cũng ẩn ô ảnh;
+  - đổi tên cột thành **Vận hành DANAVA**, **Marketing**, **Khác**;
+  - cột Marketing có thêm mục **Landing page**, dẫn tới /giai-phap/thiet-ke-website/.
+- **Chân trang:** bỏ chữ "DANAVA" khổ lớn ở cuối trang.
+- **Trang Hello DANAVA:** ảnh phần "Nhận báo giá" chụp lại trọn biểu mẫu thật trên hello.danava.vn (chọn gói, tùy chọn bổ sung, thông tin liên hệ, dự toán) và bỏ khung điện thoại đang che phần tổng tiền.
+- **Trang Liên hệ:** danh thiếp dùng logo tách nền. Thêm `public/assets/danava-logo-light.png`, chỉ đổi dòng "SOLUTIONS" sang màu sáng cho nền tối; giữ nguyên file `danava-logo.png`.

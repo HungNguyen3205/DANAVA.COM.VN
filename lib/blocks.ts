@@ -48,24 +48,25 @@ const PAGES = {
   'case-study': { ctaTitle: 'Bạn cần một website có bản sắc riêng?', ctaLead: 'Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá.' }
 };
 
-/** Menu "Giải pháp" (mega menu 3 cột). Mục không có đường dẫn chỉ hiển thị (vd. công cụ nội bộ). */
+/** Menu "Giải pháp" (mega menu 3 cột, chỉ chữ — không hiển thị ảnh). Mục không có đường dẫn chỉ hiển thị (vd. công cụ nội bộ). */
 const MENU = {
   columns: [
     {
-      title: 'Nền tảng số DANAVA',
+      title: 'Vận hành DANAVA',
       items: [
         { label: 'DANAVA Studio', desc: 'Phần mềm quản lý Gym, Yoga, Pilates, bể bơi và Spa', href: '/giai-phap/danava-studio/', badge: '', image: '' },
         { label: 'DANAVA GO', desc: 'Đặt vé xe khách trực tuyến cao cấp', href: '/giai-phap/danava-go/', badge: '', image: '' },
         { label: 'Hello DANAVA', desc: 'Bảng giá, so sánh gói và nhận báo giá DANAVA Studio', href: '/giai-phap/hello-danava/', badge: '', image: '' },
-        { label: 'DANAVA Work', desc: 'Nền tảng quản trị công việc nhóm', href: '/giai-phap/danava-work/', badge: 'Nội bộ', image: '/assets/menu/danava-work.webp' }
+        { label: 'DANAVA Work', desc: 'Nền tảng quản trị công việc nhóm', href: '/giai-phap/danava-work/', badge: 'Nội bộ', image: '' }
       ]
     },
     {
-      title: 'Digital Marketing',
+      title: 'Marketing',
       items: [
         { label: 'Sự kiện', desc: 'Ý tưởng, sân khấu, thi công và điều phối sự kiện doanh nghiệp', href: '/giai-phap/su-kien-truyen-thong/', badge: '', image: '' },
         { label: 'Truyền thông', desc: 'Quay phim, chụp ảnh và nội dung cho thương hiệu', href: '/giai-phap/su-kien-truyen-thong/#hang-muc', badge: '', image: '' },
-        { label: 'Marketing', desc: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng', href: '/giai-phap/digital-marketing/', badge: '', image: '' }
+        { label: 'Marketing', desc: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng', href: '/giai-phap/digital-marketing/', badge: '', image: '' },
+        { label: 'Landing page', desc: 'Trang đích cho chiến dịch, chương trình và sản phẩm, có biểu mẫu thu khách hàng tiềm năng', href: '/giai-phap/thiet-ke-website/', badge: '', image: '' }
       ]
     },
     {

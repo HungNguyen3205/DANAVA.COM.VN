@@ -27,10 +27,11 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
   },
   menu: {
     title: 'Menu Giải pháp',
-    desc: 'Các cột trong menu "Giải pháp" trên đầu trang (máy tính) và trong menu điện thoại. Mục để trống đường dẫn chỉ hiển thị, không bấm được (vd. công cụ nội bộ). Đường dẫn: /trang-trong-website/ hoặc https://…',
+    desc: 'Các cột trong menu "Giải pháp" trên đầu trang (máy tính) và trong menu điện thoại — chỉ chữ, không có ảnh. Mục để trống đường dẫn chỉ hiển thị, không bấm được (vd. công cụ nội bộ). Đường dẫn: /trang-trong-website/ hoặc https://…',
     config: {
+      hidden: ['image'],
       labels: { ...COMMON, columns: 'Các cột', items: 'Mục trong cột', label: 'Tên', desc: 'Mô tả ngắn', href: 'Đường dẫn (để trống = chỉ hiển thị)', badge: 'Nhãn nhỏ (vd. Mới, Nội bộ)',
-        image: 'Ảnh (tùy chọn, hiện thành thẻ ảnh)', footText: 'Dòng cuối menu', footLabel: 'Chữ liên kết cuối menu', footHref: 'Đường dẫn cuối menu' }
+        footText: 'Dòng cuối menu', footLabel: 'Chữ liên kết cuối menu', footHref: 'Đường dẫn cuối menu' }
     }
   },
   pages: {
