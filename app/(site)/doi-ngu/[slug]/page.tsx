@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { getContent } from '@/lib/database';
 import { seo, jsonLD, siteURL, breadcrumbLD, ORG_ID } from '@/lib/seo';
 import { personPhoto } from '@/lib/media';
-import { getStaffProfile } from '@/lib/staff';
+import { staffProfileFor } from '@/lib/blocks';
 import StaffProfile from '@/components/site/StaffProfile';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -36,7 +36,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     notFound();
   }
 
-  const profile = getStaffProfile(person, data.projects || []);
+  const profile = staffProfileFor(data, person);
 
   const schema = {
     '@context': 'https://schema.org',

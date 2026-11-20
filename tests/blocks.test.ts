@@ -54,3 +54,21 @@ test('hồ sơ nhân sự: sửa trong CMS được dùng, người mới lấy 
   assert.equal(staffBlockFor(d, d.staff[0]).intro, 'Giới thiệu mới');
   assert.ok(staffBlockFor(d, { id: 'moi', name: 'Người Mới', role: 'Thiết kế', visible: true }).bio.includes('Người Mới'));
 });
+
+test('hồ sơ nhân sự: dựng từ dữ liệu khối cho kết quả giống hệt bản cũ (website không đổi)', async () => {
+  const { getStaffDetail, getStaffProfile } = await import('../lib/staff.ts');
+  const { staffDetailFor, staffProfileFor } = await import('../lib/blocks.ts');
+  const d = structuredClone(initial);
+  for (const p of d.staff) {
+    assert.deepEqual(staffDetailFor(d, p), getStaffDetail(p), 'thẻ ' + p.id);
+    assert.deepEqual(staffProfileFor(d, p), getStaffProfile(p, d.projects || []), 'hồ sơ ' + p.id);
+  }
+});
+
+test('hồ sơ nhân sự: thêm người mới sau khi đã lưu hồ sơ → vẫn có hồ sơ; người đã xóa không còn', () => {
+  const d = structuredClone(initial);
+  d.blocks = { staff: structuredClone(blockDefaults(d.staff).staff) };
+  d.staff = [...d.staff.slice(1), { id: 'moi', name: 'Người Mới', role: 'Thiết kế', visible: true }];
+  const list = block(d, 'staff');
+  assert.deepEqual(list.map(s => s.id), d.staff.map(p => p.id));
+});

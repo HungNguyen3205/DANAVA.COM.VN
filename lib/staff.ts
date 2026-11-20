@@ -644,3 +644,51 @@ export function getStaffProfile(person: Person, allProjects: Project[]): StaffFu
     ]
   };
 }
+
+/* ------------------------------------------------------------------
+ * Hồ sơ chỉnh sửa trong CMS (lib/blocks.ts → khối "staff").
+ * Dự án vẫn lấy từ danh sách đã xuất bản (giống getStaffProfile) để không hiện dự án đã gỡ.
+ * ------------------------------------------------------------------ */
+export type StaffEdit = {
+  departmentId: string; departmentName: string; departmentKicker: string; expertise: string[]; bio: string;
+  portfolio: { title: string; href: string; desc: string; badge: string }[];
+  profileDepartmentName: string; profileDepartmentKicker: string; intro: string; experienceYears: string;
+  skillGroups: SkillGroup[];
+  personalProducts: { title: string; description: string; badge: string; link: string }[];
+  verifiedLinks: { label: string; url: string; type: string }[];
+  projectRoles: { projectId: string; role: string; contributions: string[]; resultHighlight: string }[];
+};
+const DEPTS = ['ky-thuat', 'truyen-thong', 'kinh-doanh', 'van-hanh'] as const;
+const dept = (v: string) => (DEPTS as readonly string[]).includes(v) ? v as StaffDetail['departmentId'] : 'van-hanh';
+
+export function staffDetailFromEdit(e: StaffEdit): StaffDetail {
+  return {
+    departmentId: dept(e.departmentId), departmentName: e.departmentName, departmentKicker: e.departmentKicker,
+    expertise: e.expertise, bio: e.bio,
+    portfolio: e.portfolio.map(p => ({ title: p.title, href: p.href, desc: p.desc, ...(p.badge ? { badge: p.badge } : {}) }))
+  };
+}
+
+export function staffProfileFromEdit(person: Person, allProjects: Project[], e: StaffEdit): StaffFullProfile {
+  const map = new Map<string, Project>();
+  for (const vp of verifiedProjects) if (vp.published) map.set(vp.id, vp);
+  for (const p of allProjects || []) { if (p.published) map.set(p.id, p); else map.delete(p.id); }
+  const projects: StaffProjectContribution[] = [];
+  for (const r of e.projectRoles) {
+    const project = map.get(r.projectId);
+    if (!project) continue;
+    projects.push({
+      projectId: project.id, projectSlug: project.slug, projectTitle: project.title, client: project.client, category: project.category,
+      image: project.image, summary: project.summary, roleInProject: r.role, contributions: r.contributions,
+      ...(r.resultHighlight ? { resultHighlight: r.resultHighlight } : {})
+    });
+  }
+  const linkType = (t: string): VerifiedLink['type'] => (['email', 'phone', 'external', 'internal'].includes(t) ? t as VerifiedLink['type'] : 'external');
+  return {
+    id: person.id, name: person.name, role: person.role,
+    departmentId: dept(e.departmentId), departmentName: e.profileDepartmentName || e.departmentName, departmentKicker: e.profileDepartmentKicker || e.departmentKicker,
+    intro: e.intro, experienceYears: e.experienceYears, skillGroups: e.skillGroups, projects,
+    personalProducts: e.personalProducts.map(p => ({ title: p.title, description: p.description, badge: p.badge, ...(p.link ? { link: p.link } : {}) })),
+    verifiedLinks: e.verifiedLinks.map(l => ({ label: l.label, url: l.url, type: linkType(l.type) }))
+  };
+}

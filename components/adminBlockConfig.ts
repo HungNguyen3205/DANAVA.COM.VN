@@ -68,7 +68,7 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
         bio: 'Giới thiệu ngắn (thẻ Đội ngũ)', portfolio: 'Liên kết nổi bật', desc: 'Mô tả', profileDepartmentName: 'Tên phòng ban (trang hồ sơ)', profileDepartmentKicker: 'Dòng chữ nhỏ (trang hồ sơ)',
         intro: 'Giới thiệu (trang hồ sơ)', experienceYears: 'Kinh nghiệm (vd. 7+ năm kinh nghiệm)', skillGroups: 'Nhóm kỹ năng', category: 'Tên nhóm', skills: 'Kỹ năng',
         personalProducts: 'Sản phẩm / đóng góp cá nhân', verifiedLinks: 'Liên kết liên hệ', type: 'Loại liên kết',
-        projectRoles: 'Vai trò trong dự án', projectId: 'Mã dự án', role: 'Vai trò', contributions: 'Đóng góp', resultHighlight: 'Kết quả nổi bật' },
+        projectRoles: 'Vai trò trong dự án', projectId: 'Dự án', role: 'Vai trò', contributions: 'Đóng góp', resultHighlight: 'Kết quả nổi bật' },
       hidden: ['id'],
       fixed: [''],
       long: ['bio', 'intro', 'desc', 'description'],

@@ -24,6 +24,8 @@ export type BlockEditorConfig = {
   fixed?: string[];
   /** Tên hiển thị cho từng khóa con của một object dạng bản đồ (vd. trang) */
   groupTitle?: (key: string) => string | undefined;
+  /** Tên hiển thị cho một mục danh sách (vd. tên nhân sự theo mã) */
+  itemTitle?: (item: Json, index: number, listKey: string) => string | undefined;
   /** Gợi ý dưới trường */
   hints?: Record<string, string>;
 };
@@ -129,7 +131,7 @@ function ListEditor({ items, tpl, onChange, cfg, k, depth }: { items: Json[]; tp
         <details key={i} className="blk-item" open={open === i} onToggle={e => { if ((e.target as HTMLDetailsElement).open) setOpen(i); else if (open === i) setOpen(null); }}>
           <summary>
             <span className="blk-item__n">{i + 1}</span>
-            <span className="blk-item__t">{summaryOf(it, i)}</span>
+            <span className="blk-item__t">{cfg.itemTitle?.(it, i, k) || summaryOf(it, i)}</span>
             {isObj(it) && it.visible === false && <span className="adm-pill adm-pill--muted">Đang ẩn</span>}
           </summary>
           <div className="blk-item__tools">

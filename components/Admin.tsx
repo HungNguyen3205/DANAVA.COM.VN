@@ -137,7 +137,8 @@ function AdminWorkspace({ section }: { section: string }) {
     return (
       <BlockPanel key={key} title={meta.title} desc={meta.desc} edited={saved !== undefined}
         onReset={() => { const next = { ...(draft.blocks || {}) }; delete next[key]; setDraft({ ...draft, blocks: next }); }}>
-        <BlockEditor value={block(draft, key) as never} def={def as never} config={meta.config}
+        <BlockEditor value={block(draft, key) as never} def={def as never}
+          config={key === 'staff' ? { ...meta.config, enums: { ...meta.config.enums, projectId: (draft.projects || []).map(p => ({ value: p.id, label: p.title })) }, itemTitle: (it, _i, k) => (k === '' && it && typeof it === 'object' && !Array.isArray(it) ? draft.staff.find(p => p.id === it.id)?.name : undefined) } : meta.config}
           onChange={v => setDraft({ ...draft, blocks: { ...(draft.blocks || {}), [key]: v } })} />
       </BlockPanel>
     );

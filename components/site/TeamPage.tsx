@@ -5,7 +5,8 @@ import { useMemo, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { personPhoto } from '@/lib/media';
-import { STAFF_DEPARTMENTS, getStaffDetail, getStaffInitials, type StaffDeptId } from '@/lib/staff';
+import { STAFF_DEPARTMENTS, getStaffInitials, type StaffDeptId } from '@/lib/staff';
+import { staffDetailFor } from '@/lib/blocks';
 import { verifiedProjects } from '@/lib/verified-projects';
 import type { Person, Project } from '@/lib/content';
 import { PageHead, SectionHeading, CtaBand } from './ui';
@@ -26,11 +27,11 @@ export default function TeamPage() {
 
   const counts = useMemo(() => {
     const map: Record<string, number> = { all: staff.length };
-    staff.forEach(p => { const d = getStaffDetail(p).departmentId; map[d] = (map[d] || 0) + 1; });
+    staff.forEach(p => { const d = staffDetailFor(data, p).departmentId; map[d] = (map[d] || 0) + 1; });
     return map;
   }, [staff]);
 
-  const shown = dept === 'all' ? staff : staff.filter(p => getStaffDetail(p).departmentId === dept);
+  const shown = dept === 'all' ? staff : staff.filter(p => staffDetailFor(data, p).departmentId === dept);
   const tabs = STAFF_DEPARTMENTS.filter(d => d.id === 'all' || counts[d.id]);
 
   const projects: Project[] = useMemo(() => {
@@ -62,7 +63,7 @@ export default function TeamPage() {
           {shown.length ? (
             <div className="s-grid s-grid--3">
               {shown.map(p => {
-                const detail = getStaffDetail(p);
+                const detail = staffDetailFor(data, p);
                 return (
                   <article key={p.id} className="s-card s-card--link s-card--pad s-team-card">
                     <StaffAvatar person={p} />

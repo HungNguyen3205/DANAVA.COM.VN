@@ -11,7 +11,7 @@
 import type { Person, SiteData } from './content';
 import { CONTACT, SOCIAL, company } from './company.ts';
 import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, initialEcosystemUnits } from './ecosystem.ts';
-import { PROJECT_STAFF_ASSIGNMENTS, getStaffDetail, getStaffProfile } from './staff.ts';
+import { PROJECT_STAFF_ASSIGNMENTS, getStaffDetail, getStaffProfile, staffDetailFromEdit, staffProfileFromEdit } from './staff.ts';
 import { APPROVED_SERVICE_POLICIES, DRAFT_POLICY_CLAUSES, SERVICE_POLICY_METADATA, SLA_MATRIX, SUPPORT_CHANNELS } from './service-policy.ts';
 import { COLLAB_STEPS, GOALS, MILESTONES, MOMENTS, PRINCIPLES } from '../components/site/company-content.ts';
 
@@ -176,6 +176,11 @@ function fillMissing<T>(value: unknown, def: T): T {
 export function block<K extends BlockKey>(data: Pick<SiteData, 'blocks' | 'staff'>, key: K): BlockDefaults[K] {
   const def = (key === 'staff' ? blockDefaults(data.staff).staff : blockDefaults()[key]) as BlockDefaults[K];
   const saved = (data.blocks as Blocks | undefined)?.[key];
+  if (key === 'staff' && Array.isArray(saved)) {
+    // Theo đúng danh sách Nhân sự hiện tại: người mới → hồ sơ mặc định, người đã xóa → bỏ
+    const list = saved as StaffBlock[];
+    return data.staff.map(p => { const s = list.find(x => x.id === p.id); return s ? fillMissing(s, staffDefault(p)) : staffDefault(p); }) as BlockDefaults[K];
+  }
   return saved === undefined ? def : fillMissing(saved, def);
 }
 
@@ -261,3 +266,7 @@ function relax(t: Tpl): Tpl {
   if (t.kind === 'obj') return { kind: 'obj', keys: Object.fromEntries(Object.entries(t.keys).map(([k, x]) => [k, relax(x)])), required: new Set() };
   return t;
 }
+
+/** Thẻ Đội ngũ và trang hồ sơ dùng nội dung đã sửa trong CMS. */
+export const staffDetailFor = (data: Pick<SiteData, 'blocks' | 'staff'>, person: Person) => staffDetailFromEdit(staffBlockFor(data, person));
+export const staffProfileFor = (data: Pick<SiteData, 'blocks' | 'staff' | 'projects'>, person: Person) => staffProfileFromEdit(person, data.projects || [], staffBlockFor(data, person));
