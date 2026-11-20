@@ -1,13 +1,10 @@
 import Link from 'next/link';
 import { ShieldCheck, Wrench, Headphones, PackageCheck, Info, AlertTriangle, Check, X, Phone, Mail, MapPin, Clock } from 'lucide-react';
-import {
-  SERVICE_POLICY_METADATA,
-  APPROVED_SERVICE_POLICIES,
-  SLA_MATRIX,
-  SUPPORT_CHANNELS,
-  DRAFT_POLICY_CLAUSES,
-  type ServicePolicyGroup
-} from '@/lib/service-policy';
+import type { ServicePolicyGroup, SLAMatrixItem, SupportChannel, DraftClause } from '@/lib/service-policy';
+import type { SiteData } from '@/lib/content';
+import { CONTACT } from '@/lib/company';
+import { block } from '@/lib/blocks';
+import { formatPhone } from './site/catalog';
 import { PageHead, IconTile } from './site/ui';
 
 const HIGHLIGHTS = [
@@ -53,8 +50,17 @@ function PolicyGroup({ group, labels, link }: {
   );
 }
 
-export function ServicePolicy() {
-  const [software, website, media] = APPROVED_SERVICE_POLICIES;
+export function ServicePolicy({ data }: { data: SiteData }) {
+  // Nội dung sửa trong CMS (khối "servicePolicy"); pháp nhân, địa chỉ, email hỗ trợ từ "Thông tin công ty"; hotline từ Cài đặt
+  const sp = block(data, 'servicePolicy');
+  const co = block(data, 'company');
+  const hotline = formatPhone(data.phone || CONTACT.phone);
+  const generalEmail = data.email || CONTACT.email;
+  const SERVICE_POLICY_METADATA = { version: sp.version, lastUpdated: sp.lastUpdated, effectiveDate: sp.effectiveDate, companyName: co.companyName, representative: co.representative, address: co.legalAddress, hotline, supportEmail: co.supportEmail, generalEmail };
+  const SLA_MATRIX = sp.sla as SLAMatrixItem[];
+  const SUPPORT_CHANNELS = sp.channels as SupportChannel[];
+  const DRAFT_POLICY_CLAUSES = sp.drafts as DraftClause[];
+  const [software, website, media] = sp.groups as ServicePolicyGroup[];
   return (
     <main id="main">
       <PageHead

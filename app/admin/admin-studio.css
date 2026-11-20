@@ -897,3 +897,8 @@
   .blk-item > summary { padding-right: 0; flex-wrap: wrap; }
   .blk-item__tools { position: static; justify-content: flex-end; margin-bottom: 6px; }
 }
+/* Bỏ quy tắc cũ của globals.css (details[open]>summary span xoay 45°) trong các danh sách mới */
+.ds-root :is(.blk-item, .adm-entity)[open] > summary span { transform: none; }
+.ds-root .blk-item { padding: 0 14px; }
+.ds-root .blk-item[open] { padding-bottom: 12px; }
+.ds-root .blk-item > summary { padding-top: 0; padding-bottom: 0; }

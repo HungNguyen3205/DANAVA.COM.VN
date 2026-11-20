@@ -15,39 +15,20 @@ test('legacy redirects include privacy aliases redirecting permanently to /chinh
   }
 });
 
-test('privacy component source code covers all required technical sections and anchors', () => {
-  const privacyFilePath = path.join(process.cwd(), 'components', 'PrivacyPolicy.tsx');
-  assert.ok(fs.existsSync(privacyFilePath), 'File components/PrivacyPolicy.tsx phải tồn tại');
-
-  const content = fs.readFileSync(privacyFilePath, 'utf8');
-
-  // Kiểm tra 8 anchors trong mục lục
-  const requiredAnchors = [
-    'pham-vi',
-    'form-lien-he',
-    'analytics',
-    'embeds',
-    'luu-tru-bao-mat',
-    'quyen-khach-hang',
-    'xac-nhan-chu-website',
-    'thong-tin-lien-he'
-  ];
-
-  for (const anchor of requiredAnchors) {
-    assert.ok(
-      content.includes(`href="#${anchor}"`),
-      `Mục lục phải chứa liên kết mỏ neo href="#${anchor}"`
-    );
-    assert.ok(
-      content.includes(`id="${anchor}"`),
-      `Nội dung phải có thẻ chứa id="${anchor}"`
-    );
-  }
+test('privacy component source code covers all required technical sections and anchors', async () => {
+  // Nội dung nằm trong CMS (lib/blocks.ts → khối "privacy"); thành phần hiển thị dựng mục lục và id từ dữ liệu
+  const { blockDefaults } = await import('../lib/blocks.ts');
+  const ids = blockDefaults().privacy.sections.map(sec => sec.id);
+  const requiredAnchors = ['pham-vi', 'form-lien-he', 'analytics', 'embeds', 'luu-tru-bao-mat', 'quyen-khach-hang', 'xac-nhan-chu-website', 'thong-tin-lien-he'];
+  assert.deepEqual(ids, requiredAnchors, 'Đủ 8 mục, đúng thứ tự');
+  const content = fs.readFileSync(path.join(process.cwd(), 'components', 'PrivacyPolicy.tsx'), 'utf8');
+  assert.ok(content.includes('href={`#${sec.id}`}'), 'Mục lục liên kết tới từng mục');
+  assert.ok(content.includes('id={sec.id}'), 'Mỗi mục có id để neo');
 });
 
-test('privacy policy addresses real technical operations and flagged owner confirmations', () => {
-  const privacyFilePath = path.join(process.cwd(), 'components', 'PrivacyPolicy.tsx');
-  const content = fs.readFileSync(privacyFilePath, 'utf8');
+test('privacy policy addresses real technical operations and flagged owner confirmations', async () => {
+  const { blockDefaults } = await import('../lib/blocks.ts');
+  const content = JSON.stringify(blockDefaults().privacy);
 
   // Đối chiếu thực tế kỹ thuật:
   assert.ok(content.includes('SHA-256'), 'Chính sách phải nêu rõ mã hóa danh tính một chiều SHA-256');

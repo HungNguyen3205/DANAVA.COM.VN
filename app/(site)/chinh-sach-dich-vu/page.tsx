@@ -1,5 +1,6 @@
 import { seo, jsonLD, siteURL, breadcrumbLD } from '@/lib/seo';
 import { ServicePolicy } from '@/components/ServicePolicy';
+import { getContent } from '@/lib/database';
 
 export const metadata = seo(
   'Chính sách dịch vụ và bảo hành kỹ thuật',
@@ -7,7 +8,8 @@ export const metadata = seo(
   '/chinh-sach-dich-vu/'
 );
 
-export default function Page() {
+export default async function Page() {
+  const { data } = await getContent();
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -41,7 +43,7 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: jsonLD(schemaData) }}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLD(breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Chính sách dịch vụ', href: '/chinh-sach-dich-vu/' }])) }} />
-      <ServicePolicy />
+      <ServicePolicy data={data} />
     </>
   );
 }

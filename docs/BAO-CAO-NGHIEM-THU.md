@@ -139,11 +139,34 @@ DANAVA không cung cấp Digital Marketing (yêu cầu của chủ sở hữu, 1
 | Nhân sự: họ tên, chức danh, ảnh, ẩn/hiện, thứ tự | Có (Nhân sự) |
 | Email, hotline | Có (Cài đặt) |
 | Trình chiếu mở đầu, sơ đồ hệ sinh thái trong trình chiếu | Có (Trình chiếu) |
-| Hồ sơ chi tiết nhân sự (giới thiệu, kinh nghiệm, kỹ năng) | **Chưa**: nằm trong `lib/staff.ts` |
-| Địa chỉ văn phòng, giờ làm việc, link Facebook/YouTube | **Chưa**: nằm trong `lib/company.ts` |
-| Trang Hệ sinh thái (đơn vị, hành trình, sản phẩm đang chạy) | **Chưa**: nằm trong `lib/ecosystem.ts` |
-| Trang Về DANAVA (lịch sử, giá trị, văn phòng) | **Chưa**: `components/site/company-content.ts` |
+| Hồ sơ chi tiết nhân sự (giới thiệu, kinh nghiệm, kỹ năng) | Có (Hồ sơ nhân sự), từ mục 12 |
+| Địa chỉ văn phòng, giờ làm việc, link Facebook/YouTube | Có (Thông tin công ty), từ mục 12 |
+| Trang Hệ sinh thái (đơn vị, hành trình, sản phẩm đang chạy) | Có (Hệ sinh thái), từ mục 12 |
+| Trang Về DANAVA (lịch sử, giá trị, văn phòng) | Có (Về DANAVA), từ mục 12 |
 | Màn hình app và 16 module trên trang Studio; khối nhận diện riêng của trang Website, Sự kiện | **Chưa**: trong mã nguồn |
-| Chữ tiêu đề và câu dẫn của các khối trên trang (hero từng trang, dải CTA) | **Chưa**: trong mã nguồn |
-| Chính sách bảo mật, điều khoản dịch vụ | **Chưa**: trong mã nguồn |
+| Chữ đầu trang và dải kêu gọi cuối trang | Có (Chữ trên các trang), từ mục 12 |
+| Chính sách bảo mật, điều khoản dịch vụ | Có (Chính sách), từ mục 12 |
 | Menu, chân trang | **Chưa**: trong mã nguồn |
+
+
+## 12. Cập nhật: CMS chỉnh được thêm 5 nhóm nội dung
+
+Nhóm menu mới **"Trang & thông tin"** trong CMS gồm 6 mục. Nội dung mặc định lấy đúng chữ đang hiển thị, nên website không đổi cho tới khi quản trị viên sửa và bấm Lưu. Mỗi mục có nút "Khôi phục mặc định".
+
+| Mục trong CMS | Áp dụng cho |
+|---|---|
+| Thông tin công ty | Chân trang, menu điện thoại, Liên hệ (giờ làm việc, bản đồ, Facebook, YouTube, pháp nhân, email hỗ trợ), Về DANAVA, Trang chủ, dữ liệu Organization/LocalBusiness cho Google, chính sách |
+| Chữ trên các trang | Dòng chữ nhỏ, tiêu đề H1, câu dẫn và dải kêu gọi cuối trang của 8 trang, dải cuối trang Studio, Website, case study, dải mặc định (bài viết, chủ đề). Đặt `*dấu sao*` quanh phần muốn nhấn mạnh |
+| Về DANAVA | Giá trị · sứ mệnh · tầm nhìn, cột mốc, ảnh hoạt động, nguyên tắc làm việc (cũng hiện ở Trang chủ), quy trình hợp tác (Trang chủ) |
+| Hệ sinh thái | Khối năng lực, hành trình khách hàng, đơn vị (chọn khối và giai đoạn bằng ô chọn, bật/tắt hiển thị), sản phẩm đang chạy |
+| Hồ sơ nhân sự | Thẻ trên trang Đội ngũ và trang hồ sơ: phòng ban, chuyên môn, giới thiệu, kỹ năng, đóng góp, liên kết, vai trò trong từng dự án (chọn dự án từ danh sách) |
+| Chính sách | Chính sách quyền riêng tư (8 mục, bảng lưu trữ, quyền, điều khoản chờ xác nhận) và chính sách dịch vụ (3 nhóm, SLA, kênh hỗ trợ, điều khoản dự thảo) |
+
+- **Biểu mẫu:** sinh tự động theo cấu trúc dữ liệu. Chữ ngắn dùng ô một dòng, chữ dài dùng ô nhiều dòng, ảnh chọn từ Thư viện, danh sách có thêm / xóa / đổi thứ tự, trường cố định dùng ô chọn.
+- **An toàn khi lưu:** máy chủ kiểm tra dữ liệu đúng cấu trúc mặc định (không thêm khóa lạ, đúng kiểu, giới hạn độ dài, tối đa 600 KB). Chữ trong chính sách được hiển thị không qua HTML thô.
+- **Hồ sơ nhân sự:** danh sách tự khớp với mục Nhân sự. Người mới có hồ sơ mặc định; người đã xóa không còn hồ sơ.
+- **Kiểm tra:**
+  - Kiểm thử tự động 97/97. Có test chứng minh hồ sơ nhân sự dựng từ dữ liệu mới giống hệt bản cũ.
+  - So sánh chữ hiển thị của 18 trang trước và sau thay đổi: không khác.
+  - E2E trên giao diện quản trị 18/18: sửa ở cả 6 mục → lưu → hiện đúng trên website; "Khôi phục mặc định" đưa nội dung về như cũ.
+- **Còn trong mã nguồn (ít khi cần sửa):** màn hình app và 16 module trên trang Studio, khối nhận diện riêng trang Website/Sự kiện, menu chính và chân trang (cấu trúc liên kết), trang 404.

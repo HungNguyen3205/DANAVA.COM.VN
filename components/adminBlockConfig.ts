@@ -64,7 +64,7 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
     title: 'Hồ sơ nhân sự',
     desc: 'Nội dung thẻ trên trang Đội ngũ và trang hồ sơ từng người. Họ tên, chức danh, ảnh sửa ở mục Nhân sự.',
     config: {
-      labels: { ...COMMON, departmentId: 'Phòng ban (dùng cho bộ lọc)', departmentName: 'Tên phòng ban (thẻ Đội ngũ)', departmentKicker: 'Dòng chữ nhỏ (thẻ Đội ngũ)', expertise: 'Chuyên môn',
+      labels: { ...COMMON, '': 'Hồ sơ theo từng người', departmentId: 'Phòng ban (dùng cho bộ lọc)', departmentName: 'Tên phòng ban (thẻ Đội ngũ)', departmentKicker: 'Dòng chữ nhỏ (thẻ Đội ngũ)', expertise: 'Chuyên môn',
         bio: 'Giới thiệu ngắn (thẻ Đội ngũ)', portfolio: 'Liên kết nổi bật', desc: 'Mô tả', profileDepartmentName: 'Tên phòng ban (trang hồ sơ)', profileDepartmentKicker: 'Dòng chữ nhỏ (trang hồ sơ)',
         intro: 'Giới thiệu (trang hồ sơ)', experienceYears: 'Kinh nghiệm (vd. 7+ năm kinh nghiệm)', skillGroups: 'Nhóm kỹ năng', category: 'Tên nhóm', skills: 'Kỹ năng',
         personalProducts: 'Sản phẩm / đóng góp cá nhân', verifiedLinks: 'Liên kết liên hệ', type: 'Loại liên kết',
@@ -82,7 +82,7 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
     title: 'Chính sách quyền riêng tư',
     desc: 'Trang /chinh-sach-rieng-tu/. Trong ô nội dung: dòng trống tách đoạn, dòng bắt đầu bằng "- " là danh sách, "> " là ô ghi chú, **chữ đậm**, `tên miền`, [chữ](/duong-dan).',
     config: {
-      labels: { ...COMMON, eyebrow: 'Dòng chữ nhỏ phía trên', lead: 'Câu dẫn', badges: 'Nhãn dưới tiêu đề', summary: 'Tóm tắt (4 thẻ)', sections: 'Các mục', body: 'Nội dung mục',
+      labels: { ...COMMON, eyebrow: 'Dòng chữ nhỏ phía trên', lead: 'Câu dẫn', badges: 'Nhãn dưới tiêu đề', summary: 'Tóm tắt (4 thẻ)', sections: 'Các mục', toc: 'Tên trong mục lục', body: 'Nội dung mục',
         storage: 'Bảng thời gian lưu trữ', type: 'Loại dữ liệu', mechanism: 'Cơ chế lưu trữ', retention: 'Thời gian lưu trữ', access: 'Phân quyền truy cập',
         rights: 'Quyền của khách hàng', pendingBadge: 'Nhãn mục chờ xác nhận', pending: 'Điều khoản chờ xác nhận', tag: 'Mã xác nhận', status: 'Trạng thái',
         issuerAddress: 'Địa chỉ đơn vị chịu trách nhiệm', issuerEmailNote: 'Ghi chú email' },
