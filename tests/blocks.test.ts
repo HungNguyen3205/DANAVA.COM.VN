@@ -78,7 +78,7 @@ test('menu Giải pháp: 3 cột mặc định; chặn đường dẫn không an
   const m = block(d, 'menu');
   assert.deepEqual(m.columns.map(c => c.title), ['Nền tảng số DANAVA', 'Digital Marketing', 'Khác']);
   const work = m.columns[0].items.find(i => i.label === 'DANAVA Work')!;
-  assert.equal(work.href, '', 'DANAVA Work chỉ hiển thị ảnh, không có đường dẫn');
+  assert.equal(work.href, '/giai-phap/danava-work/', 'DANAVA Work dẫn tới trang giới thiệu (nút trên trang mở workspace)');
   assert.ok(work.image);
   const bad = structuredClone(blockDefaults().menu);
   bad.columns[0].items[0].href = 'javascript:alert(1)';

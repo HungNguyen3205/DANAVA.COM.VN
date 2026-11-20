@@ -185,3 +185,26 @@ Nhóm menu mới **"Trang & thông tin"** trong CMS gồm 6 mục. Nội dung m�
 - Vẫn giữ gỡ: 5 bài viết marketing cũ, chủ đề kiến thức "marketing", khối "DANAVA DIGITAL" trên trang Hệ sinh thái.
 - **Website & Landing Page, Du lịch trải nghiệm, Cộng đồng** không có trong menu mới theo đúng mô tả của chủ sở hữu. Các trang này vẫn có ở "Xem tất cả giải pháp", chân trang, và có thể thêm vào menu trong CMS.
 - **Kiểm tra:** kiểm thử tự động 98/98; menu nằm gọn ở 1440px và 1100px; menu điện thoại không tràn ngang; trang Digital Marketing không tràn ở 1440/390/360px và không có ảnh hỏng. Ảnh chụp: docs/screenshots/menu/.
+
+## 14. Cập nhật: trang giới thiệu DANAVA GO, Hello DANAVA, DANAVA Work (20/11/2026)
+
+Ba trang mới, mỗi trang một phong cách theo đúng tinh thần sản phẩm. Mỗi trang có nút mở trang thật của sản phẩm.
+
+| Trang | Phong cách | Nội dung chính | Nút |
+|---|---|---|---|
+| /giai-phap/danava-go/ | Vé lên xe (boarding pass), tông hoàng hôn kem – cam – xanh navy | Vé mẫu Đà Nẵng → Hội An; giao diện máy tính và điện thoại; 3 dòng xe và Cabin VIP 22 phòng; 3 tuyến gợi ý; ba bước đặt vé; 4 điểm an tâm; phần dành cho nhà xe | Đặt vé trên DANAVA GO, Mở app DANAVA GO |
+| /giai-phap/hello-danava/ | Bảng giá sáng màu, cam – xanh DANAVA Studio | 5 mô hình; 4 gói với giá kỳ 12 tháng; bảng so sánh 16 module có nút "Chỉ xem điểm khác nhau"; 2 tùy chọn mua thêm; 3 bước nhận báo giá | Mở Hello DANAVA, Đăng ký trải nghiệm Studio |
+| /giai-phap/danava-work/ | Bảng công việc tối | Màn hình đăng nhập thật; bảng công việc 3 cột minh họa (ghi rõ là minh họa, không phải dữ liệu thật); 3 điều DANAVA Work làm | Mở DANAVA Work |
+
+- **Nguồn nội dung:** chỉ dùng thông tin công khai trên danavago.com, hello.danava.vn và workspace.danava.com.vn, lấy ngày 20/11/2026 (`lib/products.ts`). Ảnh là chụp màn hình thật (`public/assets/products/`).
+- **Ghi chú trung thực trên trang:**
+  - DANAVA GO đang chạy thử: trang gốc ghi bản demo chưa xử lý hoàn tiền thực tế và hiện có 1 nhà xe (Cửa Ông Limousine). Khi kiểm tra không có chuyến nào đang mở bán, nên trang không đưa ảnh sơ đồ ghế.
+  - Hello DANAVA chỉ có giá kỳ 12 tháng; kỳ 6 và 24 tháng ghi "liên hệ".
+  - DANAVA Work hiện dùng nội bộ.
+- **Menu Giải pháp:** DANAVA GO, Hello DANAVA, DANAVA Work giờ dẫn tới trang giới thiệu. Nút trên trang giới thiệu mới mở trang thật.
+- **SEO:** mỗi trang có tiêu đề, mô tả, ảnh chia sẻ, dữ liệu SoftwareApplication và BreadcrumbList (Hello có thêm Offer cho 3 gói trả phí). Cả 3 trang đã có trong sitemap.
+- **Kiểm tra:**
+  - 3 trang × 4 khổ (1440/1024/390/360px): không tràn ngang, không chữ ra ngoài màn hình, không ảnh hỏng, không lỗi console.
+  - Bảng so sánh lọc đúng 13/16 module khác nhau.
+  - Kiểm thử tự động 100/100.
+  - Ảnh chụp: `docs/screenshots/san-pham/`.

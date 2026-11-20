@@ -55,9 +55,9 @@ const MENU = {
       title: 'Nền tảng số DANAVA',
       items: [
         { label: 'DANAVA Studio', desc: 'Phần mềm quản lý Gym, Yoga, Pilates, bể bơi và Spa', href: '/giai-phap/danava-studio/', badge: '', image: '' },
-        { label: 'DANAVA GO', desc: 'Đặt vé xe khách trực tuyến cao cấp', href: 'https://danavago.com/', badge: '', image: '' },
-        { label: 'Hello DANAVA', desc: 'Bảng giá, so sánh gói và nhận báo giá DANAVA Studio', href: 'https://hello.danava.vn/', badge: '', image: '' },
-        { label: 'DANAVA Work', desc: 'Nền tảng quản trị công việc nhóm', href: '', badge: 'Nội bộ', image: '/assets/menu/danava-work.webp' }
+        { label: 'DANAVA GO', desc: 'Đặt vé xe khách trực tuyến cao cấp', href: '/giai-phap/danava-go/', badge: '', image: '' },
+        { label: 'Hello DANAVA', desc: 'Bảng giá, so sánh gói và nhận báo giá DANAVA Studio', href: '/giai-phap/hello-danava/', badge: '', image: '' },
+        { label: 'DANAVA Work', desc: 'Nền tảng quản trị công việc nhóm', href: '/giai-phap/danava-work/', badge: 'Nội bộ', image: '/assets/menu/danava-work.webp' }
       ]
     },
     {
