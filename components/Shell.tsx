@@ -32,7 +32,6 @@ function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: 
 
 const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
-  { href: '/du-an/', label: 'Dự án' },
   { href: '/ve-danava/', label: 'Về chúng tôi' },
   { href: '/kien-thuc/', label: 'Blogs' }
 ];
@@ -102,7 +101,7 @@ export function Header() {
                   className="s-nav__link"
                   aria-expanded={mega}
                   aria-controls="s-mega-solutions"
-                  aria-current={active('/giai-phap/') ? 'page' : undefined}
+                  aria-current={active('/giai-phap/') || active('/du-an/') ? 'page' : undefined}
                   onClick={() => setMega(v => !v)}
                 >
                   Giải pháp <ChevronDown aria-hidden="true" />

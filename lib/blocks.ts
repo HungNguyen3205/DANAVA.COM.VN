@@ -72,6 +72,7 @@ const MENU = {
     {
       title: 'Cộng đồng',
       items: [
+        { label: 'Dự án', desc: 'Câu chuyện triển khai thực tế cùng khách hàng', href: '/du-an/', badge: '', image: '' },
         { label: 'Đối tác', desc: 'Các cơ sở đồng hành trong hệ sinh thái DANAVA', href: '/doi-tac/', badge: '', image: '' },
         { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '' }
       ]
