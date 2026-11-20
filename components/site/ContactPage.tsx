@@ -20,6 +20,9 @@ type Errors = Partial<Record<keyof Fields, string>>;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
+/** Lĩnh vực của DANAVA bay quanh danh thiếp. */
+const PILLARS = ['Phần mềm', 'Website', 'Sự kiện', 'Truyền thông', 'Du lịch', 'Cộng đồng'];
+
 /** Tên ngắn cho nút chọn nhanh dịch vụ trên form. */
 const CHIP: Record<string, string> = {
   'danava-studio': 'DANAVA Studio', 'thiet-ke-website': 'Website', 'digital-marketing': 'Marketing',
@@ -63,6 +66,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
   const copy = pageCopy(data, 'lien-he');
+  const about = block(data, 'about');
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(co.legalAddress)}&output=embed`;
 
   const [fields, setFields] = useState<Fields>({
@@ -155,14 +159,18 @@ export function ContactPage({ initialService }: { initialService: string }) {
   return (
     <main id="main" className="c-page">
       {/* Hero "Hãy nói xin chào": lời mời + nút liên hệ nhanh bên trái, danh thiếp DANAVA Solutions bên phải */}
-      <section className="c-hero c-hero--hello">
-        <div className="c-gridbg" aria-hidden="true" />
+      <section className="c-hero c-hero--hello c-hero--aurora">
+        <div className="c-aurora" aria-hidden="true"><i /><i /><i /><b /></div>
         <div className="s-container">
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
           <div className="c-hero__grid">
             <div className="c-hero__copy">
               <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />{copy.kicker}</p>
               <h1 className="c-hero__title c-hero__title--hello">{rich(copy.title, 'c-grad c-brand')}</h1>
+              <p className="c-motto">
+                {data.headline || 'Cùng bạn phát triển.'}
+                <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 14 C 60 2, 120 20, 180 9 S 270 4, 298 12" /></svg>
+              </p>
               <p className="c-hero__lead">{copy.lead}</p>
               {isOpen !== null && (
                 <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
@@ -186,7 +194,10 @@ export function ContactPage({ initialService }: { initialService: string }) {
             <div className="c-cardzone">
               <span className="c-orbit c-orbit--a" aria-hidden="true" />
               <span className="c-orbit c-orbit--b" aria-hidden="true" />
-              <div className="c-namecard" ref={cardRef} onPointerMove={tilt} onPointerLeave={untilt}>
+              <ul className="c-pillars" aria-label="Lĩnh vực của DANAVA">
+                {PILLARS.map((p, i) => <li key={p} style={{ ['--i' as string]: i, ['--n' as string]: PILLARS.length }}><span>{p}</span></li>)}
+              </ul>
+              <div className="c-namecard c-namecard--float" ref={cardRef} onPointerMove={tilt} onPointerLeave={untilt}>
                 <div className="c-namecard__face">
                   <div className="c-namecard__top">
                     <img src="/assets/danava-logo-trim.png" alt="" width={554} height={135} />
@@ -210,6 +221,30 @@ export function ContactPage({ initialService }: { initialService: string }) {
           </div>
         </div>
       </section>
+
+      {/* Sau lời chào: quy trình hợp tác (CMS → Về DANAVA → Quy trình hợp tác), nối bằng đường cong như dòng sông */}
+      {about.steps.length > 0 && (
+        <section className="c-journey" aria-labelledby="c-journey-title">
+          <div className="s-container">
+            <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />Sau lời chào</p>
+            <h2 className="c-journey__title" id="c-journey-title">Một lời chào, <em>một hành trình cùng phát triển.</em></h2>
+            <div className="c-journey__track">
+              <svg className="c-journey__river" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0 70 C 150 10, 300 110, 450 60 S 750 10, 900 60 S 1100 110, 1200 50" />
+              </svg>
+              <ol className="c-journey__steps" style={{ ['--n' as string]: about.steps.length }}>
+                {about.steps.map((st, i) => (
+                  <li key={i} style={{ ['--i' as string]: i }}>
+                    <span className="c-journey__node">{String(i + 1).padStart(2, '0')}</span>
+                    <h3>{st.title}</h3>
+                    <p>{st.text}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 01 / Liên hệ: nền tối, thông tin bên trái, form bên phải */}
       <section className="c-contact" id="dang-ky-tu-van" aria-labelledby="c-contact-heading">
@@ -341,6 +376,27 @@ export function ContactPage({ initialService }: { initialService: string }) {
           </div>
         </div>
       </section>
+
+      {/* Mỗi dự án bắt đầu bằng một lời chào: ảnh hoạt động thật (CMS → Về DANAVA → Ảnh hoạt động) trôi chậm */}
+      {about.moments.length > 0 && (
+        <section className="c-moments" aria-labelledby="c-moments-title">
+          <div className="s-container">
+            <h2 className="c-moments__title" id="c-moments-title">Mỗi dự án <em>bắt đầu bằng một lời chào.</em></h2>
+          </div>
+          <div className="c-moments__rail">
+            <ul className="c-moments__track">
+              {[...about.moments, ...about.moments].map((m, i) => (
+                <li key={i} aria-hidden={i >= about.moments.length ? true : undefined} style={{ ['--t' as string]: `${(i % 5) - 2}deg` }}>
+                  <figure><img src={m.src} alt={i >= about.moments.length ? '' : m.title} width={480} height={360} loading="lazy" decoding="async" /><figcaption>{m.title}</figcaption></figure>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="s-container c-moments__cta">
+            <a className="c-dock__btn c-dock__btn--call" href="#dang-ky-tu-van"><MessageCircle aria-hidden="true" /><span><small>Bắt đầu ngay</small>Gửi lời chào tới DANAVA</span></a>
+          </div>
+        </section>
+      )}
 
       {/* Hộp xác nhận sau khi gửi */}
       {status === 'ok' && (
