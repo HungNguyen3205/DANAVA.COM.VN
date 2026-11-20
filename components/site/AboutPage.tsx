@@ -5,8 +5,9 @@ import { useSite } from '../SiteStore';
 import { CONTACT, formatPhone } from './catalog';
 import { SectionHeading, CtaBand, IconTile, ArrowLink, Crumbs } from './ui';
 import { StaffAvatar } from './TeamPage';
-import { GOALS, MILESTONES, MOMENTS, PRINCIPLES } from './company-content';
 import { block } from '@/lib/blocks';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 const PRINCIPLE_ICONS = { field: Compass, transparent: BarChart3, ownership: KeyRound, longterm: InfinityIcon } as const;
 const PRINCIPLE_TONES = { field: 'blue', transparent: 'orange', ownership: 'sky', longterm: 'green' } as const;
@@ -17,6 +18,8 @@ export default function AboutPage() {
   const founder = staff.find(p => p.id === 'thanh');
   const phone = data.phone || CONTACT.phone;
   const co = block(data, 'company');
+  const copy = pageCopy(data, 've-danava');
+  const ab = block(data, 'about');
 
   return (
     <main id="main">
@@ -25,9 +28,9 @@ export default function AboutPage() {
         <div className="s-container s-split">
           <div className="s-about-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Về DANAVA' }]} />
-            <p className="s-eyebrow">Về DANAVA</p>
-            <h1 className="s-h1">Đồng hành bằng công nghệ. <span className="s-hl">Gắn kết bằng giá trị thực.</span></h1>
-            <p className="s-lead">DANAVA Solutions là đơn vị công nghệ, truyền thông và trải nghiệm tại Đà Nẵng. Chúng tôi giải quyết bài toán vận hành thực tế cho phòng tập, studio wellness và doanh nghiệp dịch vụ, biến quy trình thủ công thành nền tảng số gọn nhẹ.</p>
+            <p className="s-eyebrow">{copy.kicker}</p>
+            <h1 className="s-h1">{rich(copy.title, 's-hl')}</h1>
+            <p className="s-lead">{copy.lead}</p>
             <div className="s-row s-stack-m">
               <a className="s-btn s-btn--primary s-btn--lg" href="#cau-chuyen">Câu chuyện của chúng tôi</a>
               <Link className="s-btn s-btn--secondary s-btn--lg" href="/doi-ngu/">Gặp đội ngũ</Link>
@@ -62,7 +65,7 @@ export default function AboutPage() {
         <div className="s-container">
           <SectionHeading eyebrow="Định hướng" title={<span id="about-goals">“Công nghệ tạo khả năng, <span className="s-hl">con người tạo giá trị.</span>”</span>} />
           <ol className="s-grid s-grid--3 s-tiles u-goals">
-            {GOALS.map(g => (
+            {ab.goals.map(g => (
               <li key={g.n} className="s-card s-card--pad">
                 <span className="u-goals__n" aria-hidden="true">{g.n}</span>
                 <h3 className="s-h4">{g.title}</h3>
@@ -104,7 +107,7 @@ export default function AboutPage() {
         <div className="s-container">
           <SectionHeading eyebrow="Hành trình" title={<span id="about-milestones">Những cột mốc đáng nhớ</span>} />
           <ol className="s-about-timeline">
-            {MILESTONES.map(m => (
+            {ab.milestones.map(m => (
               <li key={m.year}>
                 <img className="u-timeline-img" src={m.image} alt="" loading="lazy" decoding="async" width={640} height={400} />
                 <span className="s-about-timeline__year">{m.year}</span>
@@ -121,7 +124,7 @@ export default function AboutPage() {
         <div className="s-container">
           <SectionHeading eyebrow="Dấu ấn" title={<span id="about-moments">Những chương trình <span className="s-hl">DANAVA đã cùng thực hiện</span></span>} lead="Hình ảnh từ hồ sơ năng lực của DANAVA." action={<ArrowLink href="/giai-phap/su-kien-truyen-thong/">Xem các chương trình sự kiện</ArrowLink>} />
           <div className="u-moments">
-            {MOMENTS.map(m => (
+            {ab.moments.map(m => (
               <figure key={m.src}>
                 <img src={m.src} alt={m.title} loading="lazy" decoding="async" width={800} height={600} />
                 <figcaption>{m.title}</figcaption>
@@ -136,9 +139,9 @@ export default function AboutPage() {
         <div className="s-container">
           <SectionHeading eyebrow="Nguyên tắc làm việc" title={<span id="about-principles">Bốn điều <span className="s-hl">chúng tôi luôn giữ</span></span>} />
           <div className="s-grid s-grid--4 s-tiles">
-            {PRINCIPLES.map(p => (
+            {ab.principles.map((p, i) => (
               <div key={p.key} className="s-feature">
-                <IconTile icon={PRINCIPLE_ICONS[p.key]} tone={PRINCIPLE_TONES[p.key]} />
+                <IconTile icon={PRINCIPLE_ICONS[p.key as keyof typeof PRINCIPLE_ICONS] ?? Object.values(PRINCIPLE_ICONS)[i % 4]} tone={PRINCIPLE_TONES[p.key as keyof typeof PRINCIPLE_TONES] ?? Object.values(PRINCIPLE_TONES)[i % 4]} />
                 <h3 className="s-feature__title">{p.title}</h3>
                 <p className="s-feature__text">{p.text}</p>
               </div>
@@ -178,7 +181,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <CtaBand title="Sẵn sàng cùng bạn bắt đầu" primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

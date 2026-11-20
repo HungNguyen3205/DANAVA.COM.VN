@@ -16,6 +16,8 @@ import { ProductGallery } from './ProductGallery';
 import { StudioTour, type TourRole } from './StudioTour';
 import { StudioModules } from './StudioModules';
 import { contactHrefFor } from './ServiceDetailPage';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 const S = '/assets/studio/';
 const all = STUDIO_GALLERY.flatMap(g => g.shots);
@@ -44,6 +46,7 @@ const MODELS = [
 ];
 
 export function StudioPage({ service, data }: { service: Service; data: SiteData }) {
+  const copy = pageCopy(data, 'studio');
   const contactHref = contactHrefFor(service);
   const phone = data.phone || CONTACT.phone;
   const projects = projectsForService(data, 'studio');
@@ -226,7 +229,7 @@ export function StudioPage({ service, data }: { service: Service; data: SiteData
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
       <RelatedPosts posts={postsForService(data, 'studio', 3)} data={data} title="Kiến thức vận hành phòng tập" />
       <ServiceLinks services={sortServices(data.services).filter(s => ['website', 'events'].includes(s.id))} title="Kết hợp cùng DANAVA Studio" />
-      <CtaBand title="Xem DANAVA Studio chạy với dữ liệu của bạn" lead="Đăng ký demo, chuyên viên DANAVA liên hệ để tìm hiểu mô hình và hướng dẫn trực tiếp trên phần mềm." primary={{ href: contactHref, label: 'Đăng ký demo' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Đăng ký demo' }} />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
 import { getContent } from '@/lib/database';
-import { getEcosystemUnits } from '@/lib/ecosystem';
+import { ecosystemFor } from '@/lib/blocks';
 import { EcosystemPage } from '@/components/site/EcosystemPage';
 import { JsonLd } from '@/components/site/blocks';
 
@@ -13,7 +13,7 @@ export const metadata = seo(
 
 export default async function Page() {
   const { data } = await getContent();
-  const units = getEcosystemUnits();
+  const units = ecosystemFor(data).units;
   return (
     <>
       <JsonLd value={{

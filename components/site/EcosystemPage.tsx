@@ -6,10 +6,13 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Hotel, Handshake, LayoutDashboard, GraduationCap, Globe, Plane, Users, Sparkles, type LucideIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
-import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, getEcosystemCategoryCounts, getEcosystemUnits, type EcosystemCategory, type EcosystemUnit } from '@/lib/ecosystem';
+import type { EcosystemCategory, EcosystemUnit } from '@/lib/ecosystem';
+import { ecosystemFor } from '@/lib/blocks';
 import { publicPartners, publishedProjects } from '@/lib/site-queries';
 import { Crumbs, CtaBand } from './ui';
 import { BrowserFrame } from './showcase';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 const ICONS: Record<string, LucideIcon> = {
   studio: LayoutDashboard, platform: Globe, elearning: GraduationCap, website: Globe, pms: Hotel,
@@ -52,9 +55,10 @@ function Unit({ u, flip }: { u: EcosystemUnit; flip: boolean }) {
 }
 
 export function EcosystemPage({ data }: { data: SiteData }) {
-  const counts = getEcosystemCategoryCounts();
-  const units = getEcosystemUnits();
-  const cats = ECOSYSTEM_CATEGORIES.filter((c): c is { id: EcosystemCategory; label: string; shortDesc: string } => c.id !== 'all');
+  const copy = pageCopy(data, 'he-sinh-thai');
+  const eco = ecosystemFor(data);
+  const { counts, units } = eco;
+  const cats = eco.categories;
   const partners = publicPartners(data);
   const projects = publishedProjects(data);
 
@@ -67,9 +71,9 @@ export function EcosystemPage({ data }: { data: SiteData }) {
         <div className="s-container eco-hero__grid">
           <div>
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Hệ sinh thái' }]} />
-            <p className="eco-hero__kicker">Hệ sinh thái DANAVA</p>
-            <h1 className="eco-hero__title" id="eco-title">Hệ sinh thái mở, <em>giá trị kết nối.</em></h1>
-            <p className="eco-hero__lead">Phần mềm và website giúp vận hành, sự kiện và trải nghiệm tạo dấu ấn, nền tảng và cộng đồng giữ khách hàng ở lại. Doanh nghiệp bắt đầu từ một giải pháp và mở rộng khi cần, tất cả do DANAVA Solutions phát triển và vận hành.</p>
+            <p className="eco-hero__kicker">{copy.kicker}</p>
+            <h1 className="eco-hero__title" id="eco-title">{rich(copy.title)}</h1>
+            <p className="eco-hero__lead">{copy.lead}</p>
             <div className="s-row s-stack-m">
               <Link className="s-btn s-btn--primary s-btn--lg" href="/lien-he/">Trao đổi với DANAVA</Link>
               <a className="s-btn s-btn--lg eco-btn-ghost" href="#dang-chay">Sản phẩm đang chạy</a>
@@ -109,7 +113,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
             <h2 className="eco-head__title" id="eco-journey-title">Một hành trình khách hàng, <em>một đối tác đồng hành.</em></h2>
           </div>
           <ol className="eco-journey__rail">
-            {JOURNEY_STAGES.map((st, i) => (
+            {eco.journey.map((st, i) => (
               <li key={st.id}>
                 <span className="eco-journey__dot" aria-hidden="true">{i + 1}</span>
                 <h3>{st.label}</h3>
@@ -155,7 +159,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
             <h2 className="eco-head__title eco-head__title--light" id="eco-live-title">Sản phẩm trong hệ sinh thái, <em>mở được ngay.</em></h2>
             <p className="eco-head__lead">Đã kiểm tra trực tiếp ngày 19/11/2026.</p>
           </div>
-          {LIVE_PRODUCTS.map(g => (
+          {eco.live.map(g => (
             <div key={g.group} className="eco-live__group">
               <h3>{g.group}</h3>
               <ul>
@@ -209,7 +213,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      <CtaBand title="Bắt đầu từ một mảnh ghép" lead="Chia sẻ nhu cầu hiện tại, DANAVA đề xuất giải pháp phù hợp và cách kết nối với các phần còn lại khi bạn sẵn sàng." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} secondary={{ href: '/giai-phap/', label: 'Xem giải pháp' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} secondary={{ href: '/giai-phap/', label: 'Xem giải pháp' }} />
     </main>
   );
 }

@@ -12,6 +12,8 @@ import { knowledgePosts, postHref, postsForTopic, publishedPosts, topicHasPage, 
 import { PageHead, SectionHeading, CtaBand } from './ui';
 import { formatDate, excerpt } from './catalog';
 import { postCover, PostTile } from './blocks';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 const PER_TOPIC = 6;
 
@@ -53,6 +55,7 @@ function TopicSection({ data, topic, posts }: { data: SiteData; topic: Topic; po
 }
 
 export default function NewsPage({ data }: { data: SiteData }) {
+  const copy = pageCopy(data, 'kien-thuc');
   const posts = knowledgePosts(data);
   const featured = posts.find(p => postCover(p)) || posts[0];
   const topics = (data.topics || []).filter(t => t.published && t.id !== ARCHIVE_TOPIC);
@@ -63,9 +66,9 @@ export default function NewsPage({ data }: { data: SiteData }) {
   return (
     <main id="main">
       <PageHead
-        eyebrow="Kiến thức"
-        title="Kiến thức & tin hoạt động từ DANAVA"
-        lead="Bài viết về vận hành phòng tập, website, yoga, du lịch và những hoạt động cộng đồng DANAVA đồng hành."
+        eyebrow={copy.kicker}
+        title={rich(copy.title)}
+        lead={copy.lead}
         crumbs={[{ href: '/', label: 'Trang chủ' }, { label: 'Kiến thức' }]}
       />
 
@@ -145,7 +148,7 @@ export default function NewsPage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      <CtaBand title="Cần trao đổi cho trường hợp cụ thể?" lead="Kể cho DANAVA về doanh nghiệp của bạn, chuyên viên sẽ liên hệ lại để tư vấn." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

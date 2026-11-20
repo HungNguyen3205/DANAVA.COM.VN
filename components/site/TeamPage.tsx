@@ -10,6 +10,8 @@ import { staffDetailFor } from '@/lib/blocks';
 import { verifiedProjects } from '@/lib/verified-projects';
 import type { Person, Project } from '@/lib/content';
 import { PageHead, SectionHeading, CtaBand } from './ui';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 export function StaffAvatar({ person, size = 'lg' }: { person: Pick<Person, 'id' | 'name' | 'image' | 'role' | 'visible'>; size?: 'lg' | 'xl' }) {
   const photo = personPhoto(person as Person);
@@ -22,6 +24,7 @@ export function StaffAvatar({ person, size = 'lg' }: { person: Pick<Person, 'id'
 
 export default function TeamPage() {
   const { data } = useSite();
+  const copy = pageCopy(data, 'doi-ngu');
   const [dept, setDept] = useState<StaffDeptId>('all');
   const staff = useMemo(() => data.staff.filter(p => p.visible), [data.staff]);
 
@@ -42,9 +45,9 @@ export default function TeamPage() {
   return (
     <main id="main">
       <PageHead
-        eyebrow="Con người DANAVA"
-        title="Đội ngũ chuyên môn"
-        lead="Những người trực tiếp tư vấn, xây dựng và vận hành giải pháp cho khách hàng. Mỗi hồ sơ gắn với dự án thật mà họ đã tham gia."
+        eyebrow={copy.kicker}
+        title={rich(copy.title)}
+        lead={copy.lead}
         crumbs={[{ href: '/', label: 'Trang chủ' }, { href: '/ve-danava/', label: 'Về DANAVA' }, { label: 'Đội ngũ' }]}
       />
 
@@ -115,7 +118,7 @@ export default function TeamPage() {
         </section>
       )}
 
-      <CtaBand title="Làm việc cùng đội ngũ DANAVA" lead="Gặp trực tiếp người phụ trách giải pháp phù hợp với bài toán của bạn." />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} />
     </main>
   );
 }

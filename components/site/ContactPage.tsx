@@ -11,6 +11,8 @@ import { VALID_BUSINESS_TYPES, VALID_CONTACT_SERVICES, isValidPhoneNumber } from
 import { CONTACT, formatPhone } from './catalog';
 import { Crumbs } from './ui';
 import { block } from '@/lib/blocks';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 type Fields = { name: string; phone: string; email: string; businessType: string; service: string; message: string };
 type Errors = Partial<Record<keyof Fields, string>>;
@@ -35,6 +37,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
+  const copy = pageCopy(data, 'lien-he');
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(co.legalAddress)}&output=embed`;
 
   const [fields, setFields] = useState<Fields>({
@@ -104,11 +107,9 @@ export function ContactPage({ initialService }: { initialService: string }) {
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
           <div className="c-hero__grid">
             <div className="c-hero__copy">
-              <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />Contact · DANAVA</p>
-              <h1 className="c-hero__title">Liên hệ <span className="c-grad">DANAVA Solutions</span></h1>
-              <p className="c-hero__lead">
-                DANAVA luôn lắng nghe mọi ý kiến của khách hàng. Hãy liên hệ để nhận tư vấn miễn phí và báo giá chi tiết cho phần mềm quản lý phòng tập, website, truyền thông và sự kiện.
-              </p>
+              <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />{copy.kicker}</p>
+              <h1 className="c-hero__title">{rich(copy.title, 'c-grad')}</h1>
+              <p className="c-hero__lead">{copy.lead}</p>
               <p className="c-badge">
                 <span className="c-badge__mark" aria-hidden="true">D</span>
                 <span>Đơn vị chuyển đổi số cho <b>Gym · Yoga · Spa</b><i>Đà Nẵng · Toàn quốc</i></span>

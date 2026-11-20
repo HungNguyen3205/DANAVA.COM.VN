@@ -13,8 +13,11 @@ import { ServiceLinks } from './blocks';
 import { BrowserFrame, PhoneFrame, MotionImage, ShowcaseStrip, hostOf } from './showcase';
 import { formatDate } from './catalog';
 import { DraftBanner } from './SubServicePage';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 export function ShowcaseCaseStudy({ item, data, preview }: { item: ShowcaseItem; data: SiteData; preview?: boolean }) {
+  const copy = pageCopy(data, 'case-study');
   const service = data.services.find(s => s.id === item.serviceId);
   const others = showcaseFor(data, item.serviceId).filter(x => x.id !== item.id).slice(0, 4);
   const desktopShots = item.gallery.filter(g => !g.src.includes('/mobile-'));
@@ -144,7 +147,7 @@ export function ShowcaseCaseStudy({ item, data, preview }: { item: ShowcaseItem;
         </section>
       )}
       <ServiceLinks services={sortServices(data.services.filter(s => s.id === item.serviceId))} title="Dịch vụ liên quan" />
-      <CtaBand title="Bạn cần một website có bản sắc riêng?" lead="Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá." primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
     </main>
   );
 }

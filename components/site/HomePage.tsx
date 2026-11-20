@@ -19,7 +19,6 @@ import { FeaturedShowcase, ShowcaseStrip } from './showcase';
 import { StaffAvatar } from './TeamPage';
 import { ProjectTile, PostTile, Testimonials, JsonLd, faqLD } from './blocks';
 import { HeroSlides, SolutionsExplorer, Reveal, type SolutionItem } from './HomeClient';
-import { PRINCIPLES, COLLAB_STEPS } from './company-content';
 import { block } from '@/lib/blocks';
 
 const PF = '/assets/profile/';
@@ -55,6 +54,7 @@ export default function HomePage({ data }: { data: SiteData }) {
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
+  const ab = block(data, 'about');
 
   const clients = publicPartners(data);
   const metrics = visibleMetrics(data);
@@ -234,9 +234,9 @@ export default function HomePage({ data }: { data: SiteData }) {
             <h2 className="s-h2" id="home-why">Bốn điều <span className="s-hl">chúng tôi luôn giữ</span></h2>
           </div>
           <div className="s-grid s-grid--4 s-tiles">
-            {PRINCIPLES.map(p => (
+            {ab.principles.map((p, i) => (
               <div key={p.key} className="s-feature" data-reveal>
-                <IconTile icon={PRINCIPLE_ICONS[p.key]} tone={PRINCIPLE_TONES[p.key]} />
+                <IconTile icon={PRINCIPLE_ICONS[p.key as keyof typeof PRINCIPLE_ICONS] ?? Object.values(PRINCIPLE_ICONS)[i % 4]} tone={PRINCIPLE_TONES[p.key as keyof typeof PRINCIPLE_TONES] ?? Object.values(PRINCIPLE_TONES)[i % 4]} />
                 <h3 className="s-feature__title">{p.title}</h3>
                 <p className="s-feature__text">{p.text}</p>
               </div>
@@ -253,7 +253,7 @@ export default function HomePage({ data }: { data: SiteData }) {
             <h2 className="s-h2" id="home-process">Rõ ràng <span className="s-hl">từ buổi trao đổi đầu tiên</span></h2>
           </div>
           <ol className="s-home-steps s-tiles">
-            {COLLAB_STEPS.map((s, i) => (
+            {ab.steps.map((s, i) => (
               <li key={s.title}>
                 <span className="s-home-steps__num">{String(i + 1).padStart(2, '0')}</span>
                 <h3 className="s-h4">{s.title}</h3>

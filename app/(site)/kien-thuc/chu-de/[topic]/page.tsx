@@ -5,6 +5,8 @@ import { findTopic, postsForTopic, sortServices, topicHasPage, topicHref } from 
 import { JsonLd, PostTile, ServiceLinks } from '@/components/site/blocks';
 import { PageHead, CtaBand } from '@/components/site/ui';
 import { TopicNav } from '@/components/site/NewsPage';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from '@/components/site/rich';
 
 type Params = { params: Promise<{ topic: string }> };
 
@@ -54,7 +56,7 @@ export default async function Page({ params }: Params) {
           </div>
         </section>
         <ServiceLinks services={services} title="Giải pháp DANAVA liên quan" />
-        <CtaBand primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+        <CtaBand title={rich(pageCopy(data, 'mac-dinh').ctaTitle)} lead={pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
       </main>
     </>
   );

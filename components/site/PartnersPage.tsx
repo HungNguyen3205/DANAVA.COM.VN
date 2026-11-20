@@ -9,11 +9,14 @@ import type { Client, SiteData } from '@/lib/content';
 import { publicPartners, publicPlaces, publishedProjects } from '@/lib/site-queries';
 import { PlacesDirectory, type PlaceCard } from './PlacesDirectory';
 import { Crumbs, CtaBand } from './ui';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 const cityOf = (c: Client) => (c.city || 'Khác').replace(/^Thừa Thiên /, '').replace(/^Hồ Chí Minh$/, 'TP. Hồ Chí Minh');
 const anchor = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function PartnersPage({ data }: { data: SiteData }) {
+  const copy = pageCopy(data, 'doi-tac');
   const partners = publicPartners(data);
   const places = publicPlaces(data);
   const onDanava = [...partners, ...places].filter(c => c.url.startsWith('https://danava.vn/places/')).length;
@@ -34,9 +37,9 @@ export function PartnersPage({ data }: { data: SiteData }) {
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/he-sinh-thai/', label: 'Hệ sinh thái' }, { label: 'Đối tác đồng hành' }]} />
           <div className="pt-hero__grid">
             <div>
-              <p className="pt-hero__kicker">Đối tác đồng hành</p>
-              <h1 className="pt-hero__title" id="pt-title">Những cơ sở <em>cùng phát triển</em> trong hệ sinh thái DANAVA</h1>
-              <p className="pt-hero__lead">Phòng tập, studio, trung tâm đào tạo và cộng đồng wellness đang có mặt trên nền tảng danava.vn.</p>
+              <p className="pt-hero__kicker">{copy.kicker}</p>
+              <h1 className="pt-hero__title" id="pt-title">{rich(copy.title)}</h1>
+              <p className="pt-hero__lead">{copy.lead}</p>
             </div>
             <dl className="pt-hero__facts">
               <div><dt>Đối tác đồng hành</dt><dd>{partners.length}</dd></div>
@@ -118,7 +121,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      <CtaBand title="Trở thành đối tác trong hệ sinh thái DANAVA" lead="Cơ sở của bạn vận hành bằng DANAVA Studio và có mặt trên nền tảng danava.vn. Trao đổi với DANAVA để bắt đầu." primary={{ href: '/lien-he/?service=danava-studio', label: 'Đăng ký demo' }} secondary={{ href: '/he-sinh-thai/', label: 'Xem hệ sinh thái' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/?service=danava-studio', label: 'Đăng ký demo' }} secondary={{ href: '/he-sinh-thai/', label: 'Xem hệ sinh thái' }} />
     </main>
   );
 }

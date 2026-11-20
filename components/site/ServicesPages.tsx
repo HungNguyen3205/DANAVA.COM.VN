@@ -5,12 +5,15 @@ import type { Service } from '@/lib/content';
 import { useSite } from '../SiteStore';
 import { serviceMeta, sortServices, excerpt } from './catalog';
 import { PageHead, SectionHeading, CheckList, CtaBand, Visual, IconTile, SwipeHint } from './ui';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 /* ==========================================================================
    /giai-phap/
    ========================================================================== */
 export function ServicesIndex() {
   const { data } = useSite();
+  const copy = pageCopy(data, 'giai-phap');
   const services = sortServices(data.services);
   const [featured, ...rest] = services;
 
@@ -24,10 +27,10 @@ export function ServicesIndex() {
     <main id="main">
       <PageHead
         center
-        eyebrow="Giải pháp"
+        eyebrow={copy.kicker}
         crumbs={[{ href: '/', label: 'Trang chủ' }, { label: 'Giải pháp' }]}
-        title={<>Đúng giải pháp cho <span className="s-hl">từng bài toán</span></>}
-        lead="Từ phần mềm vận hành đến truyền thông và trải nghiệm khách hàng, chọn thứ doanh nghiệp bạn cần ngay hôm nay và mở rộng khi sẵn sàng."
+        title={rich(copy.title, 's-hl')}
+        lead={copy.lead}
       />
 
       <section className="s-section s-section--flush-top" aria-label="Danh sách giải pháp">
@@ -60,7 +63,7 @@ export function ServicesIndex() {
         </div>
       </section>
 
-      <CtaBand title="Cần tư vấn trực tiếp?" lead="Chuyên viên DANAVA sẽ lắng nghe và đề xuất giải pháp phù hợp với quy mô, ngân sách của bạn." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

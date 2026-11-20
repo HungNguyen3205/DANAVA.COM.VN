@@ -10,7 +10,7 @@
  */
 import type { Person, SiteData } from './content';
 import { CONTACT, SOCIAL, company } from './company.ts';
-import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, initialEcosystemUnits } from './ecosystem.ts';
+import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, initialEcosystemUnits, type EcosystemCategory, type EcosystemUnit, type JourneyStage } from './ecosystem.ts';
 import { PROJECT_STAFF_ASSIGNMENTS, getStaffDetail, getStaffProfile, staffDetailFromEdit, staffProfileFromEdit } from './staff.ts';
 import { APPROVED_SERVICE_POLICIES, DRAFT_POLICY_CLAUSES, SERVICE_POLICY_METADATA, SLA_MATRIX, SUPPORT_CHANNELS } from './service-policy.ts';
 import { COLLAB_STEPS, GOALS, MILESTONES, MOMENTS, PRINCIPLES } from '../components/site/company-content.ts';
@@ -270,3 +270,12 @@ function relax(t: Tpl): Tpl {
 /** Thẻ Đội ngũ và trang hồ sơ dùng nội dung đã sửa trong CMS. */
 export const staffDetailFor = (data: Pick<SiteData, 'blocks' | 'staff'>, person: Person) => staffDetailFromEdit(staffBlockFor(data, person));
 export const staffProfileFor = (data: Pick<SiteData, 'blocks' | 'staff' | 'projects'>, person: Person) => staffProfileFromEdit(person, data.projects || [], staffBlockFor(data, person));
+
+/** Dữ liệu trang Hệ sinh thái (đã sửa trong CMS), cùng dạng với lib/ecosystem.ts. */
+export function ecosystemFor(data: Pick<SiteData, 'blocks' | 'staff'>) {
+  const eco = block(data, 'ecosystem');
+  const units = (eco.units as unknown as EcosystemUnit[]).filter(u => u.visible);
+  const categories = eco.categories as { id: EcosystemCategory; label: string; shortDesc: string }[];
+  const counts = Object.fromEntries([['all', units.length], ...categories.map(c => [c.id, units.filter(u => u.category === c.id).length])]) as Record<'all' | EcosystemCategory, number>;
+  return { units, categories, counts, journey: eco.journey as { id: JourneyStage; label: string; text: string }[], live: eco.live, allLabel: eco.allLabel };
+}

@@ -7,6 +7,8 @@ import { useSite } from '../SiteStore';
 import { excerpt } from './catalog';
 import { PageHead, CtaBand, Visual } from './ui';
 import { FeaturedShowcase, ShowcaseStrip } from './showcase';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 export { getProjectTeam, findProject, projectGallery } from './project-helpers';
 
@@ -36,6 +38,7 @@ export function ProjectCard({ p }: { p: Project }) {
    ========================================================================== */
 export function ProjectsIndex() {
   const { data } = useSite();
+  const copy = pageCopy(data, 'du-an');
   const projects = useMemo(() => {
     const list = (data.projects || []).filter(p => p.published);
     return [...list.filter(p => p.featured), ...list.filter(p => !p.featured)];
@@ -54,9 +57,9 @@ export function ProjectsIndex() {
       <PageHead
         center
         crumbs={[{ href: '/', label: 'Trang chủ' }, { label: 'Dự án' }]}
-        eyebrow="Dự án"
-        title={<>Câu chuyện <span className="s-hl">triển khai thực tế</span></>}
-        lead="Những doanh nghiệp đang vận hành cùng DANAVA. Mỗi case study ghi rõ phạm vi đã thực hiện và nguồn đối chiếu."
+        eyebrow={copy.kicker}
+        title={rich(copy.title, 's-hl')}
+        lead={copy.lead}
       />
       <section className="s-section s-section--flush-top" aria-label="Danh sách dự án">
         <div className="s-container">
@@ -91,7 +94,7 @@ export function ProjectsIndex() {
           </div>
         </section>
       )}
-      <CtaBand title="Dự án tiếp theo có thể là của bạn" lead="Chia sẻ bài toán của doanh nghiệp, DANAVA sẽ đề xuất cách triển khai phù hợp." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

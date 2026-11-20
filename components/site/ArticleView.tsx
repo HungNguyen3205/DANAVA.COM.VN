@@ -11,6 +11,8 @@ import { formatDate } from './catalog';
 import { postCover, RelatedPosts, ServiceLinks } from './blocks';
 import { contactHrefFor } from './ServiceDetailPage';
 import { DraftBanner } from './SubServicePage';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 type TocItem = { id: string; title: string; level: number };
 type Img = { src: string; alt: string };
@@ -204,7 +206,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
 
       <RelatedPosts posts={related} data={data} title="Bài viết liên quan" id="s-article-related" soft />
       <ServiceLinks services={services.slice(0, 3)} />
-      <CtaBand primary={{ href: services[0] ? contactHrefFor(services[0]) : '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand title={rich(pageCopy(data, 'mac-dinh').ctaTitle)} lead={pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: services[0] ? contactHrefFor(services[0]) : '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

@@ -13,6 +13,8 @@ import { FaqSection, PricingSection, ProblemsSection, ProcessSection, RelatedPos
 import { BrowserFrame, FeaturedShowcase } from './showcase';
 import { PortfolioGallery } from './PortfolioGallery';
 import { contactHrefFor } from './ServiceDetailPage';
+import { pageCopy } from '@/lib/blocks';
+import { rich } from './rich';
 
 const PRINCIPLES = [
   { n: '01', title: 'Thẩm mỹ riêng cho từng thương hiệu', text: 'Màu sắc, kiểu chữ và hình ảnh xuất phát từ cá tính thương hiệu, không dùng theme dựng sẵn.' },
@@ -24,6 +26,7 @@ const PRINCIPLES = [
 const STANDARDS = ['Ảnh nén WebP, tải nhanh', 'Chứng chỉ SSL (HTTPS)', 'Thẻ meta, Open Graph, dữ liệu cấu trúc và sitemap', 'Trang quản trị tiếng Việt để tự cập nhật', 'Bàn giao tên miền, tài khoản và tài liệu'];
 
 export function WebsitePage({ service, data }: { service: Service; data: SiteData }) {
+  const copy = pageCopy(data, 'website');
   const items = showcaseFor(data, 'website');
   const { featured, rest } = splitFeatured(items);
   const lead = featured[0];
@@ -120,7 +123,7 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
       <RelatedPosts posts={postsForService(data, service.id, 3)} data={data} title="Kiến thức về website & tên miền" />
       <ServiceLinks services={sortServices(data.services).filter(s => ['studio', 'events', 'travel'].includes(s.id))} title="Kết hợp cùng website" />
-      <CtaBand title="Bắt đầu website của bạn" lead="Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá." primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
     </main>
   );
 }
