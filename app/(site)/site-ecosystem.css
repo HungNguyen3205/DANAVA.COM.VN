@@ -260,3 +260,35 @@
 .hx-card__kicker, .hx-pcard__role, .hx-stop ul a { font-weight: 700; }
 .hx-btn { font-weight: 700; }
 @media (max-width: 560px) { .hx .hx-sky { width: 84%; } }
+
+/* ---- Thẻ đơn vị: khung minh hoạ khi chưa có ảnh, link sản phẩm dạng chip, nút luôn ở đáy ---- */
+.hx-card__icon { position: relative; overflow: hidden; display: grid; place-items: center; align-content: center; gap: 6px; aspect-ratio: 16 / 10; border-radius: 14px; background:
+  radial-gradient(circle at 50% 45%, #fff 0, transparent 60%),
+  radial-gradient(color-mix(in srgb, var(--tone) 22%, transparent) 1px, transparent 1.5px) 0 0 / 16px 16px,
+  linear-gradient(160deg, var(--tone-soft), #fff); color: var(--tone-ink); }
+.hx-card__icon svg { width: auto; height: auto; padding: 0; background: none; box-shadow: none; }
+.hx-card__icon-rings { position: absolute; left: 50%; top: 42%; width: 0; height: 0; }
+.hx-card__icon-rings i { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1.5px dashed color-mix(in srgb, var(--tone) 35%, transparent); transform: translate(-50%, -50%); }
+.hx-card__icon-rings i:nth-child(1) { width: 130px; height: 130px; }
+.hx-card__icon-rings i:nth-child(2) { width: 210px; height: 210px; border-style: solid; border-color: color-mix(in srgb, var(--tone) 16%, transparent); }
+.hx-card__icon-rings i:nth-child(3) { width: 300px; height: 300px; border-color: color-mix(in srgb, var(--tone) 12%, transparent); }
+.hx-card__icon-badge { position: relative; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 26px; background: #fff; color: var(--tone); box-shadow: 0 18px 36px -18px color-mix(in srgb, var(--tone) 80%, transparent); }
+.hx-card__icon-badge svg { width: 40px; height: 40px; }
+.hx-card__icon strong { position: relative; margin-top: 8px; font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--hx-ink); }
+.hx-card__icon small { position: relative; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--tone-ink); }
+.hx-card__icon-chip { position: absolute; padding: 6px 12px; border-radius: 999px; background: #fff; color: var(--hx-ink); font-size: 12.5px; font-style: normal; font-weight: 700; white-space: nowrap; box-shadow: 0 10px 22px -14px rgba(19, 36, 79, .5); animation: hx-float 6s ease-in-out infinite; }
+.hx-card__icon-chip::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--tone); vertical-align: 1px; }
+.hx-card__icon-chip--0 { left: 7%; top: 14%; }
+.hx-card__icon-chip--1 { right: 7%; bottom: 12%; animation-delay: -3s; }
+@media (prefers-reduced-motion: reduce) { .hx-card__icon-chip { animation: none; } }
+
+.hx-card__live { order: 1; display: flex; flex-wrap: wrap; gap: 8px; margin: auto 0 0; padding: 18px 0 0; list-style: none; }
+.hx-card__live a { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--hx-line); background: #fff; color: var(--hx-ink); font-size: 13px; font-weight: 700; text-decoration: none; transition: border-color .2s, transform .2s; }
+.hx-card__live a i { width: 7px; height: 7px; border-radius: 50%; background: #19b27b; box-shadow: 0 0 0 3px rgba(25, 178, 123, .18); }
+.hx-card__live a svg { width: 14px; height: 14px; color: var(--hx-muted); }
+.hx-card__live a:hover { border-color: var(--tone); transform: translateY(-1px); }
+.hx-card__live a:focus-visible { outline: 3px solid var(--tone); outline-offset: 2px; }
+.hx-card__links { order: 2; padding-top: 16px; }
+.hx-card__links:last-child { margin-top: auto; padding-top: 22px; }
+.hx-card__links .hx-btn { font-size: 15px; }
+@media (max-width: 720px) { .hx-card__icon-chip { display: none; } }

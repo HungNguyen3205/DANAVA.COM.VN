@@ -53,7 +53,18 @@ function spans(n: number) {
 
 function Media({ u }: { u: EcosystemUnit }) {
   const Icon = ICONS[u.id] || Sparkles;
-  if (!u.screenshot) return <div className="hx-card__icon" aria-hidden="true"><Icon /><span>{u.shortName}</span></div>;
+  if (!u.screenshot) {
+    // Chưa có ảnh thật: khung minh hoạ bằng biểu tượng + các điểm chính của đơn vị (không dùng ảnh không liên quan)
+    return (
+      <div className="hx-card__icon" aria-hidden="true">
+        <span className="hx-card__icon-rings"><i /><i /><i /></span>
+        <span className="hx-card__icon-badge"><Icon /></span>
+        <strong>{u.shortName}</strong>
+        <small>{u.categoryKicker}</small>
+        {u.features.slice(0, 2).map((f, i) => <em key={f} className={`hx-card__icon-chip hx-card__icon-chip--${i}`}>{f}</em>)}
+      </div>
+    );
+  }
   if (u.screenshot.includes('/profile/') || u.screenshot.includes('/legacy/')) {
     return <figure className="hx-card__photo"><img src={u.screenshot} alt={u.name} loading="lazy" decoding="async" width={1200} height={750} /></figure>;
   }
@@ -78,10 +89,17 @@ function Card({ u, span, lead }: { u: EcosystemUnit; span: number; lead: boolean
           {ext
             ? <a className="hx-btn" href={u.officialLink.href} target="_blank" rel="noopener">{u.officialLink.label} <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
             : <Link className="hx-btn" href={u.officialLink.href}>{u.officialLink.label} <ArrowRight aria-hidden="true" /></Link>}
-          {u.live?.filter(l => l.href !== u.officialLink.href.replace(/\/$/, '')).map(l => (
-            <a key={l.href} className="hx-link" href={l.href} target="_blank" rel="noopener">{l.label} <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
-          ))}
         </div>
+        {(() => {
+          const extra = u.live?.filter(l => l.href !== u.officialLink.href.replace(/\/$/, '')) || [];
+          return extra.length > 0 && (
+            <ul className="hx-card__live" aria-label={`Sản phẩm đang chạy của ${u.shortName}`}>
+              {extra.map(l => (
+                <li key={l.href}><a href={l.href} target="_blank" rel="noopener"><i aria-hidden="true" />{l.label}<ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a></li>
+              ))}
+            </ul>
+          );
+        })()}
       </div>
     </article>
   );
