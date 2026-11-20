@@ -373,3 +373,38 @@
   .pgo-stub { padding: 16px; gap: 10px; }
   .pgo-stub b { font-size: 22px; }
 }
+
+/* ---- DANAVA GO: 3 nút chuyển dòng xe (components/site/GoFleet.tsx) ---- */
+.pgo-fleet .pgo-vehicles { display: inline-flex; flex-wrap: wrap; max-width: 100%; margin: 26px 0 30px; }
+.pgo-fleet .pgo-vehicles button { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 20px; border: 0; border-radius: 999px; background: transparent; color: var(--go-navy); font: inherit; font-size: 15.5px; font-weight: 800; cursor: pointer; transition: background .25s, color .25s, transform .2s; }
+.pgo-fleet .pgo-vehicles button svg { width: 18px; height: 18px; }
+.pgo-fleet .pgo-vehicles button:hover { background: rgba(19, 36, 79, .07); }
+.pgo-fleet .pgo-vehicles button.is-on { background: var(--go-navy); color: #fff; box-shadow: 0 10px 22px -12px rgba(19, 36, 79, .8); }
+.pgo-fleet .pgo-vehicles button:focus-visible { outline: 3px solid var(--go-orange); outline-offset: 2px; }
+.pgo-fleet .pgo-cabin { margin-top: 0; animation: pgo-fleet-in .45s ease both; }
+.pgo-fleet .pgo-seat__img { display: grid; align-items: center; min-height: clamp(220px, 28vw, 380px); touch-action: pan-y; }
+.pgo-fleet .pgo-seat__img span { top: 0; z-index: 0; transition: opacity .3s; }
+.pgo-fleet .pgo-seat__img img { grid-area: 1 / 1; z-index: 1; width: 100%; height: auto; max-height: 380px; object-fit: contain; opacity: 0; transform: translateX(40px) scale(.96); transition: opacity .45s ease, transform .6s cubic-bezier(.2, .8, .2, 1); filter: drop-shadow(0 30px 26px rgba(19, 36, 79, .22)); }
+.pgo-fleet .pgo-seat__img img.is-on { opacity: 1; transform: none; }
+.pgo-fleet__nav { position: relative; z-index: 2; grid-area: 2 / 1; justify-self: center; display: inline-flex; align-items: center; gap: 14px; margin-top: 18px; padding: 6px; border-radius: 999px; background: var(--go-cream); font-size: 14px; color: #6b7590; font-variant-numeric: lining-nums tabular-nums; }
+.pgo-fleet__nav b { color: var(--go-navy); }
+.pgo-fleet__nav button { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--go-navy); cursor: pointer; box-shadow: 0 6px 16px -10px rgba(19, 36, 79, .6); transition: background .2s, color .2s; }
+.pgo-fleet__nav button:hover { background: var(--go-orange); color: #fff; }
+.pgo-fleet__nav button:focus-visible { outline: 3px solid var(--go-orange); outline-offset: 2px; }
+.pgo-fleet__nav svg { width: 20px; height: 20px; }
+@keyframes pgo-fleet-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .pgo-fleet .pgo-cabin { animation: none; }
+  .pgo-fleet .pgo-seat__img img { transition: none; transform: none; }
+}
+@media (max-width: 900px) {
+  .pgo-fleet .pgo-seat__img { order: -1; }
+}
+@media (max-width: 560px) {
+  .pgo-fleet .pgo-vehicles { display: flex; flex-wrap: nowrap; width: 100%; box-sizing: border-box; }
+  .pgo-fleet .pgo-vehicles button { flex: 1; justify-content: center; padding: 8px 6px; font-size: 14px; gap: 5px; }
+  .pgo-fleet .pgo-vehicles button svg { display: none; }
+}
+.pgo-seat { overflow-x: clip; }
+.pgo-fleet .pgo-seat__img > span { left: 0; right: 0; text-align: center; white-space: nowrap; font-size: clamp(44px, 7.5vw, 112px); }
+.pgo-fleet__nav span { position: static; font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0; color: #6b7590; }

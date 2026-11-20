@@ -13,6 +13,7 @@ import { Crumbs } from './ui';
 import { BrowserFrame } from './showcase';
 import { HelloCompare } from './HelloCompare';
 import { StudioTour } from './StudioTour';
+import { GoFleet } from './GoFleet';
 
 const ext = { target: '_blank', rel: 'noopener' } as const;
 const crumbs = (label: string) => <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/', label: 'Giải pháp' }, { label }]} />;
@@ -138,21 +139,12 @@ export function GoPage(_: { data: SiteData }) {
       </section>
 
       <section className="pgo-sec pgo-seat" aria-labelledby="pgo-seat-title">
-        <div className="s-container pgo-seat__grid">
-          <div>
+        <div className="s-container">
+          <div className="pgo-fleet__head">
             <p className="pgo-eyebrow">Chọn cách bạn tận hưởng</p>
             <h2 className="pgo-h2" id="pgo-seat-title">Chuyến đi đẹp, <em>bắt đầu từ chỗ ngồi.</em></h2>
-            <ul className="pgo-vehicles">{GO.vehicles.map((v, i) => <li key={v} className={i === 2 ? 'is-on' : undefined}><Armchair aria-hidden="true" />{v}</li>)}</ul>
-            <div className="pgo-cabin">
-              <p className="pgo-cabin__tag">Cabin VIP</p>
-              <h3>{GO.cabin.name}</h3>
-              <p>{GO.cabin.text}</p>
-              <p className="pgo-cabin__specs"><Users aria-hidden="true" />{GO.cabin.specs.join(' · ')}</p>
-              <ul>{GO.cabin.perks.map(p => <li key={p}><Check aria-hidden="true" />{p}</li>)}</ul>
-              <small>{GO.cabin.note}</small>
-            </div>
           </div>
-          <figure className="pgo-seat__img"><span aria-hidden="true">PRIVATE</span><img src="/assets/products/go-cabin.webp" alt="Xe Cabin VIP 22 phòng của DANAVA GO" width={660} height={410} loading="lazy" /></figure>
+          <GoFleet fleet={GO.fleet} note={GO.fleetNote} />
         </div>
       </section>
 

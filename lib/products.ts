@@ -15,7 +15,13 @@ export const GO = {
   lead: 'Nền tảng đặt vé xe khách trực tuyến cao cấp. Mang đến trải nghiệm di chuyển êm ái, an toàn và văn minh trên mọi nẻo đường Việt Nam.',
   ticketPerks: ['Vé điện tử', 'Giữ chỗ 10 phút', 'Trả tại quầy hoặc QR'],
   vehicles: ['Giường nằm', 'Limousine', 'Cabin VIP'],
-  cabin: { name: 'Cabin VIP 22 phòng', text: 'Khoang nghỉ riêng, dành thêm không gian cho chính bạn.', specs: ['22 chỗ', '2 tầng'], perks: ['Phòng riêng biệt lập', 'Hệ thống massage đa điểm', 'Màn hình LCD giải trí', 'Tai nghe chống ồn'], note: 'Tiện ích cụ thể được hiển thị theo từng chuyến.' },
+  /** 3 dòng xe trên trang chủ DANAVA GO (dự án DatVeXeONL: VEHICLE_MODELS + VehicleExperience) */
+  fleet: [
+    { id: 'sleeper', label: 'Giường nằm', name: 'Giường nằm 34 chỗ', word: 'JOURNEY', text: 'Ngả lưng thư giãn, để hành trình đưa bạn đến miền đất mới.', seats: 34, floors: 2, perks: ['Wifi tốc độ cao', 'Cổng sạc Type-C', 'Chăn gối kháng khuẩn', 'Nước suối & khăn lạnh'], image: '/assets/products/go/vehicle-sleeper.webp', width: 900, height: 493 },
+    { id: 'limousine', label: 'Limousine', name: 'Limousine VIP 16 chỗ', word: 'COMFORT', text: 'Không gian ghế ngồi thoải mái cho những chuyến đi linh hoạt.', seats: 16, floors: 1, perks: ['Ghế bọc da ngả 135°', 'Cổng sạc & Đèn đọc sách', 'Tivi trần trung tâm', 'Tủ lạnh mini'], image: '/assets/products/go/vehicle-limousine.webp', width: 900, height: 491 },
+    { id: 'cabin', label: 'Cabin VIP', name: 'Cabin VIP 22 phòng', word: 'PRIVATE', text: 'Khoang nghỉ riêng, dành thêm không gian cho chính bạn.', seats: 22, floors: 2, perks: ['Phòng riêng biệt lập', 'Hệ thống massage đa điểm', 'Màn hình LCD giải trí', 'Tai nghe chống ồn'], image: '/assets/products/go/vehicle-cabin.webp', width: 900, height: 431 }
+  ],
+  fleetNote: 'Tiện ích cụ thể được hiển thị theo từng chuyến.',
   routes: [
     { tag: 'Di sản', kicker: 'Qua miền di sản', from: 'Đà Nẵng', to: 'Huế', image: '/assets/products/go-route-hue.webp' },
     { tag: 'Biển xanh', kicker: 'Hẹn một ngày bên biển', from: 'Đà Nẵng', to: 'Nha Trang', image: '/assets/products/go-route-nhatrang.webp' },
