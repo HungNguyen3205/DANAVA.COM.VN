@@ -6,12 +6,13 @@
  * Nội dung: lib/products.ts (thông tin công khai trên chính trang sản phẩm). Ảnh: chụp màn hình thật.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, BadgeCheck, Bus, CalendarCheck, Check, ClipboardList, KeyRound, MapPin, QrCode, Smartphone, Ticket, Users, Armchair, Eye, ListChecks, Route } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BadgeCheck, Bus, CalendarCheck, CalendarDays, Gauge, LayoutDashboard, Store, UserRound, Wallet, Check, ClipboardList, KeyRound, MapPin, QrCode, Smartphone, Ticket, Users, Armchair, Eye, ListChecks, Route } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { GO, HELLO, WORK, PRODUCTS_CHECKED } from '@/lib/products';
 import { Crumbs } from './ui';
 import { BrowserFrame } from './showcase';
 import { HelloCompare } from './HelloCompare';
+import { StudioTour } from './StudioTour';
 
 const ext = { target: '_blank', rel: 'noopener' } as const;
 const crumbs = (label: string) => <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/', label: 'Giải pháp' }, { label }]} />;
@@ -59,6 +60,80 @@ export function GoPage(_: { data: SiteData }) {
         <div className="s-container pgo-devices__stage">
           <BrowserFrame src="/assets/products/go-hero.webp" alt="Trang chủ DANAVA GO trên máy tính: tìm chuyến Đà Nẵng – Hội An" url={GO.url} priority />
           <figure className="pgo-phone"><img src="/assets/products/go-mobile.webp" alt="DANAVA GO trên điện thoại" width={390} height={844} loading="lazy" /></figure>
+        </div>
+      </section>
+
+      {/* Một nền tảng, ba góc nhìn */}
+      <section className="pgo-sec pgo-roles" aria-labelledby="pgo-roles-title">
+        <div className="s-container">
+          <p className="pgo-eyebrow">Hệ thống DANAVA GO</p>
+          <h2 className="pgo-h2" id="pgo-roles-title">Một nền tảng, <em>ba góc nhìn.</em></h2>
+          <ul className="pgo-roles__grid">
+            <li><span className="pgo-roles__no">01</span><UserRound aria-hidden="true" /><h3>Hành khách</h3><p>Đặt vé trên danavago.com hoặc app DANAVA GO: tìm chuyến, chọn chỗ, nhận vé điện tử, tra cứu lại bất cứ lúc nào.</p><span className="pgo-roles__host">danavago.com · app.danavago.com</span></li>
+            <li><span className="pgo-roles__no">02</span><Store aria-hidden="true" /><h3>Nhà xe</h3><p>Trang nhà xe và app đặt vé mang tên, logo của chính nhà xe; tuyến, giờ chạy, giá do nhà xe cập nhật.</p><span className="pgo-roles__host">tên-nhà-xe.danavago.com</span></li>
+            <li><span className="pgo-roles__no">03</span><LayoutDashboard aria-hidden="true" /><h3>Điều phối</h3><p>DANAVA GO Studio: {GO.studio.tagline.charAt(0).toLowerCase() + GO.studio.tagline.slice(1)}</p><span className="pgo-roles__host">studio.danavago.com</span></li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Bên trong DANAVA GO: màn hình thật theo vai trò */}
+      <section className="pgo-sec pgo-tour" aria-labelledby="pgo-tour-title">
+        <div className="s-container">
+          <p className="pgo-eyebrow">Bên trong DANAVA GO</p>
+          <h2 className="pgo-h2" id="pgo-tour-title">Từng màn hình, <em>đúng như đang chạy.</em></h2>
+          <p className="pgo-sub">Chọn vai trò, bấm từng bước để xem giao diện thật của app và trang quản trị.</p>
+          <StudioTour roles={GO.tour} />
+        </div>
+      </section>
+
+      {/* App riêng cho từng nhà xe — ví dụ thật */}
+      <section className="pgo-sec pgo-brand" aria-labelledby="pgo-brand-title">
+        <div className="s-container pgo-brand__grid">
+          <figure className="pgo-brand__phone"><img src="/assets/products/go/app-trips.webp" alt={`App đặt vé riêng của ${GO.operator.name}: chuyến ${GO.operator.trip.from} → ${GO.operator.trip.to}`} width={390} height={812} loading="lazy" /></figure>
+          <div>
+            <p className="pgo-eyebrow">Mỗi nhà xe một thương hiệu</p>
+            <h2 className="pgo-h2" id="pgo-brand-title">App đặt vé <em>mang tên nhà xe.</em></h2>
+            <p className="pgo-lead">Nhà xe có app đặt vé riêng trên tên miền của mình, với logo và màu sắc riêng, cùng trang giới thiệu trên danavago.com. Ví dụ thật: <b>{GO.operator.name}</b> · {GO.operator.kinds} · {GO.operator.places}.</p>
+            <dl className="pgo-brand__stats">{GO.operator.stats.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+            <div className="pgo-stub" aria-label="Một chuyến thật trên app nhà xe">
+              <div><small>{GO.operator.trip.kind}</small><b>{GO.operator.trip.depart}</b><span>{GO.operator.trip.from}</span></div>
+              <div className="pgo-stub__line" aria-hidden="true"><i /><span>{GO.operator.trip.duration}</span></div>
+              <div className="is-right"><small>{GO.operator.trip.plusDay ? '+1 ngày' : ''}</small><b>{GO.operator.trip.arrive}</b><span>{GO.operator.trip.to}</span></div>
+              <p className="pgo-stub__price">{GO.operator.trip.price}<small>/ người</small></p>
+            </div>
+            <div className="pgo-actions">
+              <a className="pgo-btn pgo-btn--primary" href={GO.operator.app} {...ext}>Xem app {GO.operator.name} <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
+              <a className="pgo-btn pgo-btn--ghost" href={GO.operator.page} {...ext}>Trang nhà xe <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
+            </div>
+            <p className="pgo-brand__note"><BadgeCheck aria-hidden="true" />{GO.status} Số liệu theo trang nhà xe ngày {PRODUCTS_CHECKED}.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* DANAVA GO Studio — trang quản trị */}
+      <section className="pgo-studio" aria-labelledby="pgo-studio-title">
+        <div className="s-container">
+          <div className="pgo-studio__head">
+            <p className="pgo-eyebrow pgo-eyebrow--light">DANAVA GO Studio · Quản trị nhà xe</p>
+            <h2 className="pgo-h2 pgo-h2--light" id="pgo-studio-title">Điều phối mọi chuyến xe <em>từ một bảng điều khiển.</em></h2>
+            <p className="pgo-studio__lead">{GO.studio.tagline}</p>
+          </div>
+          <ol className="pgo-studio__route">
+            {GO.studio.modules.map((m, i) => {
+              const Icon = [Bus, CalendarDays, Ticket, Wallet][i % 4];
+              return <li key={m}><span className="pgo-studio__stop"><Icon aria-hidden="true" /></span><b>{m}</b></li>;
+            })}
+          </ol>
+          <div className="pgo-studio__grid">
+            <BrowserFrame src="/assets/products/go/studio-login.webp" alt="Trang đăng nhập DANAVA GO Studio" url={GO.studioUrl} />
+            <div className="pgo-studio__side">
+              <h3><Gauge aria-hidden="true" />Ai dùng Studio?</h3>
+              <p>Nhà xe đăng nhập bằng số điện thoại hoặc email. Trên app DANAVA GO, nhân viên nhà xe cũng có lối đăng nhập riêng:</p>
+              <ul>{GO.studio.staff.map(x => <li key={x}>{x}</li>)}</ul>
+              <a className="pgo-btn pgo-btn--primary" href={GO.studioUrl} {...ext}>Mở DANAVA GO Studio <ArrowUpRight aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></a>
+              <small>Đăng nhập bằng tài khoản nhà xe do DANAVA cấp.</small>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -120,19 +195,6 @@ export function GoPage(_: { data: SiteData }) {
               return <li key={f.title}><Icon aria-hidden="true" /><h3>{f.title}</h3><p>{f.text}</p></li>;
             })}
           </ul>
-        </div>
-      </section>
-
-      <section className="pgo-sec pgo-ops" aria-labelledby="pgo-ops-title">
-        <div className="s-container pgo-ops__box">
-          <div>
-            <p className="pgo-eyebrow pgo-eyebrow--light">Dành cho nhà xe</p>
-            <h2 className="pgo-h2 pgo-h2--light" id="pgo-ops-title">Mở bán vé trên DANAVA GO</h2>
-            <p>{GO.operatorNote}</p>
-            <p className="pgo-ops__list">Nhà xe đang đồng hành: {GO.operators.map(o => <b key={o}>{o}</b>)}</p>
-            <Link className="pgo-btn pgo-btn--primary" href="/lien-he/?ref=danava-go">Trao đổi với DANAVA <ArrowRight aria-hidden="true" /></Link>
-          </div>
-          <p className="pgo-ops__note"><BadgeCheck aria-hidden="true" />{GO.status} Kiểm tra ngày {PRODUCTS_CHECKED}.</p>
         </div>
       </section>
 

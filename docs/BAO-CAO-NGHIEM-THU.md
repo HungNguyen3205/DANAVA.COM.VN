@@ -218,3 +218,27 @@ Ba trang mới, mỗi trang một phong cách theo đúng tinh thần sản ph�
 - **Chân trang:** bỏ chữ "DANAVA" khổ lớn ở cuối trang.
 - **Trang Hello DANAVA:** ảnh phần "Nhận báo giá" chụp lại trọn biểu mẫu thật trên hello.danava.vn (chọn gói, tùy chọn bổ sung, thông tin liên hệ, dự toán) và bỏ khung điện thoại đang che phần tổng tiền.
 - **Trang Liên hệ:** danh thiếp dùng logo tách nền. Thêm `public/assets/danava-logo-light.png`, chỉ đổi dòng "SOLUTIONS" sang màu sáng cho nền tối; giữ nguyên file `danava-logo.png`.
+
+## 16. Cập nhật: trang DANAVA GO đầy đủ app và trang quản trị (20/11/2026)
+
+Trang `/giai-phap/danava-go/` được bổ sung theo kiểu trang DANAVA Studio. Mọi ảnh và số liệu lấy từ các trang thật của DANAVA GO, xem ngày 20/11/2026.
+
+- **Một nền tảng, ba góc nhìn:** ba thẻ dạng vé cho Hành khách (danavago.com, app.danavago.com), Nhà xe (app riêng trên tên miền nhà xe) và Điều phối (studio.danavago.com).
+- **Tour màn hình thật:** dùng lại `StudioTour`, chia ba tab.
+  - Hành khách: trang chủ app, danh sách chuyến, sơ đồ chọn chỗ 2 tầng, vé của tôi.
+  - Tài khoản & ưu đãi: đăng nhập tài khoản và nhân viên nhà xe, mã giảm giá.
+  - Nhà xe & quản trị: trang nhà xe, DANAVA GO Studio.
+- **App mang tên nhà xe:** ví dụ thật Cửa Ông Limousine.
+  - Số liệu: 16 tuyến, khoảng 2 chuyến mỗi ngày, vé từ 600.000đ.
+  - Chuyến Cabin VIP 13:00 Hội An → 11:30 (+1 ngày) Quảng Ninh.
+  - Nút mở app riêng và trang nhà xe; ghi chú trạng thái chạy thử.
+- **DANAVA GO Studio:** khu nền tối.
+  - 4 mô-đun: Đội xe, Lịch chuyến, Ghế & vé, Doanh thu.
+  - Ảnh màn hình đăng nhập thật; người dùng là chủ xe, tài xế, lơ xe.
+  - Nút "Mở DANAVA GO Studio".
+- Khối "Dành cho nhà xe" cũ được gộp vào hai phần mới.
+- Ảnh mới nằm trong `public/assets/products/go/`.
+- **Kiểm tra:**
+  - 3 trang sản phẩm × 4 độ rộng (1440, 1024, 390, 360): không tràn ngang, không ảnh hỏng, không lỗi console.
+  - `npm test` 100/100.
+  - `npm run build` thành công.

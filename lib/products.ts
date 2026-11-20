@@ -33,6 +33,40 @@ export const GO = {
     { title: 'Thông tin chuyến đầy đủ', text: 'Xem giá, lịch trình và loại xe để chọn chuyến phù hợp với nhu cầu.' }
   ],
   operators: ['Cửa Ông Limousine'],
+  studioUrl: 'https://studio.danavago.com/',
+  /** DANAVA GO Studio — trang quản trị cho nhà xe (theo trang đăng nhập studio.danavago.com) */
+  studio: {
+    tagline: 'Chuyến, ghế, vé và doanh thu của nhà xe trên DANAVA GO, cập nhật theo thời gian thực.',
+    modules: ['Đội xe', 'Lịch chuyến', 'Ghế & vé', 'Doanh thu'],
+    staff: ['Chủ xe', 'Tài xế', 'Lơ xe']
+  },
+  /** Ví dụ thật: nhà xe Cửa Ông Limousine (trang nhà xe và app riêng, xem ngày 20/11/2026) */
+  operator: {
+    name: 'Cửa Ông Limousine',
+    app: 'https://cuaonglimousine.danavago.com/',
+    page: 'https://danavago.com/nha-xe/cua-ong-limousine',
+    kinds: 'Phòng riêng (cabin) & Ghế ngồi limousine',
+    places: 'Quảng Ninh, Hội An, Ninh Bình, Huế',
+    stats: [['Số tuyến', '16'], ['Chuyến mỗi ngày', '~2'], ['Vé từ', '600.000đ']] as [string, string][],
+    trip: { from: 'Hội An', to: 'Quảng Ninh', depart: '13:00', arrive: '11:30', plusDay: true, duration: '22h30m', kind: 'Cabin VIP', price: '600.000đ' }
+  },
+  /** Các màn hình thật (app.danavago.com, cuaonglimousine.danavago.com, danavago.com, studio.danavago.com) */
+  tour: [
+    { id: 'hanh-khach', label: 'Hành khách', device: 'phone' as const, lead: 'App DANAVA GO tại app.danavago.com: tìm chuyến, chọn chỗ và giữ vé ngay trên điện thoại.', shots: [
+      { src: '/assets/products/go/app-home.webp', title: 'Đi đâu tiếp theo?', text: 'Tìm chuyến một chiều hoặc khứ hồi, chọn ngày đi, xem điểm đến nổi bật.' },
+      { src: '/assets/products/go/app-trips.webp', title: 'Chuyến phù hợp', text: 'Lọc theo giờ đi, loại xe, giá; thấy số chỗ còn, điểm đón và điểm trả.' },
+      { src: '/assets/products/go/app-seat.webp', title: 'Chọn chỗ trên sơ đồ 2 tầng', text: 'Phân biệt chỗ chưa bán, đang giữ, đã bán; giờ đón và giờ đến rõ ràng.' },
+      { src: '/assets/products/go/app-tickets.webp', title: 'Vé của tôi', text: 'Vé sắp đi, hoàn thành, đã hủy; tra cứu bằng mã vé và số điện thoại.' }
+    ] },
+    { id: 'tai-khoan', label: 'Tài khoản & ưu đãi', device: 'phone' as const, lead: 'Tài khoản được tạo tự động khi đặt vé. Nhân viên nhà xe đăng nhập ngay trên cùng app.', shots: [
+      { src: '/assets/products/go/app-account.webp', title: 'Tài khoản hành khách', text: 'Tên đăng nhập là số điện thoại đặt vé; chủ xe, tài xế, lơ xe có lối đăng nhập riêng.' },
+      { src: '/assets/products/go/app-promos.webp', title: 'Ưu đãi & khuyến mãi', text: 'Mã giảm giá do nhà xe tạo; bấm "Dùng mã" để mã tự điền khi đặt vé.' }
+    ] },
+    { id: 'nha-xe', label: 'Nhà xe & quản trị', device: 'desktop' as const, lead: 'Mỗi nhà xe có trang riêng trên danavago.com và điều hành bằng DANAVA GO Studio.', shots: [
+      { src: '/assets/products/go/operator-page.webp', title: 'Trang nhà xe', text: 'Ảnh xe, số tuyến, chuyến mỗi ngày, giá từ, hỏi đáp và danh sách tuyến theo lịch 7 ngày.' },
+      { src: '/assets/products/go/studio-login.webp', title: 'DANAVA GO Studio', text: 'Cổng quản trị của nhà xe: đội xe, lịch chuyến, ghế & vé, doanh thu.' }
+    ] }
+  ],
   operatorNote: 'Lịch trình, giá và tồn ghế do nhà xe quản lý (dữ liệu qua API). Thanh toán theo hướng dẫn của nhà xe.',
   status: 'DANAVA GO đang chạy thử: trang ghi rõ bản demo chưa xử lý hoàn tiền thực tế, hiện có 1 nhà xe đồng hành.'
 };

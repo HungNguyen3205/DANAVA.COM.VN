@@ -292,3 +292,84 @@
   .phl-stack { min-height: 220px; }
 }
 @media (prefers-reduced-motion: reduce) { .pgo-card img, .pgo-btn, .phl-btn, .pwk-btn { transition: none; } }
+
+/* ---- DANAVA GO: ba góc nhìn, tour màn hình thật, app nhà xe, Studio ---- */
+.pgo-sub { margin: 14px 0 30px; max-width: 620px; font-size: 17px; line-height: 1.7; color: #3d4a6b; }
+.pgo-roles { background: #fff; }
+.pgo-roles__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 34px 0 0; padding: 0; list-style: none; }
+.pgo-roles__grid li { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 28px 24px 22px; border-radius: 22px; background: var(--go-cream); border: 1.5px dashed rgba(19, 36, 79, .16); overflow: hidden; }
+.pgo-roles__grid li::before, .pgo-roles__grid li::after { content: ""; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: #fff; transform: translateY(-50%); }
+.pgo-roles__grid li::before { left: -12px; }
+.pgo-roles__grid li::after { right: -12px; }
+.pgo-roles__grid svg { width: 40px; height: 40px; padding: 9px; box-sizing: border-box; border-radius: 12px; background: var(--go-navy); color: var(--go-sun); }
+.pgo-roles__grid h3 { margin: 4px 0 0; font-size: 21px; font-weight: 800; }
+.pgo-roles__grid p { margin: 0; flex: 1; font-size: 15.5px; line-height: 1.65; color: #3d4a6b; }
+.pgo-roles__no { position: absolute; top: 18px; right: 22px; font-family: var(--font-display); font-size: 40px; font-weight: 600; line-height: 1; color: rgba(242, 107, 29, .22); }
+.pgo-roles__host { margin-top: 6px; padding-top: 12px; border-top: 1.5px dashed rgba(19, 36, 79, .16); font-size: 13px; font-weight: 800; color: var(--go-orange); overflow-wrap: anywhere; }
+
+.pgo-tour { background: linear-gradient(180deg, #fff, var(--go-cream)); }
+.pgo-tour .st-tour__tabs { background: #f3e9da; }
+.pgo-tour .st-tour__tabs [role="tab"][aria-selected="true"] { color: var(--go-orange); }
+.pgo-tour .st-tour__n { color: var(--go-orange); }
+.pgo-tour .st-tour__lead { color: var(--go-navy); }
+.pgo-tour .st-tour__steps button[aria-pressed="true"] { border-color: var(--go-orange); background: #fff3e8; }
+.pgo-tour .st-tour__dot { background: #f3e9da; color: var(--go-orange); }
+.pgo-tour [aria-pressed="true"] .st-tour__dot { background: var(--go-orange); color: #fff; }
+.pgo-tour .st-tour__panel--phone .st-tour__stage, .pgo-tour .st-tour__panel--desktop .st-tour__stage { background: var(--go-navy); }
+
+.pgo-brand { background: var(--go-cream); }
+.pgo-brand__grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+.pgo-brand__phone { position: relative; isolation: isolate; justify-self: center; width: min(300px, 80%); margin: 0; padding: 8px; border-radius: 36px; background: var(--go-navy); box-shadow: 0 40px 70px -30px rgba(19, 36, 79, .6); transform: rotate(-3deg); }
+.pgo-brand__phone::before { content: ""; position: absolute; inset: -26px -40px; z-index: -1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 179, 71, .55), transparent); }
+.pgo-brand__phone img { display: block; width: 100%; height: auto; border-radius: 28px; }
+.pgo-brand__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 24px 0 0; }
+.pgo-brand__stats div { padding: 14px 16px; border-radius: 16px; background: #fff; box-shadow: 0 12px 26px -20px rgba(19, 36, 79, .5); }
+.pgo-brand__stats dt { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #6b7590; }
+.pgo-brand__stats dd { margin: 4px 0 0; font-size: clamp(20px, 2.2vw, 26px); font-weight: 800; color: var(--go-navy); font-variant-numeric: lining-nums tabular-nums; }
+.pgo-stub { display: grid; grid-template-columns: auto minmax(60px, 1fr) auto; align-items: center; gap: 14px; margin-top: 16px; padding: 18px 20px; border-radius: 18px; background: var(--go-navy); color: #fff; font-variant-numeric: lining-nums tabular-nums; }
+.pgo-stub > div { display: grid; gap: 2px; }
+.pgo-stub .is-right { text-align: right; }
+.pgo-stub small { min-height: 1.2em; font-size: 11.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--go-sun); }
+.pgo-stub b { font-size: 26px; font-weight: 800; line-height: 1; }
+.pgo-stub span { font-size: 14px; color: #cfd8f3; }
+.pgo-stub__line { position: relative; display: grid; place-items: center; height: 30px; }
+.pgo-stub__line i { position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed rgba(255, 255, 255, .35); }
+.pgo-stub__line span { position: relative; padding: 2px 10px; border-radius: 999px; background: var(--go-orange); color: #fff; font-size: 12px; font-weight: 800; }
+.pgo-stub__price { grid-column: 1 / -1; margin: 6px 0 0; padding-top: 12px; border-top: 1.5px dashed rgba(255, 255, 255, .2); font-size: 22px; font-weight: 800; color: var(--go-sun); }
+.pgo-stub__price small { margin-left: 6px; color: #cfd8f3; text-transform: none; letter-spacing: 0; font-size: 14px; }
+.pgo-brand__note { display: flex; gap: 8px; align-items: flex-start; margin: 18px 0 0; font-size: 14px; line-height: 1.6; color: #6b7590; }
+.pgo-brand__note svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--go-orange); }
+
+.pgo-studio { position: relative; padding: clamp(60px, 8vw, 110px) 0; overflow: hidden; background: radial-gradient(900px 420px at 85% 0%, rgba(242, 107, 29, .28), transparent 60%), radial-gradient(700px 400px at 0% 100%, rgba(83, 165, 219, .22), transparent 60%), #0e1a3d; color: #fff; }
+.pgo-studio__head { max-width: 760px; }
+.pgo-studio__lead { margin: 16px 0 0; font-size: 17.5px; line-height: 1.7; color: #cfd8f3; }
+.pgo-studio__route { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 40px 0 34px; padding: 0; list-style: none; counter-reset: st; }
+.pgo-studio__route::before { content: ""; position: absolute; top: 28px; left: 12%; right: 12%; border-top: 2px dashed rgba(255, 179, 71, .5); }
+.pgo-studio__route li { position: relative; display: grid; justify-items: center; gap: 10px; text-align: center; counter-increment: st; }
+.pgo-studio__stop { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #fff; color: var(--go-orange); box-shadow: 0 0 0 6px rgba(255, 255, 255, .08), 0 14px 30px -12px rgba(242, 107, 29, .8); }
+.pgo-studio__stop svg { width: 24px; height: 24px; }
+.pgo-studio__route b { font-size: 16px; font-weight: 800; }
+.pgo-studio__route b::before { content: "0" counter(st) " · "; color: var(--go-sun); }
+.pgo-studio__grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, .9fr); gap: clamp(22px, 3vw, 40px); align-items: center; }
+.pgo-studio__side { padding: 26px; border-radius: 22px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); }
+.pgo-studio__side h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: 20px; font-weight: 800; }
+.pgo-studio__side h3 svg { width: 22px; height: 22px; color: var(--go-sun); }
+.pgo-studio__side p { margin: 0; font-size: 15.5px; line-height: 1.65; color: #cfd8f3; }
+.pgo-studio__side ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 22px; padding: 0; list-style: none; }
+.pgo-studio__side li { padding: 6px 14px; border-radius: 999px; background: rgba(255, 179, 71, .16); color: var(--go-sun); font-size: 14px; font-weight: 800; }
+.pgo-studio__side small { display: block; margin-top: 12px; font-size: 13px; color: #9fb0d8; }
+.pgo-studio .pgo-btn:focus-visible { outline-color: var(--go-sun); }
+
+@media (max-width: 900px) {
+  .pgo-roles__grid { grid-template-columns: 1fr; }
+  .pgo-brand__grid, .pgo-studio__grid { grid-template-columns: 1fr; }
+  .pgo-brand__phone { width: min(260px, 72%); }
+}
+@media (max-width: 560px) {
+  .pgo-studio__route { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 22px; }
+  .pgo-studio__route::before { display: none; }
+  .pgo-brand__stats { gap: 6px; }
+  .pgo-brand__stats div { padding: 12px 10px; }
+  .pgo-stub { padding: 16px; gap: 10px; }
+  .pgo-stub b { font-size: 22px; }
+}
