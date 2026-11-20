@@ -1,0 +1,5 @@
+/* ==== Tiêu đề toàn dự án theo kiểu trang DANAVA GO (nạp sau cùng) ====
+   Playfair Display, chữ đứng; phần nhấn (em) giữ màu nhấn của từng trang nhưng KHÔNG nghiêng. */
+.s-app :is(h1, h2, h3) em,
+.s-app :is(.s-h1, .s-h2) em { font-style: normal; }
+.s-app :is(h1, h2) em { font-weight: inherit; }
