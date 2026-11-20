@@ -295,11 +295,6 @@ export function HelloPage(_: { data: SiteData }) {
 /* =====================================================================
  * DANAVA Work
  * ===================================================================== */
-const BOARD = [
-  { col: 'Cần làm', n: 3 },
-  { col: 'Đang làm', n: 2 },
-  { col: 'Hoàn thành', n: 3 }
-];
 export function WorkPage(_: { data: SiteData }) {
   return (
     <main id="main" className="pwk">
@@ -316,40 +311,32 @@ export function WorkPage(_: { data: SiteData }) {
                 <span className="pwk-hint"><KeyRound aria-hidden="true" />{WORK.access}</span>
               </div>
             </div>
-            <BrowserFrame src="/assets/products/work-login.webp" alt="Màn hình đăng nhập DANAVA Work" url={WORK.url} priority className="pwk-shot" />
+            <BrowserFrame src="/assets/products/danava-work/kanban-picnic.webp" alt="Bảng Kanban trên DANAVA Work với các cột Ý tưởng, Đang làm, Chờ cả nhà xem, Xong rồi (dữ liệu minh họa)" url={WORK.url} priority className="pwk-shot" />
           </div>
         </div>
       </section>
 
-      <section className="pwk-sec" aria-labelledby="pwk-board-title">
+      <section className="pwk-sec pwk-tour" aria-labelledby="pwk-tour-title">
         <div className="s-container">
-          <p className="pwk-eyebrow">Cách nhóm làm việc</p>
-          <h2 className="pwk-h2" id="pwk-board-title">Phân bổ, theo dõi, <em>hoàn thành.</em></h2>
-          <div className="pwk-board" role="img" aria-label="Hình minh họa bảng công việc ba cột: Cần làm, Đang làm, Hoàn thành">
-            {BOARD.map((c, ci) => (
-              <div key={c.col} className="pwk-col">
-                <p className="pwk-col__head"><i className={`pwk-dot pwk-dot--${ci}`} />{c.col}<span>{c.n}</span></p>
-                {Array.from({ length: c.n }, (_, i) => (
-                  <div key={i} className={`pwk-card${ci === 1 && i === 0 ? ' is-moving' : ''}`}>
-                    <span className="pwk-line" style={{ width: `${62 + ((ci * 3 + i * 7) % 30)}%` }} />
-                    <span className="pwk-line pwk-line--sm" style={{ width: `${38 + ((ci * 5 + i * 11) % 34)}%` }} />
-                    <span className="pwk-card__meta"><i /><i /></span>
-                  </div>
-                ))}
-              </div>
+          <p className="pwk-eyebrow">Bên trong DANAVA Work</p>
+          <h2 className="pwk-h2 pwk-h2--dark" id="pwk-tour-title">Phân bổ, theo dõi, <em>hoàn thành.</em></h2>
+          <p className="pwk-sub">Bấm từng tab để xem giao diện thật. Ảnh chụp bản chạy thử với dữ liệu minh họa vui: dã ngoại, góc bếp, khu vườn.</p>
+          <StudioTour roles={WORK.tour} />
+        </div>
+      </section>
+
+      <section className="pwk-sec" aria-labelledby="pwk-facts-title">
+        <div className="s-container">
+          <p className="pwk-eyebrow">Có gì trong DANAVA Work</p>
+          <h2 className="pwk-h2" id="pwk-facts-title">Đủ cho cả nhóm, <em>gọn cho từng người.</em></h2>
+          <ul className="pwk-notes">
+            {WORK.features.map((f, i) => (
+              <li key={f.title} className={`pwk-note pwk-note--${i}`}>
+                <span className="pwk-note__pin" aria-hidden="true" />
+                <h3>{f.title}</h3>
+                <ul>{f.items.map(x => <li key={x}><Check aria-hidden="true" />{x}</li>)}</ul>
+              </li>
             ))}
-          </div>
-          <p className="pwk-note">Hình minh họa luồng công việc, không phải dữ liệu thật.</p>
-        </div>
-      </section>
-
-      <section className="pwk-sec pwk-sec--light" aria-labelledby="pwk-facts-title">
-        <div className="s-container">
-          <h2 className="pwk-h2 pwk-h2--dark" id="pwk-facts-title">Điều DANAVA Work làm</h2>
-          <ul className="pwk-facts">
-            <li><ListChecks aria-hidden="true" /><h3>Phân bổ công việc</h3><p>Giao việc cho từng thành viên trong nhóm trên cùng một bảng.</p></li>
-            <li><Eye aria-hidden="true" /><h3>Theo dõi tiến độ</h3><p>Cả nhóm thấy việc nào đang làm, việc nào đã xong.</p></li>
-            <li><KeyRound aria-hidden="true" /><h3>Tài khoản do quản trị viên cấp</h3><p>Chỉ người được cấp tài khoản mới đăng nhập được.</p></li>
           </ul>
           <p className="pwk-status"><CalendarCheck aria-hidden="true" />{WORK.status} Doanh nghiệp muốn dùng công cụ tương tự có thể trao đổi với DANAVA. Kiểm tra ngày {PRODUCTS_CHECKED}.</p>
         </div>

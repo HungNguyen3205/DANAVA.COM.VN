@@ -408,3 +408,33 @@
 .pgo-seat { overflow-x: clip; }
 .pgo-fleet .pgo-seat__img > span { left: 0; right: 0; text-align: center; white-space: nowrap; font-size: clamp(44px, 7.5vw, 112px); }
 .pgo-fleet__nav span { position: static; font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0; color: #6b7590; }
+
+/* ---- DANAVA Work: tour màn hình thật + giấy note tính năng ---- */
+.pwk-tour { background: linear-gradient(180deg, #f6f8fd, #eef2fb); color: #3a4766; }
+.pwk-sub { margin: 14px 0 30px; max-width: 640px; font-size: 17px; line-height: 1.7; color: #4b5675; }
+.pwk-tour .st-tour__tabs { background: #e3e8f5; }
+.pwk-tour .st-tour__tabs [role="tab"] { color: #0e1530; }
+.pwk-tour .st-tour__tabs [role="tab"][aria-selected="true"] { color: #2b3a8f; }
+.pwk-tour .st-tour__n { color: #e08a00; }
+.pwk-tour .st-tour__lead { color: #0e1530; }
+.pwk-tour .st-tour__steps button[aria-pressed="true"] { border-color: #2b3a8f; background: #eef1ff; }
+.pwk-tour .st-tour__dot { background: #e3e8f5; color: #2b3a8f; }
+.pwk-tour [aria-pressed="true"] .st-tour__dot { background: #2b3a8f; color: #fff; }
+.pwk-tour .st-tour__panel--desktop .st-tour__stage { background: #0e1530; }
+
+.pwk-notes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin: 34px 0 0; padding: 0; list-style: none; }
+.pwk-note { position: relative; padding: 30px 22px 22px; border-radius: 6px 6px 22px 6px; color: #2a2414; box-shadow: 0 22px 34px -24px rgba(0, 0, 0, .7); transform: rotate(var(--r, 0deg)); transition: transform .3s ease; }
+.pwk-note:hover { transform: rotate(0deg) translateY(-4px); }
+.pwk-note--0 { --r: -1.6deg; background: #fff3b8; }
+.pwk-note--1 { --r: 1.2deg; background: #ffd9e4; }
+.pwk-note--2 { --r: -.8deg; background: #d6f3e4; }
+.pwk-note--3 { --r: 1.6deg; background: #dbe6ff; }
+.pwk-note__pin { position: absolute; top: -10px; left: 50%; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffd27a, #e08a00 70%); box-shadow: 0 4px 8px rgba(0, 0, 0, .35); transform: translateX(-50%); }
+.pwk-note h3 { margin: 0 0 12px; font-family: var(--font-display); font-size: 22px; font-weight: 600; color: #1d2340; }
+.pwk-note ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pwk-note li { display: flex; gap: 8px; font-size: 14.5px; line-height: 1.5; }
+.pwk-note li svg { flex: none; width: 16px; height: 16px; margin-top: 3px; color: #1d2340; }
+.pwk-notes + .pwk-status { margin-top: 34px; }
+@media (prefers-reduced-motion: reduce) { .pwk-note { transition: none; } }
+@media (max-width: 1100px) { .pwk-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .pwk-notes { grid-template-columns: 1fr; gap: 26px; } .pwk-note { --r: 0deg; } }

@@ -21,6 +21,8 @@ test('nội dung sản phẩm trung thực: GO ghi rõ đang chạy thử; giá 
   assert.match(HELLO.termNote, /6 tháng và 24 tháng: liên hệ/);
   assert.equal(HELLO.modules.length, 16);
   assert.ok(HELLO.modules.every(m => m.v.length === 4));
-  // Bảng công việc trên trang Work là hình minh họa, không chứa nội dung giả
-  assert.ok(fs.readFileSync('components/site/ProductPages.tsx', 'utf8').includes('Hình minh họa luồng công việc, không phải dữ liệu thật'));
+  // Ảnh chụp DANAVA Work/GO Studio dùng dữ liệu minh họa: trang phải ghi rõ điều đó
+  assert.ok(fs.readFileSync('components/site/ProductPages.tsx', 'utf8').includes('dữ liệu minh họa vui'));
+  assert.ok(WORK.tour.every(r => r.shots.every(s => s.src.startsWith('/assets/products/'))));
+  assert.match(GO.tour.find(r => r.id === 'quan-tri')!.lead, /dữ liệu mẫu/);
 });

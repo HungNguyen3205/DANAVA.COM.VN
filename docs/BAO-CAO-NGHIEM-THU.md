@@ -242,3 +242,21 @@ Trang `/giai-phap/danava-go/` được bổ sung theo kiểu trang DANAVA Studio
   - 3 trang sản phẩm × 4 độ rộng (1440, 1024, 390, 360): không tràn ngang, không ảnh hỏng, không lỗi console.
   - `npm test` 100/100.
   - `npm run build` thành công.
+
+## 17. Cập nhật: chọn xe DANAVA GO, ảnh thật GO Studio và DANAVA Work (20/11/2026)
+
+- **DANAVA GO, chọn xe:**
+  - 3 nút Giường nằm, Limousine, Cabin VIP chuyển qua lại được. Dùng được nút mũi tên, phím ←/→, và vuốt trên điện thoại.
+  - Dữ liệu và ảnh lấy từ trang chủ DANAVA GO (dự án DatVeXeONL).
+- **DANAVA GO, tab "Quản trị Studio":** 5 màn hình thật là Tổng quan, Xe tuyến & chuyến, Sơ đồ xe & bán vé, Đơn vé, App & tên miền nhà xe.
+  - Chụp từ bản chạy trên máy, trên bản sao database với dữ liệu mẫu do lệnh demo có sẵn của dự án tạo ra.
+  - Số điện thoại được che.
+  - Ảnh trang nhà xe chụp lại, đủ hình.
+- **DANAVA Work:** ảnh Kanban ở hero, tour 3 tab gồm Bảng công việc, Góc cá nhân, Theo dõi nhóm (7 màn hình thật), và thẻ tính năng theo README dự án.
+  - Chụp từ bản chạy trên máy với database SQLite riêng, dữ liệu minh họa vui: dã ngoại, góc bếp, khu vườn.
+  - Tên thành viên là tên hư cấu, không có dữ liệu công việc thật.
+  - Telegram và mail được tắt khi chạy.
+- **Kiểm tra:**
+  - 3 trang sản phẩm × 4 độ rộng: không tràn ngang, không ảnh hỏng, không lỗi console.
+  - `npm test` 100/100.
+  - `npm run build` thành công.

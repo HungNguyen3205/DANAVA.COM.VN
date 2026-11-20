@@ -130,5 +130,28 @@ export const WORK = {
   tagline: 'Nền tảng quản trị công việc chuyên nghiệp. Mọi thứ bạn cần ở một nơi.',
   purpose: 'Phân bổ và theo dõi công việc của nhóm DANAVA.',
   access: 'Sử dụng tài khoản do Admin cấp',
-  status: 'DANAVA Work hiện được dùng nội bộ cho đội ngũ DANAVA.'
+  status: 'DANAVA Work hiện được dùng nội bộ cho đội ngũ DANAVA.',
+  /** Ảnh chụp bản chạy thử của DANAVA Work (dự án Trello) với dữ liệu minh họa vui, không phải dữ liệu thật */
+  tour: [
+    { id: 'bang', label: 'Bảng công việc', device: 'desktop' as const, lead: 'Một bảng, ba cách xem: Kanban kéo thả, danh sách và lịch, cùng một nguồn dữ liệu.', shots: [
+      { src: '/assets/products/danava-work/kanban.webp', title: 'Kanban kéo thả', text: 'Cột Ý tưởng → Đang làm → Chờ duyệt → Xong; thẻ có nhãn màu, hạn, tiến độ và người làm.' },
+      { src: '/assets/products/danava-work/list.webp', title: 'Danh sách', text: 'Xem mọi việc dạng bảng, đổi trạng thái ngay tại chỗ, lọc và nhập việc từ Excel.' },
+      { src: '/assets/products/danava-work/calendar.webp', title: 'Lịch', text: 'Việc trải theo ngày bắt đầu và hạn hoàn thành; xem theo tháng hoặc lịch biểu.' }
+    ] },
+    { id: 'ca-nhan', label: 'Góc cá nhân', device: 'desktop' as const, lead: 'Mỗi người có trang chủ riêng: việc hôm nay, việc cần chú ý và các bảng đang tham gia.', shots: [
+      { src: '/assets/products/danava-work/home.webp', title: 'Trang chủ của tôi', text: 'Lời chào, chấm công hôm nay, tiếp tục bảng đang làm và danh sách việc cần chú ý.' },
+      { src: '/assets/products/danava-work/my-tasks.webp', title: 'Công việc của tôi', text: 'Gom mọi việc được giao từ tất cả các bảng: cần làm, sắp đến hạn, quá hạn.' }
+    ] },
+    { id: 'theo-doi', label: 'Theo dõi nhóm', device: 'desktop' as const, lead: 'Nhìn nhanh khối lượng việc của từng thành viên để chia việc cho đều.', shots: [
+      { src: '/assets/products/danava-work/stats.webp', title: 'Thống kê khối lượng', text: 'Tổng việc, đã xong, đang làm, quá hạn và biểu đồ phân bổ theo từng thành viên.' },
+      { src: '/assets/products/work-login.webp', title: 'Đăng nhập', text: 'Tài khoản do quản trị viên cấp; đổi mật khẩu ở lần đăng nhập đầu tiên.' }
+    ] }
+  ],
+  /** Tính năng theo README dự án DANAVA Work */
+  features: [
+    { title: 'Quản lý công việc', items: ['Kanban kéo thả, Danh sách, Lịch', 'Việc cha, việc con, checklist', 'Nhiều người làm, chia % đóng góp', 'Nhãn màu, bình luận, file đính kèm', 'Nhập việc từ Excel'] },
+    { title: 'Điều hành & báo cáo', items: ['Trang chủ và công việc của tôi', 'Thống kê khối lượng theo thành viên', 'Chấm điểm hiệu suất theo kỳ', 'Tổng kết dự án', 'Nhân viên, phòng ban, chấm công'] },
+    { title: 'Cộng tác & thông báo', items: ['Mời thành viên vào từng bảng', 'Vai trò Chủ bảng / Quản trị / Thành viên', 'Thông báo trong ứng dụng', 'Gửi thông báo qua Telegram'] },
+    { title: 'Dùng ở mọi nơi', items: ['Máy tính, máy tính bảng, điện thoại', 'Chế độ sáng và tối', 'Cài như ứng dụng (PWA)', 'Trợ lý công việc DANAVA'] }
+  ]
 };
