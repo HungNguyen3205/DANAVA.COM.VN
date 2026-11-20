@@ -1,53 +1,27 @@
 /**
- * Trang chủ (server component) — gọn theo câu hỏi của khách: làm cùng ai → làm được gì → làm thật chưa →
- * làm thế nào → công ty là ai → liên hệ. Hồ sơ chi tiết (giá trị, ESG, câu chuyện, đội ngũ) ở /ve-danava/ và /doi-ngu/;
- * nội dung lấy từ danava.vn/about vẫn giữ ở lib/about-danava.ts.
- * Hero ảnh văn phòng → Đã đồng hành cùng → 01 Làm được gì → 02 Sản phẩm & dự án → 03 Quy trình → 04 Về DANAVA →
- * (Nhận xét) → Blogs → 05 Liên hệ.
+ * Trang chủ (server component) — theo ngôn ngữ thiết kế bộ "Company Profile 2026" của DANAVA:
+ * nền xanh hoàng gia với các mảng cắt chéo, điểm nhấn cam, tiêu đề in hoa đậm (Be Vietnam Pro — font chung của dự án),
+ * nhãn mục dạng thanh màu, ảnh cắt chéo. Nguyên văn nội dung ở lib/about-danava.ts (PROFILE_2026, ABOUT_DANAVA).
+ * Bìa (ảnh văn phòng) → Đã đồng hành cùng → Về DANAVA → What We Do → Dự án tiêu biểu → Why Choose Us → Tin mới → Liên hệ.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, ChevronDown, Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Check, X } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
-import { defaultPresentation } from '@/lib/presentation';
-import { showcaseFor, splitFeatured, knowledgePosts, publicPartners, publicTestimonials, publishedProjects, serviceHref, sortServices, projectHref } from '@/lib/site-queries';
+import { knowledgePosts, publicPartners, publicTestimonials, publishedProjects, projectHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, formatDate } from './catalog';
-import { CheckList } from './ui';
-import { StudioShowcase } from './StudioShowcase';
-import { FeaturedShowcase } from './showcase';
-import { StaffAvatar } from './TeamPage';
-import { ProjectTile, PostTile, Testimonials, JsonLd, faqLD } from './blocks';
-import { SolutionsExplorer, Reveal, CountUp, type SolutionItem } from './HomeClient';
+import { ProjectTile, PostTile, Testimonials } from './blocks';
+import { Reveal, CountUp } from './HomeClient';
 import { block } from '@/lib/blocks';
-import { ABOUT_DANAVA as A } from '@/lib/about-danava';
+import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { markOf } from '@/lib/partner-marks';
 
-const ECO_IMAGES: Record<string, string> = {
-  studio: '/assets/presentation/studio-dashboard.webp',
-  website: '/assets/portfolio/vinhomes/desktop-hero.webp',
-  events: '/assets/profile/set-stage.webp',
-  travel: '/assets/legacy/community.webp',
-  community: '/assets/legacy/community.webp'
-};
-
-
-function Head({ no, kicker, title, lead, light, center, id }: { no: string; kicker: string; title: React.ReactNode; lead?: string; light?: boolean; center?: boolean; id: string }) {
-  return (
-    <div className={`hp-head${light ? ' hp-head--light' : ''}${center ? ' hp-head--center' : ''}`} data-reveal>
-      {no && <span className="hp-head__no" aria-hidden="true">{no}</span>}
-      <div>
-        <p className="ha-kicker ha-kicker--dark">{kicker}</p>
-        <h2 className="ha-h3" id={id}>{title}</h2>
-        {lead && <p className="hp-head__lead">{lead}</p>}
-      </div>
-    </div>
-  );
+/** Nhãn mục dạng thanh màu như trong profile */
+function Tag({ children, tone = 'blue' }: { children: React.ReactNode; tone?: 'blue' | 'orange' }) {
+  return <span className={`hb-tag hb-tag--${tone}`}>{children}</span>;
 }
 
 export default function HomePage({ data }: { data: SiteData }) {
-  const pres = data.presentation || defaultPresentation;
-  const services = sortServices(data.services);
-  const studio = services.find(s => s.id === 'studio');
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
@@ -58,67 +32,47 @@ export default function HomePage({ data }: { data: SiteData }) {
     const featured = list.filter(p => p.featured);
     return (featured.length ? featured : list).slice(0, 3);
   })();
-  const webLead = splitFeatured(showcaseFor(data, 'website')).featured[0];
   const posts = knowledgePosts(data).slice(0, 3);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
-  const staff = data.staff.filter(p => p.visible).slice(0, 5);
-  const solutions: SolutionItem[] = services.map(s => ({
-    id: s.id, href: serviceHref(s), title: s.title, description: s.description, items: s.items,
-    image: s.image || ECO_IMAGES[s.id] || '/assets/legacy/event-group.webp'
-  }));
-  const pick = (id: string, i: number) => data.services.find(s => s.id === id)?.faqs?.[i];
-  const faqs = [pick('studio', 0), pick('website', 1), pick('events', 0), pick('travel', 1)].filter((f): f is NonNullable<typeof f> => !!f);
 
   return (
-    <main id="main" className="h-home ha hp">
+    <main id="main" className="h-home hb">
       <Reveal />
 
-      {/* Hero — ảnh văn phòng DANAVA, chữ đè lên ảnh */}
-      <section className="hp-hero" aria-labelledby="home-title">
-        <div className="hp-hero__bg" aria-hidden="true">
-          <img src="/assets/about/office.webp" srcSet="/assets/about/office-sm.webp 1100w, /assets/about/office.webp 2200w" sizes="100vw" alt="" width={2200} height={1650} fetchPriority="high" />
+      {/* Bìa — như trang 1 & 3 của profile: mảng xanh cắt chéo, ảnh văn phòng */}
+      <section className="hb-cover" aria-labelledby="home-title">
+        <div className="hb-cover__photo" aria-hidden="true">
+          <img src="/assets/about/office.webp" srcSet="/assets/about/office-sm.webp 1100w, /assets/about/office.webp 2200w" sizes="(max-width: 900px) 100vw, 60vw" alt="" width={2200} height={1650} fetchPriority="high" />
         </div>
-        <div className="hp-hero__veil" aria-hidden="true" />
-        <span className="hp-orb hp-orb--a" aria-hidden="true" /><span className="hp-orb hp-orb--b" aria-hidden="true" /><span className="hp-orb hp-orb--c" aria-hidden="true" />
-        <div className="s-container hp-hero__grid">
-          <div className="hp-hero__copy">
-            <p className="ha-kicker">DANAVA Solutions · Company Profile 2026</p>
-            <h1 className="hp-hero__title" id="home-title">
-              <span className="hp-hero__line">DANAVA Solutions</span>
-              <em>Growing Your Business Together.</em>
-            </h1>
-            {data.heroTitle && <p className="hp-hero__sub">{data.heroTitle}</p>}
-            <p className="hp-hero__lead">{A.tagline} — phần mềm, website, sự kiện và cộng đồng trong một đầu mối.</p>
-            <div className="hp-hero__cta">
-              <Link className="hp-btn hp-btn--sun" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
-              <Link className="hp-btn hp-btn--ghost" href="/he-sinh-thai/">Khám phá hệ sinh thái</Link>
-            </div>
-          </div>
-          <div className="hp-hero__float" aria-hidden="true">
-            <span className="hp-glass hp-glass--a"><b>Từ 2018</b>đồng hành cùng ngành Wellness</span>
-            <span className="hp-glass hp-glass--b"><b>1.000+</b>huấn luyện viên kết nối</span>
+        <span className="hb-shard hb-shard--1" aria-hidden="true" />
+        <span className="hb-shard hb-shard--2" aria-hidden="true" />
+        <span className="hb-shard hb-shard--3" aria-hidden="true" />
+        <div className="s-container hb-cover__inner">
+          <p className="hb-cover__date">Company Profile · {P.years}</p>
+          <h1 className="hb-cover__title" id="home-title">Growing your business <span>together</span></h1>
+          <p className="hb-cover__slogan">DANAVA Solutions</p>
+          <p className="hb-cover__lead">{P.tagline}.</p>
+          <div className="hb-cover__cta">
+            <Link className="hb-btn hb-btn--orange" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
+            <Link className="hb-btn hb-btn--line" href="/giai-phap/">Xem giải pháp</Link>
           </div>
         </div>
-        <div className="s-container hp-hero__bottom">
-          <dl className="hp-hero__stats">
+        <div className="s-container hb-cover__stats">
+          <dl>
             {A.stats.map(st => <div key={st.label}><dd><CountUp value={st.value} /></dd><dt>{st.label}</dt></div>)}
           </dl>
-          <p className="hp-hero__src">Số liệu trên nền tảng danava.vn, cập nhật {A.checked}.</p>
+          <p>Số liệu trên nền tảng danava.vn · {A.checked}</p>
         </div>
-        <div className="hp-marquee" aria-hidden="true">
-          {[0, 1].map(k => <ul key={k}>{[...A.fields, ...A.fields].map((f, i) => <li key={i}>{f}<i>✦</i></li>)}</ul>)}
-        </div>
-        <p className="s-sr">Lĩnh vực: {A.fields.join(', ')}.</p>
       </section>
 
-      {/* Đã đồng hành cùng — điều khách muốn thấy đầu tiên */}
-      <section className="hp-trust" id="doi-tac" aria-labelledby="t-trust">
-        <div className="s-container hp-trust__head">
+      {/* Đã đồng hành cùng */}
+      <section className="hb-trust" id="doi-tac" aria-labelledby="t-trust">
+        <div className="s-container hb-row">
           <div>
-            <p className="ha-kicker ha-kicker--dark">Đã đồng hành cùng</p>
-            <h2 className="ha-h3" id="t-trust"><span className="hp-trust__count"><CountUp value={partners.length} suffix="" /></span> cơ sở & thương hiệu <em>tin chọn DANAVA.</em></h2>
+            <Tag>Đối tác</Tag>
+            <h2 className="hb-h2" id="t-trust"><b><CountUp value={partners.length} suffix="" /></b> cơ sở đã đồng hành cùng DANAVA</h2>
           </div>
-          <Link className="h-link" href="/doi-tac/">Xem tất cả đối tác <ArrowRight aria-hidden="true" /></Link>
+          <Link className="hb-more" href="/doi-tac/">Xem tất cả đối tác <ArrowRight aria-hidden="true" /></Link>
         </div>
         {partners.length > 0 && (
           <div className="hp-trust__rows">
@@ -146,100 +100,98 @@ export default function HomePage({ data }: { data: SiteData }) {
         )}
       </section>
 
-      {/* 01 · Làm được gì — giải pháp thật của website */}
-      <section className="hp-ch hp-alt" id="giai-phap" aria-labelledby="t-eco">
-        <div className="s-container">
-          <div className="hp-row">
-            <Head no="01" kicker="DANAVA làm được gì cho bạn" id="t-eco" title={<>Doanh nghiệp bạn cần gì, <em>DANAVA có lối đi riêng.</em></>} />
-            <Link className="h-link" href="/he-sinh-thai/">Xem toàn bộ hệ sinh thái <ArrowRight aria-hidden="true" /></Link>
+      {/* Về DANAVA — trang 2 của profile */}
+      <section className="hb-about" id="ve-danava" aria-labelledby="t-about">
+        <span className="hb-about__shard" aria-hidden="true" />
+        <div className="s-container hb-about__grid">
+          <div className="hb-about__copy" data-reveal>
+            <h2 className="hb-h1" id="t-about">Về DANAVA</h2>
+            {P.about.map(t => <p key={t} className="hb-text">{t.split('DANAVA').map((x, i, all) => <span key={i}>{x}{i < all.length - 1 && <b>DANAVA</b>}</span>)}</p>)}
+            <p className="hb-text hb-text--em">{P.aboutClose}</p>
+            <div className="hb-about__mv">
+              <div><Tag>Sứ mệnh</Tag><p className="hb-text">{A.mission}</p></div>
+              <div><Tag>Tầm nhìn</Tag><p className="hb-text">{A.vision}</p></div>
+              <div><Tag tone="orange">Giá trị cốt lõi</Tag><p className="hb-values">{P.values.map((v, i) => <span key={v}>{v}{i < P.values.length - 1 && <i aria-hidden="true"> - </i>}</span>)}</p></div>
+            </div>
+            <Link className="hb-more" href="/ve-danava/">Câu chuyện & đội ngũ DANAVA <ArrowRight aria-hidden="true" /></Link>
           </div>
-          <SolutionsExplorer items={solutions} />
+          <div className="hb-about__media" data-reveal aria-hidden="true">
+            <figure className="hb-about__ph hb-about__ph--a"><img src={A.founder.image} alt="" loading="lazy" decoding="async" width={1200} height={885} /></figure>
+            <figure className="hb-about__ph hb-about__ph--b"><img src="/assets/about/office-sm.webp" alt="" loading="lazy" decoding="async" width={1100} height={825} /></figure>
+            <span className="hb-about__badge"><b>{P.years}</b>Công ty Cổ phần Giải pháp DANAVA</span>
+          </div>
         </div>
       </section>
 
-      {/* 02 · Sản phẩm chủ lực & dự án thật */}
-      <section className="hp-ch hp-dark" id="san-pham" aria-labelledby="t-studio">
-        <div className="s-container s-split">
-          <div className="s-stack-lg" data-reveal>
-            <p className="ha-kicker"><span className="hp-mini-no">02</span> Sản phẩm chủ lực · DANAVA Studio</p>
-            <h2 className="ha-title" id="t-studio">
-              {pres.technologyTitle.split('\n').map((l, i, all) => <span key={i} style={{ display: 'block' }}>{i === all.length - 1 && all.length > 1 ? <em>{l}</em> : l}</span>)}
-            </h2>
-            <p className="hp-dark__lead">{pres.technologyDescription}</p>
-            {studio && <CheckList items={studio.items} />}
-            <div className="hp-hero__cta">
-              <Link className="hp-btn hp-btn--sun" href="/lien-he/?service=danava-studio">Đăng ký demo</Link>
-              <Link className="hp-btn hp-btn--ghost" href="/giai-phap/danava-studio/">Tìm hiểu DANAVA Studio</Link>
-            </div>
-          </div>
-          <div data-reveal style={{ ['--d' as string]: '120ms' }}><StudioShowcase image={pres.screenImage || defaultPresentation.screenImage} /></div>
+      {/* What We Do — trang 3 của profile */}
+      <section className="hb-what" id="giai-phap" aria-labelledby="t-what">
+        <div className="hb-what__band">
+          <div className="hb-what__photo" aria-hidden="true"><img src="/assets/profile/set-stage.webp" alt="" loading="lazy" decoding="async" /></div>
+          <div className="s-container"><h2 className="hb-mega" id="t-what">What<br />we do</h2></div>
         </div>
-      </section>
-      <section className="hp-ch hp-projects" aria-labelledby="t-projects">
         <div className="s-container">
-          <div className="hp-row">
-            <div data-reveal><p className="ha-kicker ha-kicker--dark">Dự án tiêu biểu</p><h2 className="ha-h3" id="t-projects">Sản phẩm <em>đang chạy thật.</em></h2></div>
-            <Link className="h-link" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+          <h3 className="hb-h2 hb-center" data-reveal>Những bài toán doanh nghiệp</h3>
+          <div className="hb-problems" data-reveal>
+            <ul className="hb-problems__q">{A.problems.map(p => <li key={p.problem}><X aria-hidden="true" />{p.problem}</li>)}</ul>
+            <span className="hb-problems__arrow" aria-hidden="true"><ArrowRight /></span>
+            <ul className="hb-problems__a">{A.problems.map(p => <li key={p.solution}><Check aria-hidden="true" />{p.solution}</li>)}</ul>
           </div>
-          {webLead && <FeaturedShowcase item={webLead} headingLevel="h3" eyebrow="Dự án thiết kế website nổi bật" id="home-featured-web" />}
-          {projects.length > 0 && (
-            <div className={`s-grid s-snap u-subblock ${projects.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
-              {projects.map(p => <ProjectTile key={p.id} p={p} />)}
-            </div>
-          )}
+          <ul className="hb-services">
+            {P.services.map((sv, i) => (
+              <li key={sv.title} data-reveal style={{ ['--d' as string]: `${i * 80}ms` }}>
+                <Link href={sv.href}>
+                  <span className={`hb-tag hb-tag--block hb-tag--${i === 1 ? 'orange' : 'blue'}`}>{sv.title}</span>
+                  <p className="hb-text">{sv.text}</p>
+                  <span className="hb-services__go">Tìm hiểu <ArrowUpRight aria-hidden="true" /></span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="hb-quote" data-reveal>“{P.quote}”</p>
         </div>
       </section>
+
+      {/* Dự án tiêu biểu — bằng chứng thật */}
+      {projects.length > 0 && (
+        <section className="hb-sec hb-projects" aria-labelledby="t-projects">
+          <div className="s-container">
+            <div className="hb-row">
+              <div><Tag>Dự án</Tag><h2 className="hb-h2" id="t-projects">Sản phẩm đang chạy thật</h2></div>
+              <Link className="hb-more" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+            </div>
+            <div className={`s-grid s-snap ${projects.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>{projects.map(p => <ProjectTile key={p.id} p={p} />)}</div>
+          </div>
+        </section>
+      )}
 
       <Testimonials items={testimonials} />
 
-      {/* 03 · Quy trình triển khai */}
-      <section className="hp-ch" id="quy-trinh" aria-labelledby="t-process">
-        <div className="s-container">
-          <Head no="03" center kicker="Cách DANAVA triển khai" id="t-process" title={<>Bảy bước, <em>rõ ràng từ đầu đến cuối.</em></>} />
-          <ol className="hp-process">
-            {A.process.map((p, i) => (
-              <li key={p.name} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
-                <span className="hp-process__dot">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{p.name}</h3>
-                <p>{p.text}</p>
+      {/* Why Choose Us — trang 4 của profile */}
+      <section className="hb-why" aria-labelledby="t-why">
+        <span className="hb-why__light" aria-hidden="true" />
+        <div className="s-container hb-why__grid">
+          <div className="hb-why__head">
+            <img src="/assets/danava-mark.png" alt="" width={96} height={96} loading="lazy" />
+            <h2 className="hb-mega hb-mega--blue" id="t-why">Why<br />choose<br />us</h2>
+          </div>
+          <ol className="hb-why__list">
+            {P.why.map((w, i) => (
+              <li key={w.title} data-reveal style={{ ['--d' as string]: `${i * 90}ms`, ['--i' as string]: i }}>
+                <h3 className="hb-why__bar">{String(i + 1).padStart(2, '0')}. {w.title}</h3>
+                <p>{w.text}</p>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* 04 · Về DANAVA (rút gọn) — chi tiết ở /ve-danava/ và /doi-ngu/ */}
-      <section className="hp-ch hp-alt" id="ve-danava" aria-labelledby="t-about">
-        <div className="s-container ha-founder">
-          <figure className="ha-founder__photo" data-reveal>
-            <img src={A.founder.image} alt={`${A.founder.name}, ${A.founder.title}`} width={1200} height={885} loading="lazy" decoding="async" />
-            <figcaption><strong>{A.founder.name}</strong><small>{A.founder.title}</small></figcaption>
-          </figure>
-          <div className="ha-founder__body" data-reveal>
-            <p className="ha-kicker ha-kicker--dark"><span className="hp-mini-no">04</span> Về DANAVA</p>
-            <h2 className="s-sr" id="t-about">Về DANAVA</h2>
-            <blockquote className="ha-quote"><p>{A.founder.quote}</p></blockquote>
-            <p className="hp-about__mission"><b>Sứ mệnh.</b> {A.mission}</p>
-            <ul className="hp-about__facts">
-              <li><b>Từ 2018</b>đồng hành cùng ngành Wellness</li>
-              <li><b>{staff.length}+</b>người trong đội ngũ</li>
-              <li><b>{partners.length}</b>đối tác đồng hành</li>
-            </ul>
-            <div className="hp-about__links">
-              <Link className="h-link" href="/ve-danava/">Câu chuyện & hồ sơ công ty <ArrowRight aria-hidden="true" /></Link>
-              <Link className="h-link" href="/doi-ngu/">Gặp đội ngũ <ArrowRight aria-hidden="true" /></Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Blogs */}
+      {/* Tin mới */}
       {posts.length > 0 && (
-        <section className="hp-ch" aria-labelledby="home-news">
+        <section className="hb-sec" aria-labelledby="home-news">
           <div className="s-container">
-            <div className="hp-row">
-              <div data-reveal><p className="ha-kicker ha-kicker--dark">Blogs</p><h2 className="ha-h3" id="home-news">Bài viết mới <em>từ DANAVA.</em></h2></div>
-              <Link className="h-link" href="/kien-thuc/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>
+            <div className="hb-row">
+              <div><Tag>Blogs</Tag><h2 className="hb-h2" id="home-news">Tin mới từ DANAVA</h2></div>
+              <Link className="hb-more" href="/kien-thuc/">Xem tất cả <ArrowRight aria-hidden="true" /></Link>
             </div>
             <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>{posts.map(p => <PostTile key={p.id} post={p} data={data} />)}</div>
             {social.length > 1 && (
@@ -258,39 +210,33 @@ export default function HomePage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      {/* 05 · Liên hệ & hợp tác */}
-      <section className="hp-ch hp-contact" id="lien-he-nhanh" aria-labelledby="home-faq">
-        {faqs.length > 0 && <JsonLd value={faqLD(faqs)} />}
-        <div className="s-container u-faq-contact">
+      {/* Liên hệ — trang 5 của profile */}
+      <section className="hb-contact" id="lien-he-nhanh" aria-labelledby="t-contact">
+        <span className="hb-shard hb-shard--1" aria-hidden="true" />
+        <span className="hb-shard hb-shard--3" aria-hidden="true" />
+        <div className="s-container hb-contact__grid">
           <div>
-            <p className="ha-kicker ha-kicker--dark"><span className="hp-mini-no">05</span> Liên hệ & hợp tác</p>
-            <h2 className="ha-h3" id="home-faq">Trước khi <em>bắt đầu.</em></h2>
-            <div className="s-faq">
-              {faqs.map((f, i) => (
-                <details key={f.q} open={i === 0}>
-                  <summary>{f.q}<ChevronDown aria-hidden="true" /></summary>
-                  <div>{f.a}</div>
-                </details>
-              ))}
+            <img className="hb-contact__logo" src="/assets/danava-logo-light.png" alt="DANAVA Solutions" width={554} height={135} loading="lazy" />
+            <h2 className="hb-contact__title" id="t-contact">Sẵn sàng phát triển cùng DANAVA?</h2>
+            <p className="hb-cover__slogan">{P.slogan}</p>
+            <p className="hb-cover__lead">{P.tagline}.</p>
+            <div className="hb-cover__cta">
+              <Link className="hb-btn hb-btn--orange" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
+              <Link className="hb-btn hb-btn--line" href="/lien-he/?service=danava-studio">Đăng ký demo DANAVA Studio</Link>
             </div>
           </div>
-          <aside className="u-contact-card hp-contact__card" aria-labelledby="home-contact">
-            <h2 className="s-h3" id="home-contact">Trao đổi với DANAVA</h2>
-            <p className="s-text">Gửi yêu cầu, chuyên viên DANAVA liên hệ lại để tìm hiểu nhu cầu và đề xuất phạm vi phù hợp.</p>
-            <div className="u-contact-card__actions">
-              <Link className="s-btn s-btn--primary s-btn--lg s-btn--block" href="/lien-he/">Nhận tư vấn</Link>
-              <Link className="s-btn s-btn--secondary s-btn--lg s-btn--block" href="/lien-he/?service=danava-studio">Đăng ký demo DANAVA Studio</Link>
-            </div>
-            <ul className="u-contact-card__list">
-              <li><Phone aria-hidden="true" /><a href={`tel:${phone}`}>{formatPhone(phone)}</a></li>
-              <li><MessageCircle aria-hidden="true" /><a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener">Nhắn Zalo</a></li>
-              <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{email}</a></li>
-              <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener">{co.address}</a></li>
-              <li><Clock aria-hidden="true" /><span>{co.hours}</span></li>
+          <div className="hb-contact__info">
+            <h3>Thông tin liên hệ</h3>
+            <ul>
+              <li><span><Phone aria-hidden="true" /></span><a href={`tel:${phone}`}>{formatPhone(phone)}</a></li>
+              <li><span><Mail aria-hidden="true" /></span><a href={`mailto:${email}`}>{email}</a></li>
+              <li><span><AtSign aria-hidden="true" /></span><a href={co.facebook} target="_blank" rel="noopener">{P.social}<span className="s-sr"> (mở tab mới)</span></a></li>
+              <li><span><Globe aria-hidden="true" /></span><a href="https://danava.vn" target="_blank" rel="noopener">{P.website}<span className="s-sr"> (mở tab mới)</span></a></li>
+              <li><span><MapPin aria-hidden="true" /></span><a href={co.mapUrl} target="_blank" rel="noopener">{co.address}</a></li>
             </ul>
-          </aside>
+            <p className="hb-contact__legal">{A.company}</p>
+          </div>
         </div>
-        <div className="s-container"><p className="ha-company">{A.company}</p></div>
       </section>
     </main>
   );

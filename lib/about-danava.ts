@@ -76,3 +76,35 @@ export const ABOUT_DANAVA = {
   ],
   company: 'Công ty Cổ phần Giải pháp DANAVA · MST 0401883105 · Sở KH&ĐT TP. Đà Nẵng cấp lần đầu 08/03/2018 · Trụ sở: 08 Đặng Vũ Hỷ, P. An Hải, TP. Đà Nẵng'
 };
+
+/**
+ * Nguyên văn bộ "Company Profile 2026" của DANAVA (bản PDF/ảnh chủ sở hữu gửi ngày 20/11/2026, đề ngày 08/06/2026).
+ * Trang chủ trình bày theo đúng ngôn ngữ thiết kế của bộ profile này.
+ */
+export const PROFILE_2026 = {
+  date: '08/06/2026',
+  years: '2018 - 2026',
+  slogan: 'DANAVA Solutions — Growing Your Business Together',
+  tagline: 'DANAVA – Nền tảng hệ sinh thái số dành riêng cho ngành Wellness tại Việt Nam',
+  about: [
+    'DANAVA cung cấp giải pháp Phần mềm quản lý phòng tập Gym, Yoga, Pilates, Spa & Beauty, Dance Studio,... Chuyển đổi số và Truyền thông số, giúp doanh nghiệp tối ưu vận hành và phát triển bền vững.',
+    'Tại DANAVA, chúng tôi tin rằng chuyển đổi số không chỉ là công nghệ — đó là hành trình kiến tạo giá trị bền vững cho doanh nghiệp và cộng đồng.'
+  ],
+  aboutClose: 'DANAVA phát triển “Nền tảng hệ sinh thái số dành riêng cho ngành Wellness” tại Việt Nam.',
+  values: ['Kết nối', 'Đồng hành', 'Đổi mới', 'Hiệu quả', 'Bền vững'],
+  services: [
+    { title: 'Marketing AI', text: 'Tiếp cận đúng khách hàng mục tiêu bằng AI, tối ưu quảng cáo, tự động hóa marketing và gia tăng hiệu quả chuyển đổi.', href: '/giai-phap/digital-marketing/' },
+    { title: 'DANAVA Studio', text: 'Nền tảng quản lý vận hành toàn diện, giúp quản lý hội viên, lịch hẹn, thanh toán, nhân sự và báo cáo một cách hiệu quả.', href: '/giai-phap/danava-studio/' },
+    { title: 'Website Platform', text: 'Thiết kế website hiện đại, chuẩn SEO, tối ưu tốc độ, thân thiện trên mọi thiết bị và hỗ trợ phát triển thương hiệu trực tuyến.', href: '/giai-phap/thiet-ke-website/' },
+    { title: 'DANAVA Branding', text: 'Xây dựng hệ thống nhận diện thương hiệu chuyên nghiệp, đồng bộ từ logo, màu sắc, hình ảnh đến thông điệp, tạo dấu ấn bền vững.', href: '/giai-phap/su-kien-truyen-thong/' }
+  ],
+  quote: 'Danava – Kết nối công nghệ, kiến tạo hệ sinh thái Wellness.',
+  why: [
+    { title: 'Năng lực công nghệ', text: 'Ứng dụng AI, điện toán đám mây và các công nghệ hiện đại để phát triển giải pháp phần mềm an toàn, linh hoạt và dễ mở rộng theo nhu cầu doanh nghiệp.' },
+    { title: 'Giải pháp toàn diện', text: 'Cung cấp hệ sinh thái từ tư vấn, chuyển đổi số, phát triển phần mềm, website, ứng dụng di động đến truyền thông số, giúp doanh nghiệp vận hành hiệu quả trên một nền tảng thống nhất.' },
+    { title: 'Đồng hành phát triển', text: 'Không chỉ triển khai dự án, DANAVA đồng hành lâu dài với khách hàng thông qua tư vấn, đào tạo, bảo trì và tối ưu giải pháp theo từng giai đoạn phát triển.' },
+    { title: 'Hiệu quả & giá trị bền vững', text: 'Cam kết mang đến giải pháp chất lượng, tối ưu chi phí đầu tư, nâng cao năng suất vận hành và tạo lợi thế cạnh tranh bền vững cho doanh nghiệp.' }
+  ],
+  social: '@danavasolutions',
+  website: 'www.danava.vn'
+};
