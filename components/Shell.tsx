@@ -31,6 +31,7 @@ function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: 
 }
 
 const NAV = [
+  { href: '/du-an/', label: 'Dự án' },
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
   { href: '/kien-thuc/', label: 'Blogs' },
   { href: '/ve-danava/', label: 'Về chúng tôi' }
@@ -101,7 +102,7 @@ export function Header() {
                   className="s-nav__link"
                   aria-expanded={mega}
                   aria-controls="s-mega-solutions"
-                  aria-current={active('/giai-phap/') || active('/du-an/') ? 'page' : undefined}
+                  aria-current={active('/giai-phap/') ? 'page' : undefined}
                   onClick={() => setMega(v => !v)}
                 >
                   Giải pháp <ChevronDown aria-hidden="true" />
@@ -134,7 +135,6 @@ export function Header() {
           </nav>
 
           <div className="s-header__actions">
-            <a className="s-header__phone" href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
             <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/">Nhận tư vấn</Link>
             <button
               type="button"

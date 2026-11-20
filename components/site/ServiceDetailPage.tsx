@@ -103,8 +103,8 @@ function StandardServicePage({ service, data }: { service: Service; data: SiteDa
       {service.id === 'travel' && (
         <section className="s-section s-section--tight" aria-label="Sự kiện doanh nghiệp">
           <div className="s-container u-crosslink">
-            <p><strong>Tổ chức hội nghị, kick-off, gala hay booth trưng bày?</strong> Xem các chương trình thực tế và hạng mục tại trang Sự kiện & Truyền thông.</p>
-            <Link className="s-btn s-btn--secondary" href="/giai-phap/su-kien-truyen-thong/">Sự kiện & Truyền thông</Link>
+            <p><strong>Tổ chức hội nghị, kick-off, gala hay booth trưng bày?</strong> Xem các chương trình thực tế và hạng mục tại trang Tổ chức sự kiện.</p>
+            <Link className="s-btn s-btn--secondary" href="/giai-phap/su-kien-truyen-thong/">Tổ chức sự kiện</Link>
           </div>
         </section>
       )}

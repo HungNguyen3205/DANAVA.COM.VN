@@ -23,8 +23,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Tên ngắn cho nút chọn nhanh dịch vụ trên form. */
 const CHIP: Record<string, string> = {
-  'danava-studio': 'DANAVA Studio', 'thiet-ke-website': 'Website', 'digital-marketing': 'Marketing',
-  'su-kien-truyen-thong': 'Sự kiện', 'media-production': 'Video & hình ảnh', 'du-lich-su-kien': 'Du lịch', 'tu-van-chuyen-doi-so': 'Tư vấn chuyển đổi số'
+  'danava-studio': 'DANAVA Studio', 'thiet-ke-website': 'Website', 'digital-marketing': 'Marketing & Truyền thông',
+  'su-kien-truyen-thong': 'Tổ chức sự kiện', 'media-production': 'Video & hình ảnh', 'du-lich-su-kien': 'Du lịch', 'tu-van-chuyen-doi-so': 'Tư vấn chuyển đổi số'
 };
 
 /**

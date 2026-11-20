@@ -44,7 +44,7 @@ const PAGES = {
   'doi-ngu': { kicker: 'Con người DANAVA', title: 'Đội ngũ chuyên môn', lead: 'Những người trực tiếp tư vấn, xây dựng và vận hành giải pháp cho khách hàng. Mỗi hồ sơ gắn với dự án thật mà họ đã tham gia.', ctaTitle: 'Làm việc cùng đội ngũ DANAVA', ctaLead: 'Gặp trực tiếp người phụ trách giải pháp phù hợp với bài toán của bạn.' },
   'lien-he': { kicker: 'Contact · DANAVA SOLUTIONS', title: 'Liên hệ *DANAVA Solutions*', lead: 'DANAVA luôn lắng nghe mọi ý kiến của khách hàng. Hãy liên hệ để nhận tư vấn miễn phí và báo giá chi tiết cho phần mềm quản lý phòng tập, website, truyền thông và sự kiện.' },
   studio: { ctaTitle: 'Xem DANAVA Studio chạy với dữ liệu của bạn', ctaLead: 'Đăng ký demo, chuyên viên DANAVA liên hệ để tìm hiểu mô hình và hướng dẫn trực tiếp trên phần mềm.' },
-  website: { ctaTitle: 'Bắt đầu website của bạn', ctaLead: 'Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá.' },
+  website: { ctaTitle: 'Trao đổi về Website & Landing Page', ctaLead: 'Chia sẻ mục tiêu và các trang mẫu bạn thích. DANAVA sẽ đề xuất cấu trúc, phong cách và báo giá.' },
   'case-study': { ctaTitle: 'Bạn cần một website có bản sắc riêng?', ctaLead: 'Gửi mục tiêu và vài website bạn thích, DANAVA đề xuất cấu trúc, phong cách và báo giá.' }
 };
 
@@ -61,12 +61,11 @@ const MENU = {
       ]
     },
     {
-      title: 'Marketing',
+      title: 'Dịch vụ doanh nghiệp',
       items: [
-        { label: 'Sự kiện', desc: 'Ý tưởng, sân khấu, thi công và điều phối sự kiện doanh nghiệp', href: '/giai-phap/su-kien-truyen-thong/', badge: '', image: '' },
-        { label: 'Truyền thông', desc: 'Quay phim, chụp ảnh và nội dung cho thương hiệu', href: '/giai-phap/su-kien-truyen-thong/#hang-muc', badge: '', image: '' },
-        { label: 'Marketing', desc: 'Kết nối chiến lược, nội dung và hình ảnh để đưa thương hiệu đến gần khách hàng', href: '/giai-phap/digital-marketing/', badge: '', image: '' },
-        { label: 'Landing page', desc: 'Trang đích cho chiến dịch, chương trình và sản phẩm, có biểu mẫu thu khách hàng tiềm năng', href: '/giai-phap/thiet-ke-website/', badge: '', image: '' }
+        { label: 'Marketing & Truyền thông', desc: 'Chiến lược, nội dung, vận hành kênh, quảng cáo và đo lường', href: '/giai-phap/digital-marketing/', badge: '', image: '' },
+        { label: 'Website & Landing Page', desc: 'Thiết kế website và trang đích theo thương hiệu', href: '/giai-phap/thiet-ke-website/', badge: '', image: '' },
+        { label: 'Tổ chức sự kiện', desc: 'Kịch bản, sân khấu, thi công, thiết bị, nhân sự và điều phối', href: '/giai-phap/su-kien-truyen-thong/', badge: '', image: '' }
       ]
     },
     {
@@ -140,7 +139,7 @@ const PRIVACY = {
   ],
   sections: [
     { id: 'pham-vi', toc: 'Phạm vi áp dụng', title: 'Phạm vi áp dụng & nguyên tắc chung', body: md('Chính sách này áp dụng cho toàn bộ khách truy cập, đối tác và khách hàng sử dụng website chính thức của **DANAVA Solutions** tại tên miền `danava.com.vn` (và các chuyển hướng liên quan).\n\nChúng tôi tôn trọng quyền riêng tư của mọi cá nhân và tổ chức. Các hoạt động thu thập và xử lý dữ liệu được thiết kế bám sát thực tế vận hành kỹ thuật của website, tuân thủ quy định hiện hành của pháp luật Việt Nam (bao gồm Luật An toàn thông tin mạng và Nghị định 13/2023/NĐ-CP về Bảo vệ dữ liệu cá nhân).') },
-    { id: 'form-lien-he', toc: 'Dữ liệu qua form liên hệ', title: 'Dữ liệu tiếp nhận qua form liên hệ', body: md('Khi bạn chủ động gửi yêu cầu tư vấn qua trang [Liên hệ](/lien-he/) hoặc các nút nhận tư vấn trên website, hệ thống tiếp nhận các thông tin sau:\n\n- **Họ và tên:** để xưng hô trong quá trình trao đổi.\n- **Số điện thoại:** kênh liên lạc chính để chuyên viên khảo sát nhu cầu và phản hồi giải pháp.\n- **Email** (tùy chọn): để gửi hồ sơ năng lực, tài liệu demo và đề xuất báo giá.\n- **Loại hình kinh doanh** (Gym, Yoga, Pilates, Spa, Khách sạn…): giúp chuẩn bị đúng tài liệu nghiệp vụ.\n- **Dịch vụ quan tâm:** giải pháp bạn đang tìm hiểu (DANAVA Studio, Website, Sự kiện & Truyền thông, Du lịch).\n- **Nội dung trao đổi:** hiện trạng, quy mô hoặc bài toán bạn cần giải quyết.\n- **Trang nguồn (Referrer):** trang bạn đang xem trước khi bấm liên hệ, để hiểu ngữ cảnh yêu cầu.\n\n> **Chống spam & gửi lặp:** Biểu mẫu tích hợp trường bẫy Honeypot để lọc bot tự động và giới hạn tần suất gửi trong 45 giây để ngăn gửi lặp liên tục.') },
+    { id: 'form-lien-he', toc: 'Dữ liệu qua form liên hệ', title: 'Dữ liệu tiếp nhận qua form liên hệ', body: md('Khi bạn chủ động gửi yêu cầu tư vấn qua trang [Liên hệ](/lien-he/) hoặc các nút nhận tư vấn trên website, hệ thống tiếp nhận các thông tin sau:\n\n- **Họ và tên:** để xưng hô trong quá trình trao đổi.\n- **Số điện thoại:** kênh liên lạc chính để chuyên viên khảo sát nhu cầu và phản hồi giải pháp.\n- **Email** (tùy chọn): để gửi hồ sơ năng lực, tài liệu demo và đề xuất báo giá.\n- **Loại hình kinh doanh** (Gym, Yoga, Pilates, Spa, Khách sạn…): giúp chuẩn bị đúng tài liệu nghiệp vụ.\n- **Dịch vụ quan tâm:** giải pháp bạn đang tìm hiểu (DANAVA Studio, Marketing & Truyền thông, Website & Landing Page, Tổ chức sự kiện, Du lịch).\n- **Nội dung trao đổi:** hiện trạng, quy mô hoặc bài toán bạn cần giải quyết.\n- **Trang nguồn (Referrer):** trang bạn đang xem trước khi bấm liên hệ, để hiểu ngữ cảnh yêu cầu.\n\n> **Chống spam & gửi lặp:** Biểu mẫu tích hợp trường bẫy Honeypot để lọc bot tự động và giới hạn tần suất gửi trong 45 giây để ngăn gửi lặp liên tục.') },
     { id: 'analytics', toc: 'Đo lường truy cập nội bộ', title: 'Đo lường truy cập nội bộ', body: md('Website sử dụng hệ thống đo lường truy cập tự phát triển, lưu trực tiếp trên máy chủ nội bộ với tiêu chí bảo vệ quyền riêng tư cao nhất:\n\n- **Mã hóa danh tính một chiều (SHA-256):** mã phiên và mã thiết bị được băm SHA-256 ngay khi tiếp nhận, không thể dịch ngược để truy vết người dùng.\n- **Không lưu địa chỉ IP:** hệ thống không lưu địa chỉ IP đầy đủ của bạn trong cơ sở dữ liệu.\n- **Rút gọn nguồn truy cập:** URL nguồn được lược bỏ tham số truy vấn, chỉ giữ tên miền (ví dụ `google.com`, `facebook.com`).\n- **Không dùng cookie bên thứ ba:** website không cài mã theo dõi Google Analytics, Meta Pixel hay mạng quảng cáo liên kết.\n- **Tôn trọng Do Not Track:** nếu trình duyệt bật tín hiệu DNT, hệ thống tự động ngừng ghi nhận phiên.') },
     { id: 'embeds', toc: 'Nội dung nhúng bên thứ ba', title: 'Nội dung nhúng bên thứ ba', body: md('Trên mục [Blogs DANAVA](/kien-thuc/), chúng tôi có thể dẫn nguồn hoặc cho phép xem trực tiếp video, bài đăng từ YouTube, Facebook hoặc Zalo OA:\n\n- **Tải khi tương tác (click-to-load):** mặc định website không tự tải iframe bên thứ ba, giúp trang nhanh hơn và tránh cookie theo dõi ngầm.\n- **Chế độ YouTube No-Cookie:** khi bạn chủ động bấm xem, video được kết nối qua tên miền `youtube-nocookie.com`.\n- **Luôn có liên kết gốc:** mỗi bài đăng mạng xã hội đều kèm đường dẫn chính thức để mở trên nền tảng nguồn.') },
     { id: 'luu-tru-bao-mat', toc: 'Lưu trữ & bảo mật', title: 'Thời gian lưu trữ & biện pháp bảo mật', body: '' },
@@ -216,6 +215,23 @@ export function block<K extends BlockKey>(data: Pick<SiteData, 'blocks' | 'staff
     // Theo đúng danh sách Nhân sự hiện tại: người mới → hồ sơ mặc định, người đã xóa → bỏ
     const list = saved as StaffBlock[];
     return data.staff.map(p => { const s = list.find(x => x.id === p.id); return s ? fillMissing(s, staffDefault(p)) : staffDefault(p); }) as BlockDefaults[K];
+  }
+  if (key === 'menu' && saved) {
+    const menu = fillMissing(saved, MENU) as typeof MENU;
+    const services = MENU.columns[1];
+    return {
+      ...menu,
+      columns: menu.columns.map(column => ({
+        ...column,
+        title: column.title === 'Marketing' || column.title === 'Digital Marketing' ? services.title : column.title,
+        items: column.items
+          .filter(item => item.href !== '/giai-phap/su-kien-truyen-thong/#hang-muc')
+          .map(item => {
+            const service = services.items.find(s => s.href === item.href);
+            return service ? { ...item, label: service.label, desc: service.desc } : item;
+          })
+      }))
+    } as BlockDefaults[K];
   }
   return saved === undefined ? def : fillMissing(saved, def);
 }

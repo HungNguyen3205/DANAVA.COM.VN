@@ -5,19 +5,40 @@
  * Thanh mục lục dính giúp tới thẳng dịch vụ và form liên hệ.
  */
 import Link from 'next/link';
-import { Mic2, Megaphone, Speaker, Music4, MapPin, Phone, ArrowRight, Check } from 'lucide-react';
+import { Mic2, Hammer, Speaker, Music4, MapPin, Phone, ArrowRight, Check } from 'lucide-react';
 import type { Service, ShowcaseItem, SiteData } from '@/lib/content';
 import { postsForService, publishedSubServices, showcaseFor, splitFeatured, subServiceHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone } from './catalog';
 import { Crumbs } from './ui';
-import { FaqSection, PricingSection, ProcessSection, RelatedPosts } from './blocks';
+import { FaqSection, RelatedPosts } from './blocks';
+import { EventsPlanning } from './EventsPlanning';
 import { contactHrefFor } from './ServiceDetailPage';
 
 const SERVICES = [
-  { icon: Mic2, title: 'Tổ chức sự kiện', text: 'Lễ ra mắt sản phẩm, họp báo, sự kiện triển lãm, tổ chức trưng bày sản phẩm, lễ kỷ niệm, gala dinner…' },
-  { icon: Megaphone, title: 'Truyền thông', text: 'Roadshow, activation, sampling, tư vấn chiến lược truyền thông, truyền thông thương hiệu, truyền thông đa phương tiện…' },
-  { icon: Speaker, title: 'Thiết bị sự kiện', text: 'Âm thanh ánh sáng, màn hình LED, thiết bị dịch đa ngôn ngữ, ấn phẩm như backdrop, standee…' },
-  { icon: Music4, title: 'Giải trí', text: 'MC, DJ, ca sĩ, band nhạc, PG-PB, vũ đoàn…' }
+  {
+    icon: Mic2,
+    title: 'Kịch bản & điều phối',
+    image: { file: 'pnj-2.webp', alt: 'Khán giả theo dõi chương trình kick-off PNJ tại Aeon Mall Huế', width: 1600, height: 1577 },
+    items: ['Lên kịch bản và chạy tổng duyệt', 'Điều phối tại hiện trường', 'Lễ ra mắt, họp báo, triển lãm, lễ kỷ niệm và gala']
+  },
+  {
+    icon: Hammer,
+    title: 'Sân khấu & thi công',
+    image: { file: 'ariyana-build.webp', alt: 'Đội thi công lắp dựng booth tại Ariyana', width: 1600, height: 1198 },
+    items: ['Thiết kế và thi công sân khấu', 'Lắp dựng booth, backdrop và đạo cụ', 'Bố trí không gian theo nhận diện']
+  },
+  {
+    icon: Speaker,
+    title: 'Thiết bị sự kiện',
+    image: { file: 'who-gala.webp', alt: 'Hệ thống ánh sáng và màn hình trên sân khấu gala', width: 736, height: 736 },
+    items: ['Âm thanh, ánh sáng và màn hình LED', 'Thiết bị phiên dịch đa ngôn ngữ', 'Nhân sự kỹ thuật tại sự kiện']
+  },
+  {
+    icon: Music4,
+    title: 'Nhân sự & biểu diễn',
+    image: { file: 'lutech-2.webp', alt: 'Người tham gia chương trình LUTECH trên sân khấu', width: 1600, height: 1576 },
+    items: ['MC và đội ngũ đón tiếp', 'DJ, ca sĩ, ban nhạc và vũ đoàn', 'Bố trí tiết mục theo kịch bản']
+  }
 ];
 
 function Program({ p, index, total }: { p: ShowcaseItem; index: number; total: number }) {
@@ -54,6 +75,10 @@ export function EventsPage({ service, data }: { service: Service; data: SiteData
   const contactHref = contactHrefFor(service);
   const phone = data.phone || CONTACT.phone;
   const subs = publishedSubServices(data, service.id);
+  const steps = service.process || [];
+  const pricing = service.pricing?.trim() || '';
+  const faqs = service.faqs || [];
+  const posts = postsForService(data, service.id, 3);
 
   return (
     <main id="main" className="ev">
@@ -81,8 +106,8 @@ export function EventsPage({ service, data }: { service: Service; data: SiteData
         <div className="s-container ev-nav__inner">
           <a href="#chuong-trinh">Chương trình</a>
           <a href="#hang-muc">Hạng mục</a>
-          <a href="#quy-trinh">Quy trình</a>
-          <a href="#bao-gia">Báo giá</a>
+          {steps.length > 0 && <a href="#quy-trinh">Quy trình</a>}
+          {pricing && <a href="#bao-gia">Báo giá</a>}
           <Link className="ev-nav__cta" href={contactHref}>Gửi yêu cầu</Link>
         </div>
       </nav>
@@ -124,35 +149,32 @@ export function EventsPage({ service, data }: { service: Service; data: SiteData
           <div className="ev-services__grid">
             {SERVICES.map(s => (
               <article key={s.title} className="ev-svc">
-                <span className="ev-svc__icon"><s.icon aria-hidden="true" /></span>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
+                <div className="ev-svc__body">
+                  <div className="ev-svc__heading">
+                    <span className="ev-svc__icon"><s.icon aria-hidden="true" /></span>
+                    <h3>{s.title}</h3>
+                  </div>
+                  <ul className="ev-svc__items">
+                    {s.items.map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}
+                  </ul>
+                </div>
+                <div className="ev-svc__media">
+                  <img src={`/assets/profile/${s.image.file}`} alt={s.image.alt} width={s.image.width} height={s.image.height} loading="lazy" decoding="async" />
+                </div>
               </article>
             ))}
           </div>
           <div className="ev-about">
-            <p>DANAVA kết nối <em>ý tưởng</em>, <em>nguồn lực</em> và <em>triển khai</em>: lên ý tưởng và kế hoạch; thiết kế, thi công booth, backdrop, đạo cụ và không gian; phối hợp thiết bị, nhân sự kỹ thuật và biểu diễn; kết nối truyền thông với trải nghiệm thương hiệu.</p>
-            <Link className="ev-about__link" href="/ve-danava/">Về DANAVA <ArrowRight aria-hidden="true" /></Link>
+            <p>DANAVA lập kế hoạch theo địa điểm và số lượng khách mời, thống nhất kịch bản với các đội kỹ thuật và biểu diễn, rồi điều phối tại hiện trường.</p>
+            <Link className="s-btn ev-btn-ghost" href="/ve-danava/">Về DANAVA <ArrowRight aria-hidden="true" /></Link>
           </div>
         </div>
       </section>
 
-      <div id="quy-trinh"><ProcessSection steps={service.process || []} title="Bốn bước tới ngày diễn ra" /></div>
-      <div id="bao-gia"><PricingSection pricing={service.pricing || ''} contactHref={contactHref} /></div>
-
-      <section className="s-section s-section--soft" aria-labelledby="ev-after">
-        <div className="s-container ev-after">
-          <div>
-            <p className="s-eyebrow">Sau sự kiện</p>
-            <h2 className="s-h3" id="ev-after">Hình ảnh và video được bàn giao đầy đủ</h2>
-            <p className="s-text">Hình ảnh, video ghi tại chương trình được bàn giao để doanh nghiệp dùng cho website và các kênh của mình.</p>
-          </div>
-          <Link className="s-btn s-btn--secondary s-btn--lg" href="/lien-he/?service=su-kien-truyen-thong">Gửi yêu cầu <ArrowRight aria-hidden="true" /></Link>
-        </div>
-      </section>
+      <EventsPlanning steps={steps} pricing={pricing} contactHref={contactHref} />
 
       {subs.length > 0 && (
-        <section className="s-section s-section--line" aria-labelledby="ev-subs">
+        <section className="s-section ev-subs" aria-labelledby="ev-subs">
           <div className="s-container">
             <h2 className="s-h3" id="ev-subs">Theo loại chương trình</h2>
             <ul className="u-linklist">{subs.map(s => <li key={s.id}><Link href={subServiceHref(data, s)}>{s.title}</Link></li>)}</ul>
@@ -160,16 +182,29 @@ export function EventsPage({ service, data }: { service: Service; data: SiteData
         </section>
       )}
 
-      <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
-      <RelatedPosts posts={postsForService(data, 'travel', 3)} data={data} title="Tin hoạt động" />
+      {faqs.length > 0 && (
+        <div className="ev-faq">
+          <FaqSection faqs={faqs} contactHref={contactHref} />
+        </div>
+      )}
+      {posts.length > 0 && (
+        <div className="ev-reading">
+          <RelatedPosts posts={posts} data={data} title="Bài viết về tổ chức sự kiện" soft />
+        </div>
+      )}
 
       <section className="ev-final" aria-labelledby="ev-final-title">
-        <div className="s-container ev-final__inner">
-          <h2 className="ev-head__title" id="ev-final-title">Chương trình tiếp theo <em>có thể là của bạn.</em></h2>
-          <p>Cho DANAVA biết thời gian, địa điểm, số khách mời và mục tiêu, chúng tôi gửi đề xuất ý tưởng và báo giá.</p>
-          <div className="s-row s-row--center">
-            <Link className="s-btn s-btn--primary s-btn--lg" href={contactHref}>Gửi yêu cầu tổ chức</Link>
-            <a className="s-btn s-btn--lg ev-btn-ghost" href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
+        <div className="s-container">
+          <div className="ev-final__panel">
+            <div className="ev-final__copy">
+              <h2 className="ev-head__title" id="ev-final-title">Chương trình tiếp theo <em>có thể là của bạn.</em></h2>
+              <p>Cho DANAVA biết thời gian, địa điểm, số khách mời và mục tiêu, chúng tôi gửi đề xuất ý tưởng và báo giá.</p>
+              <div className="s-row">
+                <Link className="s-btn s-btn--primary s-btn--lg" href={contactHref}>Gửi yêu cầu tổ chức</Link>
+                <a className="s-btn s-btn--lg ev-btn-ghost" href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
+              </div>
+            </div>
+            <img className="ev-final__photo" src="/assets/profile/lutech-4.webp" alt="" width={1508} height={1600} loading="lazy" decoding="async" />
           </div>
         </div>
       </section>

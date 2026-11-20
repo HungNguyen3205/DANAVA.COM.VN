@@ -2,12 +2,12 @@
  * Giá trị mặc định cho các trường nội dung bổ sung (dịch vụ chi tiết, trang dịch vụ con, danh mục kiến thức,
  * quan hệ bài viết–dịch vụ–dự án, khách hàng tiêu biểu).
  *
- * normalizeContent() chỉ ĐIỀN chỗ còn thiếu, không bao giờ ghi đè giá trị quản trị viên đã lưu.
+ * normalizeContent() điền các trường còn thiếu và cập nhật tên các giải pháp đã đổi.
  * Nguồn: nội dung đã có trên website (components/site/service-content.ts trước đây, trang Về DANAVA),
  * case study trên danava.vn (lib/verified-projects.ts). Không thêm số liệu, giá hay cam kết mới.
  */
 import { initial, RETIRED_SERVICES, type Client, type Feature, type Faq, type Project, type Service, type SiteData, type SubService, type Topic } from './content.ts';
-import { SHOWCASE_SEEDS } from './showcase-seeds.ts';
+import { HUDI_WEBSITE_SHOWCASE, SHOWCASE_SEEDS } from './showcase-seeds.ts';
 
 /* ------------------------------------------------------------------ Dịch vụ */
 type ServiceSeed = Pick<Service, 'heroLead' | 'audience' | 'problems' | 'process' | 'faqs' | 'pricing' | 'productUrl' | 'productLabel'>;
@@ -64,7 +64,7 @@ export const SERVICE_SEEDS: Record<string, ServiceSeed> = {
     pricing: 'Báo giá dựa trên số lượng trang, tính năng đặc thù (đặt lịch, bán gói, nhiều ngôn ngữ…) và mức độ chuẩn bị nội dung, hình ảnh. Chi phí duy trì chủ yếu là tên miền và máy chủ theo giá nhà cung cấp. DANAVA gửi đề xuất phạm vi và tiến độ trước khi bắt đầu.'
   },
   marketing: {
-    heroLead: 'Chiến lược, nội dung, quay chụp và quảng cáo được kết nối thành một kế hoạch. Thương hiệu của bạn đến gần khách hàng hơn, với số liệu minh bạch.',
+    heroLead: 'DANAVA xây dựng một kế hoạch chung cho chiến lược truyền thông, sản xuất nội dung và hình ảnh, vận hành kênh, quảng cáo và đo lường hiệu quả.',
     audience: ['Phòng tập & studio', 'Spa & wellness', 'Doanh nghiệp dịch vụ', 'Cơ sở đào tạo'],
     problems: [
       'Đăng bài không đều, hình ảnh mỗi kênh một kiểu nên thương hiệu thiếu nhất quán.',
@@ -98,14 +98,14 @@ export const SERVICE_SEEDS: Record<string, ServiceSeed> = {
       { title: 'Ý tưởng & kế hoạch', text: 'Thống nhất mục tiêu, khách mời, chủ đề và kế hoạch tổ chức.' },
       { title: 'Thiết kế không gian', text: 'Phối cảnh booth, backdrop, sân khấu và đạo cụ để duyệt trước khi thi công.' },
       { title: 'Thi công & kỹ thuật', text: 'Dựng không gian, phối hợp thiết bị âm thanh, ánh sáng, LED và nhân sự kỹ thuật.' },
-      { title: 'Điều phối & ghi hình', text: 'Điều phối tại chỗ, nhân sự biểu diễn, ghi hình và tổng kết sau chương trình.' }
+      { title: 'Tổng duyệt & điều phối', text: 'Tổng duyệt kịch bản, kiểm tra thiết bị và điều phối nhân sự tại hiện trường.' }
     ],
     faqs: [
       { q: 'DANAVA có nhận thi công riêng booth, backdrop hoặc đạo cụ không?', a: 'Có. Thiết kế, thi công booth, backdrop, đạo cụ và không gian sự kiện là một hạng mục DANAVA thực hiện, có thể đặt riêng hoặc trong gói tổ chức.' },
       { q: 'Tôi cần chuẩn bị gì để nhận báo giá?', a: 'Chỉ cần cho biết thời gian dự kiến, số lượng khách mời, địa điểm mong muốn và mục tiêu chương trình.' },
-      { q: 'Hình ảnh, video sau sự kiện có dùng được cho truyền thông không?', a: 'Có. Hình ảnh, video ghi lại tại chương trình được bàn giao để doanh nghiệp dùng cho website, Fanpage và quảng cáo.' }
+      { q: 'DANAVA có tổng duyệt trước chương trình không?', a: 'DANAVA phối hợp với MC, kỹ thuật và nhân sự tại địa điểm để kiểm tra thiết bị, chạy thử kịch bản và thống nhất các phần chuyển tiếp.' }
     ],
-    pricing: 'Báo giá theo quy mô chương trình, địa điểm và các hạng mục: thiết kế – thi công không gian, thiết bị kỹ thuật, nhân sự biểu diễn, điều phối và ghi hình. DANAVA gửi đề xuất chi tiết sau khi nhận thông tin chương trình.'
+    pricing: 'Báo giá theo quy mô, địa điểm và các hạng mục cần triển khai, gồm thiết kế và thi công không gian, thiết bị, nhân sự và điều phối. DANAVA gửi đề xuất chi tiết sau khi nhận thông tin chương trình.'
   },
   travel: {
     heroLead: 'Tour trải nghiệm, retreat yoga và hành trình thiết kế riêng cho từng nhóm: lịch trình, phòng nghỉ, phương tiện và vé tham quan do một đầu mối sắp xếp.',
@@ -277,12 +277,12 @@ export const SUB_SERVICE_SEEDS: SubService[] = [
   },
   {
     id: 'event-corporate', parentId: 'events', slug: 'to-chuc-su-kien-doanh-nghiep', title: 'Tổ chức sự kiện doanh nghiệp',
-    description: 'Hội nghị, kick-off, gala và team building: kịch bản, hậu cần, truyền thông và ghi hình.',
-    heroLead: 'Một đầu mối lo kịch bản, hậu cần, sân khấu và ghi hình để doanh nghiệp tập trung vào khách mời.',
+    description: 'Hội nghị, kick-off, gala và team building: kịch bản, sân khấu, hậu cần và điều phối.',
+    heroLead: 'Một đầu mối lo kịch bản, hậu cần, sân khấu và điều phối để doanh nghiệp tập trung vào khách mời.',
     audience: ['Doanh nghiệp', 'Chuỗi cửa hàng', 'Hiệp hội & câu lạc bộ'],
     problems: SERVICE_SEEDS.events.problems!,
     features: [
-      f('Hội nghị & hội thảo', 'Lên kịch bản, hậu cần, truyền thông và ghi hình cho sự kiện doanh nghiệp.'),
+      f('Hội nghị & hội thảo', 'Lên kịch bản, sân khấu, hậu cần và điều phối cho sự kiện doanh nghiệp.'),
       f('Team building & gala', 'Chương trình gắn kết đội ngũ, từ hoạt động ngoài trời đến đêm gala.'),
       f('Trang trí & booth', 'Không gian sự kiện và booth theo nhận diện thương hiệu.')
     ],
@@ -291,16 +291,16 @@ export const SUB_SERVICE_SEEDS: SubService[] = [
   },
   {
     id: 'event-workshop', parentId: 'events', slug: 'to-chuc-workshop', title: 'Tổ chức workshop',
-    description: 'Workshop chuyên đề cho cộng đồng và khách hàng: nội dung, diễn giả, địa điểm và truyền thông.',
+    description: 'Workshop chuyên đề cho cộng đồng và khách hàng: kịch bản, diễn giả, địa điểm và điều phối.',
     heroLead: 'Những buổi chia sẻ quy mô nhỏ, tập trung vào trải nghiệm và kết nối người tham gia.',
     audience: ['Cộng đồng yoga', 'Doanh nghiệp', 'Trung tâm đào tạo'],
-    problems: ['Có chủ đề hay nhưng thiếu người lo địa điểm, truyền thông và đón khách.'],
+    problems: ['Có chủ đề hay nhưng thiếu người lo địa điểm, kỹ thuật và đón khách.'],
     features: [
       f('Chủ đề & diễn giả', 'Cùng xây dựng nội dung và kết nối diễn giả phù hợp.'),
       f('Địa điểm & hậu cần', 'Chuẩn bị không gian, âm thanh và đón tiếp người tham gia.'),
-      f('Truyền thông & ghi hình', 'Bài đăng trước sự kiện và hình ảnh tổng kết.')
+      f('Điều phối tại chỗ', 'Phối hợp với diễn giả, kỹ thuật viên và nhân sự đón tiếp theo kịch bản.')
     ],
-    process: PROCESS_EVENT, faqs: [], pricing: SERVICE_SEEDS.travel.pricing!, image: '/assets/legacy/event-workshop.webp', published: false, updated: '2026-11-19',
+    process: SERVICE_SEEDS.events.process!, faqs: [], pricing: SERVICE_SEEDS.events.pricing!, image: '/assets/legacy/event-workshop.webp', published: false, updated: '2026-11-19',
     editorNote: 'Có thể gắn các bài Tin hoạt động về chuỗi Yoga Workshop và Thiền Trà. Cần DANAVA xác nhận trước khi xuất bản.'
   },
   {
@@ -444,33 +444,60 @@ const RETIRED_TOPICS = ['marketing'];
 const fill = <T,>(value: T | undefined, fallback: T): T => (value === undefined ? fallback : value);
 
 /**
- * Điền các trường còn thiếu bằng giá trị mặc định. Không ghi đè dữ liệu đã có
- * (kể cả mảng rỗng hay chuỗi rỗng — đó là lựa chọn của quản trị viên).
+ * Điền các trường còn thiếu, đồng bộ tên giải pháp và cập nhật nội dung mẫu cũ.
  */
 export function normalizeContent(data: SiteData): SiteData {
   const topics = fill(data.topics, TOPIC_SEEDS.map(t => ({ ...t, serviceIds: [...t.serviceIds] })))
     .filter(t => !RETIRED_TOPICS.includes(t.id))
     .map(t => ({ ...t, serviceIds: t.serviceIds.filter(id => !RETIRED_IDS.includes(id)) }));
   const topicServices = new Map(topics.map(t => [t.id, t.serviceIds]));
-  // Giải pháp mới thêm sau (vd. Sự kiện & Truyền thông) được bổ sung vào dữ liệu cũ, giữ thứ tự gốc.
+  // Giải pháp mới thêm sau (vd. Tổ chức sự kiện) được bổ sung vào dữ liệu cũ, giữ thứ tự gốc.
   const services = [...data.services, ...initial.services.filter(x => !data.services.some(s => s.id === x.id)).map(x => structuredClone(x))]
     .filter(s => !RETIRED_IDS.includes(s.id));
+  const showcase = (data.showcase ?? structuredClone(SHOWCASE_SEEDS))
+    .filter(x => !REMOVED_SHOWCASE_IDS.includes(x.id) && !RETIRED_IDS.includes(x.serviceId));
+  // Bổ sung HUDI vào thư viện đã lưu, giữ nguyên mục do quản trị viên quản lý.
+  if (!showcase.some(item => item.id === HUDI_WEBSITE_SHOWCASE.id || item.slug === HUDI_WEBSITE_SHOWCASE.slug)
+    && !data.projects?.some(project => project.slug === HUDI_WEBSITE_SHOWCASE.slug)) {
+    showcase.unshift(structuredClone(HUDI_WEBSITE_SHOWCASE));
+  }
   return {
     ...data,
     // Khối DANAVA DIGITAL (marketing) đã ngừng — gỡ khỏi dữ liệu trình chiếu đã lưu
     ...(data.presentation ? { presentation: { ...data.presentation, ecosystem: data.presentation.ecosystem.filter(x => x.id !== 'digital') } } : {}),
     heroTitle: data.heroTitle === undefined || OLD_HERO_TITLES.includes(data.heroTitle) ? DEFAULT_HERO_TITLE : data.heroTitle,
-    showcase: fill(data.showcase, structuredClone(SHOWCASE_SEEDS)).filter(x => !REMOVED_SHOWCASE_IDS.includes(x.id) && !RETIRED_IDS.includes(x.serviceId)),
+    showcase,
     services: services.map(s => {
       const seed = SERVICE_SEEDS[s.id] || {};
+      const updatedService = ['website', 'marketing', 'events'].includes(s.id)
+        ? initial.services.find(item => item.id === s.id)
+        : undefined;
+      const isMarketing = s.id === 'marketing';
+      const isEvent = s.id === 'events';
+      const marketingSeoTitle = s.seoTitle?.replace(/Digital Marketing/gi, updatedService?.title || s.title);
+      const heroLead = isMarketing && s.heroLead === 'Chiến lược, nội dung, quay chụp và quảng cáo được kết nối thành một kế hoạch. Thương hiệu của bạn đến gần khách hàng hơn, với số liệu minh bạch.'
+        ? seed.heroLead
+        : s.heroLead;
       return {
         ...s,
-        heroLead: fill(s.heroLead, seed.heroLead || ''),
+        ...(updatedService ? { title: updatedService.title } : {}),
+        ...(isMarketing && updatedService ? {
+          seoTitle: marketingSeoTitle?.includes(updatedService.title) ? marketingSeoTitle : updatedService.title,
+          description: updatedService.description,
+          items: [...updatedService.items]
+        } : {}),
+        ...(isEvent && updatedService ? {
+          seoTitle: s.seoTitle?.replace(/Sự kiện & Truyền thông/gi, updatedService.title),
+          items: s.items.map(item => item === 'Roadshow, activation, sampling và truyền thông sự kiện' ? updatedService.items[4] : item)
+        } : {}),
+        heroLead: fill(heroLead, seed.heroLead || ''),
         audience: fill(s.audience, seed.audience ? [...seed.audience] : []).map(x => x === 'Chiến dịch marketing' ? 'Chương trình & sự kiện' : x),
         problems: fill(s.problems, seed.problems ? [...seed.problems] : []),
-        process: fill(s.process, seed.process ? seed.process.map(x => ({ ...x })) : []),
-        faqs: fill(s.faqs, seed.faqs ? seed.faqs.map(x => ({ ...x })) : []),
-        pricing: fill(s.pricing, seed.pricing || ''),
+        process: fill(s.process, seed.process ? seed.process.map(x => ({ ...x })) : []).map(step =>
+          isEvent && step.title === 'Điều phối & ghi hình' ? { ...SERVICE_SEEDS.events.process![3] } : step),
+        faqs: fill(s.faqs, seed.faqs ? seed.faqs.map(x => ({ ...x })) : []).map(faq =>
+          isEvent && faq.q === 'Hình ảnh, video sau sự kiện có dùng được cho truyền thông không?' ? { ...SERVICE_SEEDS.events.faqs![2] } : faq),
+        pricing: fill(isEvent && s.pricing === 'Báo giá theo quy mô chương trình, địa điểm và các hạng mục: thiết kế – thi công không gian, thiết bị kỹ thuật, nhân sự biểu diễn, điều phối và ghi hình. DANAVA gửi đề xuất chi tiết sau khi nhận thông tin chương trình.' ? undefined : s.pricing, seed.pricing || ''),
         productUrl: fill(s.productUrl, seed.productUrl || ''),
         productLabel: fill(s.productLabel, seed.productLabel || '')
       };
