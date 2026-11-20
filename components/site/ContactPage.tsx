@@ -20,9 +20,6 @@ type Errors = Partial<Record<keyof Fields, string>>;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
-/** Lĩnh vực của DANAVA bay quanh danh thiếp. */
-const PILLARS = ['Phần mềm', 'Website', 'Sự kiện', 'Truyền thông', 'Du lịch', 'Cộng đồng'];
-
 /** Tên ngắn cho nút chọn nhanh dịch vụ trên form. */
 const CHIP: Record<string, string> = {
   'danava-studio': 'DANAVA Studio', 'thiet-ke-website': 'Website', 'digital-marketing': 'Marketing',
@@ -172,45 +169,44 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 14 C 60 2, 120 20, 180 9 S 270 4, 298 12" /></svg>
               </p>
               <p className="c-hero__lead">{copy.lead}</p>
-              {isOpen !== null && (
-                <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
-                  <b><i aria-hidden="true" />{isOpen ? 'Đang trong giờ làm việc · gọi là có người nghe máy' : 'Ngoài giờ làm việc · để lại lời nhắn, DANAVA gọi lại vào ngày làm việc kế tiếp'}</b>
-                  <span>{co.hours}</span>
-                </p>
-              )}
               <div className="c-dock">
                 <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><Phone aria-hidden="true" /><span><small>Gọi ngay</small>{formatPhone(phone)}</span></a>
                 <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" /><span><small>Nhắn tin</small>Chat Zalo</span><span className="c-sr"> (mở tab mới)</span></a>
                 <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><Mail aria-hidden="true" /><span><small>Gửi email</small>{email}</span></a>
               </div>
-              <ul className="c-socials" aria-label="Kênh khác">
-                <li><a href={co.facebook} target="_blank" rel="noopener noreferrer"><ThumbsUp aria-hidden="true" />Fanpage<span className="c-sr"> (mở tab mới)</span></a></li>
-                <li><a href={co.youtube} target="_blank" rel="noopener noreferrer"><PlayCircle aria-hidden="true" />YouTube<span className="c-sr"> (mở tab mới)</span></a></li>
-                <li><a href={`mailto:${co.supportEmail}`}><LifeBuoy aria-hidden="true" />Hỗ trợ kỹ thuật</a></li>
-                <li><a href="#dang-ky-tu-van"><ArrowRight aria-hidden="true" />Gửi yêu cầu tư vấn</a></li>
-              </ul>
+              <div className="c-meta">
+                {isOpen !== null && (
+                  <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
+                    <i aria-hidden="true" />{isOpen ? 'Đang trong giờ làm việc' : 'Ngoài giờ làm việc · DANAVA gọi lại vào ngày làm việc kế tiếp'}<span>{co.hours}</span>
+                  </p>
+                )}
+                <p className="c-alt">
+                  <a href={co.facebook} target="_blank" rel="noopener noreferrer"><ThumbsUp aria-hidden="true" />Fanpage<span className="c-sr"> (mở tab mới)</span></a>
+                  <a href={co.youtube} target="_blank" rel="noopener noreferrer"><PlayCircle aria-hidden="true" />YouTube<span className="c-sr"> (mở tab mới)</span></a>
+                  <a href={`mailto:${co.supportEmail}`}><LifeBuoy aria-hidden="true" />Hỗ trợ kỹ thuật</a>
+                </p>
+              </div>
             </div>
 
             <div className="c-cardzone">
-              <span className="c-orbit c-orbit--a" aria-hidden="true" />
-              <span className="c-orbit c-orbit--b" aria-hidden="true" />
-              <ul className="c-pillars" aria-label="Lĩnh vực của DANAVA">
-                {PILLARS.map((p, i) => <li key={p} style={{ ['--i' as string]: i, ['--n' as string]: PILLARS.length }}><span>{p}</span></li>)}
-              </ul>
+              <span className="c-orbit c-orbit--a" aria-hidden="true"><i /><i /></span>
+              <span className="c-orbit c-orbit--b" aria-hidden="true"><i /></span>
+              <span className="c-halo" aria-hidden="true" />
               <div className="c-namecard c-namecard--float" ref={cardRef} onPointerMove={tilt} onPointerLeave={untilt}>
+                <div className="c-namecard__back" aria-hidden="true"><span>D</span></div>
                 <div className="c-namecard__face">
                   <div className="c-namecard__top">
-                    <img src="/assets/danava-logo-trim.png" alt="" width={554} height={135} />
+                    <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
                     <span className="c-namecard__chip" aria-hidden="true" />
                   </div>
-                  <p className="c-namecard__brand">DANAVA&nbsp;Solutions</p>
-                  <p className="c-namecard__motto">{data.headline || 'Cùng bạn phát triển.'}</p>
+                  <p className="c-namecard__label">Hotline · Zalo</p>
+                  <p className="c-namecard__phone"><a href={`tel:${phone}`}>{formatPhone(phone)}</a></p>
                   <ul className="c-namecard__lines">
-                    <li><Phone aria-hidden="true" /><a href={`tel:${phone}`}>{formatPhone(phone)}</a></li>
                     <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{email}</a></li>
                     <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener noreferrer">{co.address}</a></li>
                     <li><Globe aria-hidden="true" /><span>danava.com.vn</span></li>
                   </ul>
+                  <p className="c-namecard__motto">{data.headline || 'Cùng bạn phát triển.'}</p>
                 </div>
               </div>
               <div className="c-cardacts">
@@ -220,6 +216,9 @@ export function ContactPage({ initialService }: { initialService: string }) {
             </div>
           </div>
         </div>
+        <svg className="c-wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 56 C 240 96, 420 10, 720 40 S 1200 92, 1440 30 L1440 90 L0 90 Z" />
+        </svg>
       </section>
 
       {/* Sau lời chào: quy trình hợp tác (CMS → Về DANAVA → Quy trình hợp tác), nối bằng đường cong như dòng sông */}

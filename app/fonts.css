@@ -9,3 +9,5 @@
   --font-display: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
 }
 body, button, input, select, textarea { font-family: var(--font-sans); }
+/* Số luôn cao bằng nhau (Playfair mặc định dùng số kiểu cổ, cao thấp lệch nhau, khó đọc) */
+html { font-variant-numeric: lining-nums; }

@@ -622,3 +622,53 @@ body:has(.s-app) { background: var(--s-bg); }
   .c-journey__river { display: none; }
   .c-pillars span { font-size: 11px; padding: 4px 9px; }
 }
+
+/* ---- Liên hệ: tinh chỉnh (ánh sáng trong trẻo, danh thiếp 2 lớp, quỹ đạo đốm sáng, sóng mềm) ---- */
+.c-hero--aurora { isolation: isolate; padding-bottom: clamp(96px, 11vw, 150px); background: radial-gradient(120% 90% at 50% 0%, #142057 0%, #0b1230 60%); }
+.c-aurora i { mix-blend-mode: screen; filter: blur(90px); }
+.c-aurora i:nth-child(1) { background: #3553c4; opacity: .5; }
+.c-aurora i:nth-child(2) { width: 460px; height: 460px; right: 4%; top: 18%; background: #ff9f43; opacity: .22; }
+.c-aurora i:nth-child(3) { background: #53a5db; opacity: .3; }
+/* Chữ thương hiệu: một dải màu ấm, không nhạt về cuối */
+.c-hero--aurora .c-brand { background-image: linear-gradient(95deg, #ffe2a3 0%, #ffc65a 30%, #f5ae1b 55%, #ff8a3d 80%, #ffc65a 100%); }
+
+/* Trạng thái + liên kết phụ gọn trên một hàng */
+.c-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 20px; }
+.c-hero--aurora .c-status { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: #dfe6fb; }
+.c-hero--aurora .c-status span { margin-left: 4px; }
+.c-alt { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+.c-alt a { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font-size: 14px; font-weight: 600; color: #aab6dc; text-decoration: none; transition: color .2s; }
+.c-alt a:hover { color: #fff; }
+.c-alt svg { width: 16px; height: 16px; }
+
+/* Quỹ đạo: đốm sáng chạy theo vòng, không có chữ */
+.c-hero--aurora .c-orbit { border-style: solid; border-color: #ffffff14; }
+.c-hero--aurora .c-orbit--b { border-color: #f5ae1b2e; }
+.c-orbit i { position: absolute; left: 50%; top: -5px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #ffd27a; box-shadow: 0 0 14px 4px #ffd27a80; }
+.c-orbit i + i { top: auto; bottom: -4px; width: 7px; height: 7px; background: #9fd3ff; box-shadow: 0 0 12px 3px #9fd3ff80; }
+.c-orbit--b i { background: #ff9f43; box-shadow: 0 0 14px 4px #ff9f4380; }
+.c-halo { position: absolute; left: 50%; top: 46%; width: min(420px, 90%); aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, #f5ae1b33 0%, #3553c41f 45%, transparent 70%); pointer-events: none; }
+
+/* Danh thiếp 2 lớp: thẻ cam phía sau tạo chiều sâu */
+.c-hero--aurora .c-namecard { width: min(420px, 92%); transform: rotateX(var(--rx)) rotateY(var(--ry)) rotate(-4deg); }
+.c-namecard__back { position: absolute; inset: 0; overflow: hidden; border-radius: 24px; background: linear-gradient(140deg, #ffd27a, #f2850e); transform: rotate(10deg) translate(22px, 14px); box-shadow: 0 30px 60px -30px #000a; }
+.c-namecard__back span { position: absolute; right: 14px; bottom: -30px; font-family: var(--font-display); font-size: 170px; font-weight: 700; line-height: 1; color: #ffffff3d; }
+.c-namecard__face { z-index: 1; }
+@media (prefers-reduced-motion: no-preference) { .c-namecard--float .c-namecard__back { animation: c-bob 7s ease-in-out infinite; animation-delay: -1.2s; } }
+.c-namecard__label { margin: clamp(14px, 2.4vw, 22px) 0 0; font-size: 11.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #ffd27a; }
+.c-namecard__phone { margin: 2px 0 0; }
+.c-namecard__phone a { font-family: var(--font-sans); font-size: clamp(28px, 3.1vw, 36px); font-weight: 800; letter-spacing: .02em; font-variant-numeric: lining-nums tabular-nums; line-height: 1.1; color: #fff; text-decoration: none; white-space: nowrap; }
+.c-namecard__phone a:hover { color: #ffd27a; }
+.c-namecard__face .c-namecard__motto { position: absolute; right: clamp(18px, 3vw, 28px); bottom: clamp(14px, 2.4vw, 22px); margin: 0; font-family: var(--font-display); font-style: italic; font-size: 14px; color: #ffd27acc; }
+.c-hero--aurora .c-cardacts { margin-top: 18px; }
+
+/* Sóng mềm nối sang phần "Sau lời chào" */
+.c-wave { position: absolute; left: 0; right: 0; bottom: -1px; z-index: 1; display: block; width: 100%; height: clamp(44px, 6vw, 90px); }
+.c-wave path { fill: #fbfaf6; }
+
+@media (max-width: 640px) {
+  .c-namecard__back { transform: rotate(8deg) translate(12px, 10px); }
+  .c-namecard__face .c-namecard__motto { position: static; margin-top: 8px; }
+  .c-meta { gap: 8px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .c-hero--aurora .c-namecard { transform: rotate(-4deg); } }
