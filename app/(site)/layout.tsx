@@ -1,3 +1,4 @@
+import '../fonts.css';
 import './site.css';
 import './site-a.css';
 import './site-b.css';
@@ -13,12 +14,7 @@ import './site-studio.css';
 import './site-ecosystem.css';
 import './site-partners.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
-import { siteFont } from '@/lib/site-font';
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className={siteFont.variable} style={{ display: 'contents' }}>
-      <SiteFrame>{children}</SiteFrame>
-    </div>
-  );
+  return <SiteFrame>{children}</SiteFrame>;
 }

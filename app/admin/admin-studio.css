@@ -27,7 +27,7 @@
   --ds-shadow-elevated: 0 10px 30px rgba(15, 17, 23, 0.08);
 
   /* Bảng màu cho các thành phần nội dung .adm-* có sẵn */
-  --adm-font: var(--font-bvp), 'Be Vietnam Pro', 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --adm-font: var(--font-sans);
   --adm-bg: var(--ds-bg-canvas);
   --adm-surface: #ffffff;
   --adm-surface-strong: #ffffff;

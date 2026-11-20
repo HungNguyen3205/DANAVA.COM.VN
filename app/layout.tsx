@@ -5,6 +5,7 @@ import { publicContent } from '@/lib/site-queries';
 import Analytics from '@/components/Analytics';
 import { siteURL, jsonLD, indexable, ORG_ID, BRAND } from '@/lib/seo';
 import { CONTACT, SOCIAL } from '@/lib/company';
+import { fontVariables } from '@/lib/site-font';
 
 /**
  * Root layout dùng chung cho website công khai và CMS.
@@ -59,10 +60,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
     sameAs: [SOCIAL.facebook, SOCIAL.youtube]
   };
   return (
-    <html lang="vi">
+    <html lang="vi" className={fontVariables}>
       <head>
-        <link rel="preload" href="/fonts/manrope-400-normal.woff" as="font" type="font/woff" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/manrope-700-normal.woff" as="font" type="font/woff" crossOrigin="anonymous" />
       </head>
       <body>
         <SiteStore initialData={publicContent(data)}>

@@ -26,7 +26,7 @@
   overflow: hidden;
   background: var(--wl-bg);
   color: var(--wl-text);
-  font-family: var(--font-bvp), 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.55;
   transition: background-color 1s ease;

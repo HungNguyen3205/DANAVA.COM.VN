@@ -1,0 +1,49 @@
+PASS 1440px / tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /giai-phap/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /giai-phap/cong-dong/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /giai-phap/du-lich-su-kien/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /giai-phap/danava-studio/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /he-sinh-thai/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /doi-tac/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Be Vietnam Pro Fallback,Playfair Display
+PASS 1440px /du-an/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /ve-danava/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /doi-ngu/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /doi-ngu/nam/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /kien-thuc/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /kien-thuc/thien-tra/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /lien-he/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Be Vietnam Pro Fallback,Playfair Display
+PASS 1440px /chinh-sach-rieng-tu/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 1440px /khong-ton-tai/ tràn 1440/1440 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px / tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /giai-phap/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /giai-phap/cong-dong/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /giai-phap/du-lich-su-kien/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /giai-phap/danava-studio/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /he-sinh-thai/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /doi-tac/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Be Vietnam Pro Fallback,Playfair Display
+PASS 390px /du-an/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /ve-danava/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /doi-ngu/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /doi-ngu/nam/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /kien-thuc/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /kien-thuc/thien-tra/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /lien-he/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Be Vietnam Pro Fallback,Playfair Display
+PASS 390px /chinh-sach-rieng-tu/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 390px /khong-ton-tai/ tràn 390/390 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px / tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /giai-phap/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /giai-phap/cong-dong/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /giai-phap/du-lich-su-kien/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /giai-phap/danava-studio/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /he-sinh-thai/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /doi-tac/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Be Vietnam Pro Fallback,Playfair Display
+PASS 360px /du-an/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /ve-danava/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /doi-ngu/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /doi-ngu/nam/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /kien-thuc/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /kien-thuc/thien-tra/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /lien-he/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Be Vietnam Pro Fallback,Playfair Display
+PASS 360px /chinh-sach-rieng-tu/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+PASS 360px /khong-ton-tai/ tràn 360/360 h1-playfair=true tiêu đề tràn=[] phông đã tải=Be Vietnam Pro,Playfair Display
+FAIL: 0

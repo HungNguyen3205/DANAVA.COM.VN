@@ -1,6 +1,6 @@
 /* ==========================================================================
    Bản sắc riêng từng trang dịch vụ (11/2026)
-   Chung: token màu, font Playfair (tiêu đề) + Manrope (nội dung) của DANAVA.
+   Chung: token màu, font Playfair Display (tiêu đề) + Be Vietnam Pro (nội dung) của DANAVA.
    - .sc-*  khối trưng bày sản phẩm thật (khung trình duyệt, điện thoại, featured)
    - .pf-*  thư viện portfolio có bộ lọc, bố cục so le
    - .wb-*  Website & Landing Page — portfolio sáng tạo, nền sáng, nhấn xanh DANAVA
@@ -9,7 +9,7 @@
    - .cs-*  Case study sản phẩm (Vinhomes Hải Vân Bay)
    ========================================================================== */
 .s-app {
-  --h-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --h-serif: var(--font-display);
   --h-gold: #ffc233;
   --h-orange: #f6a21f;
   --h-cream: #f8f4ec;

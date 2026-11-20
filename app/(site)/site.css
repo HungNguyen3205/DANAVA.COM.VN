@@ -2,13 +2,6 @@
    DANAVA — Public site design system (clean / product-first)
    Mọi selector đều nằm dưới .s-app hoặc dùng tiền tố .s- để không đụng CMS.
    ========================================================================== */
-
-@font-face { font-family: 'Manrope'; src: url('/fonts/manrope-400-normal.woff') format('woff'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'Manrope'; src: url('/fonts/manrope-500-normal.woff') format('woff'); font-weight: 500; font-display: swap; }
-@font-face { font-family: 'Manrope'; src: url('/fonts/manrope-600-normal.woff') format('woff'); font-weight: 600; font-display: swap; }
-@font-face { font-family: 'Manrope'; src: url('/fonts/manrope-700-normal.woff') format('woff'); font-weight: 700; font-display: swap; }
-@font-face { font-family: 'Manrope'; src: url('/fonts/manrope-800-normal.woff') format('woff'); font-weight: 800; font-display: swap; }
-
 :root {
   /* Brand (lấy từ logo DANAVA) */
   --s-blue: #2b4294;
@@ -41,7 +34,7 @@
   --s-container: 1200px;
   --s-gutter: clamp(20px, 4vw, 40px);
   --s-header-h: 72px;
-  --s-font: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --s-font: var(--font-sans);
 }
 
 /* ---------- Base (chỉ áp dụng khi trang là website công khai) ---------- */
@@ -275,7 +268,8 @@ body:has(.s-app.is-locked) { overflow: hidden; }
 /* ---------- Prose (bài viết, chính sách) ---------- */
 .s-prose { font-size: 18px; line-height: 1.8; color: var(--s-ink-2); }
 .s-prose > * + * { margin-top: 1.1em; }
-.s-prose h2 { margin-top: 2em; font-size: clamp(24px, 2.4vw, 30px); color: var(--s-ink); letter-spacing: -0.02em; line-height: 1.25; scroll-margin-top: calc(var(--s-header-h) + 24px); }
+.s-prose h2 { margin-top: 2em; font-family: var(--font-display); font-weight: 500; font-size: clamp(24px, 2.4vw, 30px); color: var(--s-ink); letter-spacing: -0.02em; line-height: 1.25; scroll-margin-top: calc(var(--s-header-h) + 24px); }
+.s-prose code { font-family: var(--font-sans); font-size: .95em; font-weight: 600; padding: .05em .35em; border-radius: 6px; background: var(--s-soft); }
 .s-prose h3 { margin-top: 1.6em; font-size: 21px; color: var(--s-ink); line-height: 1.3; scroll-margin-top: calc(var(--s-header-h) + 24px); }
 .s-prose ul { display: grid; gap: .5em; padding-left: 1.3em; list-style: disc; }
 .s-prose ol { display: grid; gap: .5em; padding-left: 1.3em; list-style: decimal; }

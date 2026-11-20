@@ -1,0 +1,11 @@
+/*
+ * Hệ chữ của toàn dự án — chỉ khai báo phông ở đây (lib/site-font.ts).
+ * CSS khác chỉ dùng hai token:
+ *   var(--font-sans)     chữ nội dung, nút, biểu mẫu, nhãn
+ *   var(--font-display)  tiêu đề trang (h1) và tiêu đề mục (h2)
+ */
+:root {
+  --font-sans: var(--font-bvp), 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-display: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+body, button, input, select, textarea { font-family: var(--font-sans); }

@@ -114,7 +114,7 @@
   @keyframes eco-pulse { 50% { box-shadow: 0 0 0 9px rgba(34, 197, 94, 0); } }
 }
 .eco-live__name { grid-area: name; font-weight: 700; font-size: 15.5px; }
-.eco-live__host { grid-area: host; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; color: #9cd2f2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.eco-live__host { grid-area: host; font-family: var(--font-sans); font-weight: 600; font-size: 13px; color: #9cd2f2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .eco-live__note { grid-area: note; font-size: 12.5px; color: rgba(233, 238, 252, .6); }
 .eco-live__group a > svg { grid-area: go; width: 18px; height: 18px; color: rgba(233, 238, 252, .6); }
 

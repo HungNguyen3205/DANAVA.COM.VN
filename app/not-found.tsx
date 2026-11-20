@@ -1,8 +1,8 @@
+import './fonts.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Home, LayoutGrid, Headphones, ArrowRight } from 'lucide-react';
 import { SiteFrame } from '@/components/site/SiteFrame';
-import { siteFont } from '@/lib/site-font';
 // Cùng thứ tự stylesheet với app/(site)/layout.tsx để 404 toàn cục trông giống hệt các trang khác
 import './(site)/site.css';
 import './(site)/site-a.css';
@@ -35,11 +35,9 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className={siteFont.variable} style={{ display: 'contents' }}>
-      <SiteFrame>
-        <NotFoundContent />
-      </SiteFrame>
-    </div>
+    <SiteFrame>
+      <NotFoundContent />
+    </SiteFrame>
   );
 }
 

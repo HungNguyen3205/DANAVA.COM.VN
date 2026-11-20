@@ -99,3 +99,13 @@ DANAVA không cung cấp Digital Marketing (yêu cầu của chủ sở hữu, 1
 - Khối logo ở Trang chủ và Hệ sinh thái vẫn chỉ hiện khách hàng và 15 đối tác đồng hành. Danh bạ 32 địa điểm không gửi xuống trình duyệt ở các trang khác.
 - Lưu ý dữ liệu nguồn: 10 địa điểm ghi giờ mở cửa “08:00 - 21:00”, có thể là giá trị mặc định của danava.vn; trang hiển thị đúng như nguồn công bố.
 - Kiểm tra trình duyệt 12/12, kiểm thử tự động 90/90.
+
+## 10. Cập nhật: đồng nhất phông chữ toàn dự án
+
+- Trước khi sửa, các trang dùng lẫn 5 bộ phông: Manrope, Be Vietnam Pro, Playfair Display, Noto Serif và UTM Eremitage (không có file phông). Tiêu đề trang cũ dùng Be Vietnam Pro ExtraBold, trang mới dùng Playfair Display. Trang Liên hệ và Chính sách có chữ Consolas.
+- Nay toàn dự án (website, trang 404, CMS) chỉ dùng 2 phông, khai báo một nơi duy nhất (`lib/site-font.ts` + `app/fonts.css`):
+  - **Be Vietnam Pro** (`--font-sans`): chữ nội dung, nút, biểu mẫu, nhãn.
+  - **Playfair Display** (`--font-display`): tiêu đề trang (h1) và tiêu đề mục (h2), độ đậm 500.
+- Hai phông đều được next/font tự phục vụ khi build (đủ bộ ký tự tiếng Việt) và preload; trình duyệt không gọi Google Fonts. Đã xoá 15 file phông cũ trong `public/fonts/`.
+- Sửa kèm: khối app hội viên trên trang DANAVA Studio bị cắt chữ trên điện thoại (cột lưới rộng 458px trong màn 390px).
+- Kiểm tra: 16 trang × 3 khổ (1440/390/360px) đạt 48/48. Không trang nào tràn ngang, mọi h1 dùng Playfair, nội dung dùng Be Vietnam Pro. Kết quả: `docs/screenshots/phong-chu/`.
