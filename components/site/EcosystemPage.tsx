@@ -121,22 +121,32 @@ export function EcosystemPage({ data }: { data: SiteData }) {
             <svg className="hx-sky__lines" viewBox="0 0 100 100" aria-hidden="true" preserveAspectRatio="none">
               <circle cx="50" cy="50" r="27" />
               <circle cx="50" cy="50" r="43" />
-              {stars.map(s => <line key={s.u.id} x1="50" y1="50" x2={s.x} y2={s.y} className={`hx-tone-${TONE[s.u.category]}`} />)}
             </svg>
+            {/* Hai quỹ đạo quay ngược chiều nhau; mỗi điểm quay ngược lại để chữ luôn đứng thẳng */}
+            {(['in', 'out'] as const).map(ring => {
+              const list = stars.filter(s => (s.u.category === 'san-pham-so') === (ring === 'in'));
+              return (
+                <div key={ring} className={`hx-ring hx-ring--${ring}`}>
+                  <svg className="hx-sky__lines" viewBox="0 0 100 100" aria-hidden="true" preserveAspectRatio="none">
+                    {list.map(s => <line key={s.u.id} x1="50" y1="50" x2={s.x} y2={s.y} className={`hx-tone-${TONE[s.u.category]}`} />)}
+                  </svg>
+                  <ul className="hx-sky__stars">
+                    {list.map((s, i) => {
+                      const Icon = ICONS[s.u.id] || Sparkles;
+                      return (
+                        <li key={s.u.id} className={`hx-star hx-tone-${TONE[s.u.category]}`} style={{ left: `${s.x}%`, top: `${s.y}%`, ['--d' as string]: `${i * 0.5}s` }}>
+                          <a href={`#${s.u.id}`}><span className="hx-star__dot"><Icon aria-hidden="true" /></span><span className="hx-star__name">{s.u.shortName}</span></a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
             <div className="hx-sky__core">
               <img src="/assets/danava-mark.png" alt="" width={64} height={64} />
               <strong>DANAVA</strong><small>Solutions</small>
             </div>
-            <ul className="hx-sky__stars">
-              {stars.map((s, i) => {
-                const Icon = ICONS[s.u.id] || Sparkles;
-                return (
-                  <li key={s.u.id} className={`hx-star hx-tone-${TONE[s.u.category]}`} style={{ left: `${s.x}%`, top: `${s.y}%`, ['--d' as string]: `${i * 0.35}s` }}>
-                    <a href={`#${s.u.id}`}><span className="hx-star__dot"><Icon aria-hidden="true" /></span><span className="hx-star__name">{s.u.shortName}</span></a>
-                  </li>
-                );
-              })}
-            </ul>
             <figcaption id="hx-sky-cap" className="s-sr">Sơ đồ hệ sinh thái DANAVA: {units.map(short).join(', ')}.</figcaption>
           </figure>
         </div>

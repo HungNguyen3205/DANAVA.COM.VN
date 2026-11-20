@@ -240,3 +240,23 @@
   .hx-pcard__logo img { border-radius: 12px; }
   .hx-pcard__media:has(.hx-pcard__logo) + .hx-pcard__body { padding-top: 32px; }
 }
+
+/* ---- Chòm sao chuyển động: vòng trong quay xuôi, vòng ngoài quay ngược; điểm quay bù để chữ luôn thẳng ---- */
+.hx-ring { position: absolute; inset: 0; animation: hx-spin 120s linear infinite; }
+.hx-ring--out { animation-duration: 180s; animation-direction: reverse; }
+.hx-ring--in .hx-star > a { animation: hx-spin 120s linear infinite reverse; }
+.hx-ring--out .hx-star > a { animation: hx-spin 180s linear infinite; }
+@keyframes hx-spin { to { transform: rotate(360deg); } }
+.hx-sky:hover .hx-ring, .hx-sky:hover .hx-star > a, .hx-sky:focus-within .hx-ring, .hx-sky:focus-within .hx-star > a { animation-play-state: paused; }
+.hx-sky__core { z-index: 4; }
+@media (prefers-reduced-motion: reduce) { .hx-ring, .hx-star > a { animation: none; } }
+
+/* ---- Chữ đồng nhất với toàn dự án: Be Vietnam Pro cho nội dung/nhãn/số liệu, Playfair chỉ cho tiêu đề ---- */
+.hx, .hx button, .hx input { font-family: var(--font-sans); }
+.hx-star__name { font-family: var(--font-sans); font-weight: 700; letter-spacing: .01em; }
+.hx-legend, .hx-stats dt, .hx-board__group h3 { font-weight: 700; }
+.hx-stats dd { font-family: var(--font-sans); font-weight: 800; letter-spacing: -.01em; }
+.hx-sky__core strong, .hx-sky__core small { font-family: var(--font-sans); }
+.hx-card__kicker, .hx-pcard__role, .hx-stop ul a { font-weight: 700; }
+.hx-btn { font-weight: 700; }
+@media (max-width: 560px) { .hx .hx-sky { width: 84%; } }
