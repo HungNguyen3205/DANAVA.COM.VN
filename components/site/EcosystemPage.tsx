@@ -14,6 +14,7 @@ import { publicPartners, publishedProjects } from '@/lib/site-queries';
 import { Crumbs, CtaBand } from './ui';
 import { BrowserFrame } from './showcase';
 import { pageCopy } from '@/lib/blocks';
+import { markOf } from '@/lib/partner-marks';
 import { rich } from './rich';
 
 const ICONS: Record<string, LucideIcon> = {
@@ -22,12 +23,6 @@ const ICONS: Record<string, LucideIcon> = {
 };
 const TONE: Record<EcosystemCategory, string> = { 'san-pham-so': 'blue', 'du-lich-su-kien': 'orange', 'cong-dong': 'green', 'truyen-thong': 'violet' };
 const NO: Record<EcosystemCategory, string> = { 'san-pham-so': '01', 'du-lich-su-kien': '02', 'cong-dong': '03', 'truyen-thong': '04' };
-/** Logo vuông đã cắt viền (public/assets/partners/marks/) cho các logo đối tác có sẵn; logo tải lên khác giữ nguyên. */
-const MARKS = new Set(['bung-healing', 'dyf', 'fuji-swimming-club-danang', 'glg-yoga-school', 'hariver-gym-fitness', 'hoc-vien-quoc-te-yoga-ngoc-bich', 'hue-pilates-yoga', 'kien-gym', 'lien-minh-yoga-viet-nam', 'sadhana-pilates', 'sun-moon-yogashala', 'tam-tay-gym', 'tigi-yoga', 'vf-gym', 'yoga-club-vietnam']);
-const markOf = (logo: string) => {
-  const m = /^\/assets\/partners\/([a-z0-9-]+)\.webp$/.exec(logo);
-  return m && MARKS.has(m[1]) ? { src: `/assets/partners/marks/${m[1]}.webp`, fill: true } : { src: logo, fill: false };
-};
 const short = (u: EcosystemUnit) => u.name.replace(' · Sự kiện & Truyền thông', '');
 
 /** Vị trí đơn vị trên chòm sao: sản phẩm số ở vòng trong, còn lại ở vòng ngoài (đơn vị %). */

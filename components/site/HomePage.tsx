@@ -1,52 +1,66 @@
 /**
- * Trang chủ (server component). Thứ tự theo hành trình của khách hàng doanh nghiệp:
- *  1 Hero định vị + CTA → 2 Khách hàng tiêu biểu → 3 Giải pháp chính → 4 DANAVA Studio →
- *  5 Dự án/case study → 6 Lý do chọn DANAVA → 7 Quy trình hợp tác → 8 Về DANAVA (theo danava.vn/about) →
- *  9 Blogs → 10 FAQ & liên hệ.
- * Phần kể chuyện đầy đủ (mục tiêu, hành trình, khoảnh khắc) nằm ở /ve-danava/.
- * Khối bằng chứng (khách hàng, nhận xét, số liệu) chỉ hiện khi có dữ liệu được phép công bố trong CMS.
+ * Trang chủ (server component) — trình bày như hồ sơ công ty tương tác, theo cấu trúc trang danava.vn/about
+ * (cùng doanh nghiệp DANAVA; nội dung & số liệu ở lib/about-danava.ts, có ghi nguồn và ngày lấy).
+ * Hero + số liệu → thanh mục lục bám → 01 Nhà sáng lập → 02 Sứ mệnh → 03 Hệ sinh thái & giải pháp (dữ liệu thật) →
+ * 04 Bài toán → 05 Sản phẩm & dự án (DANAVA Studio, case study thật) → 06 Công nghệ, R&D & ngành → 07 Quy trình →
+ * 08 Hiệu quả trước/sau → 09 Giá trị → 10 ESG → 11 Câu chuyện → 12 Đối tác (đối tác thật) → 13 Đội ngũ → 14 Blogs → 15 Liên hệ.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, Cpu, Eye, X, Globe, PartyPopper, Phone, Mail, MapPin, Clock, MessageCircle, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, Clock, Compass, Eye, Mail, MapPin, MessageCircle, Phone, X, Cpu, Cloud, BarChart3, ShieldCheck, Leaf, Users, GraduationCap, HeartPulse, Sparkles, Sprout } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { defaultPresentation } from '@/lib/presentation';
-import { showcaseFor, splitFeatured, knowledgePosts, publicPartners, publicTestimonials, publishedProjects, serviceHref, sortServices, visibleMetrics, projectHref } from '@/lib/site-queries';
+import { showcaseFor, splitFeatured, knowledgePosts, publicPartners, publicTestimonials, publishedProjects, serviceHref, sortServices, projectHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, formatDate } from './catalog';
-import { CheckList, IconTile } from './ui';
+import { CheckList } from './ui';
 import { StudioShowcase } from './StudioShowcase';
-import { FeaturedShowcase, ShowcaseStrip } from './showcase';
+import { FeaturedShowcase } from './showcase';
 import { StaffAvatar } from './TeamPage';
 import { ProjectTile, PostTile, Testimonials, JsonLd, faqLD } from './blocks';
-import { HeroSlides, SolutionsExplorer, Reveal, CountUp, type SolutionItem } from './HomeClient';
-import { ABOUT_DANAVA } from '@/lib/about-danava';
+import { SolutionsExplorer, Reveal, CountUp, ChapterNav, type SolutionItem } from './HomeClient';
 import { block } from '@/lib/blocks';
-
-const PF = '/assets/profile/';
-
-const SLIDES = [
-  { src: `${PF}set-stage.webp`, caption: 'Đạo cụ phim trường · Nhà hát Trưng Vương' },
-  { src: `${PF}lutech-4.webp`, caption: 'LUTECH · Kỷ niệm 4 năm “Tap to TOP”' },
-  { src: `${PF}everlastify-1.webp`, caption: 'EVERLASTIFY · Trang trí thương hiệu theo chủ đề' },
-  { src: '/assets/legacy/community.webp', caption: 'Cộng đồng yoga · Đà Nẵng' }
-];
-
-const PILLARS = [
-  { icon: Cpu, title: 'Phần mềm', text: 'DANAVA Studio và app hội viên mang tên cơ sở.', href: '/giai-phap/danava-studio/' },
-  { icon: Globe, title: 'Website', text: 'Website & landing page thiết kế riêng.', href: '/giai-phap/thiet-ke-website/' },
-  { icon: PartyPopper, title: 'Sự kiện', text: 'Sân khấu, không gian thương hiệu, truyền thông sự kiện.', href: '/giai-phap/su-kien-truyen-thong/' }
-];
+import { ABOUT_DANAVA as A } from '@/lib/about-danava';
+import { markOf } from '@/lib/partner-marks';
 
 const ECO_IMAGES: Record<string, string> = {
   studio: '/assets/presentation/studio-dashboard.webp',
   website: '/assets/portfolio/vinhomes/desktop-hero.webp',
-  events: `${PF}set-stage.webp`,
+  events: '/assets/profile/set-stage.webp',
   travel: '/assets/legacy/community.webp',
   community: '/assets/legacy/community.webp'
 };
+const TECH_ICONS = [Cpu, Cloud, BarChart3, ShieldCheck];
+const ESG_ICONS = [Leaf, Users, GraduationCap, HeartPulse, Sparkles, Sprout];
 
-const PRINCIPLE_ICONS = { field: Compass, transparent: BarChart3, ownership: KeyRound, longterm: InfinityIcon } as const;
-const PRINCIPLE_TONES = { field: 'blue', transparent: 'orange', ownership: 'sky', longterm: 'green' } as const;
+const CHAPTERS = [
+  { id: 'nha-sang-lap', no: '01', label: 'Nhà sáng lập' },
+  { id: 'su-menh', no: '02', label: 'Sứ mệnh' },
+  { id: 'giai-phap', no: '03', label: 'Hệ sinh thái' },
+  { id: 'bai-toan', no: '04', label: 'Bài toán' },
+  { id: 'san-pham', no: '05', label: 'Sản phẩm & dự án' },
+  { id: 'cong-nghe', no: '06', label: 'Công nghệ & AI' },
+  { id: 'quy-trinh', no: '07', label: 'Quy trình' },
+  { id: 'hieu-qua', no: '08', label: 'Hiệu quả' },
+  { id: 'gia-tri', no: '09', label: 'Giá trị' },
+  { id: 'esg', no: '10', label: 'ESG' },
+  { id: 'cau-chuyen', no: '11', label: 'Câu chuyện' },
+  { id: 'doi-tac', no: '12', label: 'Đối tác' },
+  { id: 'doi-ngu', no: '13', label: 'Đội ngũ' },
+  { id: 'lien-he-nhanh', no: '14', label: 'Liên hệ' }
+];
+
+function Head({ no, kicker, title, lead, light, center, id }: { no: string; kicker: string; title: React.ReactNode; lead?: string; light?: boolean; center?: boolean; id: string }) {
+  return (
+    <div className={`hp-head${light ? ' hp-head--light' : ''}${center ? ' hp-head--center' : ''}`} data-reveal>
+      <span className="hp-head__no" aria-hidden="true">{no}</span>
+      <div>
+        <p className="ha-kicker ha-kicker--dark">{kicker}</p>
+        <h2 className="ha-h3" id={id}>{title}</h2>
+        {lead && <p className="hp-head__lead">{lead}</p>}
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage({ data }: { data: SiteData }) {
   const pres = data.presentation || defaultPresentation;
@@ -55,171 +69,145 @@ export default function HomePage({ data }: { data: SiteData }) {
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
-  const ab = block(data, 'about');
-
-  const clients = publicPartners(data);
-  const metrics = visibleMetrics(data);
+  const partners = publicPartners(data);
   const testimonials = publicTestimonials(data);
   const projects = (() => {
     const list = publishedProjects(data);
     const featured = list.filter(p => p.featured);
     return (featured.length ? featured : list).slice(0, 3);
   })();
-  const web = splitFeatured(showcaseFor(data, 'website'));
-  const webLead = web.featured[0];
-  const webMore = [...web.featured.slice(1), ...web.rest].slice(0, 4);
+  const webLead = splitFeatured(showcaseFor(data, 'website')).featured[0];
   const posts = knowledgePosts(data).slice(0, 3);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
   const staff = data.staff.filter(p => p.visible).slice(0, 5);
-
   const solutions: SolutionItem[] = services.map(s => ({
     id: s.id, href: serviceHref(s), title: s.title, description: s.description, items: s.items,
     image: s.image || ECO_IMAGES[s.id] || '/assets/legacy/event-group.webp'
   }));
-
-  // FAQ trang chủ: tái sử dụng câu hỏi đã có ở từng dịch vụ.
   const pick = (id: string, i: number) => data.services.find(s => s.id === id)?.faqs?.[i];
   const faqs = [pick('studio', 0), pick('website', 1), pick('events', 0), pick('travel', 1)].filter((f): f is NonNullable<typeof f> => !!f);
 
   return (
-    <main id="main" className="h-home">
+    <main id="main" className="h-home ha hp">
       <Reveal />
 
-      {/* 1 · Hero */}
-      <section className="h-hero" aria-labelledby="home-title">
-        <HeroSlides slides={SLIDES} />
-        <div className="h-hero__shade" aria-hidden="true" />
-        <div className="s-container h-hero__inner">
-          <p className="h-hero__eyebrow">DANAVA Solutions · Since 2016</p>
-          <h1 className="h-hero__title u-hero-title" id="home-title">{data.heroTitle}</h1>
-          <p className="u-hero-brand">{data.headline || 'Cùng bạn phát triển.'}</p>
-          <p className="h-hero__lead">Phần mềm quản lý DANAVA Studio cho Gym, Yoga, Pilates, Spa; thiết kế website; tổ chức sự kiện và du lịch trải nghiệm. Một đầu mối cho công nghệ và trải nghiệm khách hàng.</p>
-          <div className="h-hero__cta">
-            <Link className="s-btn s-btn--primary s-btn--lg" href="/lien-he/">Nhận tư vấn</Link>
-            <a className="s-btn s-btn--lg h-btn-glass" href="#giai-phap">Xem giải pháp <ChevronDown aria-hidden="true" /></a>
+      {/* Hero — hồ sơ công ty */}
+      <section className="hp-hero" aria-labelledby="home-title">
+        <div className="hp-hero__sky" aria-hidden="true" />
+        <div className="s-container hp-hero__grid">
+          <div className="hp-hero__copy">
+            <p className="ha-kicker">DANAVA Solutions — Company Profile 2026</p>
+            <h1 className="hp-hero__title" id="home-title">DANAVA Solutions <em>Growing Your Business Together.</em></h1>
+            {data.heroTitle && <p className="hp-hero__sub">{data.heroTitle}</p>}
+            <p className="hp-hero__lead">{A.tagline}. Phần mềm quản lý DANAVA Studio, website, sự kiện, du lịch trải nghiệm và cộng đồng — một đầu mối cho công nghệ và trải nghiệm khách hàng.</p>
+            <div className="hp-hero__cta">
+              <Link className="hp-btn hp-btn--sun" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
+              <Link className="hp-btn hp-btn--ghost" href="/he-sinh-thai/">Khám phá hệ sinh thái</Link>
+            </div>
           </div>
-          <ul className="h-hero__pillars">
-            {PILLARS.map(p => (
-              <li key={p.title}>
-                <Link href={p.href} className="h-pillar">
-                  <span className="h-pillar__icon"><p.icon aria-hidden="true" /></span>
-                  <span><strong>{p.title}</strong><small>{p.text}</small></span>
-                  <ArrowUpRight className="h-pillar__go" aria-hidden="true" />
-                </Link>
+          <figure className="hp-hero__art" aria-hidden="true">
+            <span className="hp-hero__halo" />
+            <img src="/assets/about/ecosystem.webp" alt="" width={1100} height={824} fetchPriority="high" />
+            <span className="hp-hero__badge hp-hero__badge--a"><b>Từ 2018</b>đồng hành cùng Wellness</span>
+            <span className="hp-hero__badge hp-hero__badge--b"><b>1.000+</b>huấn luyện viên kết nối</span>
+          </figure>
+        </div>
+        <div className="s-container">
+          <dl className="ha-stats hp-stats">
+            {A.stats.map(st => <div key={st.label}><dd><CountUp value={st.value} /></dd><dt>{st.label}</dt></div>)}
+          </dl>
+          <p className="ha-src">Số liệu trên nền tảng danava.vn, cập nhật {A.checked}.</p>
+        </div>
+        <div className="hp-marquee" aria-hidden="true">
+          {[0, 1].map(k => <ul key={k}>{[...A.fields, ...A.fields].map((f, i) => <li key={i}>{f}<i>•</i></li>)}</ul>)}
+        </div>
+        <p className="s-sr">Lĩnh vực: {A.fields.join(', ')}.</p>
+      </section>
+
+      <ChapterNav chapters={CHAPTERS} />
+
+      {/* 01 · Nhà sáng lập */}
+      <section className="hp-ch" id="nha-sang-lap" aria-labelledby="t-founder">
+        <div className="s-container ha-founder">
+          <figure className="ha-founder__photo" data-reveal>
+            <img src={A.founder.image} alt={`${A.founder.name}, ${A.founder.title}`} width={1200} height={885} loading="lazy" decoding="async" />
+            <figcaption><strong>{A.founder.name}</strong><small>{A.founder.title}</small></figcaption>
+          </figure>
+          <div className="ha-founder__body" data-reveal>
+            <p className="ha-kicker ha-kicker--dark"><span className="hp-mini-no">01</span> Thông điệp nhà sáng lập</p>
+            <h2 className="s-sr" id="t-founder">Thông điệp nhà sáng lập</h2>
+            <blockquote className="ha-quote"><p>{A.founder.quote}</p></blockquote>
+            <p className="hp-sign">— {A.founder.name}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 02 · Sứ mệnh & tầm nhìn */}
+      <section className="hp-ch hp-mv" id="su-menh" aria-labelledby="t-mv">
+        <div className="s-container">
+          <Head no="02" kicker="Sứ mệnh & tầm nhìn" id="t-mv" title={<>Vì một cộng đồng <em>sống khỏe, bền vững.</em></>} />
+          <div className="hp-mv__grid">
+            <article data-reveal><span className="ha-mv__ico" aria-hidden="true"><Compass /></span><h3>Sứ mệnh</h3><p>{A.mission}</p></article>
+            <article data-reveal><span className="ha-mv__ico" aria-hidden="true"><Eye /></span><h3>Tầm nhìn</h3><p>{A.vision}</p></article>
+          </div>
+        </div>
+      </section>
+
+      {/* 03 · Hệ sinh thái & giải pháp (dữ liệu thật của website) */}
+      <section className="hp-ch hp-alt" id="giai-phap" aria-labelledby="t-eco">
+        <div className="s-container">
+          <div className="hp-row">
+            <Head no="03" kicker="Hệ sinh thái" id="t-eco" title={<>Doanh nghiệp bạn cần gì, <em>DANAVA có lối đi riêng.</em></>} />
+            <Link className="h-link" href="/he-sinh-thai/">Toàn bộ hệ sinh thái <ArrowRight aria-hidden="true" /></Link>
+          </div>
+          <SolutionsExplorer items={solutions} />
+        </div>
+      </section>
+
+      {/* 04 · Bài toán & giải pháp */}
+      <section className="hp-ch" id="bai-toan" aria-labelledby="t-problems">
+        <div className="s-container">
+          <Head no="04" kicker="Bài toán & giải pháp" id="t-problems" title={<>Những bài toán <em>doanh nghiệp thường gặp.</em></>} />
+          <ul className="hp-problems">
+            {A.problems.map((p, i) => (
+              <li key={p.problem} data-reveal style={{ ['--d' as string]: `${i * 70}ms` }}>
+                <p className="hp-problems__q"><X aria-hidden="true" />{p.problem}</p>
+                <span className="hp-problems__arrow" aria-hidden="true"><ArrowRight /></span>
+                <Link className="hp-problems__a" href={p.href}><Check aria-hidden="true" /><span>{p.solution}</span><ArrowUpRight aria-hidden="true" /></Link>
               </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* 2 · Khách hàng & đối tác đồng hành (chỉ dữ liệu được phép công bố) */}
-      {(clients.length > 0 || metrics.length > 0) && (
-        <section className="u-proof" aria-labelledby="home-clients">
-          <div className="s-container">
-            <div className="u-proof__head">
-              <h2 className="u-proof__title" id="home-clients">Khách hàng & đối tác đồng hành</h2>
-              <p className="u-proof__sub">Phòng tập, studio và cộng đồng wellness đang đồng hành cùng hệ sinh thái DANAVA. <Link href="/doi-tac/">Xem tất cả đối tác</Link></p>
-            </div>
-            {clients.length > 0 && (
-              <ul className="u-logos">
-                {clients.map(c => {
-                  const project = publishedProjects(data).find(p => p.id === c.projectId);
-                  const inner = (
-                    <>
-                      <span className="u-logos__img">
-                        {c.logo ? <img src={c.logo} alt="" width={360} height={240} loading="lazy" decoding="async" /> : <span className="u-proof__name">{c.name}</span>}
-                      </span>
-                      <span className="u-logos__name">{c.name}</span>
-                      {(project || c.role) && <span className="u-logos__role">{project ? 'Case study' : c.role}</span>}
-                    </>
-                  );
-                  return (
-                    <li key={c.id} className={project ? 'is-case' : undefined}>
-                      {project
-                        ? <Link href={projectHref(project)} aria-label={`${c.name} — xem case study`}>{inner}</Link>
-                        : <Link href={`/doi-tac/#${c.id}`} aria-label={`${c.name} — thông tin đối tác`}>{inner}</Link>}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            {metrics.length > 0 && (
-              <dl className="u-proof__metrics">
-                {metrics.map(m => <div key={m.id}><dt>{m.label}</dt><dd>{m.value}</dd></div>)}
-              </dl>
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* 3 · Giải pháp chính */}
-      <section className="h-sec h-sec--cream" id="giai-phap" aria-labelledby="home-eco">
-        <div className="s-container">
-          <div className="h-eco__head u-head-row" data-reveal>
-            <div>
-              <p className="h-chapter">Giải pháp</p>
-              <h2 className="h-title" id="home-eco">Doanh nghiệp bạn cần gì, <em>DANAVA có lối đi riêng.</em></h2>
-            </div>
-            <Link className="h-link" href="/giai-phap/">Tất cả giải pháp <ArrowRight aria-hidden="true" /></Link>
-          </div>
-          <SolutionsExplorer items={solutions} />
-        </div>
-      </section>
-
-      {/* 4 · Sản phẩm chủ lực */}
-      <section className="s-section s-section--brand h-flag" aria-labelledby="home-studio">
+      {/* 05 · Sản phẩm chủ lực & dự án thật */}
+      <section className="hp-ch hp-dark" id="san-pham" aria-labelledby="t-studio">
         <div className="s-container s-split">
           <div className="s-stack-lg" data-reveal>
-            <div className="s-heading">
-              <p className="h-chapter h-chapter--light">Sản phẩm chủ lực · DANAVA Studio</p>
-              <h2 className="h-title h-title--light" id="home-studio">
-                {pres.technologyTitle.split('\n').map((l, i, all) => (
-                  <span key={i} style={{ display: 'block' }}>{i === all.length - 1 && all.length > 1 ? <em>{l}</em> : l}</span>
-                ))}
-              </h2>
-              <p className="s-lead">{pres.technologyDescription}</p>
-            </div>
+            <p className="ha-kicker"><span className="hp-mini-no">05</span> Sản phẩm chủ lực · DANAVA Studio</p>
+            <h2 className="ha-title" id="t-studio">
+              {pres.technologyTitle.split('\n').map((l, i, all) => <span key={i} style={{ display: 'block' }}>{i === all.length - 1 && all.length > 1 ? <em>{l}</em> : l}</span>)}
+            </h2>
+            <p className="hp-dark__lead">{pres.technologyDescription}</p>
             {studio && <CheckList items={studio.items} />}
-            <div className="s-row s-stack-m">
-              <Link className="s-btn s-btn--primary s-btn--lg" href="/lien-he/?service=danava-studio">Đăng ký demo</Link>
-              <Link className="s-btn s-btn--secondary s-btn--lg" href="/giai-phap/danava-studio/">Tìm hiểu DANAVA Studio</Link>
+            <div className="hp-hero__cta">
+              <Link className="hp-btn hp-btn--sun" href="/lien-he/?service=danava-studio">Đăng ký demo</Link>
+              <Link className="hp-btn hp-btn--ghost" href="/giai-phap/danava-studio/">Tìm hiểu DANAVA Studio</Link>
             </div>
           </div>
-          <div data-reveal style={{ ['--d' as string]: '120ms' }}>
-            <StudioShowcase image={pres.screenImage || defaultPresentation.screenImage} />
-          </div>
+          <div data-reveal style={{ ['--d' as string]: '120ms' }}><StudioShowcase image={pres.screenImage || defaultPresentation.screenImage} /></div>
         </div>
       </section>
-
-      {/* 5 · Dự án tiêu biểu — dự án website nổi bật đứng đầu, sau đó case study và sản phẩm khác */}
-      <section className="s-section s-section--soft h-portfolio" aria-labelledby="home-projects">
+      <section className="hp-ch hp-projects" aria-labelledby="t-projects">
         <div className="s-container">
-          <div className="u-head-row s-mb">
-            <div className="s-heading">
-              <p className="s-eyebrow">Dự án tiêu biểu</p>
-              <h2 className="s-h2" id="home-projects">Sản phẩm <span className="s-hl">đang chạy thật</span></h2>
-            </div>
-            <Link className="s-link" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+          <div className="hp-row">
+            <div data-reveal><p className="ha-kicker ha-kicker--dark">Dự án tiêu biểu</p><h2 className="ha-h3" id="t-projects">Sản phẩm <em>đang chạy thật.</em></h2></div>
+            <Link className="h-link" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
           </div>
           {webLead && <FeaturedShowcase item={webLead} headingLevel="h3" eyebrow="Dự án thiết kế website nổi bật" id="home-featured-web" />}
           {projects.length > 0 && (
-            <div className="u-subblock">
-              <div className="u-head-row">
-                <h3 className="s-h4">Case study DANAVA Studio</h3>
-                <Link className="s-link" href="/giai-phap/danava-studio/">Về DANAVA Studio <ArrowRight aria-hidden="true" /></Link>
-              </div>
-              <div className={`s-grid s-snap ${projects.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
-                {projects.map(p => <ProjectTile key={p.id} p={p} />)}
-              </div>
-            </div>
-          )}
-          {webMore.length > 0 && (
-            <div className="u-subblock">
-              <div className="u-head-row">
-                <h3 className="s-h4">Website & nền tảng khác</h3>
-                <Link className="s-link" href="/giai-phap/thiet-ke-website/#du-an-web">Xem portfolio website <ArrowRight aria-hidden="true" /></Link>
-              </div>
-              <ShowcaseStrip items={webMore} />
+            <div className={`s-grid s-snap u-subblock ${projects.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
+              {projects.map(p => <ProjectTile key={p.id} p={p} />)}
             </div>
           )}
         </div>
@@ -227,137 +215,141 @@ export default function HomePage({ data }: { data: SiteData }) {
 
       <Testimonials items={testimonials} />
 
-      {/* 6 · Lý do lựa chọn DANAVA */}
-      <section className="s-section" aria-labelledby="home-why">
+      {/* 06 · Công nghệ & AI, R&D, ngành */}
+      <section className="hp-ch hp-tech" id="cong-nghe" aria-labelledby="t-tech">
         <div className="s-container">
-          <div className="s-heading s-mb">
-            <p className="s-eyebrow">Vì sao chọn DANAVA</p>
-            <h2 className="s-h2" id="home-why">Bốn điều <span className="s-hl">chúng tôi luôn giữ</span></h2>
-          </div>
-          <div className="s-grid s-grid--4 s-tiles">
-            {ab.principles.map((p, i) => (
-              <div key={p.key} className="s-feature" data-reveal>
-                <IconTile icon={PRINCIPLE_ICONS[p.key as keyof typeof PRINCIPLE_ICONS] ?? Object.values(PRINCIPLE_ICONS)[i % 4]} tone={PRINCIPLE_TONES[p.key as keyof typeof PRINCIPLE_TONES] ?? Object.values(PRINCIPLE_TONES)[i % 4]} />
-                <h3 className="s-feature__title">{p.title}</h3>
-                <p className="s-feature__text">{p.text}</p>
-              </div>
-            ))}
+          <Head no="06" light kicker="Công nghệ & AI" id="t-tech" title={<>Công nghệ làm nền, <em>con người làm nên giá trị.</em></>} />
+          <ul className="hp-tech__grid">
+            {A.tech.map((t, i) => { const Icon = TECH_ICONS[i % 4]; return <li key={t} data-reveal style={{ ['--d' as string]: `${i * 70}ms` }}><span aria-hidden="true"><Icon /></span>{t}</li>; })}
+          </ul>
+          <div className="hp-tech__cols">
+            <div><h3>Trung tâm nghiên cứu & đổi mới</h3><ul className="hp-tags">{A.rnd.map(x => <li key={x}>{x}</li>)}</ul></div>
+            <div><h3>Giải pháp theo ngành</h3><ul className="hp-tags">{A.industries.map(x => <li key={x}>{x}</li>)}</ul></div>
           </div>
         </div>
       </section>
 
-      {/* 7 · Quy trình hợp tác */}
-      <section className="s-section s-section--soft" aria-labelledby="home-process">
+      {/* 07 · Quy trình triển khai & hành trình khách hàng */}
+      <section className="hp-ch" id="quy-trinh" aria-labelledby="t-process">
         <div className="s-container">
-          <div className="s-heading s-center s-mb">
-            <p className="s-eyebrow">Quy trình hợp tác</p>
-            <h2 className="s-h2" id="home-process">Rõ ràng <span className="s-hl">từ buổi trao đổi đầu tiên</span></h2>
-          </div>
-          <ol className="s-home-steps s-tiles">
-            {ab.steps.map((s, i) => (
-              <li key={s.title}>
-                <span className="s-home-steps__num">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="s-h4">{s.title}</h3>
-                <p className="s-text">{s.text}</p>
+          <Head no="07" center kicker="Phương pháp triển khai" id="t-process" title={<>Bảy bước, <em>rõ ràng từ đầu đến cuối.</em></>} />
+          <ol className="hp-process">
+            {A.process.map((p, i) => (
+              <li key={p.name} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
+                <span className="hp-process__dot">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{p.name}</h3>
+                <p>{p.text}</p>
               </li>
             ))}
           </ol>
+          <div className="hp-journey" data-reveal>
+            <p className="hp-journey__label">Hành trình cùng khách hàng</p>
+            <ol>{A.journey.map((j, i) => <li key={j}><span>{String(i + 1).padStart(2, '0')}</span>{j}</li>)}</ol>
+          </div>
         </div>
       </section>
 
-      {/* 8 · Về DANAVA — theo hồ sơ công ty trên danava.vn/about: số liệu, nhà sáng lập, sứ mệnh, câu chuyện, trước/sau, giá trị, đội ngũ */}
-      <section className="ha" id="ve-danava" aria-labelledby="home-about">
-        <div className="ha-top">
-          <div className="s-container">
-            <div className="ha-top__head" data-reveal>
-              <p className="ha-kicker">Về DANAVA</p>
-              <h2 className="ha-title" id="home-about">DANAVA – Nền tảng hệ sinh thái số <em>dành riêng cho ngành Wellness.</em></h2>
-            </div>
-            <ul className="ha-fields" aria-label="Lĩnh vực">
-              {ABOUT_DANAVA.fields.map(f => <li key={f}>{f}</li>)}
-            </ul>
-            <dl className="ha-stats">
-              {ABOUT_DANAVA.stats.map(st => (
-                <div key={st.label} data-reveal>
-                  <dd><CountUp value={st.value} /></dd>
-                  <dt>{st.label}</dt>
-                </div>
-              ))}
-            </dl>
-            <p className="ha-src">Số liệu trên nền tảng danava.vn, cập nhật {ABOUT_DANAVA.checked}.</p>
+      {/* 08 · Trước / sau */}
+      <section className="hp-ch hp-alt" id="hieu-qua" aria-labelledby="t-ba">
+        <div className="s-container">
+          <Head no="08" kicker="Hiệu quả" id="t-ba" title={<>Trước & sau <em>khi triển khai.</em></>} />
+          <div className="ha-ba hp-ba" data-reveal>
+            <div className="ha-ba__col ha-ba__col--before"><h3>Trước</h3><ul>{A.before.map(x => <li key={x}><X aria-hidden="true" />{x}</li>)}</ul></div>
+            <span className="ha-ba__arrow" aria-hidden="true"><ArrowRight /></span>
+            <div className="ha-ba__col ha-ba__col--after"><h3>Sau khi triển khai cùng DANAVA</h3><ul>{A.after.map(x => <li key={x}><Check aria-hidden="true" />{x}</li>)}</ul></div>
           </div>
         </div>
+      </section>
 
-        <div className="s-container ha-founder">
-          <figure className="ha-founder__photo" data-reveal>
-            <img src={ABOUT_DANAVA.founder.image} alt={`${ABOUT_DANAVA.founder.name}, ${ABOUT_DANAVA.founder.title}`} width={1200} height={885} loading="lazy" decoding="async" />
-            <figcaption><strong>{ABOUT_DANAVA.founder.name}</strong><small>{ABOUT_DANAVA.founder.title}</small></figcaption>
-          </figure>
-          <div className="ha-founder__body" data-reveal>
-            <p className="ha-kicker ha-kicker--dark">Thông điệp nhà sáng lập</p>
-            <blockquote className="ha-quote"><p>{ABOUT_DANAVA.founder.quote}</p></blockquote>
-            <div className="ha-mv">
-              <div><span className="ha-mv__ico" aria-hidden="true"><Compass /></span><h3>Sứ mệnh</h3><p>{ABOUT_DANAVA.mission}</p></div>
-              <div><span className="ha-mv__ico" aria-hidden="true"><Eye /></span><h3>Tầm nhìn</h3><p>{ABOUT_DANAVA.vision}</p></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="ha-story">
-          <div className="s-container ha-story__grid">
-            <div>
-              <p className="ha-kicker ha-kicker--dark">Câu chuyện DANAVA</p>
-              <h3 className="ha-h3">Từ trải nghiệm thực tế <em>đến giải pháp công nghệ.</em></h3>
-              <ol className="ha-time">
-                {ABOUT_DANAVA.story.map(st => (
-                  <li key={st.year} data-reveal>
-                    <span className="ha-time__year">{st.year}</span>
-                    <div><h4>{st.title}</h4><p>{st.text}</p></div>
-                  </li>
-                ))}
-              </ol>
-              <p className="ha-story__close">{ABOUT_DANAVA.storyClose}</p>
-            </div>
-            <figure className="ha-story__art" data-reveal>
-              <img src="/assets/about/ecosystem.webp" alt="Hệ sinh thái DANAVA: công nghệ, AI, marketing, du lịch, sức khỏe, giáo dục, cộng đồng" width={1100} height={824} loading="lazy" decoding="async" />
-            </figure>
-          </div>
-        </div>
-
-        <div className="s-container ha-ba" data-reveal>
-          <div className="ha-ba__col ha-ba__col--before">
-            <h3>Trước</h3>
-            <ul>{ABOUT_DANAVA.before.map(x => <li key={x}><X aria-hidden="true" />{x}</li>)}</ul>
-          </div>
-          <span className="ha-ba__arrow" aria-hidden="true"><ArrowRight /></span>
-          <div className="ha-ba__col ha-ba__col--after">
-            <h3>Sau khi triển khai cùng DANAVA</h3>
-            <ul>{ABOUT_DANAVA.after.map(x => <li key={x}><Check aria-hidden="true" />{x}</li>)}</ul>
-          </div>
-        </div>
-
-        <div className="s-container ha-values">
-          <div className="ha-values__head">
-            <p className="ha-kicker ha-kicker--dark">Vì sao chọn DANAVA</p>
-            <h3 className="ha-h3">Sáu giá trị <em>cốt lõi.</em></h3>
-          </div>
+      {/* 09 · Giá trị cốt lõi */}
+      <section className="hp-ch" id="gia-tri" aria-labelledby="t-values">
+        <div className="s-container">
+          <Head no="09" kicker="Vì sao chọn DANAVA" id="t-values" title={<>Sáu giá trị <em>cốt lõi.</em></>} />
           <ol className="ha-values__grid">
-            {ABOUT_DANAVA.values.map((v, i) => (
+            {A.values.map((v, i) => (
               <li key={v.title} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
                 <span className="ha-values__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <h4>{v.title}</h4>
+                <h3 className="hp-h4">{v.title}</h3>
                 <p>{v.text}</p>
               </li>
             ))}
           </ol>
         </div>
+      </section>
 
+      {/* 10 · ESG */}
+      <section className="hp-ch hp-esg" id="esg" aria-labelledby="t-esg">
+        <div className="s-container">
+          <Head no="10" kicker="Phát triển bền vững" id="t-esg" title={<>ESG — <em>phát triển bền vững.</em></>} />
+          <ul className="hp-esg__grid">
+            {A.esg.map((e, i) => { const Icon = ESG_ICONS[i % 6]; return (
+              <li key={e.title} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
+                <span className="hp-esg__ico" aria-hidden="true"><Icon /></span>
+                <h3>{e.title}</h3><p>{e.text}</p>
+              </li>
+            ); })}
+          </ul>
+        </div>
+      </section>
+
+      {/* 11 · Câu chuyện */}
+      <section className="hp-ch ha-story" id="cau-chuyen" aria-labelledby="t-story">
+        <div className="s-container ha-story__grid">
+          <div>
+            <p className="ha-kicker ha-kicker--dark"><span className="hp-mini-no">11</span> Câu chuyện DANAVA</p>
+            <h2 className="ha-h3" id="t-story">Từ trải nghiệm thực tế <em>đến giải pháp công nghệ.</em></h2>
+            <ol className="ha-time">
+              {A.story.map(st => (
+                <li key={st.year} data-reveal>
+                  <span className="ha-time__year">{st.year}</span>
+                  <div><h3 className="hp-h4">{st.title}</h3><p>{st.text}</p></div>
+                </li>
+              ))}
+            </ol>
+            <p className="ha-story__close">{A.storyClose}</p>
+          </div>
+          <figure className="hp-story__photos" data-reveal aria-hidden="true">
+            <img src="/assets/legacy/community.webp" alt="" loading="lazy" decoding="async" />
+            <img src="/assets/profile/set-stage.webp" alt="" loading="lazy" decoding="async" />
+          </figure>
+        </div>
+      </section>
+
+      {/* 12 · Đối tác */}
+      <section className="hp-ch hp-partners" id="doi-tac" aria-labelledby="t-partners">
+        <div className="s-container">
+          <div className="hp-row">
+            <Head no="12" kicker="Mạng lưới đối tác" id="t-partners" title={<>{partners.length} cơ sở <em>đang đồng hành.</em></>} />
+            <Link className="h-link" href="/doi-tac/">Xem tất cả đối tác <ArrowRight aria-hidden="true" /></Link>
+          </div>
+          {partners.length > 0 && (
+            <ul className="hp-logos">
+              {partners.map(c => {
+                const project = publishedProjects(data).find(p => p.id === c.projectId);
+                const mk = c.logo ? markOf(c.logo) : null;
+                return (
+                  <li key={c.id} data-reveal>
+                    <Link href={project ? projectHref(project) : `/doi-tac/#${c.id}`} aria-label={`${c.name}${project ? ' — xem case study' : ' — thông tin đối tác'}`}>
+                      <span className={`hp-logos__img${mk?.fill ? ' is-mark' : ''}`}>{mk ? <img src={mk.src} alt="" loading="lazy" decoding="async" width={96} height={96} /> : <b>{c.name.charAt(0)}</b>}</span>
+                      <span className="hp-logos__name">{c.name}</span>
+                      {c.role && <small>{c.role}</small>}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          <ul className="hp-network">
+            {A.network.map(n => <li key={n.name}><b>{n.name}</b><small>{n.text}</small></li>)}
+          </ul>
+        </div>
+      </section>
+
+      {/* 13 · Đội ngũ */}
+      <section className="hp-ch hp-alt" id="doi-ngu" aria-labelledby="t-team">
         <div className="s-container ha-team">
           <div className="ha-team__head">
-            <div>
-              <p className="ha-kicker ha-kicker--dark">Ban lãnh đạo & đội ngũ</p>
-              <h3 className="ha-h3">Cùng bạn phát triển. <em>Công nghệ tạo khả năng, con người tạo giá trị.</em></h3>
-            </div>
+            <Head no="13" kicker="Ban lãnh đạo & đội ngũ" id="t-team" title={<>Cùng bạn phát triển. <em>Con người tạo giá trị.</em></>} />
             <div className="ha-team__links">
               <Link className="h-link" href="/ve-danava/">Câu chuyện DANAVA <ArrowRight aria-hidden="true" /></Link>
               <Link className="h-link" href="/doi-ngu/">Gặp đội ngũ <ArrowRight aria-hidden="true" /></Link>
@@ -366,33 +358,22 @@ export default function HomePage({ data }: { data: SiteData }) {
           {staff.length > 0 && (
             <ul className="u-team ha-team__list" aria-label="Đội ngũ DANAVA">
               {staff.map(p => (
-                <li key={p.id}>
-                  <Link href={`/doi-ngu/${p.id}/`}>
-                    <StaffAvatar person={p} />
-                    <span><strong>{p.name}</strong><small>{p.role}</small></span>
-                  </Link>
-                </li>
+                <li key={p.id}><Link href={`/doi-ngu/${p.id}/`}><StaffAvatar person={p} /><span><strong>{p.name}</strong><small>{p.role}</small></span></Link></li>
               ))}
             </ul>
           )}
-          <p className="ha-company">{ABOUT_DANAVA.company}</p>
         </div>
       </section>
 
-      {/* 9 · Blogs */}
+      {/* Blogs */}
       {posts.length > 0 && (
-        <section className="s-section s-section--line" aria-labelledby="home-news">
+        <section className="hp-ch" aria-labelledby="home-news">
           <div className="s-container">
-            <div className="u-head-row s-mb">
-              <div className="s-heading">
-                <p className="s-eyebrow">Blogs</p>
-                <h2 className="s-h2" id="home-news">Bài viết mới <span className="s-hl">từ DANAVA</span></h2>
-              </div>
-              <Link className="s-link" href="/kien-thuc/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>
+            <div className="hp-row">
+              <div data-reveal><p className="ha-kicker ha-kicker--dark">Blogs</p><h2 className="ha-h3" id="home-news">Bài viết mới <em>từ DANAVA.</em></h2></div>
+              <Link className="h-link" href="/kien-thuc/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>
             </div>
-            <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
-              {posts.map(p => <PostTile key={p.id} post={p} data={data} />)}
-            </div>
+            <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>{posts.map(p => <PostTile key={p.id} post={p} data={data} />)}</div>
             {social.length > 1 && (
               <div className="s-home-social u-subblock">
                 <p className="s-home-social__title">Từ kênh chính thức</p>
@@ -409,13 +390,13 @@ export default function HomePage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      {/* 10 · FAQ & liên hệ */}
-      <section className="s-section" id="lien-he-nhanh" aria-labelledby="home-faq">
+      {/* 14 · Liên hệ & hợp tác */}
+      <section className="hp-ch hp-contact" id="lien-he-nhanh" aria-labelledby="home-faq">
         {faqs.length > 0 && <JsonLd value={faqLD(faqs)} />}
         <div className="s-container u-faq-contact">
           <div>
-            <p className="s-eyebrow">Câu hỏi thường gặp</p>
-            <h2 className="s-h2" id="home-faq">Trước khi bắt đầu</h2>
+            <p className="ha-kicker ha-kicker--dark"><span className="hp-mini-no">14</span> Liên hệ & hợp tác</p>
+            <h2 className="ha-h3" id="home-faq">Trước khi <em>bắt đầu.</em></h2>
             <div className="s-faq">
               {faqs.map((f, i) => (
                 <details key={f.q} open={i === 0}>
@@ -425,7 +406,7 @@ export default function HomePage({ data }: { data: SiteData }) {
               ))}
             </div>
           </div>
-          <aside className="u-contact-card" aria-labelledby="home-contact">
+          <aside className="u-contact-card hp-contact__card" aria-labelledby="home-contact">
             <h2 className="s-h3" id="home-contact">Trao đổi với DANAVA</h2>
             <p className="s-text">Gửi yêu cầu, chuyên viên DANAVA liên hệ lại để tìm hiểu nhu cầu và đề xuất phạm vi phù hợp.</p>
             <div className="u-contact-card__actions">
@@ -441,8 +422,8 @@ export default function HomePage({ data }: { data: SiteData }) {
             </ul>
           </aside>
         </div>
+        <div className="s-container"><p className="ha-company">{A.company}</p></div>
       </section>
     </main>
   );
 }
-

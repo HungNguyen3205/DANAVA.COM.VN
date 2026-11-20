@@ -117,3 +117,37 @@ export function CountUp({ value, suffix = '+' }: { value: number; suffix?: strin
   }, [value]);
   return <span ref={ref}>{n.toLocaleString('vi-VN')}{suffix}</span>;
 }
+
+/** Thanh mục lục các chương trang chủ: bám dưới header, tô sáng chương đang đọc, tự cuộn chip đang chọn vào giữa. */
+export function ChapterNav({ chapters }: { chapters: { id: string; no: string; label: string }[] }) {
+  const [active, setActive] = useState(chapters[0]?.id || '');
+  const bar = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!('IntersectionObserver' in window)) return;
+    const seen = new Map<string, number>();
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => seen.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
+      let best = '', score = 0;
+      chapters.forEach(c => { const v = seen.get(c.id) || 0; if (v > score) { score = v; best = c.id; } });
+      if (best) setActive(best);
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: [0, .05, .2, .5] });
+    chapters.forEach(c => { const el = document.getElementById(c.id); if (el) io.observe(el); });
+    return () => io.disconnect();
+  }, [chapters]);
+  useEffect(() => {
+    const el = bar.current?.querySelector<HTMLElement>(`[data-ch="${active}"]`);
+    const box = bar.current;
+    if (el && box) box.scrollTo({ left: el.offsetLeft - box.clientWidth / 2 + el.clientWidth / 2, behavior: 'smooth' });
+  }, [active]);
+  return (
+    <nav className="hp-nav" aria-label="Các chương trên trang chủ">
+      <div className="s-container hp-nav__inner" ref={bar}>
+        {chapters.map(c => (
+          <a key={c.id} data-ch={c.id} href={`#${c.id}`} className={active === c.id ? 'is-on' : undefined} aria-current={active === c.id ? 'true' : undefined}>
+            <span>{c.no}</span>{c.label}
+          </a>
+        ))}
+      </div>
+    </nav>
+  );
+}

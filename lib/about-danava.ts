@@ -38,5 +38,41 @@ export const ABOUT_DANAVA = {
     { title: 'Đồng hành lâu dài', text: 'Hỗ trợ khách hàng xuyên suốt hành trình chuyển đổi số' },
     { title: 'Kết quả đo lường được', text: 'Mọi giải pháp đều gắn với KPI và hiệu quả thực tế' }
   ],
+  /** Bài toán → giải pháp (danava.vn/about); liên kết tới trang giải pháp tương ứng trên website này */
+  problems: [
+    { problem: 'Không có khách hàng', solution: 'Marketing AI — tiếp cận đúng đối tượng', href: '/giai-phap/digital-marketing/' },
+    { problem: 'Quản lý thủ công, kém hiệu quả', solution: 'DANAVA Studio — quản lý phòng tập hiệu quả', href: '/giai-phap/danava-studio/' },
+    { problem: 'Website lỗi thời', solution: 'Website Platform — thiết kế hiện đại, chuẩn SEO', href: '/giai-phap/thiet-ke-website/' },
+    { problem: 'Thiếu nhận diện thương hiệu', solution: 'Branding — xây dựng hình ảnh chuyên nghiệp', href: '/giai-phap/su-kien-truyen-thong/' }
+  ],
+  tech: ['AI Ứng dụng', 'Nền tảng Cloud', 'Phân tích dữ liệu', 'Bảo mật & Tuân thủ'],
+  rnd: ['Innovation Lab', 'AI Lab', 'Media Lab', 'Automation Lab', 'Open Innovation'],
+  industries: ['Marketing', 'Travel', 'Education', 'Healthcare', 'Fitness', 'Yoga', 'Spa', 'Retail', 'SME'],
+  process: [
+    { name: 'Discover', text: 'Khảo sát & phân tích hiện trạng' },
+    { name: 'Analyze', text: 'Xác định yêu cầu & rủi ro' },
+    { name: 'Design', text: 'Thiết kế giải pháp tối ưu' },
+    { name: 'Develop', text: 'Phát triển & tích hợp hệ thống' },
+    { name: 'Deploy', text: 'Triển khai & kiểm thử' },
+    { name: 'Training', text: 'Đào tạo người dùng' },
+    { name: 'Optimize', text: 'Tối ưu, cải tiến liên tục & hỗ trợ kỹ thuật 24/7' }
+  ],
+  journey: ['Khách hàng', 'Tư vấn', 'Giải pháp', 'Triển khai', 'Đào tạo', 'Đồng hành'],
+  esg: [
+    { title: 'Green Technology', text: 'Công nghệ xanh, thân thiện môi trường' },
+    { title: 'Community', text: 'Xây dựng cộng đồng bền vững' },
+    { title: 'Education', text: 'Nâng cao tri thức và kỹ năng' },
+    { title: 'Wellness', text: 'Chăm sóc sức khỏe toàn diện' },
+    { title: 'Social Impact', text: 'Tác động xã hội tích cực' },
+    { title: 'Sustainable', text: 'Phát triển bền vững dài hạn' }
+  ],
+  network: [
+    { name: 'Landing Page', text: 'Giải pháp nền tảng số' },
+    { name: 'Zalo Partner', text: 'Marketing & kết nối khách hàng' },
+    { name: 'Sông Hàn Incubator', text: 'Hỗ trợ khởi nghiệp & kết nối hệ sinh thái' },
+    { name: 'AI Technology', text: 'Công nghệ & tự động hóa' },
+    { name: 'Wellness Network', text: 'Kết nối cộng đồng' },
+    { name: 'Wellness Travel Network', text: 'Hệ sinh thái du lịch & dịch vụ' }
+  ],
   company: 'Công ty Cổ phần Giải pháp DANAVA · MST 0401883105 · Sở KH&ĐT TP. Đà Nẵng cấp lần đầu 08/03/2018 · Trụ sở: 08 Đặng Vũ Hỷ, P. An Hải, TP. Đà Nẵng'
 };

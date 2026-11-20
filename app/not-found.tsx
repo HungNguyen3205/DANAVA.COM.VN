@@ -20,6 +20,7 @@ import './(site)/site-ecosystem.css';
 import './(site)/site-partners.css';
 import './(site)/site-products.css';
 import './(site)/site-blog.css';
+import './(site)/site-home2.css';
 import './(site)/site-mobile.css';
 
 /**

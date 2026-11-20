@@ -260,3 +260,29 @@ Trang `/giai-phap/danava-go/` được bổ sung theo kiểu trang DANAVA Studio
   - 3 trang sản phẩm × 4 độ rộng: không tràn ngang, không ảnh hỏng, không lỗi console.
   - `npm test` 100/100.
   - `npm run build` thành công.
+
+## 18. Cập nhật: trang chủ dạng hồ sơ công ty theo danava.vn/about (20/11/2026)
+
+Trang chủ được làm lại theo cấu trúc trang https://danava.vn/about (cùng doanh nghiệp DANAVA; chủ sở hữu đồng ý dùng lại nội dung và số liệu). Nội dung và số liệu nằm ở `lib/about-danava.ts`, có ghi nguồn và ngày lấy.
+
+- **Hero:** "DANAVA Solutions — Growing Your Business Together", ảnh hệ sinh thái.
+  - Số liệu chạy dần: 4.066+ địa điểm, 2.055+ hội viên, 13+ khóa học, 9+ tours. Đây là số trên danava.vn sau khi bộ đếm chạy xong, ngày 20/11/2026.
+  - Dải lĩnh vực chạy ngang.
+- **Thanh mục lục bám** gồm 14 chương, tô sáng chương đang đọc.
+- **Các chương:**
+  - 01 Nhà sáng lập; 02 Sứ mệnh & tầm nhìn.
+  - 03 Hệ sinh thái: các giải pháp thật của website.
+  - 04 Bài toán → giải pháp, có link tới trang giải pháp.
+  - 05 DANAVA Studio và dự án tiêu biểu thật.
+  - 06 Công nghệ & AI, R&D, ngành.
+  - 07 Quy trình 7 bước và hành trình 6 bước.
+  - 08 Trước/sau; 09 Sáu giá trị; 10 ESG.
+  - 11 Câu chuyện 2018 → 2023 → 2025–2026.
+  - 12 Đối tác: 15 cơ sở thật cùng mạng lưới.
+  - 13 Đội ngũ, lấy từ CMS.
+  - Blogs, kèm bài đăng mạng xã hội đã duyệt.
+  - 14 Liên hệ: FAQ (có dữ liệu cấu trúc) và thẻ liên hệ.
+- **Kiểm tra:**
+  - 4 độ rộng (1440, 1024, 390, 360): không tràn ngang, không ảnh hỏng, 1 thẻ H1.
+  - `npm test` 100/100.
+  - `npm run build` thành công.
