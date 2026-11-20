@@ -12,6 +12,7 @@ import { knowledgePosts, publicPartners, publicTestimonials, publishedProjects, 
 import { CONTACT, formatPhone, formatDate } from './catalog';
 import { ProjectTile, PostTile, Testimonials } from './blocks';
 import { Reveal, CountUp } from './HomeClient';
+import { OfficeScene } from './OfficeScene';
 import { block } from '@/lib/blocks';
 import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { markOf } from '@/lib/partner-marks';
@@ -53,11 +54,11 @@ export default function HomePage({ data }: { data: SiteData }) {
               <Link className="hb-btn hb-btn--ghost" href="/giai-phap/">Xem giải pháp</Link>
             </div>
           </div>
-          <figure className="hb-cover__photo" aria-hidden="true">
-            <img src="/assets/about/office.webp" srcSet="/assets/about/office-sm.webp 1100w, /assets/about/office.webp 2200w" sizes="(max-width: 900px) 100vw, 46vw" alt="" width={2200} height={1650} fetchPriority="high" />
-            <span className="hb-float hb-float--a"><b>{P.years}</b>Đồng hành cùng Wellness</span>
-            <span className="hb-float hb-float--b"><i />{partners.length} đối tác đang đồng hành</span>
-          </figure>
+          <div className="hb-cover__3d">
+            <OfficeScene fallback="/assets/about/office-sm.webp" />
+            <span className="hb-float hb-float--a" aria-hidden="true"><b>{P.years}</b>Văn phòng DANAVA · Đà Nẵng</span>
+            <span className="hb-float hb-float--b" aria-hidden="true"><i />{partners.length} đối tác đang đồng hành</span>
+          </div>
         </div>
         <div className="s-container">
           <dl className="hb-stats">
