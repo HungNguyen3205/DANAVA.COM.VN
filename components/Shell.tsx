@@ -7,6 +7,7 @@ import { useSite } from './SiteStore';
 import { SERVICE_META, sortServices, CONTACT, formatPhone } from './site/catalog';
 import { IconTile } from './site/ui';
 import { publishedSubServices, subServiceHref } from '@/lib/site-queries';
+import { block } from '@/lib/blocks';
 
 const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
@@ -18,6 +19,7 @@ const NAV = [
 export function Header() {
   const path = usePathname() || '/';
   const { data } = useSite();
+  const co = block(data, 'company');
   const [open, setOpen] = useState(false);
   const [mega, setMega] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -170,7 +172,7 @@ export function Header() {
         </div>
         <div className="s-drawer__contact">
           <span>{data.email || CONTACT.email}</span>
-          <span>{CONTACT.address}</span>
+          <span>{co.address}</span>
         </div>
       </div>
     </>
@@ -179,6 +181,7 @@ export function Header() {
 
 export function Footer() {
   const { data } = useSite();
+  const co = block(data, 'company');
   const services = sortServices(data.services);
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
@@ -195,7 +198,7 @@ export function Footer() {
             <div className="s-footer__contact">
               <a href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
               <a href={`mailto:${email}`}><Mail aria-hidden="true" />{email}</a>
-              <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{CONTACT.address}</a>
+              <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{co.address}</a>
             </div>
           </div>
 

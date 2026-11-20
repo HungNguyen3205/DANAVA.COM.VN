@@ -864,3 +864,36 @@
   .adm-entity__main b, .adm-entity__main small { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .adm-entity .adm-pill { padding: 2px 8px; font-size: 11px; }
 }
+
+/* ---- Trình chỉnh sửa khối nội dung (components/AdminBlockEditor.tsx) ---- */
+.blk-stack { display: grid; gap: 20px; }
+.blk-panel .panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.blk-btn { display: inline-flex; align-items: center; gap: 6px; }
+.blk-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 18px; align-items: start; }
+.blk-grid > .blk-wide, .blk-grid > div:has(> .blk-group), .blk-grid > div:has(> label > textarea), .blk-grid > div:has(> .blk-list) { grid-column: 1 / -1; }
+.blk-field { display: grid; gap: 6px; margin: 8px 0; font-size: 13px; font-weight: 650; color: #3a4766; }
+.blk-field input, .blk-field select, .blk-field textarea { width: 100%; font-weight: 400; }
+.blk-sub { font-weight: 500; color: #8a96ad; }
+.blk-toggle { margin: 12px 0; }
+.blk-group { margin: 12px 0; padding: 14px 16px 10px; border: 1px solid #e3e7ef; border-radius: 14px; background: #fbfcfe; }
+.blk-group > legend { padding: 0 8px; font-size: 14px; font-weight: 800; color: #1c2541; }
+.blk-list { margin: 12px 0; }
+.blk-list__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-size: 13.5px; font-weight: 750; color: #1c2541; }
+.blk-list__head b { margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: #eef1f7; font-size: 12px; color: #3a4766; }
+.blk-item { position: relative; margin-bottom: 8px; padding: 0 14px; border: 1px solid #e3e7ef; border-radius: 12px; background: #fff; }
+.blk-item[open] { padding-bottom: 12px; box-shadow: 0 6px 18px -12px rgba(28, 37, 65, .35); }
+.blk-item > summary { display: flex; align-items: center; gap: 10px; min-height: 50px; padding-right: 110px; cursor: pointer; list-style: none; }
+.blk-item > summary::-webkit-details-marker { display: none; }
+.blk-item__n { display: grid; place-items: center; width: 26px; height: 26px; flex: none; border-radius: 8px; background: #eef1f7; font-size: 12px; font-weight: 800; color: #3a4766; }
+.blk-item__t { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; font-weight: 650; color: #1c2541; }
+.blk-item__tools { position: absolute; top: 9px; right: 10px; display: flex; gap: 4px; }
+.blk-icon { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #e3e7ef; border-radius: 9px; background: #fff; color: #3a4766; cursor: pointer; }
+.blk-icon:hover:not(:disabled) { background: #f3f5fa; }
+.blk-icon:disabled { opacity: .35; cursor: default; }
+.blk-icon--danger { color: #c53030; }
+.blk-icon:focus-visible { outline: 2px solid #ff8a3d; outline-offset: 2px; }
+@media (max-width: 760px) {
+  .blk-grid { grid-template-columns: minmax(0, 1fr); }
+  .blk-item > summary { padding-right: 0; flex-wrap: wrap; }
+  .blk-item__tools { position: static; justify-content: flex-end; margin-bottom: 6px; }
+}

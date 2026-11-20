@@ -54,6 +54,17 @@ export const adminNav: {
     ],
   },
   {
+    group: 'Trang & thông tin',
+    items: [
+      { slug: 'cong-ty', icon: 'building', label: 'Thông tin công ty', desc: 'Pháp nhân, địa chỉ, giờ làm việc, bản đồ, Facebook, YouTube, sứ mệnh — dùng ở chân trang, Liên hệ, Về DANAVA và dữ liệu cho Google.' },
+      { slug: 'chu-tren-trang', icon: 'type', label: 'Chữ trên các trang', desc: 'Tiêu đề, câu dẫn đầu trang và dải kêu gọi liên hệ cuối trang của từng trang.' },
+      { slug: 've-danava', icon: 'info', label: 'Về DANAVA', desc: 'Giá trị, sứ mệnh, tầm nhìn, cột mốc, ảnh hoạt động, nguyên tắc làm việc và quy trình hợp tác.' },
+      { slug: 'he-sinh-thai', icon: 'network', label: 'Hệ sinh thái', desc: 'Khối năng lực, hành trình khách hàng, đơn vị và sản phẩm đang chạy trên trang Hệ sinh thái.' },
+      { slug: 'ho-so-nhan-su', icon: 'idcard', label: 'Hồ sơ nhân sự', desc: 'Giới thiệu, chuyên môn, kỹ năng, vai trò trong dự án và liên kết của từng nhân sự.' },
+      { slug: 'chinh-sach', icon: 'scroll', label: 'Chính sách', desc: 'Chính sách quyền riêng tư và chính sách dịch vụ (SLA, kênh hỗ trợ, điều khoản).' },
+    ],
+  },
+  {
     group: 'Tư liệu',
     items: [
       { slug: 'thu-vien', icon: 'image', label: 'Thư viện ảnh', desc: 'Tải ảnh lên — hệ thống tự xóa thông tin EXIF, thu nhỏ và nén sang WebP.' },

@@ -9,7 +9,6 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, ChevronDown, Cpu, Globe, PartyPopper, Phone, Mail, MapPin, Clock, MessageCircle, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
-import { company } from '@/lib/company';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { defaultPresentation } from '@/lib/presentation';
 import { showcaseFor, splitFeatured, knowledgePosts, publicPartners, publicTestimonials, publishedProjects, serviceHref, sortServices, visibleMetrics, projectHref } from '@/lib/site-queries';
@@ -21,6 +20,7 @@ import { StaffAvatar } from './TeamPage';
 import { ProjectTile, PostTile, Testimonials, JsonLd, faqLD } from './blocks';
 import { HeroSlides, SolutionsExplorer, Reveal, type SolutionItem } from './HomeClient';
 import { PRINCIPLES, COLLAB_STEPS } from './company-content';
+import { block } from '@/lib/blocks';
 
 const PF = '/assets/profile/';
 
@@ -54,6 +54,7 @@ export default function HomePage({ data }: { data: SiteData }) {
   const studio = services.find(s => s.id === 'studio');
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
+  const co = block(data, 'company');
 
   const clients = publicPartners(data);
   const metrics = visibleMetrics(data);
@@ -271,7 +272,7 @@ export default function HomePage({ data }: { data: SiteData }) {
               <p className="h-chapter">Về DANAVA</p>
               <h2 className="h-title" id="home-about">Cùng bạn phát triển. <em>Công nghệ tạo khả năng, con người tạo giá trị.</em></h2>
             </div>
-            <p className="h-body">{company.overview}</p>
+            <p className="h-body">{co.overview}</p>
             <div className="s-row">
               <Link className="h-link" href="/ve-danava/">Câu chuyện DANAVA <ArrowRight aria-hidden="true" /></Link>
               <Link className="h-link" href="/doi-ngu/">Gặp đội ngũ <ArrowRight aria-hidden="true" /></Link>
@@ -349,8 +350,8 @@ export default function HomePage({ data }: { data: SiteData }) {
               <li><Phone aria-hidden="true" /><a href={`tel:${phone}`}>{formatPhone(phone)}</a></li>
               <li><MessageCircle aria-hidden="true" /><a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener">Nhắn Zalo</a></li>
               <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{email}</a></li>
-              <li><MapPin aria-hidden="true" /><a href={CONTACT.mapUrl} target="_blank" rel="noopener">{CONTACT.address}</a></li>
-              <li><Clock aria-hidden="true" /><span>{CONTACT.hours}</span></li>
+              <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener">{co.address}</a></li>
+              <li><Clock aria-hidden="true" /><span>{co.hours}</span></li>
             </ul>
           </aside>
         </div>

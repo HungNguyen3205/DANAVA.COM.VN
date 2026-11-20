@@ -4,8 +4,9 @@ import { getContent } from '@/lib/database';
 import { publicContent } from '@/lib/site-queries';
 import Analytics from '@/components/Analytics';
 import { siteURL, jsonLD, indexable, ORG_ID, BRAND } from '@/lib/seo';
-import { CONTACT, SOCIAL } from '@/lib/company';
+import { CONTACT } from '@/lib/company';
 import { fontVariables } from '@/lib/site-font';
+import { block } from '@/lib/blocks';
 
 /**
  * Root layout dùng chung cho website công khai và CMS.
@@ -39,6 +40,7 @@ export const viewport: Viewport = {
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const { data } = await getContent();
+  const co = block(data, 'company');
   // Thông tin doanh nghiệp đã xác minh (lib/company.ts); email/điện thoại lấy từ CMS.
   const organization = {
     '@context': 'https://schema.org',
@@ -53,11 +55,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
     telephone: data.phone || CONTACT.phone,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: CONTACT.street,
-      addressLocality: CONTACT.city,
+      streetAddress: co.street,
+      addressLocality: co.city,
       addressCountry: 'VN'
     },
-    sameAs: [SOCIAL.facebook, SOCIAL.youtube]
+    sameAs: [co.facebook, co.youtube].filter(Boolean)
   };
   return (
     <html lang="vi" className={fontVariables}>

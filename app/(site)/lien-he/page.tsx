@@ -3,6 +3,7 @@ import { CONTACT } from '@/lib/company';
 import { ContactPage } from '@/components/site/ContactPage';
 import { resolveValidService } from '@/lib/contact-services';
 import { getContent } from '@/lib/database';
+import { block } from '@/lib/blocks';
 
 export const metadata = seo(
   'Liên hệ tư vấn và báo giá',
@@ -16,6 +17,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const initialService = resolveValidService(Array.isArray(raw) ? raw[0] : raw);
   // Hotline/email sửa trong CMS (Cài đặt) → dùng cho dữ liệu có cấu trúc, giống nội dung hiển thị
   const { data } = await getContent();
+  const co = block(data, 'company');
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
@@ -32,7 +34,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       image: `${siteURL}/assets/danava-logo.png`,
       telephone: data.phone || CONTACT.phone,
       email: data.email || CONTACT.email,
-      address: { '@type': 'PostalAddress', streetAddress: CONTACT.street, addressLocality: CONTACT.city, addressCountry: 'VN' },
+      address: { '@type': 'PostalAddress', streetAddress: co.street, addressLocality: co.city, addressCountry: 'VN' },
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '08:00', closes: '18:00' }]
     }
   };

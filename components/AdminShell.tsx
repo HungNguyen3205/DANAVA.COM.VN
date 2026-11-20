@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   ArrowUpRight, Bell, Briefcase, Check, ChevronDown, ChevronRight, ExternalLink, FileText, Globe, Image as ImageIcon,
   Inbox, Layers, LayoutGrid, LogOut, Menu, PanelLeftClose, PanelLeftOpen, PanelsTopLeft, Presentation, Save,
-  Search, Settings, TrendingUp, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, GalleryHorizontalEnd, FolderTree, Handshake, type LucideIcon,
+  Search, Settings, TrendingUp, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, GalleryHorizontalEnd, FolderTree, Handshake, Building2, Type, Info, Network, IdCard, ScrollText, type LucideIcon,
 } from 'lucide-react';
 import { AdminNavRail, type RailSection } from './AdminNavRail';
 import { adminNav, adminSettings, allAdminItems, sectionInfo, timeAgo, csrfToken, type AdminLead } from './adminData';
@@ -43,13 +43,19 @@ const ICONS: Record<string, LucideIcon> = {
   'trung-bay': GalleryHorizontalEnd,
   'chu-de': FolderTree,
   'bang-chung': Handshake,
+  'cong-ty': Building2,
+  'chu-tren-trang': Type,
+  've-danava': Info,
+  'he-sinh-thai': Network,
+  'ho-so-nhan-su': IdCard,
+  'chinh-sach': ScrollText,
   'giai-phap': Layers,
   'so-lieu': TrendingUp,
   'thu-vien': ImageIcon,
   'nhan-su': Users,
   'cai-dat': Settings,
 };
-const GROUP_ICONS: Record<string, LucideIcon> = { 'Tổng quan': LayoutGrid, 'Nội dung': FileText, 'Tư liệu': FolderOpen, 'Hệ thống': Wrench };
+const GROUP_ICONS: Record<string, LucideIcon> = { 'Tổng quan': LayoutGrid, 'Nội dung': FileText, 'Trang & thông tin': Building2, 'Tư liệu': FolderOpen, 'Hệ thống': Wrench };
 
 /** Menu: các nhóm của adminNav + nhóm "Hệ thống" chứa Cài đặt (để dải icon thu gọn cũng có). */
 const SECTIONS = [...adminNav, { group: 'Hệ thống', items: [adminSettings] }];

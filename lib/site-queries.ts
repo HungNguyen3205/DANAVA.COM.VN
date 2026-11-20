@@ -134,6 +134,8 @@ export function publicContent(data: SiteData): SiteData {
     clients: publicPartners(data).map(c => ({ ...c, note: '', description: undefined, amenities: undefined, types: undefined })),
     testimonials: publicTestimonials(data),
     // Chỉ trang /du-an/ (client) cần showcase — chỉ gửi mục website đã xuất bản
-    showcase: (data.showcase || []).filter(x => x.published && x.serviceId === 'website')
+    showcase: (data.showcase || []).filter(x => x.published && x.serviceId === 'website'),
+    // Khối chỉ dùng ở trang máy chủ (hệ sinh thái, chính sách) không gửi xuống trình duyệt
+    blocks: data.blocks && { company: data.blocks.company, pages: data.blocks.pages, about: data.blocks.about, staff: data.blocks.staff }
   };
 }

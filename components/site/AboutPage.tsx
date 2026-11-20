@@ -2,11 +2,11 @@
 import Link from 'next/link';
 import { MapPin, Clock, Phone, Compass, BarChart3, KeyRound, Infinity as InfinityIcon } from 'lucide-react';
 import { useSite } from '../SiteStore';
-import { company } from '@/lib/company';
 import { CONTACT, formatPhone } from './catalog';
 import { SectionHeading, CtaBand, IconTile, ArrowLink, Crumbs } from './ui';
 import { StaffAvatar } from './TeamPage';
 import { GOALS, MILESTONES, MOMENTS, PRINCIPLES } from './company-content';
+import { block } from '@/lib/blocks';
 
 const PRINCIPLE_ICONS = { field: Compass, transparent: BarChart3, ownership: KeyRound, longterm: InfinityIcon } as const;
 const PRINCIPLE_TONES = { field: 'blue', transparent: 'orange', ownership: 'sky', longterm: 'green' } as const;
@@ -16,6 +16,7 @@ export default function AboutPage() {
   const staff = data.staff.filter(p => p.visible);
   const founder = staff.find(p => p.id === 'thanh');
   const phone = data.phone || CONTACT.phone;
+  const co = block(data, 'company');
 
   return (
     <main id="main">
@@ -43,7 +44,7 @@ export default function AboutPage() {
         <div className="s-container s-grid s-grid--3 s-tiles">
           <div className="s-about-pillar">
             <p className="s-eyebrow">Sứ mệnh</p>
-            <p className="s-h4">{company.mission}</p>
+            <p className="s-h4">{co.mission}</p>
           </div>
           <div className="s-about-pillar">
             <p className="s-eyebrow">Triết lý</p>
@@ -51,7 +52,7 @@ export default function AboutPage() {
           </div>
           <div className="s-about-pillar">
             <p className="s-eyebrow">Trụ sở</p>
-            <p className="s-h4">{CONTACT.address}</p>
+            <p className="s-h4">{co.address}</p>
           </div>
         </div>
       </section>
@@ -171,8 +172,8 @@ export default function AboutPage() {
       {/* Văn phòng */}
       <section className="s-section s-section--tight" aria-label="Văn phòng">
         <div className="s-container s-about-office">
-          <div className="s-about-office__item"><MapPin aria-hidden="true" /><span><strong>Văn phòng</strong><a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer">{CONTACT.address}</a></span></div>
-          <div className="s-about-office__item"><Clock aria-hidden="true" /><span><strong>Giờ làm việc</strong>{CONTACT.hours}</span></div>
+          <div className="s-about-office__item"><MapPin aria-hidden="true" /><span><strong>Văn phòng</strong><a href={co.mapUrl} target="_blank" rel="noopener noreferrer">{co.address}</a></span></div>
+          <div className="s-about-office__item"><Clock aria-hidden="true" /><span><strong>Giờ làm việc</strong>{co.hours}</span></div>
           <div className="s-about-office__item"><Phone aria-hidden="true" /><span><strong>Hotline</strong><a href={`tel:${phone}`}>{formatPhone(phone)}</a></span></div>
         </div>
       </section>

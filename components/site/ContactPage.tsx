@@ -8,22 +8,15 @@ import {
 } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { VALID_BUSINESS_TYPES, VALID_CONTACT_SERVICES, isValidPhoneNumber } from '@/lib/contact-services';
-import { SERVICE_POLICY_METADATA } from '@/lib/service-policy';
 import { CONTACT, formatPhone } from './catalog';
 import { Crumbs } from './ui';
+import { block } from '@/lib/blocks';
 
 type Fields = { name: string; phone: string; email: string; businessType: string; service: string; message: string };
 type Errors = Partial<Record<keyof Fields, string>>;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Kênh chính thức của DANAVA (lấy từ trang Liên hệ trên website cũ). */
-const SOCIAL = {
-  facebook: 'https://www.facebook.com/danava.com.vn',
-  youtube: 'https://www.youtube.com/@danavasolutions'
-};
-const HOURS = 'Thứ Hai – Thứ Bảy, 08:00 – 18:00';
-const MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(SERVICE_POLICY_METADATA.address)}&output=embed`;
 
 function validate(f: Fields): Errors {
   const e: Errors = {};
@@ -41,6 +34,8 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const { data } = useSite();
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
+  const co = block(data, 'company');
+  const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(co.legalAddress)}&output=embed`;
 
   const [fields, setFields] = useState<Fields>({
     name: '', phone: '', email: '', businessType: '', service: initialService, message: ''
@@ -137,17 +132,17 @@ export function ContactPage({ initialService }: { initialService: string }) {
               <div className="c-tile">
                 <span className="c-tile__icon c-tile__icon--sky" aria-hidden="true"><ThumbsUp /></span>
                 <p className="c-tile__label">Fanpage</p>
-                <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer">Theo dõi <span aria-hidden="true">→</span></a>
+                <a href={co.facebook} target="_blank" rel="noopener noreferrer">Theo dõi <span aria-hidden="true">→</span></a>
               </div>
               <div className="c-tile">
                 <span className="c-tile__icon c-tile__icon--red" aria-hidden="true"><PlayCircle /></span>
                 <p className="c-tile__label">YouTube</p>
-                <a href={SOCIAL.youtube} target="_blank" rel="noopener noreferrer">Đăng ký kênh <span aria-hidden="true">→</span></a>
+                <a href={co.youtube} target="_blank" rel="noopener noreferrer">Đăng ký kênh <span aria-hidden="true">→</span></a>
               </div>
               <div className="c-tile">
                 <span className="c-tile__icon c-tile__icon--amber" aria-hidden="true"><LifeBuoy /></span>
                 <p className="c-tile__label">Hỗ trợ</p>
-                <a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>Kỹ thuật <span aria-hidden="true">→</span></a>
+                <a href={`mailto:${co.supportEmail}`}>Kỹ thuật <span aria-hidden="true">→</span></a>
               </div>
             </div>
           </div>
@@ -167,10 +162,10 @@ export function ContactPage({ initialService }: { initialService: string }) {
 
             <dl className="c-info">
               <div><dt>Liên hệ trực tiếp</dt><dd><a href={`tel:${phone}`}>Hotline · Zalo: {formatPhone(phone)}</a></dd></div>
-              <div><dt>Email</dt><dd><a href={`mailto:${email}`}>{email}</a><br /><a href={`mailto:${SERVICE_POLICY_METADATA.supportEmail}`}>{SERVICE_POLICY_METADATA.supportEmail}</a> (hỗ trợ kỹ thuật)</dd></div>
-              <div><dt>Giờ làm việc</dt><dd>{HOURS}</dd></div>
-              <div><dt>Pháp nhân</dt><dd>{SERVICE_POLICY_METADATA.companyName} · Đại diện: {SERVICE_POLICY_METADATA.representative}</dd></div>
-              <div><dt>Trụ sở</dt><dd>{SERVICE_POLICY_METADATA.address}</dd></div>
+              <div><dt>Email</dt><dd><a href={`mailto:${email}`}>{email}</a><br /><a href={`mailto:${co.supportEmail}`}>{co.supportEmail}</a> (hỗ trợ kỹ thuật)</dd></div>
+              <div><dt>Giờ làm việc</dt><dd>{co.hours}</dd></div>
+              <div><dt>Pháp nhân</dt><dd>{co.companyName} · Đại diện: {co.representative}</dd></div>
+              <div><dt>Trụ sở</dt><dd>{co.legalAddress}</dd></div>
             </dl>
           </div>
 
@@ -246,12 +241,12 @@ export function ContactPage({ initialService }: { initialService: string }) {
               <div className="c-office__body">
                 <span className="c-office__city">Đà Nẵng</span>
                 <h3><MapPin aria-hidden="true" />Trụ sở chính</h3>
-                <p>{SERVICE_POLICY_METADATA.address}</p>
-                <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer">Chỉ đường trên Google Maps →</a>
+                <p>{co.legalAddress}</p>
+                <a href={co.mapUrl} target="_blank" rel="noopener noreferrer">Chỉ đường trên Google Maps →</a>
               </div>
               <iframe
-                title={`Bản đồ văn phòng DANAVA: ${SERVICE_POLICY_METADATA.address}`}
-                src={MAP_EMBED}
+                title={`Bản đồ văn phòng DANAVA: ${co.legalAddress}`}
+                src={mapEmbed}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
@@ -259,7 +254,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
             <div className="c-office">
               <div className="c-office__body">
                 <span className="c-office__city">Giờ làm việc</span>
-                <h3><Clock aria-hidden="true" />{HOURS}</h3>
+                <h3><Clock aria-hidden="true" />{co.hours}</h3>
                 <p>Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.</p>
                 <a href={`https://zalo.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
               </div>
