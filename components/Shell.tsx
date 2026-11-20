@@ -32,8 +32,8 @@ function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: 
 
 const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
-  { href: '/ve-danava/', label: 'Về chúng tôi' },
-  { href: '/kien-thuc/', label: 'Blogs' }
+  { href: '/kien-thuc/', label: 'Blogs' },
+  { href: '/ve-danava/', label: 'Về chúng tôi' }
 ];
 
 export function Header() {
