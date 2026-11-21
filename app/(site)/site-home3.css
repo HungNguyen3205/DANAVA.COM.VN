@@ -414,3 +414,19 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .hb-glass, .hb-cover__3d .hb-float, .hb-cover .hb-stats { background: rgba(255, 255, 255, .82); }
 }
+
+/* ==== Tinh chỉnh hero (5 điểm) ==== */
+/* 2 + 3. Hai thẻ kính đục hơn; thẻ "Hệ sinh thái" lùi trái để không che bộ ghế gỗ; thẻ "Lịch đặt lớp" cách mép phải ≥ 20px, nhỏ hơn một bậc */
+.hb-cover__3d .hb-glass { background: rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, .8); box-shadow: 0 12px 32px rgba(15, 23, 42, .08); }
+.hb-cover__3d .hb-glass--eco { left: calc(14% - 28px); }
+.hb-cover__3d .hb-glass--sched { right: 20px; width: 196px; padding: 10px 12px 11px; }
+.hb-glass--sched p { font-size: 12px; margin-bottom: 6px; }
+.hb-glass--sched p small { font-size: 9.5px; }
+.hb-glass--sched th { font-size: 9.5px; }
+.hb-glass--sched b { font-size: 9.5px; padding: 2px 0; }
+.hb-glass--sched td { height: 17px; }
+/* 4. Bóng tiếp xúc mềm ngay dưới đáy mô hình */
+.hb-office__stage::before { content: ""; position: absolute; left: 18%; right: 12%; bottom: 1%; height: 13%; border-radius: 50%; background: radial-gradient(closest-side, rgba(90, 52, 20, .26), rgba(90, 52, 20, .1) 55%, rgba(90, 52, 20, 0)); filter: blur(6px); pointer-events: none; }
+/* 5. Pill "Kéo để xoay mô hình" nhẹ hơn, có icon xoay */
+.hb-office__hint span { gap: 6px; padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .7); background: rgba(255, 255, 255, .65); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #64748b; font: 500 12px/1.2 var(--font-sans), sans-serif; box-shadow: none; }
+.hb-office__hint span svg { width: 13px; height: 13px; color: #94a3b8; }

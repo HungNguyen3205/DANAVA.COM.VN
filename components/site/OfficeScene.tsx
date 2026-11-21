@@ -11,6 +11,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import type * as T from 'three';
+import { RotateCw } from 'lucide-react';
 
 type Ctl = { reset: () => void; dispose: () => void };
 
@@ -49,7 +50,7 @@ export function OfficeScene({ fallback }: { fallback: string }) {
       <p className="hb-office__hint" aria-hidden={!ready}>
         {moved
           ? <button type="button" onClick={() => ctl.current?.reset()}>↺ Về góc nhìn ban đầu</button>
-          : <span>Kéo để xoay mô hình</span>}
+          : <span><RotateCw aria-hidden="true" />Kéo để xoay mô hình</span>}
       </p>
     </div>
   );
