@@ -232,3 +232,14 @@
   .hb-cover__3d::before { left: -10%; right: -10%; }
   .hb-cover__3d .hb-float { translate: none; }
 }
+
+/* ==== Hero: mô hình 3D to hơn, sát phần chữ, không để khoảng trống ==== */
+@media (min-width: 901px) {
+  .hb-cover__grid { grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 0; }
+  .hb-cover__copy { position: relative; z-index: 2; }
+  .hb-cover__3d { min-height: clamp(460px, 44vw, 660px); margin-left: -9%; margin-right: -2%; }
+  .hb-cover__3d .hb-float--a { left: 3%; top: 2%; }
+  .hb-cover__3d .hb-float--b { right: 2%; bottom: 58px; }
+  .hb-curve { left: 26%; top: 80%; width: 30%; height: 16%; }
+  .hb-cover .hb-stats { margin-top: 18px; }
+}

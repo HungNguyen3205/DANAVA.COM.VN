@@ -528,7 +528,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const r = 4.7, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
-    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .86;
+    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .74;
     camera.updateProjectionMatrix();
     wake();
   };
