@@ -125,8 +125,8 @@ export function Header() {
                   </div>
                   {menu.footLabel && (
                     <div className="s-mega__foot">
-                      <span>{menu.footText}</span>
-                      <Link className="s-link" href={safeHref(menu.footHref) && menu.footHref ? menu.footHref : '/giai-phap/'} onClick={() => setMega(false)}>{menu.footLabel} <ArrowRight aria-hidden="true" /></Link>
+                      <span className="s-mega__slogan">{menu.footText}</span>
+                      <Link className="s-mega__cta" href={safeHref(menu.footHref) && menu.footHref ? menu.footHref : '/giai-phap/'} onClick={() => setMega(false)}>{menu.footLabel} <ArrowRight aria-hidden="true" /></Link>
                     </div>
                   )}
                 </div>

@@ -77,8 +77,8 @@ const MENU = {
       ]
     }
   ],
-  footText: 'Chưa chắc giải pháp nào phù hợp?',
-  footLabel: 'Xem tất cả giải pháp',
+  footText: 'Cùng DANAVA phát triển doanh nghiệp',
+  footLabel: 'Khám phá tất cả giải pháp',
   footHref: '/giai-phap/'
 };
 
@@ -218,6 +218,9 @@ export function block<K extends BlockKey>(data: Pick<SiteData, 'blocks' | 'staff
   }
   if (key === 'menu' && saved) {
     const menu = fillMissing(saved, MENU) as typeof MENU;
+    // Chữ mặc định cũ của thanh cuối menu → chữ mới (giữ nguyên nếu quản trị đã tự sửa)
+    if (menu.footText === 'Chưa chắc giải pháp nào phù hợp?') menu.footText = MENU.footText;
+    if (menu.footLabel === 'Xem tất cả giải pháp') menu.footLabel = MENU.footLabel;
     const services = MENU.columns[1];
     return {
       ...menu,

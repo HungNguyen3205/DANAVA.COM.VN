@@ -260,7 +260,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   };
 
   /* ================= kích thước phòng ================= */
-  const W = 4.2, D = 6.6, H = 2.55, TH = .08;
+  const W = 5.2, D = 5.2, H = 2.8, TH = .1;
   const L = -W / 2, R = W / 2, BK = -D / 2, FR = D / 2;
   const model = new THREE.Group(); scene.add(model);
 
@@ -271,10 +271,10 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
 
   /* ---------- đế mô hình: mỏng, sạch, vạch navy + cam ---------- */
   const base = new THREE.Group(); model.add(base);
-  add(base, rbox(W + .44, .08, D + .44, .035), M.base, 0, -.08, 0);
-  add(base, rbox(W + .46, .014, D + .46, .006), M.baseOrange, 0, -.127, 0);
-  add(base, rbox(W + .48, .05, D + .48, .022), M.baseNavy, 0, -.16, 0);
-  add(base, bx(W, .04, D), M.floor, 0, -.02, 0, 0, 0, 0, false);
+  add(base, bx(W + TH * 2, .2, D + TH * 2), M.floor, 0, -.1, 0);
+  add(base, rbox(W + .5, .1, D + .5, .04), M.base, 0, -.25, 0);
+  add(base, rbox(W + .52, .016, D + .52, .006), M.baseOrange, 0, -.308, 0);
+  add(base, rbox(W + .54, .06, D + .54, .025), M.baseNavy, 0, -.346, 0);
   stage(base, 'base', 0, .7);
 
   /* ---------- vách (gốc ở chân để "dựng lên") ---------- */
@@ -304,7 +304,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   // Vách cuối (TV): lam sẫm | tấm sáng | lam sẫm giữa (TV) | tấm sáng | lam sẫm
   const back = wall([0, 0, BK - TH / 2], [0, 0, 1]);
   add(back.group, bx(W, H, TH), fadeable(back, M.panel()), 0, H / 2, 0);
-  const sec = [[-1.72, .76, 'slat'], [-.95, .78, 'panel'], [0, 1.12, 'slat'], [.95, .78, 'panel'], [1.72, .76, 'slat']] as const;
+  const sec = [[-2.13, .94, 'slat'], [-1.18, .97, 'panel'], [0, 1.39, 'slat'], [1.18, .97, 'panel'], [2.13, .94, 'slat']] as const;
   sec.forEach(([cx, wd, kind]) => {
     const grp = new THREE.Group(); grp.position.set(cx, 0, TH / 2 + .02); back.group.add(grp);
     if (kind === 'slat') slatRun(grp, wd, 'x', H - .42, 0, 1);
@@ -325,9 +325,9 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   // Vách phải: hai bộ cửa kính khung tối + hộp rèm cuốn, giữa là tấm vân sáng
   const right = wall([R + TH / 2, 0, 0], [-1, 0, 0]);
   add(right.group, bx(TH, .3, D), fadeable(right, M.panel()), 0, H - .15, 0);
-  add(right.group, bx(TH, H - .3, .9), fadeable(right, M.panel()), 0, (H - .3) / 2, -2.85);
-  add(right.group, bx(TH, H - .3, .7), fadeable(right, M.panel()), 0, (H - .3) / 2, .25);
-  add(right.group, bx(TH, H - .3, .45), fadeable(right, M.panel()), 0, (H - .3) / 2, 3.08);
+  add(right.group, bx(TH, H - .3, .45), fadeable(right, M.panel()), 0, (H - .3) / 2, -2.375);
+  add(right.group, bx(TH, H - .3, .65), fadeable(right, M.panel()), 0, (H - .3) / 2, -.125);
+  add(right.group, bx(TH, H - .3, .5), fadeable(right, M.panel()), 0, (H - .3) / 2, 2.35);
   const glassUnit = (z: number, len: number) => {
     const u = new THREE.Group(); u.position.set(0, 0, z); right.group.add(u);
     const fh = H - .42;
@@ -338,8 +338,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     add(u, rbox(.12, .1, len + .1, .02), fadeable(right, M.blind), -.07, fh + .1, 0);
     [-len / 4, len / 4].forEach(p => add(u, bx(.02, .16, .02), fadeable(right, M.chrome), -.04, 1.0, p + (p < 0 ? .2 : -.2)));
   };
-  glassUnit(-1.47, 1.86);
-  glassUnit(1.79, 2.12);
+  glassUnit(-1.3, 1.7);
+  glassUnit(1.15, 1.9);
 
   // Viền trần giật cấp: lam gỗ quanh 3 vách + mép trần sáng + đèn hắt + đèn âm trần
   const rim = new THREE.Group(); model.add(rim);
@@ -378,7 +378,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   stage(altar, 'drop', 1.6, .55);
 
   /* ---------- bàn họp dài ---------- */
-  const TL = 2.5, TW = .95, TZ = -1.05;
+  const TL = 2.4, TW = 1.0, TZ = -.55;
   const table = new THREE.Group(); table.position.set(0, 0, TZ); model.add(table);
   add(table, rbox(TW, .045, TL / 2 - .005, .012), M.table, 0, .745, -TL / 4);
   add(table, rbox(TW, .045, TL / 2 - .005, .012), M.table, 0, .745, TL / 4);
@@ -502,10 +502,10 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     }
     stage(p, 'drop', 2.0, .6);
   };
-  plant(-1.75, 1.05, .3);
-  plant(-.75, .9, 1.7);
-  plant(1.35, 1.1, 2.6);
-  plant(2.4, .85, .9);
+  plant(-1.65, 1.1, .3);
+  plant(-.85, .95, 1.7);
+  plant(.75, 1.15, 2.6);
+  plant(1.65, .9, .9);
 
   /* ---------- vách dựng lên theo thứ tự ---------- */
   stage(back.group, 'rise', .45, .7);
@@ -526,8 +526,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   const rimLight = new THREE.DirectionalLight(0xfff0dc, .7); rimLight.position.set(-3, 3, -9); scene.add(rimLight);
   // bóng đổ lớn, mềm dưới đế (nằm ngoài khối nổi; co giãn theo độ cao)
   const floorMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: .5, color: 0x3a2a1c }); disposables.push(floorMat);
-  const floor = new THREE.Mesh(g(new THREE.PlaneGeometry(W + 3.2, D + 3.4)), floorMat);
-  floor.rotation.x = -Math.PI / 2; floor.position.y = -.55; scene.add(floor);
+  const floor = new THREE.Mesh(g(new THREE.PlaneGeometry(W + 3.8, D + 3.8)), floorMat);
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -.75; scene.add(floor);
   // đèn nội thất ấm (sáng dần trong màn mở đầu)
   const warm1 = new THREE.PointLight(0xffd7a0, 0, 5.5, 2); warm1.position.set(0, H - .3, -1.2); scene.add(warm1);
   const warm2 = new THREE.PointLight(0xffd7a0, 0, 5, 2); warm2.position.set(-.6, H - .3, 1.6); scene.add(warm2);
@@ -551,8 +551,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const w = el.clientWidth || el.parentElement!.clientWidth, h = el.clientHeight || 400;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    const r = 4.7, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
-    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .74;
+    const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
+    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .8;
     camera.updateProjectionMatrix();
     wake();
   };

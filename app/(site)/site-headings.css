@@ -15,3 +15,12 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
 .s-mega__head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px !important; font-size: 16px !important; letter-spacing: .04em !important; color: var(--s-ink, #13244f) !important; }
 .s-mega__head small { display: block; margin-top: 3px; font-size: 13px; font-weight: 500; letter-spacing: 0; text-transform: none; color: #6b7590; }
 .s-mega__no { font-family: var(--font-display), serif; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: 0; color: #f26b1d; }
+
+/* Thanh cuối menu Giải pháp: nền kem cam nhạt, câu chữ serif nghiêng, nút cam bo tròn */
+.s-mega__foot { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding: 14px 16px 14px 26px !important; border: 0 !important; border-radius: 18px; background: linear-gradient(90deg, #fff4ea 0%, #fdf8f2 100%) !important; }
+.s-mega__slogan { font-family: var(--font-display), serif; font-size: 21px; font-style: italic; font-weight: 500; color: #13244f; }
+.s-mega__cta { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 20px; border-radius: 999px; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff !important; font-size: 14.5px; font-weight: 800; text-decoration: none; box-shadow: 0 12px 24px -12px rgba(242, 107, 29, .8); transition: transform .2s; }
+.s-mega__cta svg { width: 16px; height: 16px; transition: transform .2s; }
+.s-mega__cta:hover { transform: translateY(-1px); }
+.s-mega__cta:hover svg { transform: translateX(3px); }
+.s-mega__cta:focus-visible { outline: 3px solid #13244f; outline-offset: 2px; }
