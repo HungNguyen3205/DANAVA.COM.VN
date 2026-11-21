@@ -43,3 +43,19 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
     white-space: nowrap; opacity: 0; transform: translate(4px, -50%); pointer-events: none; transition: opacity .2s, transform .2s; }
   .s-quick__mini:hover .s-quick__tip, .s-quick__mini:focus-visible .s-quick__tip { opacity: 1; transform: translate(0, -50%); }
 }
+
+/* Cụm nút nổi đồng bộ: mọi nút 40px; icon mạng xã hội mang màu thương hiệu trên nền nhạt cùng tông */
+@media (min-width: 901px) {
+  .s-quick { gap: 8px; }
+  .s-quick__btn { width: 40px; height: 40px; font-size: 10.5px; letter-spacing: -.01em; box-shadow: 0 8px 20px -12px rgba(11, 19, 43, .5); }
+  .s-quick__btn svg { width: 18px; height: 18px; }
+  .s-quick__btn--call::after { inset: -4px; border-width: 1.5px; }
+  .s-quick__mini--facebook { background: #e9f1fe; border-color: rgba(24, 119, 242, .18); color: #1877f2; }
+  .s-quick__mini--youtube { background: #ffeded; border-color: rgba(230, 33, 23, .16); color: #e62117; }
+  .s-quick__mini--tiktok { background: #eef0f3; border-color: rgba(17, 17, 17, .12); color: #111; }
+  .s-quick__mini--map { background: #fff1e6; border-color: rgba(242, 107, 29, .2); color: #f26b1d; }
+  .s-quick__mini--facebook:hover { background: #1877f2; color: #fff; }
+  .s-quick__mini--youtube:hover { background: #e62117; color: #fff; }
+  .s-quick__mini--tiktok:hover { background: #111; color: #fff; }
+  .s-quick__mini--map:hover { background: #f26b1d; color: #fff; }
+}
