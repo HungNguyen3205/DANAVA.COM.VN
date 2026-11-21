@@ -54,6 +54,11 @@ export default function HomePage({ data }: { data: SiteData }) {
               <Link className="hb-btn hb-btn--ghost" href="/giai-phap/">Xem giải pháp</Link>
             </div>
           </div>
+          <svg className="hb-curve" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <defs><linearGradient id="hb-curve-g" x1="0" x2="1"><stop offset="0" stopColor="#f6a86f" stopOpacity="0" /><stop offset=".35" stopColor="#f6a86f" stopOpacity=".55" /><stop offset="1" stopColor="#f6a86f" stopOpacity=".7" /></linearGradient></defs>
+            <path pathLength={1} d="M4 22 C 120 96, 260 112, 392 70" />
+            <circle cx="392" cy="70" r="3" />
+          </svg>
           <div className="hb-cover__3d">
             <OfficeScene fallback="/assets/about/office-sm.webp" />
             <span className="hb-float hb-float--a" aria-hidden="true"><b>{P.years}</b>Văn phòng DANAVA · Đà Nẵng</span>

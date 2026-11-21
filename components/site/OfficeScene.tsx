@@ -64,6 +64,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.autoUpdate = false;   // đèn nắng gắn theo khối nổi → chỉ tính lại bóng khi bố cục đổi
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1;
@@ -176,7 +177,6 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
 
   /* ================= vật liệu ================= */
   const std = (o: T.MeshStandardMaterialParameters) => { const m = new THREE.MeshStandardMaterial(o); disposables.push(m); return m; };
-  const phys = (o: T.MeshPhysicalMaterialParameters) => { const m = new THREE.MeshPhysicalMaterial(o); disposables.push(m); return m; };
   const M = {
     floor: std({ map: floorTex, roughness: .38, metalness: 0 }),
     slat: std({ map: slatTex, roughness: .55 }),
@@ -193,11 +193,11 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     chrome: std({ color: 0xe8ebee, roughness: .16, metalness: 1 }),
     desk: std({ map: deskTex, roughness: .28 }),
     door: std({ map: doorTex, roughness: .22 }),
-    doorGlass: phys({ color: 0xdfe8ec, roughness: .35, transmission: .6, transparent: true, opacity: .7 }),
+    doorGlass: std({ color: 0xcfdde3, roughness: .2, metalness: .1, transparent: true, opacity: .55, envMapIntensity: 1.4 }),
     lightWood: std({ map: lightWood, roughness: .35 }),
     sofa: std({ map: sofaTex, roughness: .9 }),
     winFrame: std({ color: 0x2b2e34, roughness: .35, metalness: .6 }),
-    glass: phys({ color: 0xeaf6fb, roughness: .04, metalness: 0, transmission: .92, thickness: .02, ior: 1.45, transparent: true, opacity: .32 }),
+    glass: std({ color: 0xe4f2f8, roughness: .03, metalness: .15, transparent: true, opacity: .18, envMapIntensity: 1.6, depthWrite: false }),
     blind: std({ color: 0x8e9196, roughness: .5, metalness: .4 }),
     tvBody: std({ color: 0x0c0d10, roughness: .3, metalness: .3 }),
     tvScreen: std({ map: tvTex, emissive: 0xffffff, emissiveMap: tvTex, emissiveIntensity: 0, color: 0x050608, roughness: .25 }),
@@ -205,7 +205,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     granite: std({ color: 0x23272e, roughness: .18, metalness: .2 }),
     red: std({ color: 0x7a1a1a, roughness: .35 }),
     white: std({ color: 0xf6f3ec, roughness: .6 }),
-    clearGlass: phys({ color: 0xffffff, roughness: .05, transmission: .95, transparent: true, opacity: .4 }),
+    clearGlass: std({ color: 0xffffff, roughness: .05, metalness: .1, transparent: true, opacity: .35, envMapIntensity: 1.5 }),
     leaf: std({ map: leafTex, roughness: .55, side: THREE.DoubleSide }),
     stem: std({ color: 0x5f8a45, roughness: .6 }),
     pot: std({ color: 0x6b6e75, roughness: .85 }),
@@ -216,7 +216,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     shadow: (() => { const m = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: .8 }); disposables.push(m); return m; })(),
     flag: std({ map: flagTex, side: THREE.DoubleSide, roughness: .8 }),
     cert: std({ map: certTex, roughness: .5 }),
-    altar: std({ map: lightWood, roughness: .3, color: 0xc08050 })
+    altar: std({ map: lightWood, roughness: .3, color: 0xc08050 }),
+    stub: std({ map: panelTex, roughness: .8, color: 0xf3eee6 })
   };
 
   /* ================= tiện ích hình khối ================= */
@@ -246,18 +247,18 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
 
   /* ---------- đế mô hình: mỏng, sạch, vạch navy + cam ---------- */
   const base = new THREE.Group(); model.add(base);
-  add(base, rbox(W + .5, .1, D + .5, .04), M.base, 0, -.09, 0);
-  add(base, rbox(W + .54, .025, D + .54, .01), M.baseOrange, 0, -.15, 0);
-  add(base, rbox(W + .58, .08, D + .58, .03), M.baseNavy, 0, -.2, 0);
+  add(base, rbox(W + .44, .08, D + .44, .035), M.base, 0, -.08, 0);
+  add(base, rbox(W + .46, .014, D + .46, .006), M.baseOrange, 0, -.127, 0);
+  add(base, rbox(W + .48, .05, D + .48, .022), M.baseNavy, 0, -.16, 0);
   add(base, bx(W, .04, D), M.floor, 0, -.02, 0, 0, 0, 0, false);
   stage(base, 'base', 0, .7);
 
   /* ---------- vách (gốc ở chân để "dựng lên") ---------- */
-  type Wall = { group: T.Group; normal: T.Vector3; center: T.Vector3; mats: T.Material[]; extras: T.Object3D[]; shown: boolean };
+  type Wall = { group: T.Group; normal: T.Vector3; center: T.Vector3; mats: T.Material[]; extras: T.Object3D[]; stubs: T.Object3D[]; shown: boolean };
   const walls: Wall[] = [];
   const wall = (center: [number, number, number], normal: [number, number, number]) => {
     const grp = new THREE.Group(); grp.position.set(center[0], 0, center[2]); model.add(grp);
-    const w: Wall = { group: grp, normal: new THREE.Vector3(...normal), center: new THREE.Vector3(center[0], H / 2, center[2]), mats: [], extras: [], shown: true };
+    const w: Wall = { group: grp, normal: new THREE.Vector3(...normal), center: new THREE.Vector3(center[0], H / 2, center[2]), mats: [], extras: [], stubs: [], shown: true };
     walls.push(w); return w;
   };
   const fadeable = (w: Wall, m: T.Material) => { const c = m.clone(); c.transparent = true; disposables.push(c); w.mats.push(c); return c; };
@@ -329,6 +330,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     slatRun(run, D, 'z', .4, 0, dir, fadeable(w, M.slat), fadeable(w, M.slatBack));
     add(w.group, bx(rimDepth, .05, D), fadeable(w, M.ceilingEdge), inner + dir * rimDepth / 2, H + .02, 0);
     w.extras.push(add(w.group, bx(.03, .025, D), M.cove, inner + dir * rimDepth, H + .055, 0));
+    // chân vách thấp: khi vách ẩn đi vẫn giữ đường viền căn phòng (kiểu sa bàn cắt)
+    const stub = add(w.group, bx(TH + .006, .2, D + .006), M.stub, 0, .1, 0); stub.visible = false; w.stubs.push(stub);
   });
   const dl = g(new THREE.CylinderGeometry(.05, .05, .015, 20));
   [[-1.2, BK + .2], [0, BK + .2], [1.2, BK + .2]].forEach(([x, z]) => add(rim, dl, M.downlight, x, H - .005, z, 0, 0, 0, false));
@@ -493,25 +496,39 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 1, far: 25 });
   sun.shadow.bias = -.0004; sun.shadow.normalBias = .02; sun.shadow.radius = 5;
-  scene.add(sun);
+  model.add(sun, sun.target);   // gắn theo khối: nổi/nghiêng không làm lệch bóng
   const fill = new THREE.DirectionalLight(0xdfe8ff, .45); fill.position.set(-6, 4, 6); scene.add(fill);
+  // ánh sáng viền rất nhẹ từ phía sau: tách khối sa bàn khỏi nền
+  const rimLight = new THREE.DirectionalLight(0xfff0dc, .7); rimLight.position.set(-3, 3, -9); scene.add(rimLight);
+  // bóng đổ lớn, mềm dưới đế (nằm ngoài khối nổi; co giãn theo độ cao)
+  const floorMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: .5, color: 0x3a2a1c }); disposables.push(floorMat);
+  const floor = new THREE.Mesh(g(new THREE.PlaneGeometry(W + 3.2, D + 3.4)), floorMat);
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -.55; scene.add(floor);
   // đèn nội thất ấm (sáng dần trong màn mở đầu)
   const warm1 = new THREE.PointLight(0xffd7a0, 0, 5.5, 2); warm1.position.set(0, H - .3, -1.2); scene.add(warm1);
   const warm2 = new THREE.PointLight(0xffd7a0, 0, 5, 2); warm2.position.set(-.6, H - .3, 1.6); scene.add(warm2);
   const tvGlow = new THREE.PointLight(0x5b7bd8, 0, 3, 2); tvGlow.position.set(0, 1.3, BK + .7); scene.add(tvGlow);
+  // ánh sáng hắt ấm lên vách lam phía sau
+  const wash = new THREE.SpotLight(0xffc98a, 0, 7, .9, .7, 1.6); wash.position.set(0, H - .1, BK + 2.2); wash.target.position.set(0, .9, BK); scene.add(wash, wash.target);
 
   /* ================= camera & tương tác ================= */
-  const AZ = .16, EL = .7;             // góc đẹp: phía trước hơi lệch trái, nhìn cao xuống (vách hai bên thấy từ bên trong)
-  let az = still ? AZ : AZ + .55, elv = still ? EL : EL + .1, distK = still ? 1 : 1.12;
-  let yaw = 0, vel = 0, drag = false, lastX = 0, lastMove = 0, userMoved = false;
-  const target = new THREE.Vector3(0, .55, -.15);
+  // Góc mặc định 3/4 phía trước-trái, hơi cao: thấy rõ bàn họp, TV và cửa kính bên phải
+  const AZ = .5, EL = .62;
+  const coarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  let az = AZ, elv = EL, distK = 1;
+  let yaw = 0, vel = 0, drag = false, lastX = 0, userMoved = false;
+  let tiltX = 0, tiltY = 0, aimX = 0, aimY = 0;          // nghiêng theo con trỏ (có độ trễ)
+  let floatT = 0, lastNow = 0;                           // đồng hồ chuyển động nổi (dừng khi kéo)
+  const target = new THREE.Vector3(0, .45, -.1);
+  const wrap = (el.closest('.hb-cover__3d') as HTMLElement | null) ?? el;
+  const hero = (el.closest('.hb-cover') as HTMLElement | null) ?? wrap;
   let fitDist = 20;
   const fit = () => {
     const w = el.clientWidth || el.parentElement!.clientWidth, h = el.clientHeight || 400;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
-    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .87;
+    const r = 4.7, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
+    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .86;
     camera.updateProjectionMatrix();
     wake();
   };
@@ -520,83 +537,110 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     camera.position.set(target.x - Math.sin(az) * Math.cos(elv) * d, target.y + Math.sin(elv) * d, target.z + Math.cos(az) * Math.cos(elv) * d);
     camera.lookAt(target);
   };
-  canvas.addEventListener('pointerdown', e => { drag = true; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); el.classList.add('is-drag'); wake(); });
+  let resetting = false;
+  canvas.addEventListener('pointerdown', e => { drag = true; resetting = false; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); el.classList.add('is-drag'); wake(); });
   canvas.addEventListener('pointermove', e => {
     if (!drag) return;
-    vel = (e.clientX - lastX) * .005; yaw = THREE.MathUtils.clamp(yaw + vel, -.75, .75); lastX = e.clientX; lastMove = performance.now();
+    vel = (e.clientX - lastX) * .005; yaw = THREE.MathUtils.clamp(yaw + vel, -.7, .7); lastX = e.clientX;
     if (!userMoved && Math.abs(yaw) > .05) { userMoved = true; cb.moved(true); }
     wake();
   });
-  const up = () => { drag = false; el.classList.remove('is-drag'); lastMove = performance.now(); };
+  const up = () => { drag = false; el.classList.remove('is-drag'); };
   canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
   canvas.addEventListener('dblclick', () => reset());
-  let resetting = false;
+  const onHover = (e: PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = hero.getBoundingClientRect();
+    aimX = THREE.MathUtils.clamp((e.clientX - (r.left + r.width * .62)) / (r.width * .45), -1, 1);
+    aimY = THREE.MathUtils.clamp((e.clientY - (r.top + r.height * .45)) / (r.height * .55), -1, 1);
+  };
+  const onLeave = () => { aimX = 0; aimY = 0; };
+  if (!still && !coarse) { hero.addEventListener('pointermove', onHover); hero.addEventListener('pointerleave', onLeave); }
   const reset = () => { resetting = true; vel = 0; wake(); };
   const ro = new ResizeObserver(fit); ro.observe(el);
 
   /* ================= vòng lặp ================= */
   const ease = (k: number) => 1 - Math.pow(1 - k, 3);
   const inOut = (k: number) => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-  const INTRO = 3.6;
-  let started = false, tStart = 0, frame = 0, visible = true, first = true, readySent = false;
-  const tmp = new THREE.Vector3();
+  const INTRO = 3.0;
+  let started = false, tStart = 0, frame = 0, visible = true, readySent = false, settledSent = false;
+  const tmp = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
+  if (!still) wrap.classList.add('is-intro');
 
   const applyIntro = (t: number) => {
+    const ts = t * 1.25;                     // dựng trong ~2,6 s; các nhịp chồng lên nhau
     stages.forEach(s => {
-      const k = THREE.MathUtils.clamp((t - s.at) / s.dur, 0, 1), e = ease(k);
+      const k = THREE.MathUtils.clamp((ts - s.at) / s.dur, 0, 1), e = ease(k);
       s.obj.visible = k > 0;
-      if (s.kind === 'base') { s.obj.scale.set(.92 + .08 * e, Math.max(.001, e), .92 + .08 * e); }
+      if (s.kind === 'base') { s.obj.scale.set(.94 + .06 * e, Math.max(.001, e), .94 + .06 * e); }
       else if (s.kind === 'rise') { s.obj.scale.y = Math.max(.001, e); }
-      else { s.obj.position.y = s.y0 + (1 - e) * .45; const sc = .94 + .06 * e; s.obj.scale.setScalar(sc); }
+      else { s.obj.position.y = s.y0 + (1 - e) * .35; s.obj.scale.setScalar(.95 + .05 * e); }
     });
-    const lk = ease(THREE.MathUtils.clamp((t - 2.25) / .9, 0, 1));
-    M.cove.emissiveIntensity = 2.4 * lk; M.downlight.emissiveIntensity = 3 * lk;
-    warm1.intensity = 7 * lk; warm2.intensity = 5 * lk;
-    const tk = ease(THREE.MathUtils.clamp((t - 2.7) / .6, 0, 1));
+    const lk = ease(THREE.MathUtils.clamp((ts - 2.2) / .9, 0, 1));
+    M.cove.emissiveIntensity = 2.6 * lk; M.downlight.emissiveIntensity = 3 * lk;
+    warm1.intensity = 7.5 * lk; warm2.intensity = 5.5 * lk; wash.intensity = 6 * lk;
+    const tk = ease(THREE.MathUtils.clamp((ts - 2.55) / .6, 0, 1));
     M.tvScreen.emissiveIntensity = .95 * tk; M.tvScreen.color.setScalar(.02 + .1 * tk); tvGlow.intensity = 1.6 * tk;
+    // camera tiến gần và xoay ~10° rồi dừng ở góc mặc định; mô hình nâng vào vị trí cùng lúc
     const ck = inOut(THREE.MathUtils.clamp(t / INTRO, 0, 1));
-    az = AZ + .55 * (1 - ck); elv = EL + .1 * (1 - ck); distK = 1 + .12 * (1 - ck);
+    az = AZ + .18 * (1 - ck); elv = EL + .05 * (1 - ck); distK = 1 + .1 * (1 - ck);
+    return -.5 * (1 - ease(THREE.MathUtils.clamp(t / 1.8, 0, 1)));
   };
 
   const fadeWalls = () => {
     walls.forEach(w => {
-      tmp.copy(w.normal).applyAxisAngle(new THREE.Vector3(0, 1, 0), model.rotation.y);
-      const c = w.center.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), model.rotation.y);
+      tmp.copy(w.normal).applyAxisAngle(Y, model.rotation.y);
+      const c = w.center.clone().applyAxisAngle(Y, model.rotation.y);
       const toCam = camera.position.clone().sub(c).normalize();
-      const facingAway = tmp.dot(toCam) < -.12;      // người xem đứng phía sau vách → vách che nội thất
-      const target2 = facingAway ? .12 : 1;
-      w.mats.forEach(m => { m.opacity += (target2 - m.opacity) * .15; m.depthWrite = m.opacity > .9; });
-      const shown = !facingAway;
+      const shown = tmp.dot(toCam) > -.12;      // người xem đứng sau vách → vách che nội thất → ẩn, chỉ còn chân vách
+      const goal = shown ? 1 : 0;
+      w.mats.forEach(m => { m.opacity += (goal - m.opacity) * .18; if (Math.abs(goal - m.opacity) < .01) m.opacity = goal; m.depthWrite = m.opacity > .9; });
       if (shown !== w.shown) {
         w.shown = shown;
         w.extras.forEach(o => { o.visible = shown; });
-        w.group.traverse(o => { if ((o as T.Mesh).isMesh) o.castShadow = shown; });
+        w.stubs.forEach(o => { o.visible = !shown; });
+        w.group.traverse(o => { if ((o as T.Mesh).isMesh && !w.stubs.includes(o)) o.castShadow = shown; });
+        renderer.shadowMap.needsUpdate = true;
       }
     });
   };
 
   const tick = (now: number) => {
     frame = 0;
-    if (!started) { started = true; tStart = now; }
+    if (!started) { started = true; tStart = now; lastNow = now; }
+    const dt = Math.min(.05, (now - lastNow) / 1000); lastNow = now;
     const t = still ? 99 : (now - tStart) / 1000;
-    applyIntro(t);
+    const lift = applyIntro(t);
     if (!drag) {
-      vel *= .9; yaw = THREE.MathUtils.clamp(yaw + vel, -.75, .75);
-      if (resetting || (lastMove && now - lastMove > 3200)) {
-        yaw += (0 - yaw) * .06;
-        if (Math.abs(yaw) < .002) { yaw = 0; resetting = false; lastMove = 0; if (userMoved) { userMoved = false; cb.moved(false); } }
+      vel *= .93; yaw = THREE.MathUtils.clamp(yaw + vel, -.7, .7);
+      if (Math.abs(vel) < .0002) vel = 0;
+      if (resetting) {
+        yaw += (0 - yaw) * .07;
+        if (Math.abs(yaw) < .002) { yaw = 0; resetting = false; if (userMoved) { userMoved = false; cb.moved(false); } }
       }
     }
-    model.rotation.y = yaw;
+    // nổi nhẹ: biên độ ~8 px, chu kỳ 8 s (sin tự êm ở hai đầu); tạm dừng khi kéo
+    if (!still && !drag) floatT += dt;
+    const bob = still ? 0 : Math.sin(floatT * Math.PI * 2 / 8) * (coarse ? .06 : .1) * Math.min(1, Math.max(0, t - 1.2));
+    model.position.y = lift + bob;
+    floor.scale.setScalar(1 - bob * .35);
+    (floor.material as T.MeshBasicMaterial).opacity = Math.max(0, .5 - bob * .9 + lift * .6);
+    // nghiêng theo con trỏ (chậm, biên độ nhỏ); nhãn trôi theo ít hơn để tạo chiều sâu
+    tiltX += ((drag ? 0 : aimX) - tiltX) * .045; tiltY += ((drag ? 0 : aimY) - tiltY) * .045;
+    model.rotation.y = yaw + tiltX * .08;
+    model.rotation.x = tiltY * .035;
+    wrap.style.setProperty('--hx', (tiltX * 6).toFixed(2));
+    wrap.style.setProperty('--hy', (tiltY * 4 - bob * 25).toFixed(2));
     if (!still && t > INTRO) plants.forEach(p => { p.leaf.rotation.y = p.base + Math.sin(now * .0009 + p.phase) * .05; });
     placeCamera();
     fadeWalls();
+    if (t < INTRO + .3) renderer.shadowMap.needsUpdate = true;
+    model.updateMatrixWorld(); sun.shadow.updateMatrices(sun);   // bóng đã vẽ sẵn vẫn khớp khi khối nổi/xoay
     renderer.render(scene, camera);
-    if (first) { first = false; }
     if (!readySent) { readySent = true; cb.ready(); }
-    const settling = drag || resetting || Math.abs(yaw) > .001 || Math.abs(vel) > .0005 || walls.some(w => w.mats.some(m => Math.abs(m.opacity - (m.opacity > .5 ? 1 : .12)) > .01));
-    const animating = !still || settling;
-    if (animating && visible && !document.hidden) frame = requestAnimationFrame(tick);
+    if (!settledSent && t > 2.3) { settledSent = true; wrap.classList.add('is-settled'); }
+    const settling = drag || resetting || vel !== 0 || walls.some(w => w.mats.some(m => m.opacity > 0 && m.opacity < 1));
+    if ((!still || settling) && visible && !document.hidden) frame = requestAnimationFrame(tick);
   };
   function wake() { if (!frame && visible) frame = requestAnimationFrame(tick); }
   // chỉ bắt đầu màn mở đầu khi mô hình hiện trên màn hình
@@ -612,6 +656,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       cancelAnimationFrame(frame);
       io.disconnect(); ro.disconnect();
       document.removeEventListener('visibilitychange', onVis);
+      hero.removeEventListener('pointermove', onHover); hero.removeEventListener('pointerleave', onLeave);
+      wrap.classList.remove('is-intro', 'is-settled');
       geos.forEach(x => x.dispose());
       disposables.forEach(x => x.dispose());
       envTex.dispose(); pmrem.dispose();
