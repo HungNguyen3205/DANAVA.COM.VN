@@ -61,29 +61,6 @@ export default function HomePage({ data }: { data: SiteData }) {
     return out;
   })();
   const products = block(data, 'menu').columns[0]?.items.filter(it => it.href) ?? [];
-  // Đối tác theo lĩnh vực (gom theo từ khóa trong vai trò; nhóm nhỏ gộp vào "Khác")
-  const fields = (() => {
-    const groups: [string, RegExp][] = [['Yoga', /yoga/i], ['Pilates', /pilates/i], ['Gym & Fitness', /gym|fitness/i], ['Bơi lội', /bơi/i]];
-    const count = new Map<string, number>();
-    for (const c of partners) {
-      const hit = groups.find(([, re]) => re.test(`${c.role || ''} ${c.name}`));
-      const k = hit ? hit[0] : 'Khác';
-      count.set(k, (count.get(k) || 0) + 1);
-    }
-    const list = [...count].map(([name, n]) => ({ name, count: n })).filter(x => x.name !== 'Khác').sort((x, y) => y.count - x.count);
-    const other = count.get('Khác') || 0;
-    return other ? [...list, { name: 'Khác', count: other }] : list;
-  })();
-  // Dự án theo mảng: case study đã xuất bản + dự án marketing đã thực hiện
-  const projectTotal = allProjects.length + MARKETING_ENGAGEMENTS.length;
-  const projectSplit = (() => {
-    const raw = [
-      { name: 'Phần mềm & Website', count: allProjects.length, color: '#4a63b8' },
-      { name: 'Marketing & Truyền thông', count: MARKETING_ENGAGEMENTS.length, color: '#e0611a' }
-    ].filter(x => x.count > 0);
-    let start = 0;
-    return raw.map(x => { const share = (x.count / Math.max(1, projectTotal)) * 100; const r = { ...x, share, start }; start += share; return r; });
-  })();
   const posts = knowledgePosts(data).slice(0, 3);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
 
@@ -108,44 +85,7 @@ export default function HomePage({ data }: { data: SiteData }) {
           </div>
           <div className="hb-cover__3d">
             <OfficeScene fallback="/assets/about/office-sm.webp" />
-            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
-            {/* Biểu đồ số liệu thật: đối tác theo lĩnh vực (từ danh sách đối tác) */}
-            {fields.length > 0 && (
-              <figure className="hb-glass hb-glass--eco hb-chart">
-                <figcaption>Đối tác theo lĩnh vực</figcaption>
-                <ul className="hb-bars">
-                  {fields.map(f => (
-                    <li key={f.name} title={`${f.name}: ${f.count} đối tác`}>
-                      <span className="hb-bars__name">{f.name}</span>
-                      <span className="hb-bars__track"><span className="hb-bars__fill" style={{ ['--w' as string]: `${Math.max(6, (f.count / fields[0].count) * 100)}%` }} /></span>
-                      <b>{f.count}</b>
-                    </li>
-                  ))}
-                </ul>
-              </figure>
-            )}
-            {/* Biểu đồ số liệu thật: dự án đã thực hiện theo mảng */}
-            {projectTotal > 0 && (
-              <figure className="hb-glass hb-glass--sched hb-chart">
-                <figcaption>Dự án đã thực hiện</figcaption>
-                <div className="hb-donut">
-                  <svg viewBox="0 0 80 80" role="img" aria-label={projectSplit.map(x => `${x.name}: ${x.count} dự án`).join(', ')}>
-                    <circle cx="40" cy="40" r="30" className="hb-donut__bg" />
-                    {projectSplit.map(x => (
-                      <circle key={x.name} cx="40" cy="40" r="30" pathLength={100} className="hb-donut__seg" style={{ stroke: x.color }}
-                        strokeDasharray={`${Math.max(0, x.share - 1.5)} ${100 - Math.max(0, x.share - 1.5)}`} strokeDashoffset={-x.start}>
-                        <title>{`${x.name}: ${x.count} dự án`}</title>
-                      </circle>
-                    ))}
-                    <text x="40" y="41" className="hb-donut__total">{projectTotal}</text>
-                    <text x="40" y="52" className="hb-donut__unit">dự án</text>
-                  </svg>
-                  <ul className="hb-legend">
-                    {projectSplit.map(x => <li key={x.name}><i style={{ background: x.color }} /><span>{x.name}</span><b>{x.count}</b></li>)}
-                  </ul>
-                </div>
-              </figure>
-            )}
+            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin aria-hidden="true" />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{partners.length} đối tác đang đồng hành</span>
           </div>
         </div>

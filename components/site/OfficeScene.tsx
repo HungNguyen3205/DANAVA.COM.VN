@@ -11,7 +11,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import type * as T from 'three';
-import { RotateCw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 
 type Ctl = { reset: () => void; dispose: () => void };
 
@@ -47,11 +47,9 @@ export function OfficeScene({ fallback }: { fallback: string }) {
       <div className="hb-office__stage" ref={host} role="img" aria-label="Mô hình 3D văn phòng DANAVA tại Đà Nẵng: phòng họp dài với bàn họp, ghế chân quỳ, TV trên vách lam gỗ, ghế tiếp khách, bàn làm việc có cờ Việt Nam và cửa kính nhìn ra cây xanh">
         <img className="hb-office__fallback" src={fallback} alt="" width={1100} height={825} />
       </div>
-      <p className="hb-office__hint" aria-hidden={!ready}>
-        {moved
-          ? <button type="button" onClick={() => ctl.current?.reset()}>↺ Về góc nhìn ban đầu</button>
-          : <span><RotateCw aria-hidden="true" />Kéo để xoay mô hình</span>}
-      </p>
+      <button type="button" className={`hb-office__reset${moved ? ' is-moved' : ''}`} onClick={() => ctl.current?.reset()} aria-label="Về góc nhìn ban đầu" data-tip="Về góc nhìn ban đầu" hidden={!ready}>
+        <RotateCcw aria-hidden="true" />
+      </button>
     </div>
   );
 }
@@ -544,7 +542,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
-    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .8;
+    fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .84;
     camera.updateProjectionMatrix();
     wake();
   };
