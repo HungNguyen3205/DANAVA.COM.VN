@@ -178,23 +178,36 @@ export default function HomePage({ data }: { data: SiteData }) {
       {logos.length > 0 && (
         <section className="hb-sec hb-cream hb-clients" id="doi-tac" aria-labelledby="t-clients">
           <div className="s-container">
-            <div className="hb-row">
-              <div>
-                <Eyebrow>Khách hàng & đối tác</Eyebrow>
-                <h2 className="hb-h2" id="t-clients"><em><CountUp value={logos.length} suffix="" /> thương hiệu</em> đã đồng hành cùng DANAVA.</h2>
-              </div>
-              <Link className="hb-more" href="/doi-tac/">Xem chi tiết đối tác <ArrowRight aria-hidden="true" /></Link>
+            <div className="hb-clients__head">
+              <Eyebrow>Khách hàng & đối tác</Eyebrow>
+              <h2 className="hb-h2" id="t-clients"><em><CountUp value={logos.length} suffix="" /> thương hiệu</em> đã đồng hành cùng DANAVA.</h2>
+              <p className="hb-text">Từ phòng tập, studio wellness trên nền tảng danava.vn đến các thương hiệu bất động sản, nội thất và ẩm thực tin chọn DANAVA cho phần mềm, website và truyền thông.</p>
             </div>
-            <ul className="hb-logos">
-              {logos.map((c, i) => (
-                <li key={c.key} data-reveal style={{ ['--d' as string]: `${(i % 6) * 50}ms` }}>
-                  <Link href={c.href} aria-label={`${c.name} — ${c.role}`}>
-                    <span className={`hb-logos__mark${c.fill ? ' is-mark' : ''}`}>{c.logo ? <img src={c.logo} alt="" loading="lazy" decoding="async" width={96} height={96} /> : <b>{c.name.charAt(0)}</b>}</span>
-                    <span className="hb-logos__name"><strong>{c.name}</strong><small>{c.role}</small></span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          </div>
+          {/* Dải logo trôi ngang (ý tưởng cleverads.vn): chỉ logo, rê chuột dừng lại và hiện tên */}
+          <div className="hb-marquee">
+            {[0, 1, 2].map(r => {
+              const row = logos.filter((_, i) => i % 3 === r);
+              return row.length > 0 && (
+                <div key={r} className={`hb-marquee__row${r === 1 ? ' is-rev' : ''}`} style={{ ['--dur' as string]: `${row.length * 5}s` }}>
+                  {[0, 1, 2].map(k => (
+                    <ul key={k} aria-hidden={k > 0 ? true : undefined}>
+                      {row.map(c => (
+                        <li key={c.key}>
+                          <Link href={c.href} tabIndex={k > 0 ? -1 : undefined} aria-label={`${c.name} — ${c.role}`} title={c.name}>
+                            {c.logo ? <img src={c.logo} alt="" loading="lazy" decoding="async" width={96} height={96} /> : <b>{c.name}</b>}
+                            <span className="hb-marquee__name">{c.name}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+          <div className="s-container hb-clients__more">
+            <Link className="hb-more" href="/doi-tac/">Xem chi tiết đối tác <ArrowRight aria-hidden="true" /></Link>
           </div>
         </section>
       )}
