@@ -157,7 +157,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
   return (
     <main id="main" className="c-page">
       {/* Hero "Hãy nói xin chào": lời mời + nút liên hệ nhanh bên trái, danh thiếp DANAVA Solutions bên phải */}
-      <section className="c-hero c-hero--hello c-hero--aurora">
+      <section className="c-hero c-hero--hello c-hero--light">
         <div className="c-aurora" aria-hidden="true"><i /><i /><i /><b /></div>
         <div className="s-container">
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
