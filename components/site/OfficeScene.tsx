@@ -553,25 +553,39 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   if (cb.qrUrl) {
     const q = qrcode(0, 'H'); q.addData(cb.qrUrl); q.make();
     const n = q.getModuleCount(), quiet = 2, c0 = (n - 1) / 2;
-    QS = Math.min(W, D) * .9;
+    QS = Math.min(W, D) * .7;   // nhỏ gọn giữa sàn, vẫn thấy sàn gỗ và đế xung quanh
     const cell = QS / (n + quiet * 2), logoR = Math.max(2, Math.round(n * .11));
     qrGroup = new THREE.Group(); qrGroup.visible = false; model.add(qrGroup);
     const plateMat = new THREE.MeshBasicMaterial({ color: 0xfffaf2 }); disposables.push(plateMat);
-    qrPlate = new THREE.Mesh(g(new THREE.BoxGeometry(QS, .03, QS)), plateMat); qrPlate.position.y = .016; qrGroup.add(qrPlate);
+    // tấm nền bo góc + viền cam mảnh (hình chữ nhật bo góc ép đùn)
+    const roundPlate = (w: number, r: number, depth: number) => {
+      const sh = new THREE.Shape(), h2 = w / 2;
+      sh.moveTo(-h2 + r, -h2); sh.lineTo(h2 - r, -h2); sh.quadraticCurveTo(h2, -h2, h2, -h2 + r); sh.lineTo(h2, h2 - r); sh.quadraticCurveTo(h2, h2, h2 - r, h2);
+      sh.lineTo(-h2 + r, h2); sh.quadraticCurveTo(-h2, h2, -h2, h2 - r); sh.lineTo(-h2, -h2 + r); sh.quadraticCurveTo(-h2, -h2, -h2 + r, -h2);
+      const geo = g(new THREE.ExtrudeGeometry(sh, { depth, bevelEnabled: false, curveSegments: 8 })); geo.rotateX(-Math.PI / 2); return geo;
+    };
+    const frameMat = new THREE.MeshBasicMaterial({ color: 0xf26b1d }); disposables.push(frameMat);
+    qrPlate = new THREE.Mesh(roundPlate(QS, QS * .06, .03), plateMat); qrPlate.position.y = .006; qrGroup.add(qrPlate);
+    const frame = new THREE.Mesh(roundPlate(QS + .12, QS * .07, .02), frameMat); frame.position.y = .002; qrPlate.add(frame); frame.position.y = -.004;
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
       if (!q.isDark(r, c) || (Math.abs(r - c0) <= logoR && Math.abs(c - c0) <= logoR)) continue;
       qrCells.push({ x: (c - c0) * cell, z: (r - c0) * cell, d: Math.hypot(r - c0, c - c0) / (n / 2) });
     }
     const blockMat = std({ color: 0x13244f, roughness: .6 });
-    qrInst = new THREE.InstancedMesh(g(new THREE.BoxGeometry(cell * .96, .16, cell * .96)), blockMat, qrCells.length);
+    qrInst = new THREE.InstancedMesh(g(new RoundedBox(cell * .97, .1, cell * .97, 2, cell * .12)), blockMat, qrCells.length);   // khối bo góc, có khe nhỏ
     qrInst.castShadow = false; qrInst.receiveShadow = false; qrGroup.add(qrInst);
     const lw = (logoR * 2 + 1) * cell;
-    const logoPad = new THREE.Mesh(g(new THREE.BoxGeometry(lw, .06, lw)), plateMat); logoPad.position.y = .05; qrGroup.add(logoPad);
+    const logoPad = new THREE.Mesh(roundPlate(lw, lw * .14, .05), plateMat); logoPad.position.y = .03; qrGroup.add(logoPad);
     const logoTex = new THREE.TextureLoader().load('/assets/danava-logo.png', () => wake()); logoTex.colorSpace = THREE.SRGBColorSpace; disposables.push(logoTex);
     const logoMat = new THREE.MeshBasicMaterial({ map: logoTex, transparent: true }); disposables.push(logoMat);
     const logo = new THREE.Mesh(g(new THREE.PlaneGeometry(lw * .88, lw * .88 * 352 / 709)), logoMat); logo.rotation.x = -Math.PI / 2; logo.position.y = .085; qrGroup.add(logo);
   }
-  let qrK = 0, qrGoal = 0, builtNow = false;
+  let qrK = 0, qrGoal = 0, builtNow = false, latched = false, lockUntil = 0;
+  // Vừa hoàn thiện: chặn lướt XUỐNG khoảng 3 s (1,5 s nút QR rơi xuống + chừng 1 s để khách chọn), lướt lên vẫn được
+  const onLockWheel = (e: WheelEvent) => { if (e.deltaY > 0 && performance.now() < lockUntil) e.preventDefault(); };
+  const onLockKey = (e: KeyboardEvent) => { if (performance.now() < lockUntil && ['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) e.preventDefault(); };
+  window.addEventListener('wheel', onLockWheel, { passive: false });
+  window.addEventListener('keydown', onLockKey);
   const qrMtx = new THREE.Matrix4(), qrPos = new THREE.Vector3(), qrScale = new THREE.Vector3(), qrQuat = new THREE.Quaternion();
   const toggleQr = () => {
     if (!qrGroup || !builtNow) return;
@@ -599,14 +613,14 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     camera.aspect = w / h;
     const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
     fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .84;
-    qrDist = (QS / 2 * 1.14) / Math.tan(Math.min(vf, hf)) + .3;   // mã QR vừa khung khi nhìn thẳng từ trên xuống
+    qrDist = (QS / 2 * 1.6) / Math.tan(Math.min(vf, hf)) + .3;   // nhìn thẳng từ trên xuống: mã chiếm khoảng nửa khung, thấy cả sàn
     camera.updateProjectionMatrix();
     wake();
   };
   const placeCamera = () => {
     const qe = qrK <= 0 ? 0 : (qrK < .5 ? 4 * qrK * qrK * qrK : 1 - Math.pow(-2 * qrK + 2, 3) / 2);
     const d = THREE.MathUtils.lerp(fitDist * distK, qrDist, qe);
-    const a = THREE.MathUtils.lerp(az, 0, qe), e = THREE.MathUtils.lerp(elv, 1.53, qe);
+    const a = THREE.MathUtils.lerp(az, 0, qe), e = THREE.MathUtils.lerp(elv, 1.555, qe);
     camAim.lerpVectors(target, qrTarget, qe);
     camera.position.set(camAim.x - Math.sin(a) * Math.cos(e) * d, camAim.y + Math.sin(e) * d, camAim.z + Math.cos(a) * Math.cos(e) * d);
     camera.lookAt(camAim);
@@ -712,7 +726,13 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const dt = Math.min(.05, (now - lastNow) / 1000); lastNow = now;
     const t = still ? 99 : (now - tStart) / 1000;
     const prevP = pS;
-    if (scrollMode) { pS += (scrollP() - pS) * .14; if (Math.abs(scrollP() - pS) < .0005) pS = scrollP(); }
+    if (scrollMode) {
+      const sp = scrollP();
+      if (!latched && sp >= .85) { latched = true; lockUntil = performance.now() + 3000; }   // hoàn thiện → dừng ~3 s
+      else if (latched && sp < .55) latched = false;                                            // lướt ngược xa mới tháo
+      const tg = latched ? 1 : Math.min(1, sp / .85);
+      pS += (tg - pS) * .14; if (Math.abs(tg - pS) < .0005) pS = tg;
+    }
     const lift = applyIntro(t);
     const built = scrollMode ? pS > .97 : t > INTRO;
     builtNow = scrollMode ? pS > .95 : t > 2.3;
@@ -730,7 +750,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       if (qrInst && qrK !== prevQr) {
         qrCells.forEach((cell, i) => {
           const h = Math.max(.001, ease(THREE.MathUtils.clamp(e2 * 1.6 - cell.d * .6, 0, 1)));   // mọc từ tâm ra ngoài
-          qrPos.set(cell.x, .03 + .08 * h, cell.z); qrScale.set(1, h, 1);
+          qrPos.set(cell.x, .036 + .05 * h, cell.z); qrScale.set(1, h, 1);
           qrInst!.setMatrixAt(i, qrMtx.compose(qrPos, qrQuat, qrScale));
         });
         qrInst.instanceMatrix.needsUpdate = true;
@@ -786,6 +806,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       cancelAnimationFrame(frame);
       io.disconnect(); ro.disconnect();
       document.removeEventListener('visibilitychange', onVis);
+      window.removeEventListener('wheel', onLockWheel); window.removeEventListener('keydown', onLockKey);
       hero.removeEventListener('pointermove', onHover); hero.removeEventListener('pointerleave', onLeave);
       wrap.classList.remove('is-intro', 'is-settled', 'is-building', 'is-built', 'is-qr');
       geos.forEach(x => x.dispose());
