@@ -601,30 +601,31 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   const T0 = .72, T1 = 3.8;                 // sàn đã có sẵn ở 0 → đèn & TV sáng ở cuối
   const buildSteps = Array.from(wrap.querySelectorAll<HTMLElement>('[data-build-step]'));
   const STEP_AT = [0, .8, 1.45, 2.4, 3.25];   // Sàn · Vách · Bàn họp · Nội thất · Hoàn thiện
-  // Khách lướt một lần → mô hình TỰ chạy lần lượt 1 → 2 → 3 → 4 → 5 (mỗi bước rơi xong, dừng một nhịp rồi sang bước sau);
-  // trong lúc tự dựng trang giữ yên; dựng xong khách lướt tiếp bình thường. Về hẳn đầu trang → trở lại cái sàn để dựng lại.
+  // Mỗi lần lướt chỉ qua MỘT bước; mỗi bước chạy với tốc độ cố định dù lướt nhanh hay chậm
   const STEPS = [T0, 1.85, 2.38, 3.25, T1];
-  const HOLD = 320;                                   // ms dừng giữa các bước
   const STICKY_TOP = pinInner ? parseFloat(getComputedStyle(pinInner).top) || 0 : 0;
-  const startP = scrollMode ? scrollP() : 1;
-  let step = startP >= .99 ? 4 : 0, tsCur = STEPS[step], lastStepAt = -1e9, arrivedAt = 0;
-  let auto = false, done = step >= 4;
-  const inZone = () => {
-    if (!pin) return false;
-    const r = pin.getBoundingClientRect();
-    return r.top <= STICKY_TOP + 12 && r.bottom >= window.innerHeight - 12;
-  };
+  let step = scrollMode ? Math.round(scrollP() * 4) : 4, tsCur = STEPS[step], lastStepAt = -1e9, lastWheelAt = -1e9, lastWheelStep = -1e9, targetY = -1;
   const goToStep = (n: number) => {
     step = THREE.MathUtils.clamp(n, 0, 4); lastStepAt = performance.now();
     if (!pin) return;
     const start = window.scrollY + pin.getBoundingClientRect().top - STICKY_TOP;   // vị trí cuộn ứng với bước 0
-    window.scrollTo({ top: start + (step / 4) * pinTotal(), behavior: still ? 'auto' : 'smooth' });
+    targetY = Math.round(start + (step / 4) * pinTotal());
+    window.scrollTo({ top: targetY, behavior: still ? 'auto' : 'smooth' });
   };
-  const startAuto = () => { if (!auto && !done) { auto = true; arrivedAt = 0; } };
   const onWheel = (e: WheelEvent) => {
-    if (!scrollMode || !pin || !inZone()) return;          // ngoài vùng dựng → cuộn bình thường
-    if (auto) { e.preventDefault(); return; }               // đang tự dựng: giữ yên trang
-    if (e.deltaY > 0 && !done) { e.preventDefault(); startAuto(); }   // lướt xuống lần đầu → tự dựng
+    if (!scrollMode || !pin || Math.abs(e.deltaY) < 2) return;
+    const r = pin.getBoundingClientRect();
+    // ngoài vùng dựng → cuộn bình thường (ở bước cuối, đáy vùng ghim = đáy phần hero đang dính, không phải đáy màn hình)
+    if (r.top > STICKY_TOP + 12 || r.bottom < STICKY_TOP + (pinInner?.offsetHeight || 0) - 12) return;
+    // Dùng thời điểm phát sinh sự kiện (không phải lúc xử lý) để gom đúng một cú lướt, kể cả khi máy đang bận
+    const dir = Math.sign(e.deltaY), now = e.timeStamp;
+    if ((dir > 0 && step >= 4 && tsCur >= T1 - .01) || (dir < 0 && step <= 0 && tsCur <= T0 + .01)) return;   // hết bước → cho trang cuộn tiếp
+    e.preventDefault();
+    const sameGesture = now - lastWheelAt < 200;   // các sự kiện sát nhau (quán tính bàn di chuột) = cùng một cú lướt
+    lastWheelAt = now;
+    if (sameGesture || now - lastWheelStep < 650) return;
+    lastWheelStep = now;
+    goToStep(step + dir);
   };
   window.addEventListener('wheel', onWheel, { passive: false });
   let pS = scrollMode ? (tsCur - T0) / (T1 - T0) : 1, lastStep = -1;
@@ -681,18 +682,12 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const t = still ? 99 : (now - tStart) / 1000;
     const prevP = pS;
     if (scrollMode) {
-      if (!auto && now - lastStepAt > 1100) {
-        const sp = scrollP();
-        if (done) { if (sp < .01) { done = false; step = 0; } }   // về đầu trang → trở lại cái sàn
-        else if (sp > .01 && inZone()) startAuto();                // cuộn bằng thanh cuộn / bàn phím → cũng tự dựng
-      }
+      // Đang cuộn tới đích của một bước → giữ nguyên bước; tới nơi (hoặc quá 2,5 s) mới đồng bộ lại theo vị trí cuộn
+      // (kéo thanh cuộn / bàn phím vẫn đi theo từng bước)
+      if (targetY >= 0 && (Math.abs(window.scrollY - targetY) < 3 || now - lastStepAt > 2500)) targetY = -1;
+      if (targetY < 0) step = Math.round(scrollP() * 4);
       const goal = STEPS[step], v = 1.6 * dt, d = goal - tsCur;
       tsCur = Math.abs(d) <= v ? goal : tsCur + Math.sign(d) * v;
-      if (auto && tsCur === goal) {
-        if (!arrivedAt) arrivedAt = now;
-        if (step >= 4) { auto = false; done = true; }
-        else if (now - arrivedAt > (step === 0 ? 60 : HOLD)) { arrivedAt = 0; goToStep(step + 1); }
-      }
       pS = (tsCur - T0) / (T1 - T0);
     }
     const lift = applyIntro(t);
