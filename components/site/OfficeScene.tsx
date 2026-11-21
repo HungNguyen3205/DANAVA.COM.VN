@@ -20,6 +20,7 @@ export function OfficeScene({ fallback }: { fallback: string }) {
   const ctl = useRef<Ctl | null>(null);
   const [ready, setReady] = useState(false);
   const [moved, setMoved] = useState(false);
+  const [noGL, setNoGL] = useState(false);
 
   useEffect(() => {
     const el = host.current;
@@ -27,12 +28,17 @@ export function OfficeScene({ fallback }: { fallback: string }) {
     let dead = false;
     (async () => {
       const probe = document.createElement('canvas');
-      if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) return;
-      const [THREE, rb, env] = await Promise.all([
-        import('three'),
-        import('three/examples/jsm/geometries/RoundedBoxGeometry.js'),
-        import('three/examples/jsm/environments/RoomEnvironment.js')
-      ]);
+      // Không có WebGL (hoặc tải thư viện lỗi) → mới dùng ảnh văn phòng thật; mặc định mở đầu bằng sàn 3D
+      if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) { setNoGL(true); return; }
+      let mods;
+      try {
+        mods = await Promise.all([
+          import('three'),
+          import('three/examples/jsm/geometries/RoundedBoxGeometry.js'),
+          import('three/examples/jsm/environments/RoomEnvironment.js')
+        ]);
+      } catch { if (!dead) setNoGL(true); return; }
+      const [THREE, rb, env] = mods;
       if (dead) return;
       ctl.current = build(THREE, rb.RoundedBoxGeometry, env.RoomEnvironment, el, {
         ready: () => setReady(true),
@@ -43,7 +49,7 @@ export function OfficeScene({ fallback }: { fallback: string }) {
   }, []);
 
   return (
-    <div className={`hb-office${ready ? ' is-ready' : ''}`}>
+    <div className={`hb-office${ready ? ' is-ready' : ''}${noGL ? ' is-fallback' : ''}`}>
       <div className="hb-office__stage" ref={host} role="img" aria-label="Mô hình 3D văn phòng DANAVA tại Đà Nẵng: phòng họp dài với bàn họp, ghế chân quỳ, TV trên vách lam gỗ, ghế tiếp khách, bàn làm việc có cờ Việt Nam và cửa kính nhìn ra cây xanh">
         <img className="hb-office__fallback" src={fallback} alt="" width={1100} height={825} />
       </div>
@@ -357,7 +363,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   });
   const dl = g(new THREE.CylinderGeometry(.05, .05, .015, 20));
   [[-1.2, BK + .2], [0, BK + .2], [1.2, BK + .2]].forEach(([x, z]) => add(rim, dl, M.downlight, x, H - .005, z, 0, 0, 0, false));
-  stage(rim, 'drop', 1.15, .7);
+  stage(rim, 'drop', 1.2, .6);
 
   /* ---------- TV + kệ ---------- */
   const tv = new THREE.Group(); tv.position.set(0, 0, BK + .02); model.add(tv);
@@ -498,9 +504,9 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   plant(1.65, .9, .9);
 
   /* ---------- vách dựng lên theo thứ tự ---------- */
-  stage(back.group, 'rise', .45, .7);
-  stage(left.group, 'rise', .6, .7);
-  stage(right.group, 'rise', .75, .7);
+  stage(back.group, 'drop', .8, .6);
+  stage(left.group, 'drop', .9, .6);
+  stage(right.group, 'drop', 1.0, .6);
 
   /* ================= ánh sáng ================= */
   const hemi = new THREE.HemisphereLight(0xffeccc, 0x6a4a30, .6); scene.add(hemi);
@@ -581,24 +587,47 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   const tmp = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
   if (!still) wrap.classList.add('is-intro');
 
+  // Cuộn để dựng: hero nằm trong .hb-pin (phần tử con dính) → tiến độ cuộn 0..1 điều khiển dòng thời gian
+  const pin = (el.closest('.hb-pin') as HTMLElement | null);
+  const pinInner = pin?.firstElementChild as HTMLElement | null;
+  const pinTotal = () => pin && pinInner ? pin.offsetHeight - pinInner.offsetHeight : 0;
+  const scrollMode = !still && pinTotal() > 40;
+  const scrollP = () => {
+    if (!pin || !pinInner) return 1;
+    const total = pinTotal(); if (total <= 0) return 1;
+    const top = parseFloat(getComputedStyle(pinInner).top) || 0;
+    return THREE.MathUtils.clamp((top - pin.getBoundingClientRect().top) / total, 0, 1);
+  };
+  const T0 = .72, T1 = 3.3;                 // sàn đã có sẵn ở 0 → đèn & TV sáng ở cuối
+  const buildSteps = Array.from(wrap.querySelectorAll<HTMLElement>('[data-build-step]'));
+  const STEP_AT = [0, .8, 1.45, 1.75, 2.25];  // Sàn · Vách · Bàn họp · Nội thất · Hoàn thiện
+  let pS = scrollMode ? scrollP() : 1, lastStep = -1;
+  if (scrollMode) wrap.classList.add('is-building');
+
   const applyIntro = (t: number) => {
-    const ts = t * 1.25;                     // dựng trong ~2,6 s; các nhịp chồng lên nhau
+    const ts = scrollMode ? T0 + pS * (T1 - T0) : t * 1.25;   // theo cuộn, hoặc dựng trong ~2,6 s
+    const dropH = scrollMode ? 2.6 : .35;                       // khi cuộn: rơi từ trên cao xuống
     stages.forEach(s => {
       const k = THREE.MathUtils.clamp((ts - s.at) / s.dur, 0, 1), e = ease(k);
       s.obj.visible = k > 0;
       if (s.kind === 'base') { s.obj.scale.set(.94 + .06 * e, Math.max(.001, e), .94 + .06 * e); }
       else if (s.kind === 'rise') { s.obj.scale.y = Math.max(.001, e); }
-      else { s.obj.position.y = s.y0 + (1 - e) * .35; s.obj.scale.setScalar(.95 + .05 * e); }
+      else { s.obj.position.y = s.y0 + (1 - e) * dropH; s.obj.scale.setScalar(.95 + .05 * e); }
     });
+    if (scrollMode) {
+      const step = STEP_AT.reduce((acc, at, i) => ts >= at ? i : acc, 0);
+      if (step !== lastStep) { lastStep = step; buildSteps.forEach((li, i) => li.classList.toggle('is-on', i <= step)); }
+      wrap.style.setProperty('--build', pS.toFixed(3));
+    }
     const lk = ease(THREE.MathUtils.clamp((ts - 2.2) / .9, 0, 1));
     M.cove.emissiveIntensity = 2.6 * lk; M.downlight.emissiveIntensity = 3 * lk;
     warm1.intensity = 7.5 * lk; warm2.intensity = 5.5 * lk; wash.intensity = 6 * lk;
     const tk = ease(THREE.MathUtils.clamp((ts - 2.55) / .6, 0, 1));
     M.tvScreen.emissiveIntensity = .95 * tk; M.tvScreen.color.setScalar(.02 + .1 * tk); tvGlow.intensity = 1.6 * tk;
     // camera tiến gần và xoay ~10° rồi dừng ở góc mặc định; mô hình nâng vào vị trí cùng lúc
-    const ck = inOut(THREE.MathUtils.clamp(t / INTRO, 0, 1));
+    const ck = inOut(THREE.MathUtils.clamp(scrollMode ? pS : t / INTRO, 0, 1));
     az = AZ + .18 * (1 - ck); elv = EL + .05 * (1 - ck); distK = 1 + .1 * (1 - ck);
-    return -.5 * (1 - ease(THREE.MathUtils.clamp(t / 1.8, 0, 1)));
+    return scrollMode ? 0 : -.5 * (1 - ease(THREE.MathUtils.clamp(t / 1.8, 0, 1)));
   };
 
   const fadeWalls = () => {
@@ -624,7 +653,10 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     if (!started) { started = true; tStart = now; lastNow = now; }
     const dt = Math.min(.05, (now - lastNow) / 1000); lastNow = now;
     const t = still ? 99 : (now - tStart) / 1000;
+    const prevP = pS;
+    if (scrollMode) { pS += (scrollP() - pS) * .14; if (Math.abs(scrollP() - pS) < .0005) pS = scrollP(); }
     const lift = applyIntro(t);
+    const built = scrollMode ? pS > .97 : t > INTRO;
     if (!drag) {
       vel *= .93; yaw = THREE.MathUtils.clamp(yaw + vel, -.7, .7);
       if (Math.abs(vel) < .0002) vel = 0;
@@ -635,7 +667,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     }
     // nổi nhẹ: biên độ ~8 px, chu kỳ 8 s (sin tự êm ở hai đầu); tạm dừng khi kéo
     if (!still && !drag) floatT += dt;
-    const bob = still ? 0 : Math.sin(floatT * Math.PI * 2 / 8) * (coarse ? .06 : .1) * Math.min(1, Math.max(0, t - 1.2));
+    const bob = still ? 0 : Math.sin(floatT * Math.PI * 2 / 8) * (coarse ? .06 : .1) * (scrollMode ? Math.min(1, Math.max(0, (pS - .9) * 10)) : Math.min(1, Math.max(0, t - 1.2)));
     model.position.y = lift + bob;
     floor.scale.setScalar(1 - bob * .35);
     (floor.material as T.MeshBasicMaterial).opacity = Math.max(0, .5 - bob * .9 + lift * .6);
@@ -645,14 +677,15 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     model.rotation.x = tiltY * .035;
     wrap.style.setProperty('--hx', (tiltX * 6).toFixed(2));
     wrap.style.setProperty('--hy', (tiltY * 4 - bob * 25).toFixed(2));
-    if (!still && t > INTRO) plants.forEach(p => { p.leaf.rotation.y = p.base + Math.sin(now * .0009 + p.phase) * .05; });
+    if (!still && built) plants.forEach(p => { p.leaf.rotation.y = p.base + Math.sin(now * .0009 + p.phase) * .05; });
     placeCamera();
     fadeWalls();
-    if (t < INTRO + .3) renderer.shadowMap.needsUpdate = true;
+    if (scrollMode ? Math.abs(pS - prevP) > .0003 : t < INTRO + .3) renderer.shadowMap.needsUpdate = true;
     model.updateMatrixWorld(); sun.shadow.updateMatrices(sun);   // bóng đã vẽ sẵn vẫn khớp khi khối nổi/xoay
     renderer.render(scene, camera);
     if (!readySent) { readySent = true; cb.ready(); }
-    if (!settledSent && t > 2.3) { settledSent = true; wrap.classList.add('is-settled'); }
+    if (!settledSent && (scrollMode ? pS > .95 : t > 2.3)) { settledSent = true; wrap.classList.add('is-settled'); }
+    if (scrollMode) wrap.classList.toggle('is-built', pS > .95);
     const settling = drag || resetting || vel !== 0 || walls.some(w => w.mats.some(m => m.opacity > 0 && m.opacity < 1));
     if ((!still || settling) && visible && !document.hidden) frame = requestAnimationFrame(tick);
   };
@@ -671,7 +704,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       io.disconnect(); ro.disconnect();
       document.removeEventListener('visibilitychange', onVis);
       hero.removeEventListener('pointermove', onHover); hero.removeEventListener('pointerleave', onLeave);
-      wrap.classList.remove('is-intro', 'is-settled');
+      wrap.classList.remove('is-intro', 'is-settled', 'is-building', 'is-built');
       geos.forEach(x => x.dispose());
       disposables.forEach(x => x.dispose());
       envTex.dispose(); pmrem.dispose();

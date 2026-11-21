@@ -517,3 +517,35 @@
   .hb-cover__3d.is-settled .hb-journey__area { animation: hb-fade .8s ease 1.2s both; }
   .hb-cover__3d.is-settled .hb-journey__pt { animation: hb-fade .4s ease both; animation-delay: calc(.4s + var(--i) * .2s); }
 }
+
+/* ==== Cuộn để dựng mô hình (ý tưởng trang glg.danava.com.vn/cafe) ==== */
+/* overflow: clip thay cho hidden để phần tử dính (sticky) vẫn bám theo khung nhìn */
+.hb-cover { overflow: clip; }
+/* Ảnh văn phòng thật chỉ hiện khi máy không chạy được 3D; mở đầu luôn là sàn 3D */
+.hb-office__fallback { opacity: 0; }
+.hb-office.is-fallback .hb-office__fallback { opacity: 1; }
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .hb-pin { position: relative; }
+  /* phần đệm phải nằm trong vùng nội dung (padding không tính) thì phần tử dính mới có chỗ để dính */
+  .hb-pin::after { content: ""; display: block; height: 140vh; }
+  .hb-pin > .hb-cover__grid { position: sticky; top: 84px; }
+}
+/* Thanh 5 bước dựng: hiện khi đang dựng, ẩn khi đã xong */
+.hb-build { display: none; }
+.hb-cover__3d.is-building .hb-build { position: absolute; left: 50%; bottom: 14px; z-index: 4; display: grid; justify-items: center; gap: 8px; width: max-content; max-width: 96%; padding: 10px 14px 12px; border-radius: 16px;
+  background: rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, .8); box-shadow: 0 12px 32px rgba(15, 23, 42, .08);
+  transform: translateX(-50%); transition: opacity .5s ease, transform .5s ease; }
+.hb-cover__3d.is-built .hb-build { opacity: 0; transform: translate(-50%, 10px); pointer-events: none; }
+.hb-build p { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 12px; font-weight: 700; color: var(--hb-navy); }
+.hb-build p svg { width: 14px; height: 14px; color: var(--hb-orange); }
+@media (prefers-reduced-motion: no-preference) { .hb-build p svg { animation: hb-nudge 1.6s ease-in-out infinite; } }
+@keyframes hb-nudge { 0%, 100% { transform: none; } 50% { transform: translateY(3px); } }
+.hb-build ol { display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.hb-build li { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 5px; border-radius: 999px; background: rgba(19, 36, 79, .06); font-size: 11.5px; font-weight: 700; color: var(--hb-muted); transition: background .3s, color .3s; }
+.hb-build li b { display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: #fff; font-size: 10px; color: var(--hb-muted); }
+.hb-build li.is-on { background: var(--hb-navy); color: #fff; }
+.hb-build li.is-on b { color: var(--hb-navy); }
+.hb-build__bar { position: relative; display: block; width: 100%; height: 3px; overflow: hidden; border-radius: 3px; background: rgba(19, 36, 79, .08); }
+.hb-build__bar i { position: absolute; inset: 0; background: linear-gradient(90deg, #ff8a2a, #e0611a); transform: scaleX(var(--build, 0)); transform-origin: left; }
+/* Trong lúc dựng: ẩn nút xoay để tập trung vào việc lướt */
+.hb-cover__3d.is-building:not(.is-built) .hb-office__reset { opacity: 0; pointer-events: none; }

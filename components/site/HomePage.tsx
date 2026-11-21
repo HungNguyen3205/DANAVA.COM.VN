@@ -7,7 +7,7 @@
  * → Sản phẩm tự phát triển → Quy trình 7 bước → Cảm nhận → Blogs → Liên hệ. Mỗi mục có icon nét mảnh (components/site/icons.tsx).
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { knowledgePosts, publicPartners, publicTestimonials, publishedProjects, projectHref } from '@/lib/site-queries';
@@ -84,6 +84,8 @@ export default function HomePage({ data }: { data: SiteData }) {
 
       {/* Bìa */}
       <section className="hb-cover" aria-labelledby="home-title">
+        {/* Vùng ghim: cuộn trong vùng này để dựng mô hình (sàn → vách → bàn họp → nội thất → hoàn thiện) */}
+        <div className="hb-pin">
         <div className="s-container hb-cover__grid">
           <div className="hb-cover__copy">
             <p className="hb-pill"><Sparkles aria-hidden="true" />DANAVA Solutions · Growing Your Business Together</p>
@@ -122,7 +124,13 @@ export default function HomePage({ data }: { data: SiteData }) {
               <p className="hb-journey__now"><i />{journey.last.year} · {journey.last.title}</p>
             </figure>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{partners.length} đối tác đang đồng hành</span>
+            <div className="hb-build" aria-hidden="true">
+              <p><ArrowDown />Lướt xuống để dựng văn phòng</p>
+              <ol>{['Sàn', 'Vách', 'Bàn họp', 'Nội thất', 'Hoàn thiện'].map((t, i) => <li key={t} data-build-step={i} className={i === 0 ? 'is-on' : undefined}><b>{i + 1}</b>{t}</li>)}</ol>
+              <span className="hb-build__bar"><i /></span>
+            </div>
           </div>
+        </div>
         </div>
         <div className="s-container">
           <dl className="hb-stats">
