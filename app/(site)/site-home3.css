@@ -647,3 +647,20 @@
 /* Khi đang là mã QR: ẩn các nhãn nổi để mã thật sạch */
 .hb-cover__3d.is-qr .hb-float, .hb-cover__3d.is-qr .hb-glass { opacity: 0; pointer-events: none; }
 .hb-office.is-qr .hb-office__stage { cursor: pointer; }
+
+/* Nút "Mã QR Zalo": góc trên phải khung mô hình (luôn trong màn hình khi hero đang ghim),
+   rơi xuống và nảy nhẹ ngay khi văn phòng dựng xong */
+.hb-office__qrbtn { top: 16px; right: 16px; bottom: auto; height: 40px; padding: 0 16px; border: 0; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff;
+  font-size: 13px; box-shadow: 0 12px 26px -12px rgba(242, 107, 29, .85); }
+.hb-office__qrbtn svg { color: #fff; }
+.hb-office__qrbtn:hover { color: #fff; background: linear-gradient(90deg, #ff7a14, #e85f12); }
+.hb-office.is-qr .hb-office__qrbtn { background: #fff; color: var(--hb-navy); box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .3); }
+.hb-office.is-qr .hb-office__qrbtn svg { color: var(--hb-orange); }
+@media (prefers-reduced-motion: no-preference) {
+  .hb-office__qrbtn { animation: hb-qr-drop .8s cubic-bezier(.34, 1.56, .64, 1) both, hb-qr-glow 1.6s ease-out .8s 2; }
+}
+@keyframes hb-qr-drop { 0% { opacity: 0; transform: translateY(-46px); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+@keyframes hb-qr-glow { 0% { box-shadow: 0 0 0 0 rgba(242, 107, 29, .55), 0 12px 26px -12px rgba(242, 107, 29, .85); } 100% { box-shadow: 0 0 0 14px rgba(242, 107, 29, 0), 0 12px 26px -12px rgba(242, 107, 29, .85); } }
+/* Mã QR đang hiện: dòng hướng dẫn nằm giữa phía trên, nút ở góc phải không chồng lên */
+.hb-office__qrcap { top: 16px; }
+@media (max-width: 600px) { .hb-office__qrcap { top: 64px; white-space: normal; text-align: center; width: max-content; max-width: 90%; } }
