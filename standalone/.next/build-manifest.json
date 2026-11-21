@@ -1,0 +1,300 @@
+{
+  "pages": {
+    "/_app": []
+  },
+  "devFiles": [],
+  "polyfillFiles": [
+    "static/chunks/0cz1d0mv5g_q7.js"
+  ],
+  "lowPriorityFiles": [
+    "static/63KX78LB4gnSXe9oy0Oqo/_buildManifest.js",
+    "static/63KX78LB4gnSXe9oy0Oqo/_ssgManifest.js",
+    "static/63KX78LB4gnSXe9oy0Oqo/_clientMiddlewareManifest.js"
+  ],
+  "rootMainFiles": [
+    "static/chunks/310vm2bl3xxpt.js",
+    "static/chunks/1-myfgousxbv2.js",
+    "static/chunks/2mfg306n6taog.js",
+    "static/chunks/0g9frf21oihyt.js",
+    "static/chunks/turbopack-077hmtqrhcoji.js"
+  ],
+  "rootMainFilesTree": {},
+  "pagesChunkGroupBootstrapParams": {
+    "/_not-found/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/_global-error/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/chinh-sach-dich-vu/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/chinh-sach-rieng-tu/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/doi-ngu/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/doi-ngu/[slug]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/doi-tac/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/du-an/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/du-an/[slug]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/giai-phap/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/giai-phap/[slug]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/giai-phap/[slug]/[sub]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/giai-phap/danava-go/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/giai-phap/danava-work/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/giai-phap/hello-danava/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/he-sinh-thai/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/kien-thuc/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/kien-thuc/[slug]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/kien-thuc/chu-de/[topic]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/kien-thuc/doc/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/lien-he/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/(site)/ve-danava/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/admin/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    },
+    "/admin/[section]/page": {
+      "otherChunks": [
+        "static/chunks/310vm2bl3xxpt.js",
+        "static/chunks/1-myfgousxbv2.js",
+        "static/chunks/2mfg306n6taog.js",
+        "static/chunks/0g9frf21oihyt.js"
+      ],
+      "runtimeModuleIds": [
+        94553
+      ]
+    }
+  },
+  "chunkLoadingGlobal": "TURBOPACK"
+}

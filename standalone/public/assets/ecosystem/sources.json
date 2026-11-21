@@ -1,0 +1,19 @@
+{
+  "captured": "2026-11-19",
+  "method": "Chrome headless 1440×900, trang công khai, không đăng nhập. Ảnh thu nhỏ 1280px WebP.",
+  "files": {
+    "edu-yoga-hero.webp": "https://edu-yoga.danava.vn/",
+    "edu-yoga-khoa-hoc.webp": "https://edu-yoga.danava.vn/ (mục Khoá học Yoga online)"
+  },
+  "liveChecked": {
+    "danava.vn": "200",
+    "studio.danava.vn": "200 (trang đăng nhập)",
+    "hello.danava.vn": "200",
+    "edu-yoga.danava.vn": "200",
+    "danavago.com": "200",
+    "workspace.danava.com.vn": "200",
+    "ycv.danava.vn": "200",
+    "hariver.danava.vn": "200",
+    "hue.danava.vn": "200"
+  }
+}

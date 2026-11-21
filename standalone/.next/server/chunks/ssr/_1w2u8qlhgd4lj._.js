@@ -1,0 +1,3 @@
+module.exports=[90571,a=>{"use strict";let b="/assets/legacy/",c={thanh:b+"founder.webp",trang:b+"pham-trang.webp",nam:b+"tran-van-nam.webp",avinash:b+"avinash.webp",thong:b+"dang-ngoc-thong.webp"};a.s(["O",0,a=>void 0===a.image?c[a.id]||"":a.image,"i",0,{"cong-nang-luong":b+"post-energy.webp","thien-tra":b+"post-tea.webp",marketing:b+"marketing.webp"}])},52562,a=>{"use strict";var b=a.i(64831);let c={name:"check",size:24,node:[["path",{d:"M20 6 9 17l-5-5",key:"1gmf2c"}]]};c.node;let d=(0,b.f)(c);a.s(["f",0,d],52562)}];
+
+//# sourceMappingURL=_1w2u8qlhgd4lj._.js.map

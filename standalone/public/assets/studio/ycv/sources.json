@@ -1,0 +1,8 @@
+{
+  "app": "Yoga Club Vietnam — App hội viên",
+  "source": "https://ycv.danava.vn/",
+  "linkedFrom": "https://danava.vn/places/yoga-club-vietnam",
+  "captured": "2026-11-19",
+  "method": "Chrome headless khung 390×844 (2x), chỉ màn hình công khai: chào mừng (VI/EN), đăng nhập. Không đăng nhập, không gửi form.",
+  "excluded": "Màn hình chọn gói/danh sách gói Yoga không dùng vì app đang hiển thị gói thử nghiệm \"TEST GÓI TRẢI NGHIỆM 3 BUỔI\" giá 2.000đ."
+}

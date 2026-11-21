@@ -1,0 +1,5 @@
+.data/
+.env
+tmp/
+node_modules
+!standalone/node_modules

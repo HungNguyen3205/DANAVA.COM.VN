@@ -1,0 +1,30 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/app/(site)/giai-phap/[slug]/[sub]/page": [
+      "static/media/77d9a04c69f7b11b-s.p.1uklb5el4zgvl.woff2",
+      "static/media/d81b50f8e1aba043-s.p.05i4gb4p0piv4.woff2",
+      "static/media/dd018b41519c2d93-s.p.2g-0we2o5_ngd.woff2",
+      "static/media/b4fb5dfe9580f890-s.p.1zvg0ggiaivzo.woff2",
+      "static/media/1f6c95fdd7b08cc8-s.p.0jaqhc1tb-5xm.woff2",
+      "static/media/7f1976624c2b6255-s.p.1hvvd1t-trplq.woff2",
+      "static/media/6ac706d910f2bd04-s.p.25pbmqxk8u2s7.woff2",
+      "static/media/3c61b7007b1b2764-s.p.0n_ln9vqskgts.woff2",
+      "static/media/25d341d5876d8ede-s.p.2wu4yy186g04j.woff2",
+      "static/media/6bf0d8dd0c866b9f-s.p.10uaeld2xxvpt.woff2",
+      "static/media/341181aba0db3eca-s.p.2bbpeapf-lbjw.woff2",
+      "static/media/83940f62350fcaa7-s.p.13y-iz2lazqtb.woff2",
+      "static/media/7d827713c9830e8a-s.p.1ubek13yfcpkr.woff2",
+      "static/media/8ff72baa89522a13-s.p.0t1_atrj_pkiu.woff2",
+      "static/media/851ce0e34689f040-s.p.0unco9n87mni8.woff2",
+      "static/media/813db4da1994ef51-s.p.0vmd737txk1h4.woff2",
+      "static/media/6e74c70e8d776c42-s.p.0iqen1t80zg64.woff2",
+      "static/media/f462257512209772-s.p.39pl-v7c3qrze.woff2",
+      "static/media/ece6651c07dc3133-s.p.0t8ljjjn9wtsx.woff2",
+      "static/media/1d0bb6ba8433fca1-s.p.2zyohmvb-ks7f.woff2",
+      "static/media/9d036f80216c14ee-s.p.3u4lli0-axodc.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

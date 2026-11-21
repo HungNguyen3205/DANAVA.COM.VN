@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/admin/media": {},
+    "/api/admin/session": {},
+    "/assets/uploads/[file]": {}
+  }
+}
