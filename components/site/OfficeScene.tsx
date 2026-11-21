@@ -4,7 +4,7 @@
  * Phòng chữ nhật dài: bàn họp chạy dọc về TV trên vách cuối; vách lam gỗ sẫm xen tấm vân sáng; viền trần giật cấp
  * có đèn hắt và đèn âm trần; ghế đen chân quỳ khung inox, tay vịn cong; cửa gỗ + khung chứng nhận bên trái;
  * ghế tiếp khách khung gỗ đệm caro đỏ phía trước trái; bàn làm việc gỗ tối có cờ Việt Nam phía trước phải;
- * cửa kính khung tối + cây môn lá lớn bên phải; tủ thờ gỗ góc sau phải.
+ * cửa kính khung tối + cây môn lá lớn bên phải.
  * Góc nhìn 3/4 phía trước-trái, hơi cao; vách nằm giữa người xem và nội thất tự mờ khi xoay.
  * Màn mở đầu ~3,6 s: đế → vách → nội thất → đèn + TV → camera dừng ở góc đẹp. Sau đó chỉ còn cây khẽ lay.
  * Kéo xoay có giới hạn, tự về góc ban đầu (hoặc bấm nút). Giảm chuyển động: khung tĩnh. Không có WebGL: ảnh thật.
@@ -241,10 +241,6 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     shadow: (() => { const m = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: .8 }); disposables.push(m); return m; })(),
     flag: std({ map: flagTex, side: THREE.DoubleSide, roughness: .8 }),
     cert: std({ map: certTex, roughness: .5 }),
-    altar: std({ map: deskTex, roughness: .3 }),
-    lacquer: std({ color: 0x8e1b14, roughness: .28, metalness: .1 }),
-    lampRed: std({ color: 0xff3b2a, emissive: 0xff2a10, emissiveIntensity: .9, roughness: .4 }),
-    fruit: std({ color: 0xf2a23a, roughness: .5 }),
     stub: std({ map: panelTex, roughness: .8, color: 0xf3eee6 })
   };
 
@@ -372,35 +368,6 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   add(tv, rbox(1.3, .36, .34, .02), M.lightWood, 0, .18, .2);
   contact(tv, 1.5, .5, 0, .2, .6);
   stage(tv, 'drop', 1.55, .55);
-  // Tủ thờ gỗ góc sau phải
-  const altar = new THREE.Group(); altar.position.set(R - .62, 0, BK + .3); model.add(altar);
-  // tủ gỗ tối hai cánh, tay nắm vàng
-  add(altar, rbox(.7, .86, .44, .02), M.altar, 0, .43, 0);
-  add(altar, bx(.004, .7, .004), M.slatBack, 0, .45, .222);
-  [-.06, .06].forEach(xx => add(altar, bx(.015, .1, .02), M.gold, xx, .5, .23));
-  add(altar, rbox(.76, .04, .5, .01), M.altar, 0, .88, 0);
-  // khám thờ sơn đỏ: thân hộp mở mặt trước + mái cong hai tầng, viền vàng
-  const shrine = new THREE.Group(); shrine.position.set(0, .9, 0); altar.add(shrine);
-  add(shrine, rbox(.56, .04, .36, .01), M.lacquer, 0, .02, 0);
-  add(shrine, bx(.56, .5, .02), M.lacquer, 0, .29, -.17);
-  [-.27, .27].forEach(x => { add(shrine, bx(.02, .5, .36), M.lacquer, x, .29, 0); add(shrine, bx(.035, .5, .035), M.gold, x, .29, .17); });
-  add(shrine, bx(.6, .05, .4), M.lacquer, 0, .56, 0);
-  add(shrine, bx(.62, .015, .42), M.gold, 0, .59, 0);
-  const roof = add(shrine, g(new THREE.CylinderGeometry(.08, .44, .12, 4, 1)), M.lacquer, 0, .66, 0, 0, Math.PI / 4, 0);
-  roof.scale.set(1, 1, .72);
-  [[-.31, .19], [.31, .19], [-.31, -.19], [.31, -.19]].forEach(([x, z]) => add(shrine, g(new THREE.ConeGeometry(.018, .09, 8)), M.gold, x, .64, z, x < 0 ? .4 : -.4, 0, x < 0 ? .5 : -.5));
-  add(shrine, g(new THREE.SphereGeometry(.035, 12, 8)), M.gold, 0, .75, 0);
-  // bên trong: hai tượng vàng, bát hương, đôi đèn đỏ, đĩa quả
-  [-.1, .1].forEach(x => {
-    add(shrine, g(new THREE.CylinderGeometry(.035, .045, .1, 12)), M.gold, x, .1, -.08);
-    add(shrine, g(new THREE.SphereGeometry(.03, 12, 8)), M.gold, x, .18, -.08);
-  });
-  add(shrine, g(new THREE.CylinderGeometry(.045, .035, .05, 16)), M.gold, 0, .07, .05);
-  [-.2, .2].forEach(x => add(shrine, g(new THREE.CylinderGeometry(.022, .03, .09, 12)), M.lampRed, x, .09, .08));
-  add(shrine, g(new THREE.CylinderGeometry(.07, .05, .015, 16)), M.gold, .12, .05, .1);
-  [[.1, .09], [.14, .11], [.12, .13]].forEach(([x, z]) => add(shrine, g(new THREE.SphereGeometry(.022, 10, 8)), M.fruit, x, .075, z));
-  contact(altar, .8, .7, 0, 0);
-  stage(altar, 'drop', 1.6, .55);
 
   /* ---------- bàn họp dài ---------- */
   const TL = 2.4, TW = 1.0, TZ = -.55;
