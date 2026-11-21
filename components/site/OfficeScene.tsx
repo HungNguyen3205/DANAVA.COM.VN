@@ -553,7 +553,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   if (cb.qrUrl) {
     const q = qrcode(0, 'H'); q.addData(cb.qrUrl); q.make();
     const n = q.getModuleCount(), quiet = 2, c0 = (n - 1) / 2;
-    QS = Math.min(W, D) * .7;   // nhỏ gọn giữa sàn, vẫn thấy sàn gỗ và đế xung quanh
+    QS = Math.min(W, D) * .55;   // nhỏ gọn giữa sàn   // nhỏ gọn giữa sàn, vẫn thấy sàn gỗ và đế xung quanh
     const cell = QS / (n + quiet * 2), logoR = Math.max(2, Math.round(n * .11));
     qrGroup = new THREE.Group(); qrGroup.visible = false; model.add(qrGroup);
     const plateMat = new THREE.MeshBasicMaterial({ color: 0xfffaf2 }); disposables.push(plateMat);
@@ -580,8 +580,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const logoMat = new THREE.MeshBasicMaterial({ map: logoTex, transparent: true }); disposables.push(logoMat);
     const logo = new THREE.Mesh(g(new THREE.PlaneGeometry(lw * .88, lw * .88 * 352 / 709)), logoMat); logo.rotation.x = -Math.PI / 2; logo.position.y = .085; qrGroup.add(logo);
   }
-  let qrK = 0, qrGoal = 0, builtNow = false, latched = false, lockUntil = 0;
-  // Vừa hoàn thiện: chặn lướt XUỐNG khoảng 3 s (1,5 s nút QR rơi xuống + chừng 1 s để khách chọn), lướt lên vẫn được
+  let qrK = 0, qrGoal = 0, builtNow = false, latched = false, lockUntil = 0, lockArmed = false;
+  // Vừa hoàn thiện: chặn lướt XUỐNG khoảng 5 s để nút QR rơi xuống và khách kịp chọn; lướt lên vẫn được
   const onLockWheel = (e: WheelEvent) => { if (e.deltaY > 0 && performance.now() < lockUntil) e.preventDefault(); };
   const onLockKey = (e: KeyboardEvent) => { if (performance.now() < lockUntil && ['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) e.preventDefault(); };
   window.addEventListener('wheel', onLockWheel, { passive: false });
@@ -613,7 +613,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     camera.aspect = w / h;
     const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
     fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .84;
-    qrDist = (QS / 2 * 1.6) / Math.tan(Math.min(vf, hf)) + .3;   // nhìn thẳng từ trên xuống: mã chiếm khoảng nửa khung, thấy cả sàn
+    qrDist = (QS / 2 * 2.3) / Math.tan(Math.min(vf, hf)) + .3;   // nhìn thẳng từ trên xuống: mã chiếm khoảng nửa khung, thấy cả sàn
     camera.updateProjectionMatrix();
     wake();
   };
@@ -728,10 +728,12 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const prevP = pS;
     if (scrollMode) {
       const sp = scrollP();
-      if (!latched && sp >= .85) { latched = true; lockUntil = performance.now() + 3000; }   // hoàn thiện → dừng ~3 s
+      if (!latched && sp >= .85) { latched = true; lockUntil = Infinity; lockArmed = true; }   // tới mốc hoàn thiện → giữ yên trang tới khi dựng xong
       else if (latched && sp < .55) latched = false;                                            // lướt ngược xa mới tháo
       const tg = latched ? 1 : Math.min(1, sp / .85);
       pS += (tg - pS) * .14; if (Math.abs(tg - pS) < .0005) pS = tg;
+      if (lockArmed && pS > .97) { lockArmed = false; lockUntil = performance.now() + 5000; }   // dựng xong thật sự → dừng thêm ~5 s
+      if (!latched && lockArmed) { lockArmed = false; lockUntil = 0; }
     }
     const lift = applyIntro(t);
     const built = scrollMode ? pS > .97 : t > INTRO;
