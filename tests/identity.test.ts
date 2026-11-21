@@ -3,20 +3,27 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { initial, validateContent } from '../lib/content.ts';
 import { normalizeContent } from '../lib/content-defaults.ts';
+import { HUDI_WEBSITE_SHOWCASE } from '../lib/showcase-seeds.ts';
 import { showcaseFor, splitFeatured, showcaseCaseStudies, sortServices } from '../lib/site-queries.ts';
 import { legacyRedirects } from '../lib/legacy-redirects.ts';
 import { resolveValidService } from '../lib/contact-services.ts';
 
 const norm = () => normalizeContent(structuredClone(initial));
 
-test('dữ liệu production cũ (5 giải pháp, chưa có showcase) được bổ sung Sự kiện & Truyền thông và portfolio', () => {
+test('dữ liệu production cũ được bổ sung Tổ chức sự kiện, portfolio và tên Marketing mới', () => {
   const legacy = structuredClone(initial);
   legacy.services = legacy.services.filter(s => s.id !== 'events');
+  const oldMarketing = legacy.services.find(s => s.id === 'marketing')!;
+  oldMarketing.title = 'Digital Marketing';
+  oldMarketing.seoTitle = 'Digital Marketing cho doanh nghiệp dịch vụ';
   delete legacy.showcase;
   assert.equal(validateContent(legacy), true);
   const n = normalizeContent(legacy);
   assert.equal(validateContent(n), true);
-  assert.ok(n.services.some(s => s.id === 'events' && s.slug === 'su-kien-truyen-thong'));
+  assert.equal(n.services.find(s => s.slug === 'su-kien-truyen-thong')?.title, 'Tổ chức sự kiện');
+  const marketing = n.services.find(s => s.slug === 'digital-marketing');
+  assert.equal(marketing?.title, 'Marketing & Truyền thông');
+  assert.equal(marketing?.seoTitle, 'Marketing & Truyền thông cho doanh nghiệp dịch vụ');
   assert.deepEqual(sortServices(n.services).map(s => s.id), ['studio', 'website', 'marketing', 'events', 'travel', 'community']);
   assert.ok((n.showcase || []).length > 10);
 });
@@ -54,6 +61,19 @@ test('admin đổi mục nổi bật và thứ tự thì trang hiển thị theo
   assert.equal(rest[0].id, 'web-vinhomes-hai-van-bay');
 });
 
+test('thư viện đã lưu nhận dự án HUDI và giữ chỉnh sửa của quản trị viên', () => {
+  const legacy = norm();
+  legacy.showcase = legacy.showcase!.filter(item => item.id !== HUDI_WEBSITE_SHOWCASE.id);
+
+  const updated = normalizeContent(legacy);
+  const hudi = splitFeatured(showcaseFor(updated, 'website')).rest.find(item => item.slug === 'hudi-sofa-website');
+  assert.equal(hudi?.url, 'https://hudisofa.com/');
+  assert.ok(fs.existsSync('public' + hudi.image), hudi.image);
+
+  hudi.published = false;
+  assert.equal(normalizeContent(updated).showcase!.find(item => item.id === hudi.id)?.published, false);
+});
+
 test('mục showcase: không công khai khi thiếu ảnh, case study cần nội dung, slug không trùng dự án', () => {
   const n = norm();
   const a = structuredClone(n); a.showcase![0] = { ...a.showcase![0], image: '' };
@@ -81,7 +101,7 @@ test('URL truyền thông/media cũ chuyển tới trang Sự kiện & Truyền 
   assert.equal(map.get('/truyen-thong/'), '/giai-phap/su-kien-truyen-thong/');
   assert.equal(map.get('/digital-marketing/'), '/giai-phap/digital-marketing/', 'URL marketing cũ về trang Digital Marketing');
   for (const d of map.values()) assert.ok(!map.has(d));
-  assert.equal(resolveValidService('su-kien-truyen-thong'), 'Tổ chức sự kiện, thi công không gian & truyền thông sự kiện');
+  assert.equal(resolveValidService('su-kien-truyen-thong'), 'Tổ chức sự kiện');
 });
 
 test('hiệu ứng mới có nhánh giảm chuyển động', () => {

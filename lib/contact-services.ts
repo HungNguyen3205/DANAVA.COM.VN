@@ -24,15 +24,15 @@ export const VALID_CONTACT_SERVICES: ValidContactService[] = [
   },
   {
     id: 'digital-marketing',
-    label: 'Marketing & Vận hành truyền thông tổng thể',
+    label: 'Marketing & Truyền thông',
     slug: 'digital-marketing',
     category: 'Truyền thông'
   },
   {
     id: 'su-kien-truyen-thong',
-    label: 'Tổ chức sự kiện, thi công không gian & truyền thông sự kiện',
+    label: 'Tổ chức sự kiện',
     slug: 'su-kien-truyen-thong',
-    category: 'Sự kiện & Truyền thông'
+    category: 'Sự kiện'
   },
   {
     id: 'media-production',
@@ -97,13 +97,13 @@ export function resolveValidService(queryParam?: string | null): string {
   if (needle.includes('web') || needle.includes('landing')) {
     return byId('thiet-ke-website');
   }
-  if (needle.includes('marketing') || needle.includes('quang-cao') || needle.includes('fanpage')) {
+  if (needle.includes('marketing') || needle.includes('truyen-thong') || needle.includes('quang-cao') || needle.includes('fanpage')) {
     return byId('digital-marketing');
   }
   if (needle.includes('media') || needle.includes('video') || needle.includes('tvc') || needle.includes('anh')) {
     return byId('media-production');
   }
-  if (needle.includes('event') || needle.includes('booth') || needle.includes('truyen-thong')) {
+  if (needle.includes('event') || needle.includes('booth')) {
     return byId('su-kien-truyen-thong');
   }
   if (needle.includes('travel') || needle.includes('du-lich') || needle.includes('retreat') || needle.includes('su-kien')) {

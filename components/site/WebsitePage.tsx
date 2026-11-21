@@ -42,11 +42,11 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
         <div className="s-container wb-hero__grid">
           <div className="wb-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/', label: 'Giải pháp' }, { label: service.title }]} />
-            <p className="wb-hero__kicker">Thiết kế website · Portfolio</p>
+            <p className="wb-hero__kicker">Thiết kế theo thương hiệu · Portfolio</p>
             <h1 className="wb-hero__title" id="wb-title">{service.title}</h1>
             <p className="wb-hero__lead">{service.heroLead || service.description}</p>
             <div className="s-row s-stack-m">
-              <Link className="s-btn s-btn--primary s-btn--lg" href={contactHref}>Nhận báo giá website</Link>
+              <Link className="s-btn s-btn--primary s-btn--lg" href={contactHref}>Nhận tư vấn Website & Landing Page</Link>
               <a className="s-btn s-btn--secondary s-btn--lg" href="#du-an-web">Xem dự án <ArrowDown aria-hidden="true" /></a>
             </div>
             <p className="wb-hero__count"><strong>{items.length}</strong> website & nền tảng đang trưng bày · <a href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a></p>
@@ -60,7 +60,7 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
       </section>
 
       {lead && (
-        <section className="wb-featured" aria-label="Dự án nổi bật">
+        <section className="wb-featured" id={lead.slug} tabIndex={-1} aria-label="Dự án nổi bật">
           <div className="s-container">
             <FeaturedShowcase item={lead} id="wb-featured-title" />
           </div>
@@ -123,7 +123,7 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
       <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
       <RelatedPosts posts={postsForService(data, service.id, 3)} data={data} title="Bài viết về website & tên miền" />
       <ServiceLinks services={sortServices(data.services).filter(s => ['studio', 'events', 'travel'].includes(s.id))} title="Kết hợp cùng website" />
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Nhận báo giá website' }} />
+      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: contactHref, label: 'Nhận tư vấn Website & Landing Page' }} />
     </main>
   );
 }

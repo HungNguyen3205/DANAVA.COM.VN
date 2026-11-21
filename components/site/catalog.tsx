@@ -56,8 +56,8 @@ export function offeringsFrom(items: EcosystemItem[] | undefined): Offering[] {
 export const SERVICE_META: Record<string, { icon: LucideIcon; tone: Tone; group: GroupId; image?: string; imageAlt?: string; kicker: string }> = {
   studio: { icon: LayoutDashboard, tone: 'blue', group: 'phan-mem', image: '/assets/presentation/studio-dashboard.webp', imageAlt: 'Màn hình tổng quan DANAVA Studio', kicker: 'Phần mềm quản lý' },
   website: { icon: Globe, tone: 'sky', group: 'marketing', kicker: 'Không gian số' },
-  marketing: { icon: Megaphone, tone: 'orange', group: 'marketing', image: '/assets/legacy/event-session.webp', imageAlt: 'Ảnh tổng kết có khung nhận diện cho workshop do DANAVA tổ chức', kicker: 'Digital Marketing' },
-  events: { icon: Clapperboard, tone: 'navy', group: 'trai-nghiem', image: '/assets/profile/set-stage.webp', imageAlt: 'Sân khấu và đạo cụ phim trường tại Nhà hát Trưng Vương', kicker: 'Sự kiện & Truyền thông' },
+  marketing: { icon: Megaphone, tone: 'orange', group: 'marketing', image: '/assets/legacy/event-session.webp', imageAlt: 'Ảnh tổng kết có khung nhận diện cho workshop do DANAVA tổ chức', kicker: 'Chiến lược · Nội dung · Quảng cáo' },
+  events: { icon: Clapperboard, tone: 'navy', group: 'trai-nghiem', image: '/assets/profile/set-stage.webp', imageAlt: 'Sân khấu và đạo cụ phim trường tại Nhà hát Trưng Vương', kicker: 'Sân khấu · Thi công · Điều phối' },
   travel: { icon: CalendarDays, tone: 'green', group: 'trai-nghiem', image: '/assets/legacy/community.webp', imageAlt: 'Cộng đồng yoga tập luyện ngoài trời', kicker: 'Du lịch trải nghiệm' },
   community: { icon: Users, tone: 'navy', group: 'trai-nghiem', image: '/assets/legacy/community.webp', imageAlt: 'Cộng đồng yoga tập luyện ngoài trời', kicker: 'Cộng đồng' }
 };

@@ -2,7 +2,7 @@
  * Dữ liệu mặc định cho bộ sưu tập trưng bày (data.showcase).
  * - Website & Landing Page: danh sách sản phẩm trước đây nằm cứng trong components/site/portfolio.ts.
  *   Đã gỡ theo yêu cầu (19/11/2026): Bước Chạy Nhịp Sống, Omachi, AURUM, DriveRent.
- * - Sự kiện & Truyền thông: các chương trình trong Company Profile 2026 (trước đây ở trang Marketing).
+ * - Tổ chức sự kiện: các chương trình trong Company Profile 2026 (trước đây ở trang Marketing).
  * Phạm vi (scope) chỉ ghi điều tư liệu có sẵn nêu rõ; chương trình chưa rõ phạm vi để scope rỗng
  * và chỉ hiển thị như hình ảnh hoạt động, không gắn nhãn "DANAVA thực hiện…".
  * Ảnh Vinhomes Hải Vân Bay chụp từ website đang chạy (public/assets/portfolio/vinhomes/sources.json).
@@ -21,6 +21,17 @@ const item = (x: Seed): ShowcaseItem => ({
 });
 
 export const WEB_CATEGORIES = ['Landing page', 'Website thương hiệu', 'Nền tảng & ứng dụng', 'Bán hàng & đặt chỗ'];
+
+export const HUDI_WEBSITE_SHOWCASE = item({
+  id: 'web-hudi-sofa', slug: 'hudi-sofa-website', serviceId: 'website',
+  name: 'HUDI Sofa', kind: 'Website thương hiệu nội thất', category: 'Website thương hiệu',
+  description: 'Website giới thiệu các bộ sưu tập sofa và nội thất của HUDI Sofa, với danh mục sản phẩm, bài tư vấn chọn nội thất và thông tin liên hệ showroom.',
+  image: '/assets/portfolio/hudi-sofa/desktop.webp',
+  url: 'https://hudisofa.com/',
+  tags: ['Danh mục sản phẩm', 'Bài tư vấn', 'Showroom'],
+  scope: ['Thiết kế website giới thiệu thương hiệu và sản phẩm'],
+  updated: '2026-11-21'
+});
 
 export const SHOWCASE_SEEDS: ShowcaseItem[] = [
   /* -------------------------------------------- Website & Landing Page */
@@ -57,6 +68,7 @@ export const SHOWCASE_SEEDS: ShowcaseItem[] = [
     seoTitle: 'Case study thiết kế website Vinhomes Hải Vân Bay',
     seoDescription: 'Cách DANAVA thiết kế landing page Vinhomes Hải Vân Bay: ngôn ngữ nghỉ dưỡng, kể chuyện theo một ngày, quỹ căn tra cứu ngay trên trang và trải nghiệm ưu tiên điện thoại.'
   }),
+  HUDI_WEBSITE_SHOWCASE,
   item({ id: 'web-danava-go', slug: 'danava-go', serviceId: 'website', name: 'DANAVA GO', kind: 'Nền tảng đặt vé xe khách', category: 'Nền tảng & ứng dụng', description: 'Đặt vé xe khách đa nhà xe: tìm chuyến, chọn ghế cabin/limousine, vé điện tử và cổng quản trị điều phối cho từng nhà xe.', image: '/assets/portfolio/danava-go.webp', url: 'https://danavago.com', tags: ['React 19', 'Laravel', 'Đa nhà xe'] }),
   item({ id: 'web-danava-vn', slug: 'danava-vn', serviceId: 'website', name: 'danava.vn', kind: 'Nền tảng wellness', category: 'Nền tảng & ứng dụng', description: 'Kết nối phòng gym, yoga, pilates, khóa học, tour wellness và mua sắm; cơ sở vận hành bằng DANAVA Studio.', image: '/assets/portfolio/danava-vn.webp', url: 'https://danava.vn', tags: ['Marketplace', 'Hội viên', 'Đặt lịch'] }),
   item({ id: 'web-glg', slug: 'glg-the-collection', serviceId: 'website', name: 'GLG · The Collection', kind: 'Website chuỗi dịch vụ', category: 'Website thương hiệu', description: 'Năm không gian trong một thương hiệu: khách sạn, cà phê, mầm non, yoga và spa, chuyển cảnh liền mạch giữa các trang.', image: '/assets/portfolio/glg.webp', url: 'https://glg.danava.com.vn', tags: ['View Transition', 'Đa thương hiệu'] }),
@@ -69,7 +81,7 @@ export const SHOWCASE_SEEDS: ShowcaseItem[] = [
   item({ id: 'web-glg-hotel', slug: 'glg-hotel', serviceId: 'website', name: 'GLG Hotel', kind: 'Website đặt phòng khách sạn', category: 'Bán hàng & đặt chỗ', description: 'Đặt phòng khách sạn tiếng Việt với khu vực vận hành riêng cho lễ tân và quản lý.', published: false }),
   item({ id: 'web-danava-page', slug: 'danava-page', serviceId: 'website', name: 'DANAVA Page', kind: 'Công cụ nội dung bằng AI', category: 'Nền tảng & ứng dụng', description: 'Công cụ nội bộ tạo nội dung bằng AI và đăng bài lên Facebook Page, có xem trước bài viết trước khi đăng.', published: false }),
 
-  /* -------------------------------------------- Sự kiện & Truyền thông */
+  /* -------------------------------------------- Tổ chức sự kiện */
   item({ id: 'ev-phim-truong', slug: 'dao-cu-phim-truong-trung-vuong', serviceId: 'events', name: 'Đạo cụ phim trường', kind: 'Sân khấu & đạo cụ', category: 'Sân khấu & đạo cụ', place: 'Nhà hát Trưng Vương', description: 'Sân khấu và đạo cụ phim trường tại Nhà hát Trưng Vương.', image: PF + 'set-stage.webp', gallery: [{ src: PF + 'set-train.webp', caption: 'Đạo cụ phim trường' }, { src: PF + 'set-rocket.webp', caption: 'Đạo cụ phim trường' }], scope: ['Đạo cụ phim trường'], featured: true }),
   item({ id: 'ev-ariyana', slug: 'booth-su-kien-ariyana', serviceId: 'events', name: 'Booth sự kiện tại Ariyana', kind: 'Booth & không gian trưng bày', category: 'Booth & trưng bày', place: 'Ariyana', description: 'Hệ vách, nội dung sản phẩm và ánh sáng được kết hợp trong cùng không gian giới thiệu.', image: PF + 'ariyana-booth.webp', gallery: [{ src: PF + 'ariyana-build.webp', caption: 'Thi công booth' }], scope: ['Thi công booth & không gian trưng bày', 'Kết hợp hệ vách, nội dung sản phẩm và ánh sáng'], featured: true }),
   item({ id: 'ev-highlands', slug: 'dem-trang-ram-highlands', serviceId: 'events', name: 'Đêm Trăng Rằm Highlands', kind: 'Trang trí sự kiện', category: 'Trang trí & không gian', place: 'Highlands đường Bạch Đằng', description: 'Trang trí Đêm Trăng Rằm tại Highlands Bạch Đằng.', image: PF + 'highlands-1.webp', gallery: [{ src: PF + 'highlands-3.webp', caption: 'Đêm Trăng Rằm' }, { src: PF + 'highlands-2.webp', caption: 'Đêm Trăng Rằm' }, { src: PF + 'highlands-4.webp', caption: 'Đêm Trăng Rằm' }], scope: ['Trang trí không gian sự kiện Đêm Trăng Rằm'] }),

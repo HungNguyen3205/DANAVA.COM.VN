@@ -20,7 +20,7 @@ export function ServicesIndex() {
   const needs = [
     { icon: Settings2, tone: 'blue' as const, need: 'Tôi muốn vận hành cơ sở gọn hơn', answer: 'Quản lý hội viên, lịch lớp, check-in và doanh thu tự động.', id: 'studio' },
     { icon: TrendingUp, tone: 'orange' as const, need: 'Tôi muốn có website bán hàng tốt hơn', answer: 'Website thiết kế riêng, ưu tiên điện thoại, có biểu mẫu nhận yêu cầu tư vấn.', id: 'website' },
-    { icon: PartyPopper, tone: 'green' as const, need: 'Tôi muốn tổ chức tour hoặc sự kiện', answer: 'Retreat, hội thảo, workshop và team building trọn gói.', id: 'travel' }
+    { icon: PartyPopper, tone: 'green' as const, need: 'Tôi muốn tổ chức sự kiện', answer: 'Kịch bản, sân khấu, thi công, thiết bị, nhân sự và điều phối chương trình.', id: 'events' }
   ];
 
   return (

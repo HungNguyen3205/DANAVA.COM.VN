@@ -241,9 +241,9 @@ export function getStaffDetail(person: Person): StaffDetail {
       bio: 'Phụ trách truyền thông cho sự kiện và các hoạt động cộng đồng của DANAVA.',
       portfolio: [
         {
-          title: 'Sự kiện & Truyền thông',
+          title: 'Tổ chức sự kiện',
           href: '/giai-phap/su-kien-truyen-thong/',
-          desc: 'Sự kiện, không gian thương hiệu và truyền thông sự kiện',
+          desc: 'Kịch bản, sân khấu, thi công và điều phối chương trình',
           badge: 'Giải pháp dịch vụ'
         },
         {

@@ -76,8 +76,17 @@ test('hồ sơ nhân sự: thêm người mới sau khi đã lưu hồ sơ → v
 test('menu Giải pháp: 3 cột mặc định; chặn đường dẫn không an toàn', () => {
   const d = structuredClone(initial);
   const m = block(d, 'menu');
-  assert.deepEqual(m.columns.map(c => c.title), ['Vận hành DANAVA', 'Marketing', 'Cộng đồng']);
-  assert.deepEqual(m.columns[1].items.map(i => i.label), ['Sự kiện', 'Truyền thông', 'Marketing', 'Landing page']);
+  assert.deepEqual(m.columns.map(c => c.title), ['Vận hành DANAVA', 'Dịch vụ doanh nghiệp', 'Cộng đồng']);
+  assert.deepEqual(m.columns[1].items.map(i => [i.label, i.href]), [
+    ['Marketing & Truyền thông', '/giai-phap/digital-marketing/'],
+    ['Website & Landing Page', '/giai-phap/thiet-ke-website/'],
+    ['Tổ chức sự kiện', '/giai-phap/su-kien-truyen-thong/']
+  ]);
+  const old = structuredClone(m);
+  old.columns[1].title = 'Digital Marketing';
+  old.columns[1].items.forEach((item, index) => { item.label = ['Marketing', 'Landing page', 'Sự kiện'][index]; });
+  old.columns[1].items.push({ ...old.columns[1].items[2], label: 'Truyền thông', href: '/giai-phap/su-kien-truyen-thong/#hang-muc' });
+  assert.deepEqual(block({ ...d, blocks: { menu: old } }, 'menu'), m);
   assert.deepEqual(m.columns[2].items.map(i => i.label), ['Dự án', 'Đối tác', 'Đội ngũ']);
   const work = m.columns[0].items.find(i => i.label === 'DANAVA Work')!;
   assert.equal(work.href, '/giai-phap/danava-work/', 'DANAVA Work dẫn tới trang giới thiệu (nút trên trang mở workspace)');

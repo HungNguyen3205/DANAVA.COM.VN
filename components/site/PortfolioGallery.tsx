@@ -34,7 +34,7 @@ export function PortfolioGallery({ items, label = 'Lọc sản phẩm theo loạ
           const size = k % 5 === 0 ? 'pf__item--wide' : k % 5 === 3 ? 'pf__item--tall' : '';
           const href = w.caseStudy ? `/du-an/${w.slug}/` : w.url;
           return (
-            <li key={w.id} className={`pf__item ${size}`}>
+            <li key={w.id} id={w.slug} tabIndex={-1} className={`pf__item ${size}`}>
               <div className="pf__shot">
                 <img src={w.image} alt={`Giao diện ${w.name}`} loading="lazy" decoding="async" width={1200} height={750} />
               </div>

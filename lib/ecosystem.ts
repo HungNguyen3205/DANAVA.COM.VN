@@ -104,12 +104,12 @@ export const initialEcosystemUnits: EcosystemUnit[] = [
   },
 
   {
-    id: 'media', name: 'DANAVA Media · Sự kiện & Truyền thông', shortName: 'Sự kiện', category: 'du-lich-su-kien', categoryName: 'Sự kiện & Du lịch',
+    id: 'media', name: 'DANAVA Media · Tổ chức sự kiện', shortName: 'Sự kiện', category: 'du-lich-su-kien', categoryName: 'Sự kiện & Du lịch',
     categoryKicker: 'Sự kiện & sản xuất', stage: 'thu-hut',
     targetAudience: 'Doanh nghiệp, thương hiệu bán lẻ cần sự kiện và không gian thương hiệu',
-    description: 'Ý tưởng, thiết kế thi công booth, backdrop, đạo cụ, sân khấu; thiết bị, nhân sự biểu diễn, điều phối và ghi hình sự kiện.',
-    features: ['Thi công booth & không gian', 'Âm thanh, ánh sáng, LED', 'MC, biểu diễn, ghi hình'],
-    officialLink: { label: 'Xem Sự kiện & Truyền thông', href: '/giai-phap/su-kien-truyen-thong/' },
+    description: 'Ý tưởng, thiết kế thi công booth, backdrop, đạo cụ, sân khấu; thiết bị, nhân sự biểu diễn và điều phối sự kiện.',
+    features: ['Thi công booth & không gian', 'Âm thanh, ánh sáng, LED', 'MC, biểu diễn và điều phối'],
+    officialLink: { label: 'Xem Tổ chức sự kiện', href: '/giai-phap/su-kien-truyen-thong/' },
     badge: 'Sự kiện', image: '/assets/profile/set-stage.webp', screenshot: '/assets/profile/set-stage.webp',
     visible: true, statusText: 'Nhận dự án'
   },
