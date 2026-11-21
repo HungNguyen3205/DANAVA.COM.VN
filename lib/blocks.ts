@@ -28,6 +28,7 @@ const COMPANY = {
   supportEmail: SERVICE_POLICY_METADATA.supportEmail,
   facebook: SOCIAL.facebook,
   youtube: SOCIAL.youtube,
+  tiktok: SOCIAL.tiktok,
   mission: company.mission,
   overview: company.overview
 };

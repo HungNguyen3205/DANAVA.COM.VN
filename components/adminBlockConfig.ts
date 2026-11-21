@@ -21,7 +21,7 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
     config: {
       labels: { ...COMMON, companyName: 'Tên pháp nhân', representative: 'Người đại diện', address: 'Địa chỉ (ngắn, hiển thị chân trang)', legalAddress: 'Địa chỉ đầy đủ (pháp lý, bản đồ)',
         street: 'Số nhà, đường (cho Google)', city: 'Tỉnh/thành (cho Google)', hours: 'Giờ làm việc', mapUrl: 'Link chỉ đường Google Maps', supportEmail: 'Email hỗ trợ kỹ thuật',
-        facebook: 'Facebook (https://…)', youtube: 'YouTube (https://…)', mission: 'Sứ mệnh (một câu)', overview: 'Giới thiệu ngắn (trang chủ)' },
+        facebook: 'Facebook (https://…)', youtube: 'YouTube (https://…)', tiktok: 'TikTok (https://…)', mission: 'Sứ mệnh (một câu)', overview: 'Giới thiệu ngắn (trang chủ)' },
       long: ['overview', 'mission']
     }
   },

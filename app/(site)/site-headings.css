@@ -24,3 +24,22 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
 .s-mega__cta:hover { transform: translateY(-1px); }
 .s-mega__cta:hover svg { transform: translateX(3px); }
 .s-mega__cta:focus-visible { outline: 3px solid #13244f; outline-offset: 2px; }
+
+/* ==== Nút liên hệ nổi: đứng yên khi cuộn (bỏ cơ chế tự né), thêm nút mạng xã hội + bản đồ nhỏ, icon nét mảnh ==== */
+.s-quick, .s-quick.is-dodged { transform: none; opacity: 1; pointer-events: auto; transition: none; }
+.s-quick__social { display: none; }
+@media (min-width: 901px) {
+  .s-quick__social { display: grid; justify-items: center; gap: 8px; padding-bottom: 2px; }
+  .s-quick__mini { position: relative; display: grid; place-items: center; width: 40px; height: 40px; margin: 0 auto; border-radius: 50%; background: rgba(255, 255, 255, .92);
+    border: 1px solid rgba(19, 36, 79, .1); color: #13244f; box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .45); text-decoration: none; transition: color .2s, transform .2s, border-color .2s; }
+  .s-quick__mini svg { width: 18px; height: 18px; }
+  .s-quick__mini:hover { transform: translateY(-2px); border-color: rgba(242, 107, 29, .4); }
+  .s-quick__mini--facebook:hover { color: #1877f2; }
+  .s-quick__mini--youtube:hover { color: #ff0000; }
+  .s-quick__mini--tiktok:hover { color: #111; }
+  .s-quick__mini--map:hover { color: #f26b1d; }
+  .s-quick__mini:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
+  .s-quick__mini .s-quick__tip { display: block; position: absolute; right: calc(100% + 10px); top: 50%; padding: 5px 9px; border-radius: 8px; background: #13244f; color: #fff; font: 600 12px/1.2 var(--font-sans), sans-serif;
+    white-space: nowrap; opacity: 0; transform: translate(4px, -50%); pointer-events: none; transition: opacity .2s, transform .2s; }
+  .s-quick__mini:hover .s-quick__tip, .s-quick__mini:focus-visible .s-quick__tip { opacity: 1; transform: translate(0, -50%); }
+}

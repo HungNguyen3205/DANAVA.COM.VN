@@ -310,39 +310,41 @@ export function MobileBar() {
   );
 }
 
-/** Nút liên hệ nổi góc phải: Zalo + gọi hotline (điện thoại: nằm ngay trên thanh tab). */
+/** Icon mạng xã hội nét mảnh (bộ lucide không có logo thương hiệu) */
+const SocialIcon = ({ kind }: { kind: 'facebook' | 'youtube' | 'tiktok' }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {kind === 'facebook' && <path d="M14.5 8H16.5V4.5H14.2C11.9 4.5 10.5 6 10.5 8.3V10.5H8V14H10.5V20.5H14V14H16.4L16.9 10.5H14V8.6C14 8.2 14.2 8 14.5 8Z" />}
+    {kind === 'youtube' && <><rect x="3" y="6" width="18" height="12" rx="4" /><path d="M10.5 9.6V14.4L14.6 12Z" /></>}
+    {kind === 'tiktok' && <path d="M14 4C14.4 6.3 15.8 7.7 18 8V11C16.5 11 15.1 10.5 14 9.7V15A5 5 0 1 1 9 10V13A2 2 0 1 0 11 15V4Z" />}
+  </svg>
+);
+
+/** Nút liên hệ nổi góc phải: mạng xã hội + bản đồ (máy tính) và Zalo + gọi hotline. Cụm nút đứng yên khi cuộn. */
 export function QuickContact() {
   const path = usePathname() || '/';
   const { data } = useSite();
+  const co = block(data, 'company');
   const phone = (data.phone || CONTACT.phone).replace(/\D/g, '');
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [dodge, setDodge] = useState(false);
-
-  // Tự né: khi cụm nút nổi đang chồng lên nút bấm, liên kết CTA hoặc ô nhập liệu thì trượt ra mép màn hình.
-  useEffect(() => {
-    let raf = 0;
-    const check = () => {
-      raf = 0;
-      const box = ref.current?.getBoundingClientRect();
-      if (!box) return;
-      const pad = 6;
-      const hit = [...document.querySelectorAll<HTMLElement>('main .s-btn, main input, main select, main textarea, main button, .s-footer a')].some(el => {
-        const r = el.getBoundingClientRect();
-        return r.width > 0 && r.bottom > box.top - pad && r.top < box.bottom + pad && r.right > box.left - pad && r.left < box.right + pad;
-      });
-      setDodge(hit);
-    };
-    const req = () => { if (!raf) raf = requestAnimationFrame(check); };
-    check();
-    window.addEventListener('scroll', req, { passive: true });
-    window.addEventListener('resize', req);
-    const t = setTimeout(check, 600);
-    return () => { window.removeEventListener('scroll', req); window.removeEventListener('resize', req); cancelAnimationFrame(raf); clearTimeout(t); };
-  }, [path]);
+  const socials = [
+    { key: 'facebook', href: co.facebook, label: 'Facebook DANAVA', icon: <SocialIcon kind="facebook" /> },
+    { key: 'youtube', href: co.youtube, label: 'YouTube DANAVA', icon: <SocialIcon kind="youtube" /> },
+    { key: 'tiktok', href: co.tiktok, label: 'TikTok DANAVA', icon: <SocialIcon kind="tiktok" /> },
+    { key: 'map', href: co.mapUrl, label: 'Chỉ đường tới văn phòng DANAVA', icon: <MapPin aria-hidden="true" strokeWidth={1.8} /> }
+  ].filter(x => x.href && safeHref(x.href));
 
   if (path.startsWith('/lien-he')) return null;
   return (
-    <div ref={ref} className={`s-quick${dodge ? ' is-dodged' : ''}`} aria-label="Liên hệ nhanh">
+    <div className="s-quick" aria-label="Liên hệ nhanh">
+      {socials.length > 0 && (
+        <div className="s-quick__social">
+          {socials.map(x => (
+            <a key={x.key} className={`s-quick__mini s-quick__mini--${x.key}`} href={x.href} target="_blank" rel="noopener noreferrer" aria-label={`${x.label} (mở tab mới)`}>
+              {x.icon}
+              <span className="s-quick__tip">{x.label}</span>
+            </a>
+          ))}
+        </div>
+      )}
       <a className="s-quick__btn s-quick__btn--zalo" href={`https://zalo.me/${phone}`} target="_blank" rel="noopener noreferrer" aria-label="Nhắn Zalo cho DANAVA">
         Zalo
         <span className="s-quick__tip">Nhắn Zalo</span>

@@ -18,5 +18,7 @@ export const CONTACT = {
 /** Kênh chính thức (lấy từ trang Liên hệ trên website cũ). */
 export const SOCIAL = {
   facebook: 'https://www.facebook.com/danava.com.vn',
-  youtube: 'https://www.youtube.com/@danavasolutions'
+  youtube: 'https://www.youtube.com/@danavasolutions',
+  /** Theo handle chính thức @danavasolutions (Company Profile 2026); sửa được trong trang quản trị */
+  tiktok: 'https://www.tiktok.com/@danavasolutions'
 };
