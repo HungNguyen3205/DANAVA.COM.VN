@@ -401,3 +401,16 @@
 /* Nút "Nhận tư vấn" trên thanh menu cùng tông cam với nút chính của trang */
 .s-app header .s-btn--primary { background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .9); }
 @media (min-width: 901px) { .hb-curve { width: 20%; } }
+
+/* Thẻ kính trong suốt như ảnh mẫu: nền trắng rất nhẹ, làm mờ nền sau, viền sáng mảnh */
+.hb-glass, .hb-cover__3d .hb-float, .hb-cover .hb-stats {
+  background: linear-gradient(135deg, rgba(255, 255, 255, .42), rgba(255, 255, 255, .16));
+  -webkit-backdrop-filter: blur(16px) saturate(1.25); backdrop-filter: blur(16px) saturate(1.25);
+  border: 1px solid rgba(255, 255, 255, .7);
+  box-shadow: 0 16px 40px -28px rgba(80, 45, 15, .35), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+.hb-glass--sched .is-o { background: rgba(255, 214, 178, .55); }
+.hb-glass--sched .is-b { background: rgba(214, 226, 252, .6); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hb-glass, .hb-cover__3d .hb-float, .hb-cover .hb-stats { background: rgba(255, 255, 255, .82); }
+}

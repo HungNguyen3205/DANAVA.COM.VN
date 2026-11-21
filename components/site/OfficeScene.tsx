@@ -67,7 +67,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   renderer.shadowMap.autoUpdate = false;   // đèn nắng gắn theo khối nổi → chỉ tính lại bóng khi bố cục đổi
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1;
+  renderer.toneMappingExposure = 1.06;
   const canvas = renderer.domElement;
   canvas.className = 'hb-office__canvas';
   el.appendChild(canvas);
@@ -111,7 +111,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   };
   // Sàn: gạch giả gỗ chữ nhật so le, tông mật ong ấm (giảm cam)
   const floorTex = canvasTex(1024, 1024, c => {
-    const tones = ['#b78b60', '#c39a6e', '#a97f57', '#bd9266', '#c8a074', '#b08660'];
+    const tones = ['#c98a4b', '#d69a58', '#bb7b40', '#cf9252', '#dba462', '#c38447'];
     const tw = 128, th = 512;
     c.fillStyle = tones[0]; c.fillRect(0, 0, 1024, 1024);
     for (let col = 0; col < 1024 / tw; col++) {
@@ -123,8 +123,8 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       c.fillStyle = 'rgba(70,45,25,.22)'; c.fillRect(col * tw, 0, 2, 1024);
     }
   }, [1.3, 2.1]);
-  const slatTex = canvasTex(64, 512, c => grain(c, 0, 0, 64, 512, '#4a3022', '#1f130c', true, 30));
-  const panelTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#d8d1c6', '#8f877b', true, 70), [1, 1]);
+  const slatTex = canvasTex(64, 512, c => grain(c, 0, 0, 64, 512, '#5a321d', '#24120a', true, 30));
+  const panelTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#e6d3b6', '#a88a63', true, 70), [1, 1]);
   const tableTex = canvasTex(512, 512, c => { grain(c, 0, 0, 512, 512, '#5b5751', '#2c2a27', false, 60); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(0, 254, 512, 4); });
   const deskTex = canvasTex(512, 256, c => grain(c, 0, 0, 512, 256, '#4a2f22', '#1d110a', false, 50));
   const doorTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#94512a', '#4a230f', true, 40));
@@ -240,7 +240,10 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     shadow: (() => { const m = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: .8 }); disposables.push(m); return m; })(),
     flag: std({ map: flagTex, side: THREE.DoubleSide, roughness: .8 }),
     cert: std({ map: certTex, roughness: .5 }),
-    altar: std({ map: lightWood, roughness: .3, color: 0xc08050 }),
+    altar: std({ map: deskTex, roughness: .3 }),
+    lacquer: std({ color: 0x8e1b14, roughness: .28, metalness: .1 }),
+    lampRed: std({ color: 0xff3b2a, emissive: 0xff2a10, emissiveIntensity: .9, roughness: .4 }),
+    fruit: std({ color: 0xf2a23a, roughness: .5 }),
     stub: std({ map: panelTex, roughness: .8, color: 0xf3eee6 })
   };
 
@@ -369,11 +372,32 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   contact(tv, 1.5, .5, 0, .2, .6);
   stage(tv, 'drop', 1.55, .55);
   // Tủ thờ gỗ góc sau phải
-  const altar = new THREE.Group(); altar.position.set(R - .42, 0, BK + .35); model.add(altar);
-  add(altar, rbox(.55, .9, .42, .02), M.altar, 0, .45, 0);
-  add(altar, rbox(.6, .05, .46, .01), M.altar, 0, .92, 0);
-  add(altar, g(new THREE.SphereGeometry(.12, 20, 14)), M.altar, 0, 1.06, 0);
-  add(altar, rbox(.4, .14, .2, .02), M.altar, 0, 1.02, 0);
+  const altar = new THREE.Group(); altar.position.set(R - .62, 0, BK + .3); model.add(altar);
+  // tủ gỗ tối hai cánh, tay nắm vàng
+  add(altar, rbox(.7, .86, .44, .02), M.altar, 0, .43, 0);
+  add(altar, bx(.004, .7, .004), M.slatBack, 0, .45, .222);
+  [-.06, .06].forEach(xx => add(altar, bx(.015, .1, .02), M.gold, xx, .5, .23));
+  add(altar, rbox(.76, .04, .5, .01), M.altar, 0, .88, 0);
+  // khám thờ sơn đỏ: thân hộp mở mặt trước + mái cong hai tầng, viền vàng
+  const shrine = new THREE.Group(); shrine.position.set(0, .9, 0); altar.add(shrine);
+  add(shrine, rbox(.56, .04, .36, .01), M.lacquer, 0, .02, 0);
+  add(shrine, bx(.56, .5, .02), M.lacquer, 0, .29, -.17);
+  [-.27, .27].forEach(x => { add(shrine, bx(.02, .5, .36), M.lacquer, x, .29, 0); add(shrine, bx(.035, .5, .035), M.gold, x, .29, .17); });
+  add(shrine, bx(.6, .05, .4), M.lacquer, 0, .56, 0);
+  add(shrine, bx(.62, .015, .42), M.gold, 0, .59, 0);
+  const roof = add(shrine, g(new THREE.CylinderGeometry(.08, .44, .12, 4, 1)), M.lacquer, 0, .66, 0, 0, Math.PI / 4, 0);
+  roof.scale.set(1, 1, .72);
+  [[-.31, .19], [.31, .19], [-.31, -.19], [.31, -.19]].forEach(([x, z]) => add(shrine, g(new THREE.ConeGeometry(.018, .09, 8)), M.gold, x, .64, z, x < 0 ? .4 : -.4, 0, x < 0 ? .5 : -.5));
+  add(shrine, g(new THREE.SphereGeometry(.035, 12, 8)), M.gold, 0, .75, 0);
+  // bên trong: hai tượng vàng, bát hương, đôi đèn đỏ, đĩa quả
+  [-.1, .1].forEach(x => {
+    add(shrine, g(new THREE.CylinderGeometry(.035, .045, .1, 12)), M.gold, x, .1, -.08);
+    add(shrine, g(new THREE.SphereGeometry(.03, 12, 8)), M.gold, x, .18, -.08);
+  });
+  add(shrine, g(new THREE.CylinderGeometry(.045, .035, .05, 16)), M.gold, 0, .07, .05);
+  [-.2, .2].forEach(x => add(shrine, g(new THREE.CylinderGeometry(.022, .03, .09, 12)), M.lampRed, x, .09, .08));
+  add(shrine, g(new THREE.CylinderGeometry(.07, .05, .015, 16)), M.gold, .12, .05, .1);
+  [[.1, .09], [.14, .11], [.12, .13]].forEach(([x, z]) => add(shrine, g(new THREE.SphereGeometry(.022, 10, 8)), M.fruit, x, .075, z));
   contact(altar, .8, .7, 0, 0);
   stage(altar, 'drop', 1.6, .55);
 
@@ -513,7 +537,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   stage(right.group, 'rise', .75, .7);
 
   /* ================= ánh sáng ================= */
-  const hemi = new THREE.HemisphereLight(0xfff7ea, 0x5a4a3c, .55); scene.add(hemi);
+  const hemi = new THREE.HemisphereLight(0xffeccc, 0x6a4a30, .6); scene.add(hemi);
   // ánh sáng ban ngày qua cửa kính (bên phải)
   const sun = new THREE.DirectionalLight(0xffe0b0, 2.2);
   sun.position.set(7, 7.5, 2.5); sun.castShadow = true;
