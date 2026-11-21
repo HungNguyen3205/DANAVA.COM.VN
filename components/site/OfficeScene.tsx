@@ -519,7 +519,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   let yaw = 0, vel = 0, drag = false, lastX = 0, userMoved = false;
   let tiltX = 0, tiltY = 0, aimX = 0, aimY = 0;          // nghiêng theo con trỏ (có độ trễ)
   let floatT = 0, lastNow = 0;                           // đồng hồ chuyển động nổi (dừng khi kéo)
-  const target = new THREE.Vector3(0, .45, -.1);
+  const target = new THREE.Vector3(0, .25, -.1);
   const wrap = (el.closest('.hb-cover__3d') as HTMLElement | null) ?? el;
   const hero = (el.closest('.hb-cover') as HTMLElement | null) ?? wrap;
   let fitDist = 20;

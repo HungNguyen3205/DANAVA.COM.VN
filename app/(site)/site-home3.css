@@ -243,3 +243,8 @@
   .hb-curve { left: 26%; top: 80%; width: 30%; height: 16%; }
   .hb-cover .hb-stats { margin-top: 18px; }
 }
+@media (min-width: 901px) {
+  .hb-cover { padding-top: clamp(8px, 1.4vw, 24px); }
+  .hb-cover__3d { min-height: clamp(430px, 40vw, 600px); }
+  .hb-cover__3d .hb-float--a { top: 0; }
+}
