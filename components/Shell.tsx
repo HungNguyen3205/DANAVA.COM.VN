@@ -6,14 +6,19 @@ import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight, Ar
 import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
+import { HrefIcon } from './site/icons';
+
+/** Dòng phụ dưới tên cột mega menu (theo thứ tự cột) */
+const COL_SUB = ['Công nghệ & phần mềm', 'Truyền thông & tăng trưởng', 'Kết nối & phát triển'];
 
 type MenuItemData = { label: string; desc: string; href: string; badge: string; image: string };
 /** Một mục menu Giải pháp: trang trong website → Link; https → tab mới; không có đường dẫn → chỉ hiển thị. */
 function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: () => void; compact?: boolean }) {
   const external = it.href.startsWith('https://');
-  // Menu chỉ dùng chữ (yêu cầu chủ sở hữu 20/11/2026): trường ảnh trong dữ liệu được bỏ qua
+  // Không dùng ảnh (yêu cầu 20/11/2026); mỗi mục có icon nét mảnh theo đường dẫn (yêu cầu 21/11/2026)
   const body = (
     <>
+      {!compact && <HrefIcon href={it.href} className="s-mega__ico" />}
       <span className="s-mega__txt">
         <span className="s-mega__label">
           {it.label}
@@ -111,7 +116,7 @@ export function Header() {
                   <div className="s-mega__cols" style={menu.columns.length === 3 ? undefined : { gridTemplateColumns: `repeat(${menu.columns.length}, minmax(0, 1fr))` }}>
                     {menu.columns.map((col, ci) => (
                       <div key={ci} className="s-mega__col">
-                        <p className="s-mega__head">{col.title}</p>
+                        <p className="s-mega__head"><span className="s-mega__no">{String(ci + 1).padStart(2, '0')}</span><span>{col.title}{COL_SUB[ci] && <small>{COL_SUB[ci]}</small>}</span></p>
                         <ul>
                           {col.items.map((it, ii) => <li key={ii}><MenuItem it={it} onPick={() => setMega(false)} /></li>)}
                         </ul>

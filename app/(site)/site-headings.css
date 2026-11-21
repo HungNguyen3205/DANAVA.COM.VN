@@ -3,3 +3,15 @@
 .s-app :is(h1, h2, h3) em,
 .s-app :is(.s-h1, .s-h2) em { font-style: normal; }
 .s-app :is(h1, h2) em { font-weight: inherit; }
+
+/* ==== Icon nét mảnh trong ô bo góc nền nhạt (menu Giải pháp, trang chủ) ==== */
+.s-ico { display: inline-grid; place-items: center; flex: none; width: 46px; height: 46px; border-radius: 14px; }
+.s-ico svg { width: 23px; height: 23px; }
+.s-ico--blue { background: #eef2fb; color: #1f3a8a; }
+.s-ico--orange { background: #fff1e6; color: #ef6c1e; }
+.s-mega__link { display: flex !important; align-items: center; gap: 14px; }
+a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
+.s-mega__link .s-ico { transition: transform .2s ease; }
+.s-mega__head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px !important; font-size: 16px !important; letter-spacing: .04em !important; color: var(--s-ink, #13244f) !important; }
+.s-mega__head small { display: block; margin-top: 3px; font-size: 13px; font-weight: 500; letter-spacing: 0; text-transform: none; color: #6b7590; }
+.s-mega__no { font-family: var(--font-display), serif; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: 0; color: #f26b1d; }

@@ -2,15 +2,20 @@
  * Trang chủ (server component) — sáng, tối giản theo phong cách trang DANAVA GO:
  * nền kem ấm có quầng cam nhẹ, tiêu đề Playfair Display chữ đứng (navy + nhấn cam), nhãn mục chữ cam nhỏ in hoa.
  * Nội dung theo bộ "Company Profile 2026" (lib/about-danava.ts: PROFILE_2026, ABOUT_DANAVA).
- * Bìa → Đã đồng hành cùng → Về DANAVA → Giá trị (dải chữ) → What we do → Dự án → Why choose us → Tin mới → Liên hệ.
+ * Bố cục lấy ý tưởng trang agency (cleverads.vn), không có phiếu nhập thông tin:
+ * Bìa → 4 giải pháp → Dự án tiêu biểu (tab lọc) → Toàn bộ khách hàng & đối tác → Vì sao chọn DANAVA + mạng lưới
+ * → Sản phẩm tự phát triển → Quy trình 7 bước → Cảm nhận → Blogs → Liên hệ. Mỗi mục có icon nét mảnh (components/site/icons.tsx).
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Check, X, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
 import { knowledgePosts, publicPartners, publicTestimonials, publishedProjects, projectHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, formatDate } from './catalog';
-import { ProjectTile, PostTile, Testimonials } from './blocks';
+import { PostTile, Testimonials } from './blocks';
+import { HomeCases, type HomeCase } from './HomeCases';
+import { IconBox, HrefIcon, WHY_ICONS, PROCESS_ICONS, SERVICE_ICONS, NETWORK_ICONS } from './icons';
+import { MARKETING_ENGAGEMENTS } from '@/lib/marketing-portfolio';
 import { Reveal, CountUp } from './HomeClient';
 import { OfficeScene } from './OfficeScene';
 import { block } from '@/lib/blocks';
@@ -27,11 +32,35 @@ export default function HomePage({ data }: { data: SiteData }) {
   const co = block(data, 'company');
   const partners = publicPartners(data);
   const testimonials = publicTestimonials(data);
-  const projects = (() => {
-    const list = publishedProjects(data);
-    const featured = list.filter(p => p.featured);
-    return (featured.length ? featured : list).slice(0, 3);
+  const allProjects = publishedProjects(data);
+  // Dự án tiêu biểu: case study đã xuất bản (nổi bật trước) + dự án marketing có ảnh thật
+  const cases: HomeCase[] = [
+    ...[...allProjects].sort((x, y) => Number(y.featured) - Number(x.featured)).map(p => ({
+      id: 'p-' + p.id, group: 'product' as const, client: p.client, title: p.title, text: p.summary, image: p.image || undefined,
+      href: projectHref(p), tag: p.industry || p.category || 'Dự án'
+    })),
+    ...MARKETING_ENGAGEMENTS.filter(m => m.image).map(m => ({
+      id: 'm-' + m.id, group: 'marketing' as const, client: m.client, title: m.title, text: m.scope.join(' · '), image: m.image!.src, logo: m.logo,
+      href: '/giai-phap/digital-marketing/#du-an-marketing', tag: m.throughPartner ? 'Qua đối tác' : 'Marketing'
+    }))
+  ];
+  // Toàn bộ khách hàng & đối tác: đối tác trên nền tảng + khách hàng marketing (bỏ trùng theo tên)
+  const logos = (() => {
+    const out: { key: string; name: string; role: string; logo?: string; fill?: boolean; href: string }[] = [];
+    const seen = new Set<string>();
+    for (const c of partners) {
+      const k = c.name.trim().toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+      const project = allProjects.find(p => p.id === c.projectId);
+      const mk = c.logo ? markOf(c.logo) : null;
+      out.push({ key: 'c-' + c.id, name: c.name, role: project ? 'Case study' : (c.role || 'Đối tác'), logo: mk?.src, fill: mk?.fill, href: project ? projectHref(project) : `/doi-tac/#${c.id}` });
+    }
+    for (const m of MARKETING_ENGAGEMENTS) {
+      const k = m.client.trim().toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+      out.push({ key: 'm-' + m.id, name: m.client, role: m.throughPartner ? 'Truyền thông qua đối tác' : 'Marketing & truyền thông', logo: m.logo, href: '/giai-phap/digital-marketing/#du-an-marketing' });
+    }
+    return out;
   })();
+  const products = block(data, 'menu').columns[0]?.items.filter(it => it.href) ?? [];
   const posts = knowledgePosts(data).slice(0, 3);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
 
@@ -73,132 +102,142 @@ export default function HomePage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      {/* Đã đồng hành cùng */}
-      <section className="hb-trust" id="doi-tac" aria-labelledby="t-trust">
-        <div className="s-container hb-row">
-          <div>
-            <Eyebrow>Đối tác</Eyebrow>
-            <h2 className="hb-h2" id="t-trust"><em><CountUp value={partners.length} suffix="" /> cơ sở</em> đã đồng hành cùng DANAVA.</h2>
-          </div>
-          <Link className="hb-more" href="/doi-tac/">Xem tất cả đối tác <ArrowRight aria-hidden="true" /></Link>
-        </div>
-        {partners.length > 0 && (
-          <div className="hp-trust__rows">
-            {[partners.filter((_, i) => i % 2 === 0), partners.filter((_, i) => i % 2 === 1)].map((row, r) => row.length > 0 && (
-              <div key={r} className={`hp-trust__row${r ? ' is-rev' : ''}`}>
-                {[0, 1].map(k => (
-                  <ul key={k} aria-hidden={k === 1 ? true : undefined}>
-                    {row.map(c => {
-                      const project = publishedProjects(data).find(p => p.id === c.projectId);
-                      const mk = c.logo ? markOf(c.logo) : null;
-                      return (
-                        <li key={c.id}>
-                          <Link href={project ? projectHref(project) : `/doi-tac/#${c.id}`} tabIndex={k === 1 ? -1 : undefined} aria-label={`${c.name}${project ? ' — xem case study' : ' — thông tin đối tác'}`}>
-                            <span className={`hp-trust__logo${mk?.fill ? ' is-mark' : ''}`}>{mk ? <img src={mk.src} alt="" loading="lazy" decoding="async" width={96} height={96} /> : <b>{c.name.charAt(0)}</b>}</span>
-                            <span className="hp-trust__name"><strong>{c.name}</strong><small>{project ? 'Case study' : c.role}</small></span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Về DANAVA */}
-      <section className="hb-sec hb-about" id="ve-danava" aria-labelledby="t-about">
-        <div className="s-container hb-about__grid">
-          <div className="hb-about__media" data-reveal aria-hidden="true">
-            <figure><img src={A.founder.image} alt="" loading="lazy" decoding="async" width={1200} height={885} /></figure>
-            <span className="hb-float hb-float--c"><b>{A.founder.name}</b>{A.founder.title}</span>
-          </div>
-          <div data-reveal>
-            <Eyebrow>Về DANAVA</Eyebrow>
-            <h2 className="hb-h2" id="t-about">Chuyển đổi số không chỉ là công nghệ, <em>đó là hành trình kiến tạo giá trị.</em></h2>
-            <p className="hb-text">{P.about[0]}</p>
-            <ul className="hb-mv">
-              <li><span>Sứ mệnh</span><p>{A.mission}</p></li>
-              <li><span>Tầm nhìn</span><p>{A.vision}</p></li>
-            </ul>
-            <Link className="hb-more" href="/ve-danava/">Câu chuyện & đội ngũ DANAVA <ArrowRight aria-hidden="true" /></Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Giá trị cốt lõi — dải chữ chạy */}
-      <div className="hb-kinetic" aria-hidden="true">
-        {[0, 1].map(k => (
-          <ul key={k}>{[...P.values, ...P.values].map((v, i) => <li key={i} className={i % 2 ? 'is-accent' : undefined}>{v}<i>✦</i></li>)}</ul>
-        ))}
-      </div>
-      <p className="s-sr">Giá trị cốt lõi: {P.values.join(', ')}.</p>
-
-      {/* What we do */}
-      <section className="hb-sec hb-what" id="giai-phap" aria-labelledby="t-what">
+      {/* Giải pháp — 4 ô nhanh ngay dưới bìa */}
+      <section className="hb-solutions" id="giai-phap" aria-labelledby="t-sol">
         <div className="s-container">
-          <div className="hb-row">
-            <div>
-              <Eyebrow>What we do</Eyebrow>
-              <h2 className="hb-h2" id="t-what">Những bài toán doanh nghiệp, <em>một lời giải trọn vẹn.</em></h2>
-            </div>
-            <Link className="hb-more" href="/giai-phap/">Tất cả giải pháp <ArrowRight aria-hidden="true" /></Link>
-          </div>
-          <div className="hb-problems" data-reveal>
-            <ul className="hb-problems__q">{A.problems.map(p => <li key={p.problem}><X aria-hidden="true" />{p.problem}</li>)}</ul>
-            <span className="hb-problems__arrow" aria-hidden="true"><ArrowRight /></span>
-            <ul className="hb-problems__a">{A.problems.map(p => <li key={p.solution}><Check aria-hidden="true" />{p.solution}</li>)}</ul>
-          </div>
-          <ul className="hb-services">
-            {P.services.map((sv, i) => (
-              <li key={sv.title} data-reveal style={{ ['--d' as string]: `${i * 80}ms` }}>
-                <Link href={sv.href}>
-                  <span className="hb-services__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                  <h3>{sv.title}</h3>
-                  <p className="hb-text">{sv.text}</p>
-                  <span className="hb-services__go">Tìm hiểu <ArrowUpRight aria-hidden="true" /></span>
-                </Link>
-              </li>
-            ))}
+          <h2 className="s-sr" id="t-sol">Giải pháp của DANAVA</h2>
+          <ul className="hb-sol">
+            {P.services.map((sv, i) => {
+              const Ico = SERVICE_ICONS[sv.title];
+              return (
+                <li key={sv.title} data-reveal style={{ ['--d' as string]: `${i * 70}ms` }}>
+                  <Link href={sv.href}>
+                    {Ico ? <IconBox icon={Ico} tone={i % 2 ? 'blue' : 'orange'} /> : <HrefIcon href={sv.href} />}
+                    <span><strong>{sv.title}</strong><small>{sv.text}</small></span>
+                    <ArrowUpRight className="hb-sol__go" aria-hidden="true" />
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
-          <p className="hb-quote" data-reveal>“{P.quote}”</p>
         </div>
       </section>
 
-      {/* Dự án */}
-      {projects.length > 0 && (
-        <section className="hb-sec hb-cream" aria-labelledby="t-projects">
+      {/* Dự án tiêu biểu — có tab lọc */}
+      {cases.length > 0 && (
+        <section className="hb-sec" id="du-an" aria-labelledby="t-cases">
           <div className="s-container">
             <div className="hb-row">
-              <div><Eyebrow>Dự án tiêu biểu</Eyebrow><h2 className="hb-h2" id="t-projects">Sản phẩm <em>đang chạy thật.</em></h2></div>
-              <Link className="hb-more" href="/du-an/">Tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+              <div><Eyebrow>Dự án tiêu biểu</Eyebrow><h2 className="hb-h2" id="t-cases">Những dự án <em>DANAVA đã thực hiện.</em></h2></div>
+              <Link className="hb-more" href="/du-an/">Xem tất cả dự án <ArrowRight aria-hidden="true" /></Link>
             </div>
-            <div className={`s-grid s-snap ${projects.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>{projects.map(p => <ProjectTile key={p.id} p={p} />)}</div>
+            <HomeCases items={cases} />
           </div>
         </section>
       )}
 
-      <Testimonials items={testimonials} />
+      {/* Khách hàng & đối tác — hiện toàn bộ logo */}
+      {logos.length > 0 && (
+        <section className="hb-sec hb-cream hb-clients" id="doi-tac" aria-labelledby="t-clients">
+          <div className="s-container">
+            <div className="hb-row">
+              <div>
+                <Eyebrow>Khách hàng & đối tác</Eyebrow>
+                <h2 className="hb-h2" id="t-clients"><em><CountUp value={logos.length} suffix="" /> thương hiệu</em> đã đồng hành cùng DANAVA.</h2>
+              </div>
+              <Link className="hb-more" href="/doi-tac/">Xem chi tiết đối tác <ArrowRight aria-hidden="true" /></Link>
+            </div>
+            <ul className="hb-logos">
+              {logos.map((c, i) => (
+                <li key={c.key} data-reveal style={{ ['--d' as string]: `${(i % 6) * 50}ms` }}>
+                  <Link href={c.href} aria-label={`${c.name} — ${c.role}`}>
+                    <span className={`hb-logos__mark${c.fill ? ' is-mark' : ''}`}>{c.logo ? <img src={c.logo} alt="" loading="lazy" decoding="async" width={96} height={96} /> : <b>{c.name.charAt(0)}</b>}</span>
+                    <span className="hb-logos__name"><strong>{c.name}</strong><small>{c.role}</small></span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
-      {/* Why choose us */}
-      <section className="hb-sec hb-why" aria-labelledby="t-why">
+      {/* Vì sao chọn DANAVA + mạng lưới đồng hành */}
+      <section className="hb-sec hb-why" id="ve-danava" aria-labelledby="t-why">
         <div className="s-container">
-          <div className="hb-row">
-            <div><Eyebrow>Why choose us</Eyebrow><h2 className="hb-h2" id="t-why">Vì sao doanh nghiệp <em>chọn DANAVA.</em></h2></div>
+          <div className="hb-why__intro">
+            <div data-reveal>
+              <Eyebrow>Vì sao chọn DANAVA</Eyebrow>
+              <h2 className="hb-h2" id="t-why">Chuyển đổi số không chỉ là công nghệ, <em>đó là hành trình kiến tạo giá trị.</em></h2>
+              <p className="hb-text">{P.about[0]}</p>
+              <Link className="hb-more" href="/ve-danava/">Câu chuyện & đội ngũ DANAVA <ArrowRight aria-hidden="true" /></Link>
+            </div>
+            <figure className="hb-why__photo" data-reveal>
+              <img src={A.founder.image} alt={`${A.founder.name}, ${A.founder.title} DANAVA`} loading="lazy" decoding="async" width={1200} height={885} />
+              <figcaption><b>{A.founder.name}</b>{A.founder.title}</figcaption>
+            </figure>
           </div>
           <ol className="hb-why__grid">
             {P.why.map((w, i) => (
               <li key={w.title} data-reveal style={{ ['--d' as string]: `${i * 80}ms` }}>
-                <span className="hb-why__no">{String(i + 1).padStart(2, '0')}</span>
+                <IconBox icon={WHY_ICONS[i % WHY_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} />
                 <h3>{w.title}</h3>
                 <p>{w.text}</p>
               </li>
             ))}
           </ol>
+          <div className="hb-network" data-reveal>
+            <p className="hb-network__title">Mạng lưới đồng hành</p>
+            <ul>
+              {A.network.map((n, i) => (
+                <li key={n.name}><IconBox icon={NETWORK_ICONS[i % NETWORK_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} /><span><strong>{n.name}</strong><small>{n.text}</small></span></li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
+
+      {/* Hệ sinh thái sản phẩm */}
+      <section className="hb-sec hb-cream" aria-labelledby="t-products">
+        <div className="s-container">
+          <div className="hb-row">
+            <div><Eyebrow>Sản phẩm của DANAVA</Eyebrow><h2 className="hb-h2" id="t-products">Nền tảng do DANAVA <em>tự phát triển.</em></h2></div>
+            <Link className="hb-more" href="/he-sinh-thai/">Hệ sinh thái DANAVA <ArrowRight aria-hidden="true" /></Link>
+          </div>
+          <ul className="hb-products">
+            {products.map((it, i) => (
+              <li key={it.href} data-reveal style={{ ['--d' as string]: `${i * 70}ms` }}>
+                <Link href={it.href}>
+                  <HrefIcon href={it.href} />
+                  <h3>{it.label}{it.badge && <span className="hb-products__badge">{it.badge}</span>}</h3>
+                  <p>{it.desc}</p>
+                  <span className="hb-services__go">Tìm hiểu <ArrowUpRight aria-hidden="true" /></span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Quy trình */}
+      <section className="hb-sec hb-process" aria-labelledby="t-process">
+        <div className="s-container">
+          <div className="hb-row">
+            <div><Eyebrow>Quy trình làm việc</Eyebrow><h2 className="hb-h2" id="t-process">Bảy bước <em>đồng hành cùng bạn.</em></h2></div>
+          </div>
+          <ol className="hb-steps">
+            {A.process.map((st, i) => (
+              <li key={st.name} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
+                <IconBox icon={PROCESS_ICONS[i % PROCESS_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} />
+                <span className="hb-steps__no">{String(i + 1).padStart(2, '0')}</span>
+                <strong>{st.name}</strong>
+                <small>{st.text}</small>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <Testimonials items={testimonials} />
 
       {/* Tin mới */}
       {posts.length > 0 && (
