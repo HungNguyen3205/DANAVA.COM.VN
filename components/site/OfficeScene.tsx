@@ -164,12 +164,36 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   const tvCanvas = document.createElement('canvas'); tvCanvas.width = 1024; tvCanvas.height = 576;
   const drawTV = (logo?: HTMLImageElement) => {
     const c = tvCanvas.getContext('2d')!;
-    const g = c.createLinearGradient(0, 0, 1024, 576); g.addColorStop(0, '#16275e'); g.addColorStop(1, '#2b4294');
-    c.fillStyle = g; c.fillRect(0, 0, 1024, 576);
-    c.fillStyle = '#f26b1d'; c.beginPath(); c.moveTo(690, 0); c.lineTo(760, 0); c.lineTo(560, 576); c.lineTo(490, 576); c.fill();
-    c.fillStyle = 'rgba(255,179,71,.35)'; c.beginPath(); c.moveTo(790, 0); c.lineTo(812, 0); c.lineTo(612, 576); c.lineTo(590, 576); c.fill();
-    if (logo) c.drawImage(logo, 70, 190, 554 * .78, 135 * .78);
-    c.fillStyle = '#ffd27a'; c.font = '600 30px sans-serif'; c.fillText('Growing Your Business Together', 76, 350);
+    // Giao diện minh hoạ bảng điều khiển DANAVA Studio (không có số liệu)
+    const rr = (x: number, y: number, w: number, h: number, r: number, fill: string) => { c.fillStyle = fill; c.beginPath(); c.roundRect(x, y, w, h, r); c.fill(); };
+    c.fillStyle = '#eef1f7'; c.fillRect(0, 0, 1024, 576);
+    const sb = c.createLinearGradient(0, 0, 0, 576); sb.addColorStop(0, '#16275e'); sb.addColorStop(1, '#22398a');
+    c.fillStyle = sb; c.fillRect(0, 0, 210, 576);
+    if (logo) c.drawImage(logo, 22, 30, 554 * .3, 135 * .3);
+    ['Tổng quan', 'Lịch lớp', 'Hội viên', 'Bán hàng', 'Báo cáo'].forEach((t, i) => {
+      if (i === 0) rr(14, 104, 182, 40, 10, 'rgba(242,107,29,.95)');
+      rr(30, 117 + i * 52, 14, 14, 4, i === 0 ? '#fff' : 'rgba(255,255,255,.45)');
+      c.fillStyle = i === 0 ? '#fff' : 'rgba(255,255,255,.75)'; c.font = '600 19px sans-serif'; c.fillText(t, 56, 131 + i * 52);
+    });
+    c.fillStyle = '#13244f'; c.font = '700 30px sans-serif'; c.fillText('DANAVA Studio', 240, 56);
+    c.fillStyle = '#7a849c'; c.font = '500 17px sans-serif'; c.fillText('Tổng quan vận hành', 240, 84);
+    rr(870, 30, 124, 40, 20, '#f26b1d'); c.fillStyle = '#fff'; c.font = '700 17px sans-serif'; c.fillText('+ Đặt lớp', 892, 56);
+    ['#f26b1d', '#2b4294', '#19b27b', '#ffb347'].forEach((col, i) => {
+      const x = 240 + i * 192; rr(x, 108, 176, 96, 14, '#fff'); rr(x + 16, 124, 30, 30, 9, col);
+      rr(x + 16, 166, 90, 12, 6, '#dfe3ee'); rr(x + 16, 184, 56, 10, 5, '#eceff5');
+    });
+    rr(240, 222, 480, 324, 16, '#fff');
+    c.fillStyle = '#13244f'; c.font = '700 19px sans-serif'; c.fillText('Hoạt động trong tuần', 262, 256);
+    const pts = [[262, 480], [330, 450], [398, 462], [466, 410], [534, 392], [602, 350], [690, 300]];
+    const ag = c.createLinearGradient(0, 290, 0, 520); ag.addColorStop(0, 'rgba(242,107,29,.35)'); ag.addColorStop(1, 'rgba(242,107,29,0)');
+    c.fillStyle = ag; c.beginPath(); c.moveTo(262, 520); pts.forEach(([x, y]) => c.lineTo(x, y)); c.lineTo(690, 520); c.fill();
+    c.strokeStyle = '#f26b1d'; c.lineWidth = 4; c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
+    rr(738, 222, 256, 324, 16, '#fff');
+    c.fillStyle = '#13244f'; c.font = '700 19px sans-serif'; c.fillText('Lịch lớp hôm nay', 758, 256);
+    [['Yoga', '#fff1e6'], ['Pilates', '#eef2fb'], ['Thiền', '#e8f7f0'], ['Spa', '#fff1e6']].forEach(([t, bg], i) => {
+      rr(758, 278 + i * 64, 216, 50, 12, bg); c.fillStyle = '#13244f'; c.font = '600 17px sans-serif'; c.fillText(t, 774, 309 + i * 64);
+      rr(900, 294 + i * 64, 58, 16, 8, 'rgba(19,36,79,.12)');
+    });
   };
   drawTV();
   const tvTex = new THREE.CanvasTexture(tvCanvas); tvTex.colorSpace = THREE.SRGBColorSpace; tvTex.anisotropy = 8; disposables.push(tvTex);
@@ -491,7 +515,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   /* ================= ánh sáng ================= */
   const hemi = new THREE.HemisphereLight(0xfff7ea, 0x5a4a3c, .55); scene.add(hemi);
   // ánh sáng ban ngày qua cửa kính (bên phải)
-  const sun = new THREE.DirectionalLight(0xfff4e2, 2.1);
+  const sun = new THREE.DirectionalLight(0xffe0b0, 2.2);
   sun.position.set(7, 7.5, 2.5); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 1, far: 25 });
@@ -519,7 +543,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   let yaw = 0, vel = 0, drag = false, lastX = 0, userMoved = false;
   let tiltX = 0, tiltY = 0, aimX = 0, aimY = 0;          // nghiêng theo con trỏ (có độ trễ)
   let floatT = 0, lastNow = 0;                           // đồng hồ chuyển động nổi (dừng khi kéo)
-  const target = new THREE.Vector3(0, .25, -.1);
+  const target = new THREE.Vector3(0, .36, -.1);
   const wrap = (el.closest('.hb-cover__3d') as HTMLElement | null) ?? el;
   const hero = (el.closest('.hb-cover') as HTMLElement | null) ?? wrap;
   let fitDist = 20;

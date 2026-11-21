@@ -360,3 +360,44 @@
   .hb-tabs { flex-wrap: nowrap; overflow-x: auto; margin-right: -16px; padding-right: 16px; scrollbar-width: none; }
   .hb-tabs button { flex: none; }
 }
+
+/* ==== Hero: thẻ kính mờ quanh mô hình + thanh số liệu thống nhất ==== */
+.hb-cover__3d .hb-float--a { display: inline-flex; align-items: center; gap: 7px; left: 30%; top: 0; padding: 8px 14px; border-radius: 999px; font-size: 12.5px; color: var(--hb-navy); }
+.hb-cover__3d .hb-float--a svg { width: 15px; height: 15px; color: var(--hb-orange); }
+.hb-glass { position: absolute; z-index: 2; padding: 12px 14px 13px; border-radius: 16px; background: rgba(255, 255, 255, .64); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, .92); box-shadow: 0 18px 36px -26px rgba(19, 36, 79, .45); color: var(--hb-navy);
+  translate: calc(var(--hx, 0) * .8px) calc(var(--hy, 0) * .8px); transition: opacity .6s ease, transform .7s cubic-bezier(.2, .8, .2, 1); }
+.hb-glass p { margin: 0 0 8px; font-size: 13px; font-weight: 800; }
+.hb-glass p small { margin-left: 4px; font-size: 10.5px; font-weight: 700; color: var(--hb-muted); }
+.hb-glass--eco { left: 14%; bottom: 72px; width: 186px; }
+.hb-glass--eco ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.hb-glass--eco li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--hb-text); }
+.hb-glass--eco i { width: 7px; height: 7px; border-radius: 50%; background: #19b27b; box-shadow: 0 0 0 3px rgba(25, 178, 123, .18); }
+.hb-glass--sched { right: -1%; top: 8%; width: 214px; }
+.hb-glass--sched table { width: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+.hb-glass--sched th { font-size: 10px; font-weight: 700; color: var(--hb-muted); text-align: center; }
+.hb-glass--sched tbody th { text-align: left; width: 38px; }
+.hb-glass--sched td { height: 19px; }
+.hb-glass--sched b { display: block; padding: 3px 0; border-radius: 6px; font-size: 10px; font-weight: 700; text-align: center; }
+.hb-glass--sched .is-o { background: #ffe9d6; color: #b4531a; }
+.hb-glass--sched .is-b { background: #e6ecfb; color: #2b4294; }
+.hb-cover__3d.is-intro:not(.is-settled) .hb-glass { opacity: 0; transform: translateY(10px); }
+.hb-cover__3d.is-settled .hb-glass--eco { transition-delay: .15s; }
+.hb-cover__3d.is-settled .hb-glass--sched { transition-delay: .3s; }
+.hb-cover__3d.is-settled .hb-float--b { transition-delay: .45s; }
+
+/* Một thanh số liệu kính mờ, có vạch ngăn; chừa lề phải cho nút Zalo/Gọi */
+.hb-cover .hb-stats { gap: 0; padding: 4px; border-radius: 24px; background: rgba(255, 255, 255, .58); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, .9); box-shadow: 0 24px 50px -36px rgba(19, 36, 79, .45); }
+.hb-cover .hb-stats > div { position: relative; padding: 16px 26px; border-radius: 0; background: transparent; box-shadow: none; }
+.hb-cover .hb-stats > div + div::before { content: ""; position: absolute; left: 0; top: 22%; bottom: 22%; width: 1px; background: rgba(19, 36, 79, .12); }
+@media (min-width: 901px) and (max-width: 1500px) { .hb-cover .hb-stats, .hb-cover .hb-src { margin-right: 68px; } }
+@media (max-width: 900px) {
+  .hb-glass { display: none; }
+  .hb-cover__3d .hb-float--a { left: auto; }
+  .hb-cover .hb-stats > div + div::before { display: none; }
+  .hb-cover .hb-stats > div { padding: 14px 16px; }
+}
+
+/* Nút "Nhận tư vấn" trên thanh menu cùng tông cam với nút chính của trang */
+.s-app header .s-btn--primary { background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .9); }
+@media (min-width: 901px) { .hb-curve { width: 20%; } }

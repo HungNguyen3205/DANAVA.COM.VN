@@ -90,7 +90,23 @@ export default function HomePage({ data }: { data: SiteData }) {
           </svg>
           <div className="hb-cover__3d">
             <OfficeScene fallback="/assets/about/office-sm.webp" />
-            <span className="hb-float hb-float--a" aria-hidden="true"><b>{P.years}</b>Văn phòng DANAVA · Đà Nẵng</span>
+            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
+            <div className="hb-glass hb-glass--eco">
+              <p>Hệ sinh thái DANAVA</p>
+              <ul>{['DANAVA Studio', 'Website & Booking', 'Truyền thông', 'Sự kiện & Tours'].map(t => <li key={t}><i />{t}</li>)}</ul>
+            </div>
+            <div className="hb-glass hb-glass--sched" aria-hidden="true">
+              <p>Lịch đặt lớp <small>DANAVA Studio</small></p>
+              <table>
+                <thead><tr><th /><th>T2</th><th>T3</th><th>T4</th></tr></thead>
+                <tbody>
+                  <tr><th>08:00</th><td><b className="is-o">Yoga</b></td><td><b className="is-o">Pilates</b></td><td /></tr>
+                  <tr><th>10:00</th><td><b className="is-o">Pilates</b></td><td /><td><b className="is-b">Thiền</b></td></tr>
+                  <tr><th>14:00</th><td /><td><b className="is-o">Spa</b></td><td /></tr>
+                  <tr><th>16:00</th><td><b className="is-b">Thiền</b></td><td /><td><b className="is-o">Yoga</b></td></tr>
+                </tbody>
+              </table>
+            </div>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{partners.length} đối tác đang đồng hành</span>
           </div>
         </div>
