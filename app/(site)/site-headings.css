@@ -59,3 +59,13 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
   .s-quick__mini--tiktok:hover { background: #111; color: #fff; }
   .s-quick__mini--map:hover { background: #f26b1d; color: #fff; }
 }
+
+/* Zalo + Gọi cùng kiểu với các nút nhỏ: nền nhạt, icon màu, rê chuột thì tô đậm; bỏ vòng sóng */
+@media (min-width: 901px) {
+  .s-quick__btn { border: 1px solid transparent; box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .45); transition: background .2s, color .2s, transform .2s; }
+  .s-quick__btn--zalo { background: #e8f0ff; border-color: rgba(0, 104, 255, .18); color: #0068ff; font-weight: 800; }
+  .s-quick__btn--call { background: #fff1e6; border-color: rgba(242, 107, 29, .22); color: #f26b1d; }
+  .s-quick__btn--call::after { display: none; }
+  .s-quick__btn--zalo:hover { background: #0068ff; color: #fff; transform: translateY(-2px); }
+  .s-quick__btn--call:hover { background: #f26b1d; color: #fff; transform: translateY(-2px); }
+}

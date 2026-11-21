@@ -22,9 +22,9 @@ const TABS = [
   { id: 'marketing', label: 'Marketing & Truyền thông' }
 ] as const;
 
-export function HomeCases({ items }: { items: HomeCase[] }) {
+export function HomeCases({ items, limit = 6 }: { items: HomeCase[]; limit?: number }) {
   const [tab, setTab] = useState<(typeof TABS)[number]['id']>('all');
-  const list = items.filter(x => tab === 'all' || x.group === tab).slice(0, 6);
+  const list = items.filter(x => tab === 'all' || x.group === tab).slice(0, limit);
   return (
     <>
       <div className="hb-tabs" role="tablist" aria-label="Lọc dự án theo mảng">
