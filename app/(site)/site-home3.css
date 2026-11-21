@@ -549,3 +549,19 @@
 .hb-build__bar i { position: absolute; inset: 0; background: linear-gradient(90deg, #ff8a2a, #e0611a); transform: scaleX(var(--build, 0)); transform-origin: left; }
 /* Trong lúc dựng: ẩn nút xoay để tập trung vào việc lướt */
 .hb-cover__3d.is-building:not(.is-built) .hb-office__reset { opacity: 0; pointer-events: none; }
+
+/* Thẻ "Hành trình DANAVA" nằm trong cột chữ (dưới nút), không đè lên mô hình 3D */
+.hb-cover__copy .hb-journey { position: relative; inset: auto; width: min(100%, 460px); margin: 26px 0 0; padding: 14px 18px 12px; border-radius: 18px;
+  background: rgba(255, 255, 255, .7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, .85); box-shadow: 0 12px 32px rgba(15, 23, 42, .06); }
+.hb-cover__copy .hb-journey svg { max-height: 112px; }
+.hb-cover__copy .hb-journey__now { margin-top: 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .hb-cover__copy .hb-journey { animation: hb-fade .8s ease .85s both; }
+  .hb-cover__copy .hb-journey__line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: hb-draw 1.6s cubic-bezier(.4, 0, .2, 1) 1.1s forwards; }
+  .hb-cover__copy .hb-journey__area { animation: hb-fade .8s ease 2.2s both; }
+  .hb-cover__copy .hb-journey__pt { animation: hb-fade .4s ease both; animation-delay: calc(1.2s + var(--i) * .22s); }
+}
+
+/* Trong lúc dựng bằng cuộn: thanh bước chiếm đáy khung → ẩn pill đối tác; dựng xong pill hiện lại đúng chỗ */
+.hb-cover__3d .hb-float--b { transition: opacity .5s ease, transform .5s ease; }
+.hb-cover__3d.is-building:not(.is-built) .hb-float--b { opacity: 0; transform: translateY(10px); pointer-events: none; }

@@ -98,12 +98,8 @@ export default function HomePage({ data }: { data: SiteData }) {
               <Link className="hb-btn hb-btn--primary" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
               <Link className="hb-btn hb-btn--ghost" href="/giai-phap/">Xem giải pháp</Link>
             </div>
-          </div>
-          <div className="hb-cover__3d">
-            <OfficeScene fallback="/assets/about/office-sm.webp" />
-            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
             {/* Đường hành trình DANAVA 2016 → nay (mốc năm thật, không có trục số) */}
-            <figure className="hb-glass hb-journey">
+            <figure className="hb-journey">
               <figcaption>Hành trình DANAVA <small>2016 – nay</small></figcaption>
               <svg viewBox={`0 0 ${journey.W} 108`} role="img" aria-label={`Hành trình DANAVA: ${journey.pts.map(p => `${p.year} ${p.title}`).join('; ')}`}>
                 <defs>
@@ -123,7 +119,11 @@ export default function HomePage({ data }: { data: SiteData }) {
               </svg>
               <p className="hb-journey__now"><i />{journey.last.year} · {journey.last.title}</p>
             </figure>
-            <span className="hb-float hb-float--b" aria-hidden="true"><i />{partners.length} đối tác đang đồng hành</span>
+          </div>
+          <div className="hb-cover__3d">
+            <OfficeScene fallback="/assets/about/office-sm.webp" />
+            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
+            <span className="hb-float hb-float--b" aria-hidden="true"><i />{logos.length} thương hiệu đã đồng hành</span>
             <div className="hb-build" aria-hidden="true">
               <p><ArrowDown />Lướt xuống để dựng văn phòng</p>
               <ol>{['Sàn', 'Vách', 'Bàn họp', 'Nội thất', 'Hoàn thiện'].map((t, i) => <li key={t} data-build-step={i} className={i === 0 ? 'is-on' : undefined}><b>{i + 1}</b>{t}</li>)}</ol>
