@@ -631,3 +631,19 @@
   .hb-marquee__row ul { flex-wrap: wrap; justify-content: center; }
 }
 .hb-clients__more { display: flex; justify-content: center; margin-top: 26px; }
+
+/* ==== Mô hình → mã QR Zalo ==== */
+.hb-office__qrbtn { position: absolute; right: 60px; bottom: 16px; z-index: 3; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 1px solid rgba(255, 255, 255, .85); border-radius: 999px;
+  background: rgba(255, 255, 255, .85); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--hb-navy); font: 700 12.5px/1 var(--font-sans), sans-serif; cursor: pointer;
+  box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .3); transition: color .2s, transform .2s; }
+.hb-office__qrbtn svg { width: 16px; height: 16px; color: var(--hb-orange); }
+.hb-office__qrbtn:hover { transform: translateY(-1px); color: var(--hb-orange); }
+.hb-office__qrbtn:focus-visible { outline: 2px solid var(--hb-orange); outline-offset: 2px; }
+.hb-office__qrcap { position: absolute; left: 50%; top: 12px; z-index: 3; margin: 0; padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .9); color: var(--hb-navy);
+  font-size: 12.5px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .3); }
+.hb-office__qrcap:empty { display: none; }
+.hb-office__qrcap a { color: #0068ff; }
+.hb-cover__3d:not(.is-settled) .hb-office__qrbtn, .hb-cover__3d.is-building:not(.is-built) .hb-office__qrbtn { display: none; }
+/* Khi đang là mã QR: ẩn các nhãn nổi để mã thật sạch */
+.hb-cover__3d.is-qr .hb-float, .hb-cover__3d.is-qr .hb-glass { opacity: 0; pointer-events: none; }
+.hb-office.is-qr .hb-office__stage { cursor: pointer; }

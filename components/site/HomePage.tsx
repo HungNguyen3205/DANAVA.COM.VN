@@ -121,7 +121,7 @@ export default function HomePage({ data }: { data: SiteData }) {
             </figure>
           </div>
           <div className="hb-cover__3d">
-            <OfficeScene fallback="/assets/about/office-sm.webp" />
+            <OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={`https://zalo.me/${phone.replace(/\D/g, '')}`} />
             <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{logos.length} thương hiệu đã đồng hành</span>
             <div className="hb-build" aria-hidden="true">

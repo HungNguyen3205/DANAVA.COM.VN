@@ -11,16 +11,19 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import type * as T from 'three';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, QrCode, ArrowLeft } from 'lucide-react';
+import qrcode from 'qrcode-generator';
 
-type Ctl = { reset: () => void; dispose: () => void };
+type Ctl = { reset: () => void; toggleQr: () => void; dispose: () => void };
 
-export function OfficeScene({ fallback }: { fallback: string }) {
+/** qrUrl: bấm vào mô hình → sàn văn phòng biến thành mã QR dẫn tới đường dẫn này (vd. Zalo hotline). */
+export function OfficeScene({ fallback, qrUrl }: { fallback: string; qrUrl?: string }) {
   const host = useRef<HTMLDivElement>(null);
   const ctl = useRef<Ctl | null>(null);
   const [ready, setReady] = useState(false);
   const [moved, setMoved] = useState(false);
   const [noGL, setNoGL] = useState(false);
+  const [qr, setQr] = useState(false);
 
   useEffect(() => {
     const el = host.current;
@@ -42,17 +45,29 @@ export function OfficeScene({ fallback }: { fallback: string }) {
       if (dead) return;
       ctl.current = build(THREE, rb.RoundedBoxGeometry, env.RoomEnvironment, el, {
         ready: () => setReady(true),
-        moved: (m: boolean) => setMoved(m)
+        moved: (m: boolean) => setMoved(m),
+        qr: (on: boolean) => setQr(on),
+        qrUrl
       });
     })();
     return () => { dead = true; ctl.current?.dispose(); ctl.current = null; };
-  }, []);
+  }, [qrUrl]);
 
   return (
-    <div className={`hb-office${ready ? ' is-ready' : ''}${noGL ? ' is-fallback' : ''}`}>
+    <div className={`hb-office${ready ? ' is-ready' : ''}${noGL ? ' is-fallback' : ''}${qr ? ' is-qr' : ''}`}>
       <div className="hb-office__stage" ref={host} role="img" aria-label="Mô hình 3D văn phòng DANAVA tại Đà Nẵng: phòng họp dài với bàn họp, ghế chân quỳ, TV trên vách lam gỗ, ghế tiếp khách, bàn làm việc có cờ Việt Nam và cửa kính nhìn ra cây xanh">
         <img className="hb-office__fallback" src={fallback} alt="" width={1100} height={825} />
       </div>
+      {qrUrl && ready && (
+        <>
+          <button type="button" className="hb-office__qrbtn" onClick={() => ctl.current?.toggleQr()} aria-pressed={qr}>
+            {qr ? <><ArrowLeft aria-hidden="true" />Về văn phòng</> : <><QrCode aria-hidden="true" />Mã QR Zalo</>}
+          </button>
+          <p className="hb-office__qrcap" aria-live="polite">
+            {qr && <>Quét mã để nhắn Zalo DANAVA · <a href={qrUrl} target="_blank" rel="noopener noreferrer">Mở Zalo<span className="s-sr"> (mở tab mới)</span></a></>}
+          </p>
+        </>
+      )}
       <button type="button" className={`hb-office__reset${moved ? ' is-moved' : ''}`} onClick={() => ctl.current?.reset()} aria-label="Về góc nhìn ban đầu" data-tip="Về góc nhìn ban đầu" hidden={!ready}>
         <RotateCcw aria-hidden="true" />
       </button>
@@ -63,7 +78,7 @@ export function OfficeScene({ fallback }: { fallback: string }) {
 type RBCtor = new (w?: number, h?: number, d?: number, seg?: number, r?: number) => T.BufferGeometry;
 type EnvCtor = new () => T.Scene;
 
-function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCtor, el: HTMLElement, cb: { ready: () => void; moved: (m: boolean) => void }): Ctl {
+function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCtor, el: HTMLElement, cb: { ready: () => void; moved: (m: boolean) => void; qr: (on: boolean) => void; qrUrl?: string }): Ctl {
   const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
@@ -531,6 +546,40 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   // ánh sáng hắt ấm lên vách lam phía sau
   const wash = new THREE.SpotLight(0xffc98a, 0, 7, .9, .7, 1.6); wash.position.set(0, H - .1, BK + 2.2); wash.target.position.set(0, .9, BK); scene.add(wash, wash.target);
 
+  /* ================= sàn biến thành mã QR ================= */
+  // Tấm nền kem không chịu ánh sáng (tương phản cao) + khối gỗ navy cho ô tối; giữa có logo DANAVA (mức sửa lỗi H)
+  let qrGroup: T.Group | null = null, qrInst: T.InstancedMesh | null = null, qrPlate: T.Mesh | null = null, QS = 0;
+  const qrCells: { x: number; z: number; d: number }[] = [];
+  if (cb.qrUrl) {
+    const q = qrcode(0, 'H'); q.addData(cb.qrUrl); q.make();
+    const n = q.getModuleCount(), quiet = 2, c0 = (n - 1) / 2;
+    QS = Math.min(W, D) * .9;
+    const cell = QS / (n + quiet * 2), logoR = Math.max(2, Math.round(n * .11));
+    qrGroup = new THREE.Group(); qrGroup.visible = false; model.add(qrGroup);
+    const plateMat = new THREE.MeshBasicMaterial({ color: 0xfffaf2 }); disposables.push(plateMat);
+    qrPlate = new THREE.Mesh(g(new THREE.BoxGeometry(QS, .03, QS)), plateMat); qrPlate.position.y = .016; qrGroup.add(qrPlate);
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+      if (!q.isDark(r, c) || (Math.abs(r - c0) <= logoR && Math.abs(c - c0) <= logoR)) continue;
+      qrCells.push({ x: (c - c0) * cell, z: (r - c0) * cell, d: Math.hypot(r - c0, c - c0) / (n / 2) });
+    }
+    const blockMat = std({ color: 0x13244f, roughness: .6 });
+    qrInst = new THREE.InstancedMesh(g(new THREE.BoxGeometry(cell * .96, .16, cell * .96)), blockMat, qrCells.length);
+    qrInst.castShadow = false; qrInst.receiveShadow = false; qrGroup.add(qrInst);
+    const lw = (logoR * 2 + 1) * cell;
+    const logoPad = new THREE.Mesh(g(new THREE.BoxGeometry(lw, .06, lw)), plateMat); logoPad.position.y = .05; qrGroup.add(logoPad);
+    const logoTex = new THREE.TextureLoader().load('/assets/danava-logo.png', () => wake()); logoTex.colorSpace = THREE.SRGBColorSpace; disposables.push(logoTex);
+    const logoMat = new THREE.MeshBasicMaterial({ map: logoTex, transparent: true }); disposables.push(logoMat);
+    const logo = new THREE.Mesh(g(new THREE.PlaneGeometry(lw * .88, lw * .88 * 352 / 709)), logoMat); logo.rotation.x = -Math.PI / 2; logo.position.y = .085; qrGroup.add(logo);
+  }
+  let qrK = 0, qrGoal = 0, builtNow = false;
+  const qrMtx = new THREE.Matrix4(), qrPos = new THREE.Vector3(), qrScale = new THREE.Vector3(), qrQuat = new THREE.Quaternion();
+  const toggleQr = () => {
+    if (!qrGroup || !builtNow) return;
+    qrGoal = qrGoal ? 0 : 1; cb.qr(qrGoal === 1);
+    wrap.classList.toggle('is-qr', qrGoal === 1);
+    vel = 0; resetting = true; wake();
+  };
+
   /* ================= camera & tương tác ================= */
   // Góc mặc định 3/4 phía trước-trái, hơi cao: thấy rõ bàn họp, TV và cửa kính bên phải
   const AZ = .5, EL = .62;
@@ -542,32 +591,41 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   const target = new THREE.Vector3(0, .36, -.1);
   const wrap = (el.closest('.hb-cover__3d') as HTMLElement | null) ?? el;
   const hero = (el.closest('.hb-cover') as HTMLElement | null) ?? wrap;
-  let fitDist = 20;
+  let fitDist = 20, qrDist = 12;
+  const qrTarget = new THREE.Vector3(0, .1, 0), camAim = new THREE.Vector3();
   const fit = () => {
     const w = el.clientWidth || el.parentElement!.clientWidth, h = el.clientHeight || 400;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
     fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .84;
+    qrDist = (QS / 2 * 1.14) / Math.tan(Math.min(vf, hf)) + .3;   // mã QR vừa khung khi nhìn thẳng từ trên xuống
     camera.updateProjectionMatrix();
     wake();
   };
   const placeCamera = () => {
-    const d = fitDist * distK;
-    camera.position.set(target.x - Math.sin(az) * Math.cos(elv) * d, target.y + Math.sin(elv) * d, target.z + Math.cos(az) * Math.cos(elv) * d);
-    camera.lookAt(target);
+    const qe = qrK <= 0 ? 0 : (qrK < .5 ? 4 * qrK * qrK * qrK : 1 - Math.pow(-2 * qrK + 2, 3) / 2);
+    const d = THREE.MathUtils.lerp(fitDist * distK, qrDist, qe);
+    const a = THREE.MathUtils.lerp(az, 0, qe), e = THREE.MathUtils.lerp(elv, 1.53, qe);
+    camAim.lerpVectors(target, qrTarget, qe);
+    camera.position.set(camAim.x - Math.sin(a) * Math.cos(e) * d, camAim.y + Math.sin(e) * d, camAim.z + Math.cos(a) * Math.cos(e) * d);
+    camera.lookAt(camAim);
   };
   let resetting = false;
-  canvas.addEventListener('pointerdown', e => { drag = true; resetting = false; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); el.classList.add('is-drag'); wake(); });
+  let downX = 0, downY = 0, downT = 0;
+  canvas.addEventListener('pointerdown', e => { drag = true; resetting = false; lastX = e.clientX; downX = e.clientX; downY = e.clientY; downT = performance.now(); canvas.setPointerCapture(e.pointerId); el.classList.add('is-drag'); wake(); });
   canvas.addEventListener('pointermove', e => {
-    if (!drag) return;
+    if (!drag || qrGoal) return;
     vel = (e.clientX - lastX) * .005; yaw = THREE.MathUtils.clamp(yaw + vel, -.7, .7); lastX = e.clientX;
     if (!userMoved && Math.abs(yaw) > .05) { userMoved = true; cb.moved(true); }
     wake();
   });
-  const up = () => { drag = false; el.classList.remove('is-drag'); };
+  const up = (e: PointerEvent) => {
+    const tap = e.type === 'pointerup' && Math.hypot(e.clientX - downX, e.clientY - downY) < 6 && performance.now() - downT < 400;
+    drag = false; el.classList.remove('is-drag');
+    if (tap) toggleQr();
+  };
   canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
-  canvas.addEventListener('dblclick', () => reset());
   const onHover = (e: PointerEvent) => {
     if (e.pointerType !== 'mouse') return;
     const r = hero.getBoundingClientRect();
@@ -657,6 +715,29 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     if (scrollMode) { pS += (scrollP() - pS) * .14; if (Math.abs(scrollP() - pS) < .0005) pS = scrollP(); }
     const lift = applyIntro(t);
     const built = scrollMode ? pS > .97 : t > INTRO;
+    builtNow = scrollMode ? pS > .95 : t > 2.3;
+    if (qrGoal && !builtNow) { qrGoal = 0; cb.qr(false); wrap.classList.remove('is-qr'); }   // cuộn ngược tháo mô hình → bỏ QR
+    const prevQr = qrK, qd = qrGoal - qrK;
+    qrK += Math.sign(qd) * Math.min(Math.abs(qd), dt * .62);
+    if (qrGroup && qrK > 0) {
+      const e1 = ease(THREE.MathUtils.clamp(qrK * 1.8, 0, 1)), e2 = THREE.MathUtils.clamp((qrK - .3) / .7, 0, 1);
+      stages.forEach(st => {
+        if (st.kind === 'base') return;
+        const k = Math.max(.001, 1 - e1); st.obj.scale.multiplyScalar(k);
+        if (k < .02) st.obj.visible = false;
+      });
+      if (qrPlate) qrPlate.scale.set(Math.max(.001, ease(Math.min(1, e2 * 2))), 1, Math.max(.001, ease(Math.min(1, e2 * 2))));
+      if (qrInst && qrK !== prevQr) {
+        qrCells.forEach((cell, i) => {
+          const h = Math.max(.001, ease(THREE.MathUtils.clamp(e2 * 1.6 - cell.d * .6, 0, 1)));   // mọc từ tâm ra ngoài
+          qrPos.set(cell.x, .03 + .08 * h, cell.z); qrScale.set(1, h, 1);
+          qrInst!.setMatrixAt(i, qrMtx.compose(qrPos, qrQuat, qrScale));
+        });
+        qrInst.instanceMatrix.needsUpdate = true;
+      }
+    }
+    if (qrGroup) qrGroup.visible = qrK > 0;
+    if (qrK !== prevQr) renderer.shadowMap.needsUpdate = true;
     if (!drag) {
       vel *= .93; yaw = THREE.MathUtils.clamp(yaw + vel, -.7, .7);
       if (Math.abs(vel) < .0002) vel = 0;
@@ -668,13 +749,14 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     // nổi nhẹ: biên độ ~8 px, chu kỳ 8 s (sin tự êm ở hai đầu); tạm dừng khi kéo
     if (!still && !drag) floatT += dt;
     const bob = still ? 0 : Math.sin(floatT * Math.PI * 2 / 8) * (coarse ? .06 : .1) * (scrollMode ? Math.min(1, Math.max(0, (pS - .9) * 10)) : Math.min(1, Math.max(0, t - 1.2)));
-    model.position.y = lift + bob;
+    const calm = 1 - Math.min(1, qrK * 2);
+    model.position.y = lift + bob * calm;
     floor.scale.setScalar(1 - bob * .35);
     (floor.material as T.MeshBasicMaterial).opacity = Math.max(0, .5 - bob * .9 + lift * .6);
     // nghiêng theo con trỏ (chậm, biên độ nhỏ); nhãn trôi theo ít hơn để tạo chiều sâu
     tiltX += ((drag ? 0 : aimX) - tiltX) * .045; tiltY += ((drag ? 0 : aimY) - tiltY) * .045;
-    model.rotation.y = yaw + tiltX * .08;
-    model.rotation.x = tiltY * .035;
+    model.rotation.y = yaw + tiltX * .08 * calm;
+    model.rotation.x = tiltY * .035 * calm;
     wrap.style.setProperty('--hx', (tiltX * 6).toFixed(2));
     wrap.style.setProperty('--hy', (tiltY * 4 - bob * 25).toFixed(2));
     if (!still && built) plants.forEach(p => { p.leaf.rotation.y = p.base + Math.sin(now * .0009 + p.phase) * .05; });
@@ -699,12 +781,13 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
 
   return {
     reset,
+    toggleQr,
     dispose: () => {
       cancelAnimationFrame(frame);
       io.disconnect(); ro.disconnect();
       document.removeEventListener('visibilitychange', onVis);
       hero.removeEventListener('pointermove', onHover); hero.removeEventListener('pointerleave', onLeave);
-      wrap.classList.remove('is-intro', 'is-settled', 'is-building', 'is-built');
+      wrap.classList.remove('is-intro', 'is-settled', 'is-building', 'is-built', 'is-qr');
       geos.forEach(x => x.dispose());
       disposables.forEach(x => x.dispose());
       envTex.dispose(); pmrem.dispose();
