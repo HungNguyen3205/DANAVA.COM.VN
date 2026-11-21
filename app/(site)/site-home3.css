@@ -164,20 +164,25 @@
 .hb-title { font-size: clamp(36px, 4.4vw, 62px); }
 
 /* ---- Mô hình 3D văn phòng trên bìa (không khung, nằm tự do trên nền) ---- */
-.hb-cover__3d { position: relative; align-self: stretch; min-height: clamp(360px, 40vw, 560px); }
-.hb-office { position: absolute; inset: -6% -8% -4% -4%; cursor: grab; touch-action: pan-y; }
-.hb-office.is-drag { cursor: grabbing; }
-.hb-office::before { content: ""; position: absolute; left: 12%; right: 10%; bottom: 8%; height: 16%; border-radius: 50%; background: radial-gradient(closest-side, rgba(19, 36, 79, .22), transparent); filter: blur(6px); }
-.hb-office__canvas { position: relative; display: block; width: 100% !important; height: 100% !important; opacity: 0; transition: opacity .8s ease; }
+.hb-cover__3d { position: relative; align-self: stretch; display: flex; flex-direction: column; min-height: clamp(380px, 40vw, 560px); }
+.hb-office { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.hb-office__stage { position: relative; flex: 1; min-height: 320px; cursor: grab; touch-action: pan-y; }
+.hb-office__stage.is-drag { cursor: grabbing; }
+.hb-office__canvas { position: absolute; inset: 0; display: block; width: 100% !important; height: 100% !important; opacity: 0; transition: opacity .8s ease; }
 .hb-office.is-ready .hb-office__canvas { opacity: 1; }
-.hb-office__fallback { position: absolute; inset: 10% 6%; width: 88%; height: 80%; object-fit: cover; border-radius: 24px; transition: opacity .5s ease; }
+.hb-office__fallback { position: absolute; inset: 8% 6%; width: 88%; height: 84%; object-fit: cover; border-radius: 24px; box-shadow: 0 30px 60px -36px rgba(19, 36, 79, .5); transition: opacity .5s ease; }
 .hb-office.is-ready .hb-office__fallback { opacity: 0; pointer-events: none; }
-.hb-office__hint { position: absolute; left: 50%; bottom: 2%; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .8); color: var(--hb-muted); font-size: 12px; font-weight: 700; transform: translateX(-50%); opacity: 0; transition: opacity .5s; pointer-events: none; }
+.hb-office__hint { position: relative; z-index: 3; margin: 6px 0 0; text-align: center; min-height: 30px; opacity: 0; transition: opacity .5s; }
 .hb-office.is-ready .hb-office__hint { opacity: 1; }
-.hb-cover__3d .hb-float--a { left: 0; top: 6%; }
-.hb-cover__3d .hb-float--b { right: 0; bottom: 14%; }
+.hb-office__hint span, .hb-office__hint button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid rgba(19, 36, 79, .12); border-radius: 999px; background: #fff; color: var(--hb-navy); font: 700 12.5px/1.2 var(--font-sans), sans-serif; box-shadow: 0 10px 24px -16px rgba(19, 36, 79, .45); }
+.hb-office__hint button { cursor: pointer; color: var(--hb-orange); }
+.hb-office__hint button:hover { background: var(--hb-cream); }
+.hb-office__hint button:focus-visible { outline: 2px solid var(--hb-orange); outline-offset: 2px; }
+.hb-cover__3d .hb-float--a { left: -36px; top: -14px; bottom: auto; }
+.hb-cover__3d .hb-float--b { right: -8px; top: -6px; bottom: auto; }
 @media (max-width: 900px) {
-  .hb-cover__3d { min-height: 380px; }
-  .hb-office { inset: -4% -6% 0; }
+  .hb-cover__3d { min-height: 0; margin-top: 8px; flex-flow: row wrap; justify-content: center; gap: 10px; }
+  .hb-office { flex: 1 1 100%; }
+  .hb-office__stage { flex: none; height: clamp(340px, 96vw, 480px); }
+  .hb-cover__3d .hb-float { position: static; }
 }
-@media (max-width: 600px) { .hb-cover__3d { min-height: 320px; } }
