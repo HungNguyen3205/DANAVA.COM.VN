@@ -565,3 +565,6 @@
 /* Trong lúc dựng bằng cuộn: thanh bước chiếm đáy khung → ẩn pill đối tác; dựng xong pill hiện lại đúng chỗ */
 .hb-cover__3d .hb-float--b { transition: opacity .5s ease, transform .5s ease; }
 .hb-cover__3d.is-building:not(.is-built) .hb-float--b { opacity: 0; transform: translateY(10px); pointer-events: none; }
+
+/* Thanh số liệu dài hết bề ngang, thẳng hàng với các ô bên dưới */
+.hb-cover .hb-stats, .hb-cover .hb-src { margin-right: 0; }
