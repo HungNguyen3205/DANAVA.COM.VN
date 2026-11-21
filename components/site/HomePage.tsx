@@ -16,6 +16,7 @@ import { PostTile, Testimonials } from './blocks';
 import { HomeCases, type HomeCase } from './HomeCases';
 import { IconBox, HrefIcon, WHY_ICONS, PROCESS_ICONS, SERVICE_ICONS, NETWORK_ICONS } from './icons';
 import { MARKETING_ENGAGEMENTS } from '@/lib/marketing-portfolio';
+import { MILESTONES } from './company-content';
 import { Reveal, CountUp } from './HomeClient';
 import { OfficeScene } from './OfficeScene';
 import { block } from '@/lib/blocks';
@@ -61,6 +62,19 @@ export default function HomePage({ data }: { data: SiteData }) {
     return out;
   })();
   const products = block(data, 'menu').columns[0]?.items.filter(it => it.href) ?? [];
+  // Đường hành trình 2016 → 2026: 2016 theo chủ sở hữu (21/11/2026), 2018 theo đăng ký doanh nghiệp, 2021–2026 theo MILESTONES (trang Về chúng tôi)
+  const journey = (() => {
+    const steps = [
+      { year: 2016, title: 'Khởi đầu hành trình' },
+      { year: 2018, title: 'Thành lập Công ty Cổ phần Giải pháp DANAVA' },
+      ...MILESTONES.map(m => ({ year: Number(m.year), title: m.title }))
+    ].filter(x => x.year >= 2016).sort((x, y) => x.year - y.year);
+    const W = 300, X0 = 16, X1 = 284, YB = 84, YT = 22;
+    const pts = steps.map((st, i) => ({ ...st, x: X0 + ((st.year - 2016) / 10) * (X1 - X0), y: YB - (i / Math.max(1, steps.length - 1)) * (YB - YT) }));
+    const line = pts.map((p, i) => i === 0 ? `M${p.x.toFixed(1)} ${p.y.toFixed(1)}` : (() => { const q = pts[i - 1], mx = ((q.x + p.x) / 2).toFixed(1); return `C${mx} ${q.y.toFixed(1)} ${mx} ${p.y.toFixed(1)} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`; })()).join(' ');
+    const area = `${line} L${pts[pts.length - 1].x.toFixed(1)} ${YB + 10} L${pts[0].x.toFixed(1)} ${YB + 10} Z`;
+    return { W, pts, line, area, last: pts[pts.length - 1] };
+  })();
   const posts = knowledgePosts(data).slice(0, 3);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
 
@@ -85,7 +99,28 @@ export default function HomePage({ data }: { data: SiteData }) {
           </div>
           <div className="hb-cover__3d">
             <OfficeScene fallback="/assets/about/office-sm.webp" />
-            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin aria-hidden="true" />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
+            <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
+            {/* Đường hành trình DANAVA 2016 → nay (mốc năm thật, không có trục số) */}
+            <figure className="hb-glass hb-journey">
+              <figcaption>Hành trình DANAVA <small>2016 – nay</small></figcaption>
+              <svg viewBox={`0 0 ${journey.W} 108`} role="img" aria-label={`Hành trình DANAVA: ${journey.pts.map(p => `${p.year} ${p.title}`).join('; ')}`}>
+                <defs>
+                  <linearGradient id="hb-journey-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#e0611a" stopOpacity=".28" /><stop offset="1" stopColor="#e0611a" stopOpacity="0" /></linearGradient>
+                </defs>
+                <line x1="16" x2="284" y1="94" y2="94" className="hb-journey__base" />
+                <path d={journey.area} fill="url(#hb-journey-fill)" className="hb-journey__area" />
+                <path d={journey.line} pathLength={1} className="hb-journey__line" />
+                {journey.pts.map((p, i) => (
+                  <g key={p.year} className={`hb-journey__pt${p === journey.last ? ' is-last' : ''}`} style={{ ['--i' as string]: i }}>
+                    <title>{`${p.year}: ${p.title}`}</title>
+                    <circle cx={p.x} cy={p.y} r="10" className="hb-journey__hit" />
+                    <circle cx={p.x} cy={p.y} r={p === journey.last ? 5 : 4} className="hb-journey__dot" />
+                    <text x={p.x} y="105" className="hb-journey__year">{p.year}</text>
+                  </g>
+                ))}
+              </svg>
+              <p className="hb-journey__now"><i />{journey.last.year} · {journey.last.title}</p>
+            </figure>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{partners.length} đối tác đang đồng hành</span>
           </div>
         </div>

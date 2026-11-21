@@ -491,3 +491,29 @@
   .hb-cover__3d .hb-float { position: absolute; }
   .hb-office__stage { height: 100%; }
 }
+
+/* Bỏ khung nền sau mô hình 3D: mô hình nổi trực tiếp trên nền kem của hero */
+.hb-cover__3d { overflow: visible; border: 0; border-radius: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+
+/* ==== Hero: đường hành trình DANAVA 2016 → nay ==== */
+.hb-cover__3d .hb-journey { right: 20px; top: 8%; width: 300px; margin: 0; padding: 12px 14px 12px; }
+.hb-journey figcaption { margin: 0 0 4px; font-size: 12.5px; font-weight: 800; color: var(--hb-navy); }
+.hb-journey figcaption small { margin-left: 4px; font-size: 10.5px; font-weight: 700; color: var(--hb-muted); }
+.hb-journey svg { display: block; width: 100%; height: auto; overflow: visible; }
+.hb-journey__base { stroke: rgba(19, 36, 79, .1); stroke-width: 1; }
+.hb-journey__line { fill: none; stroke: #e0611a; stroke-width: 2; stroke-linecap: round; }
+.hb-journey__hit { fill: transparent; cursor: default; }
+.hb-journey__dot { fill: #fff; stroke: #e0611a; stroke-width: 2; transition: r .2s; }
+.hb-journey__pt.is-last .hb-journey__dot { fill: #e0611a; stroke: #fff; }
+.hb-journey__pt:hover .hb-journey__dot { r: 6; }
+.hb-journey__year { font: 700 8.5px/1 var(--font-sans), sans-serif; fill: var(--hb-muted); text-anchor: middle; }
+.hb-journey__pt.is-last .hb-journey__year { fill: var(--hb-navy); }
+.hb-journey__now { display: flex; align-items: center; gap: 7px; margin: 6px 0 0; font-size: 11.5px; font-weight: 700; color: var(--hb-text); }
+.hb-journey__now i { width: 7px; height: 7px; border-radius: 50%; background: #19b27b; box-shadow: 0 0 0 3px rgba(25, 178, 123, .18); }
+@media (prefers-reduced-motion: no-preference) {
+  .hb-cover__3d.is-intro .hb-journey__line { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .hb-cover__3d.is-settled .hb-journey__line { animation: hb-draw 1.4s cubic-bezier(.4, 0, .2, 1) .35s forwards; }
+  .hb-cover__3d.is-intro .hb-journey__area, .hb-cover__3d.is-intro .hb-journey__pt { opacity: 0; }
+  .hb-cover__3d.is-settled .hb-journey__area { animation: hb-fade .8s ease 1.2s both; }
+  .hb-cover__3d.is-settled .hb-journey__pt { animation: hb-fade .4s ease both; animation-delay: calc(.4s + var(--i) * .2s); }
+}
