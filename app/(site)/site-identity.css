@@ -1103,12 +1103,6 @@
 /* Trang chủ: khu portfolio */
 .h-portfolio .sc-featured { margin-bottom: 8px; }
 
-/* Nút nổi Zalo/Gọi tự né khi chồng lên CTA, nút hoặc ô nhập (Shell.tsx QuickContact) */
-.s-quick { transition: transform .3s ease, opacity .3s ease; }
-.s-quick.is-dodged { transform: translateX(calc(100% + 24px)); opacity: 0; pointer-events: none; }
-@media (prefers-reduced-motion: reduce) { .s-quick { transition: none; } }
-
-
 /* ---------- Trang chủ: tường logo khách hàng & đối tác đồng hành ---------- */
 .u-proof { padding: clamp(28px, 4vw, 48px) 0; }
 .u-proof__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; margin-bottom: 18px; }

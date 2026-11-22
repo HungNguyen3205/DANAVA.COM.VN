@@ -45,9 +45,3 @@ a.s-mega__link:focus-visible { outline: 3px solid var(--s-orange); outline-offse
 .s-mega--cols .s-mega__foot { margin-top: 14px; }
 @media (prefers-reduced-motion: reduce) { .s-mega--cols, .s-nav__item.is-open .s-mega--cols { transform: translate(-50%, 0); } }
 
-/* Menu điện thoại: các cột thành nhóm */
-.s-drawer__col + .s-drawer__col { margin-top: 10px; }
-.s-drawer__colhead { margin: 6px 0 2px; font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--s-orange); }
-.s-drawer__menu { display: grid; margin: 0; padding: 0; list-style: none; }
-.s-drawer__menu .s-mega__link { display: flex; align-items: center; min-height: 48px; padding: 8px 4px; border-radius: 10px; }
-.s-drawer__menu .s-mega__label { font-size: 15.5px; font-weight: 650; }

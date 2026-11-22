@@ -24,6 +24,7 @@ import './(site)/site-home2.css';
 import './(site)/site-home3.css';
 import './(site)/site-mobile.css';
 import './(site)/site-headings.css';
+import './(site)/site-shell.css';
 
 /**
  * 404 toàn cục (URL không khớp route nào): nằm ngoài nhóm (site) nên tự nạp stylesheet và khung website.

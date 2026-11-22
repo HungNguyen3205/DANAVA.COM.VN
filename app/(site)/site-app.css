@@ -78,7 +78,6 @@
 
   /* Chừa chỗ cho thanh tab: footer, drawer, banner cookie, các sân khấu cao bằng màn hình */
   .s-app { padding-bottom: calc(var(--s-tabbar-h) + env(safe-area-inset-bottom)); }
-  .s-drawer { bottom: calc(var(--s-tabbar-h) + env(safe-area-inset-bottom)); padding-bottom: 24px; overscroll-behavior: contain; }
   .consent-banner { bottom: calc(var(--s-tabbar-h) + env(safe-area-inset-bottom) + 12px) !important; }
   .h-home { --h-stage-h: calc(100svh - var(--s-header-h) - var(--s-tabbar-h) - env(safe-area-inset-bottom)); }
   .cine { --stage-h: calc(100svh - var(--s-header-h) - var(--s-tabbar-h) - env(safe-area-inset-bottom)); }
@@ -160,38 +159,6 @@
 @media (prefers-reduced-motion: reduce) {
   .s-tabbar__icon, .s-app .s-btn:active, .s-app :is(.s-card--link, .exit-card, .s-shot, .c-tile, .s-tab):active { transition: none; transform: none; }
 }
-
-/* ---------- Nút liên hệ nổi: Zalo + Gọi (điện thoại: nằm trên thanh tab) ---------- */
-.s-quick { position: fixed; z-index: 84; right: 14px; bottom: calc(var(--s-tabbar-h, 0px) + env(safe-area-inset-bottom) + 14px); display: grid; gap: 10px; }
-.s-quick__btn {
-  position: relative; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%;
-  color: #fff; font-size: 12.5px; font-weight: 800; letter-spacing: -.01em;
-  box-shadow: 0 10px 24px -8px rgba(11, 19, 43, .45); -webkit-tap-highlight-color: transparent;
-}
-.s-quick__btn svg { width: 20px; height: 20px; }
-.s-quick__btn--zalo { background: linear-gradient(135deg, #2f8bff, #0068ff); }
-.s-quick__btn--call { background: linear-gradient(135deg, #ffb13b, #f2730e); }
-.s-quick__tip { display: none; }
-html.is-cine .s-quick { opacity: 0; visibility: hidden; pointer-events: none; }
-@media (min-width: 861px) {
-  .s-quick { right: 22px; bottom: 26px; gap: 12px; }
-  .s-quick__btn { width: 54px; height: 54px; font-size: 13.5px; transition: transform .2s, box-shadow .2s; }
-  .s-quick__btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 14px 30px -8px rgba(11, 19, 43, .5); }
-  .s-quick__btn svg { width: 22px; height: 22px; }
-  .s-quick__btn--call::after {
-    content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(242, 115, 14, .45);
-    animation: s-quick-ring 2.2s ease-out infinite;
-  }
-  .s-quick__tip {
-    display: block; position: absolute; right: calc(100% + 12px); top: 50%; transform: translate(6px, -50%);
-    padding: 7px 12px; border-radius: 10px; background: var(--s-ink, #0b132b); color: #fff;
-    font-size: 13px; font-weight: 700; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
-  }
-  .s-quick__btn:hover .s-quick__tip, .s-quick__btn:focus-visible .s-quick__tip { opacity: 1; transform: translate(0, -50%); }
-  .consent-banner { right: 96px; }
-}
-@keyframes s-quick-ring { 0% { transform: scale(.9); opacity: 1; } 100% { transform: scale(1.35); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .s-quick__btn--call::after { animation: none; display: none; } }
 
 /* Banner đồng ý thống kê: gọn hơn trên điện thoại, 2 nút chia đôi hàng */
 @media (max-width: 680px) {

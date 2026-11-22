@@ -6,6 +6,23 @@
  * Khối mới thêm sau này cũng nên đặt ở đây.
  */
 
+/* ------------------------------------------------------------ Kênh liên hệ */
+export const CHANNELS = {
+  /** Trống = zalo.me theo số Hotline */
+  zalo: '',
+  /** Trống = m.me theo tên người dùng của Fanpage */
+  messenger: '',
+  /** Chưa có tài khoản được xác nhận → trống → không hiện */
+  linkedin: '',
+  x: ''
+};
+const CHANNEL_RULES: [keyof typeof CHANNELS, string, RegExp][] = [
+  ['zalo', 'Zalo', /^https:\/\/([a-z0-9-]+\.)?(zalo\.me|zaloapp\.com)\/[^\s"'<>]+$/i],
+  ['messenger', 'Messenger', /^https:\/\/(m\.me|(www\.)?messenger\.com)\/[^\s"'<>]+$/i],
+  ['linkedin', 'LinkedIn', /^https:\/\/([a-z0-9-]+\.)?linkedin\.com\/[^\s"'<>]+$/i],
+  ['x', 'X', /^https:\/\/(www\.)?(x|twitter)\.com\/[^\s"'<>]+$/i]
+];
+
 /* ------------------------------------------------------------ Ảnh doanh nghiệp */
 export const GALLERY = {
   visible: true,
@@ -27,7 +44,7 @@ export const PHOTO_FOCUS = ['', 'top', 'bottom', 'left', 'right'];
 export const PHOTO_MAX = 12;
 
 /* ------------------------------------------------------------ Kiểm tra giá trị */
-export type ExtraValues = { gallery: typeof GALLERY };
+export type ExtraValues = { contact: typeof CHANNELS; gallery: typeof GALLERY };
 
 const IMAGE = /^\/assets\/[a-zA-Z0-9/_.-]+\.(webp|png|jpe?g)$/;
 
@@ -36,6 +53,12 @@ const IMAGE = /^\/assets\/[a-zA-Z0-9/_.-]+\.(webp|png|jpe?g)$/;
  * Trả về câu báo lỗi cho quản trị viên, '' khi hợp lệ.
  */
 export function extraError(values: Partial<ExtraValues> | undefined): string {
+  const channels = values?.contact;
+  if (channels) {
+    for (const [key, name, rule] of CHANNEL_RULES) {
+      if (channels[key] && !rule.test(channels[key])) return `Kênh liên hệ: link ${name} không đúng. Dán link https của đúng kênh hoặc để trống.`;
+    }
+  }
   const gallery = values?.gallery;
   if (gallery) {
     if (!Array.isArray(gallery.photos)) return 'Ảnh doanh nghiệp: danh sách ảnh không hợp lệ.';

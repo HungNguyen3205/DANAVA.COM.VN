@@ -1,31 +1,35 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ChevronRight, Menu, X, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronDown, Menu, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper } from 'lucide-react';
 import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
 import { HrefIcon } from './site/icons';
+import { contactChannels } from '@/lib/contact-channels';
+import { BrandIcon } from './site/BrandIcons';
+import { MobileMenu } from './site/MobileMenu';
+import { ContactSheet } from './site/ContactDock';
 
 /** Dòng phụ dưới tên cột mega menu (theo thứ tự cột) */
 const COL_SUB = ['Công nghệ & phần mềm', 'Truyền thông & tăng trưởng', 'Kết nối & phát triển'];
 
 type MenuItemData = { label: string; desc: string; href: string; badge: string; image: string };
 /** Một mục menu Giải pháp: trang trong website → Link; https → tab mới; không có đường dẫn → chỉ hiển thị. */
-function MenuItem({ it, onPick, compact = false }: { it: MenuItemData; onPick?: () => void; compact?: boolean }) {
+function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
   const external = it.href.startsWith('https://');
   // Không dùng ảnh (yêu cầu 20/11/2026); mỗi mục có icon nét mảnh theo đường dẫn (yêu cầu 21/11/2026)
   const body = (
     <>
-      {!compact && <HrefIcon href={it.href} className="s-mega__ico" />}
+      <HrefIcon href={it.href} className="s-mega__ico" />
       <span className="s-mega__txt">
         <span className="s-mega__label">
           {it.label}
           {it.badge && <span className="s-mega__badge">{it.badge}</span>}
           {external && <ArrowUpRight aria-hidden="true" />}
         </span>
-        {it.desc && !compact && <span className="s-mega__sub">{it.desc}</span>}
+        {it.desc && <span className="s-mega__sub">{it.desc}</span>}
       </span>
     </>
   );
@@ -45,14 +49,13 @@ const NAV = [
 export function Header() {
   const path = usePathname() || '/';
   const { data } = useSite();
-  const co = block(data, 'company');
   const [open, setOpen] = useState(false);
+  const closeMenu = useCallback(() => setOpen(false), []);
   const [mega, setMega] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const megaRef = useRef<HTMLLIElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menu = block(data, 'menu');
-  const phone = data.phone || CONTACT.phone;
 
   useEffect(() => {
     setOpen(false);
@@ -65,15 +68,6 @@ export function Header() {
     window.addEventListener('scroll', update, { passive: true });
     return () => window.removeEventListener('scroll', update);
   }, []);
-
-  useEffect(() => {
-    const app = document.querySelector('.s-app');
-    app?.classList.toggle('is-locked', open);
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => { window.removeEventListener('keydown', onKey); app?.classList.remove('is-locked'); };
-  }, [open]);
 
   useEffect(() => {
     if (!mega) return;
@@ -145,52 +139,18 @@ export function Header() {
               type="button"
               className="s-burger"
               aria-label={open ? 'Đóng menu' : 'Mở menu'}
+              aria-haspopup="dialog"
               aria-expanded={open}
-              aria-controls="s-drawer"
-              onClick={() => setOpen(v => !v)}
+              aria-controls="s-menu"
+              onClick={() => setOpen(true)}
             >
-              {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+              <Menu aria-hidden="true" /><span>MENU</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div id="s-drawer" className={`s-drawer${open ? ' is-open' : ''}`} hidden={!open}>
-        <div className="s-drawer__group">
-          <Link className="s-drawer__link" href="/" aria-current={path === '/' ? 'page' : undefined}>
-            Trang chủ<ChevronRight aria-hidden="true" />
-          </Link>
-        </div>
-        <div className="s-drawer__group">
-          <p className="s-drawer__label">Giải pháp</p>
-          {menu.columns.map((col, ci) => (
-            <div key={ci} className="s-drawer__col">
-              <p className="s-drawer__colhead">{col.title}</p>
-              <ul className="s-drawer__menu">
-                {col.items.map((it, ii) => <li key={ii}><MenuItem it={it} compact /></li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="s-drawer__group">
-          {NAV.map(item => (
-            <Link key={item.href} className="s-drawer__link" href={item.href} aria-current={active(item.href) ? 'page' : undefined}>
-              {item.label}<ChevronRight aria-hidden="true" />
-            </Link>
-          ))}
-          <Link className="s-drawer__link" href="/doi-ngu/" aria-current={active('/doi-ngu/') ? 'page' : undefined}>
-            Đội ngũ<ChevronRight aria-hidden="true" />
-          </Link>
-        </div>
-        <div className="s-drawer__cta">
-          <Link className="s-btn s-btn--primary s-btn--lg s-btn--block" href="/lien-he/">Nhận tư vấn</Link>
-          <a className="s-btn s-btn--secondary s-btn--lg s-btn--block" href={`tel:${phone}`}><Phone aria-hidden="true" />Gọi {formatPhone(phone)}</a>
-        </div>
-        <div className="s-drawer__contact">
-          <span>{data.email || CONTACT.email}</span>
-          <span>{co.address}</span>
-        </div>
-      </div>
+      <MobileMenu open={open} onClose={closeMenu} path={path} />
     </>
   );
 }
@@ -201,6 +161,7 @@ export function Footer() {
   const services = sortServices(data.services);
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
+  const { socials } = contactChannels(data);
 
   return (
     <footer className="s-footer">
@@ -216,6 +177,15 @@ export function Footer() {
               <a href={`mailto:${email}`}><Mail aria-hidden="true" />{email}</a>
               <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{co.address}</a>
             </div>
+            {socials.length > 0 && (
+              <ul className="s-footer__social" aria-label="DANAVA trên mạng xã hội">
+                {socials.map(s => (
+                  <li key={s.key}>
+                    <a href={s.href} target="_blank" rel="noopener noreferrer" title={s.name} aria-label={`${s.name} của DANAVA (mở tab mới)`}><BrandIcon name={s.key} /></a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div>
@@ -282,77 +252,48 @@ const TABS = [
 
 /**
  * Thanh tab cố định dưới đáy màn hình (điện thoại, máy tính bảng dọc) — điều hướng kiểu ứng dụng:
- * luôn hiện, vùng bấm lớn trong tầm ngón cái, nút "Tư vấn" nổi ở giữa. Bấm lại tab đang mở để cuộn lên đầu.
+ * luôn hiện, vùng bấm lớn trong tầm ngón cái, nút "Tư vấn" nổi ở giữa mở bảng kênh liên hệ. Bấm lại tab đang mở để cuộn lên đầu.
  */
 export function MobileBar() {
   const path = usePathname() || '/';
+  const [sheet, setSheet] = useState(false);
+  const closeSheet = useCallback(() => setSheet(false), []);
+  useEffect(() => { setSheet(false); }, [path]);
   return (
-    <nav className="s-tabbar" aria-label="Điều hướng nhanh">
-      {TABS.map(t => {
-        const on = t.match(path);
-        const Icon = t.icon;
-        return (
-          <Link
-            key={t.href}
-            href={t.href}
-            className={`s-tabbar__item${t.primary ? ' s-tabbar__item--primary' : ''}`}
-            aria-current={on ? 'page' : undefined}
-            onClick={e => {
-              if (on && path === t.href) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-            }}
-          >
-            <span className="s-tabbar__icon"><Icon aria-hidden="true" /></span>
-            <span className="s-tabbar__label">{t.label}</span>
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
-
-/** Icon mạng xã hội nét mảnh (bộ lucide không có logo thương hiệu) */
-const SocialIcon = ({ kind }: { kind: 'facebook' | 'youtube' | 'tiktok' }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {kind === 'facebook' && <path d="M14.5 8H16.5V4.5H14.2C11.9 4.5 10.5 6 10.5 8.3V10.5H8V14H10.5V20.5H14V14H16.4L16.9 10.5H14V8.6C14 8.2 14.2 8 14.5 8Z" />}
-    {kind === 'youtube' && <><rect x="3" y="6" width="18" height="12" rx="4" /><path d="M10.5 9.6V14.4L14.6 12Z" /></>}
-    {kind === 'tiktok' && <path d="M14 4C14.4 6.3 15.8 7.7 18 8V11C16.5 11 15.1 10.5 14 9.7V15A5 5 0 1 1 9 10V13A2 2 0 1 0 11 15V4Z" />}
-  </svg>
-);
-
-/** Nút liên hệ nổi góc phải: mạng xã hội + bản đồ (máy tính) và Zalo + gọi hotline. Cụm nút đứng yên khi cuộn. */
-export function QuickContact() {
-  const path = usePathname() || '/';
-  const { data } = useSite();
-  const co = block(data, 'company');
-  const phone = (data.phone || CONTACT.phone).replace(/\D/g, '');
-  const socials = [
-    { key: 'facebook', href: co.facebook, label: 'Facebook DANAVA', icon: <SocialIcon kind="facebook" /> },
-    { key: 'youtube', href: co.youtube, label: 'YouTube DANAVA', icon: <SocialIcon kind="youtube" /> },
-    { key: 'tiktok', href: co.tiktok, label: 'TikTok DANAVA', icon: <SocialIcon kind="tiktok" /> },
-    { key: 'map', href: co.mapUrl, label: 'Chỉ đường tới văn phòng DANAVA', icon: <MapPin aria-hidden="true" strokeWidth={1.8} /> }
-  ].filter(x => x.href && safeHref(x.href));
-
-  if (path.startsWith('/lien-he')) return null;
-  return (
-    <div className="s-quick" aria-label="Liên hệ nhanh">
-      {socials.length > 0 && (
-        <div className="s-quick__social">
-          {socials.map(x => (
-            <a key={x.key} className={`s-quick__mini s-quick__mini--${x.key}`} href={x.href} target="_blank" rel="noopener noreferrer" aria-label={`${x.label} (mở tab mới)`}>
-              {x.icon}
-              <span className="s-quick__tip">{x.label}</span>
-            </a>
-          ))}
-        </div>
-      )}
-      <a className="s-quick__btn s-quick__btn--zalo" href={`https://zalo.me/${phone}`} target="_blank" rel="noopener noreferrer" aria-label="Nhắn Zalo cho DANAVA">
-        Zalo
-        <span className="s-quick__tip">Nhắn Zalo</span>
-      </a>
-      <a className="s-quick__btn s-quick__btn--call" href={`tel:${phone}`} aria-label={`Gọi ${formatPhone(phone)}`}>
-        <Phone aria-hidden="true" />
-        <span className="s-quick__tip">Gọi {formatPhone(phone)}</span>
-      </a>
-    </div>
+    <>
+      <nav className="s-tabbar" aria-label="Điều hướng nhanh">
+        {TABS.map(t => {
+          const on = t.match(path);
+          const Icon = t.icon;
+          const body = (
+            <>
+              <span className="s-tabbar__icon"><Icon aria-hidden="true" /></span>
+              <span className="s-tabbar__label">{t.label}</span>
+            </>
+          );
+          if (t.primary) {
+            return (
+              <button key={t.href} type="button" className="s-tabbar__item s-tabbar__item--primary" aria-haspopup="dialog" aria-expanded={sheet} aria-controls="s-contact-sheet" aria-current={on ? 'page' : undefined} onClick={() => setSheet(true)}>
+                {body}
+              </button>
+            );
+          }
+          return (
+            <Link
+              key={t.href}
+              href={t.href}
+              className="s-tabbar__item"
+              aria-current={on ? 'page' : undefined}
+              onClick={e => {
+                if (on && path === t.href) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+              }}
+            >
+              {body}
+            </Link>
+          );
+        })}
+      </nav>
+      <ContactSheet open={sheet} onClose={closeSheet} />
+    </>
   );
 }

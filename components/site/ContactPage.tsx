@@ -12,6 +12,7 @@ import { CONTACT, formatPhone } from './catalog';
 import { Crumbs } from './ui';
 import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
+import { contactChannels } from '@/lib/contact-channels';
 import { rich } from './rich';
 import { CuteChat, CuteFacebook, CuteMail, CuteMoon, CutePhone, CuteSun, CuteSupport, CuteYoutube } from './CuteIcons';
 
@@ -78,7 +79,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
   const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const zalo = `https://zalo.me/${phone.replace(/\D/g, '')}`;
+  const { zalo } = contactChannels(data);
 
   // Trạng thái giờ làm việc tính trên trình duyệt (tránh lệch khi render máy chủ)
   useEffect(() => { setIsOpen(openNow(co.hours)); }, [co.hours]);

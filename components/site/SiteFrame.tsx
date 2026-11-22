@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Header, Footer, MobileBar, QuickContact } from '../Shell';
+import { Header, Footer, MobileBar } from '../Shell';
+import { ContactDock } from './ContactDock';
 
 /** Khung chung của website công khai: skip link, header, nội dung, footer. */
 export function SiteFrame({ children }: { children: ReactNode }) {
@@ -11,7 +12,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
       {children}
       <Footer />
       <MobileBar />
-      <QuickContact />
+      <ContactDock />
     </div>
   );
 }

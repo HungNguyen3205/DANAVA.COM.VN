@@ -23,6 +23,7 @@ import { CompanyGallery } from './CompanyGallery';
 import { block } from '@/lib/blocks';
 import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { markOf } from '@/lib/partner-marks';
+import { contactChannels } from '@/lib/contact-channels';
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return <p className="hb-eyebrow">{children}</p>;
@@ -122,7 +123,7 @@ export default function HomePage({ data }: { data: SiteData }) {
             </figure>
           </div>
           <div className="hb-cover__3d">
-            <OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={`https://zalo.me/${phone.replace(/\D/g, '')}`} />
+            <OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={contactChannels(data).zalo} />
             <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{logos.length} thương hiệu đã đồng hành</span>
             <div className="hb-build" aria-hidden="true">

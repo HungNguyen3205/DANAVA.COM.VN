@@ -25,61 +25,12 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
 .s-mega__cta:hover svg { transform: translateX(3px); }
 .s-mega__cta:focus-visible { outline: 3px solid #13244f; outline-offset: 2px; }
 
-/* ==== Nút liên hệ nổi: đứng yên khi cuộn (bỏ cơ chế tự né), thêm nút mạng xã hội + bản đồ nhỏ, icon nét mảnh ==== */
-.s-quick, .s-quick.is-dodged { transform: none; opacity: 1; pointer-events: auto; transition: none; }
-.s-quick__social { display: none; }
-@media (min-width: 901px) {
-  .s-quick__social { display: grid; justify-items: center; gap: 8px; padding-bottom: 2px; }
-  .s-quick__mini { position: relative; display: grid; place-items: center; width: 40px; height: 40px; margin: 0 auto; border-radius: 50%; background: rgba(255, 255, 255, .92);
-    border: 1px solid rgba(19, 36, 79, .1); color: #13244f; box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .45); text-decoration: none; transition: color .2s, transform .2s, border-color .2s; }
-  .s-quick__mini svg { width: 18px; height: 18px; }
-  .s-quick__mini:hover { transform: translateY(-2px); border-color: rgba(242, 107, 29, .4); }
-  .s-quick__mini--facebook:hover { color: #1877f2; }
-  .s-quick__mini--youtube:hover { color: #ff0000; }
-  .s-quick__mini--tiktok:hover { color: #111; }
-  .s-quick__mini--map:hover { color: #f26b1d; }
-  .s-quick__mini:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
-  .s-quick__mini .s-quick__tip { display: block; position: absolute; right: calc(100% + 10px); top: 50%; padding: 5px 9px; border-radius: 8px; background: #13244f; color: #fff; font: 600 12px/1.2 var(--font-sans), sans-serif;
-    white-space: nowrap; opacity: 0; transform: translate(4px, -50%); pointer-events: none; transition: opacity .2s, transform .2s; }
-  .s-quick__mini:hover .s-quick__tip, .s-quick__mini:focus-visible .s-quick__tip { opacity: 1; transform: translate(0, -50%); }
-}
-
-/* Cụm nút nổi đồng bộ: mọi nút 40px; icon mạng xã hội mang màu thương hiệu trên nền nhạt cùng tông */
-@media (min-width: 901px) {
-  .s-quick { gap: 8px; }
-  .s-quick__btn { width: 40px; height: 40px; font-size: 10.5px; letter-spacing: -.01em; box-shadow: 0 8px 20px -12px rgba(11, 19, 43, .5); }
-  .s-quick__btn svg { width: 18px; height: 18px; }
-  .s-quick__btn--call::after { inset: -4px; border-width: 1.5px; }
-  .s-quick__mini--facebook { background: #e9f1fe; border-color: rgba(24, 119, 242, .18); color: #1877f2; }
-  .s-quick__mini--youtube { background: #ffeded; border-color: rgba(230, 33, 23, .16); color: #e62117; }
-  .s-quick__mini--tiktok { background: #eef0f3; border-color: rgba(17, 17, 17, .12); color: #111; }
-  .s-quick__mini--map { background: #fff1e6; border-color: rgba(242, 107, 29, .2); color: #f26b1d; }
-  .s-quick__mini--facebook:hover { background: #1877f2; color: #fff; }
-  .s-quick__mini--youtube:hover { background: #e62117; color: #fff; }
-  .s-quick__mini--tiktok:hover { background: #111; color: #fff; }
-  .s-quick__mini--map:hover { background: #f26b1d; color: #fff; }
-}
-
-/* Zalo + Gọi cùng kiểu với các nút nhỏ: nền nhạt, icon màu, rê chuột thì tô đậm; bỏ vòng sóng */
-@media (min-width: 901px) {
-  .s-quick__btn { border: 1px solid transparent; box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .45); transition: background .2s, color .2s, transform .2s; }
-  .s-quick__btn--zalo { background: #e8f0ff; border-color: rgba(0, 104, 255, .18); color: #0068ff; font-weight: 800; }
-  .s-quick__btn--call { background: #fff1e6; border-color: rgba(242, 107, 29, .22); color: #f26b1d; }
-  .s-quick__btn--call::after { display: none; }
-  .s-quick__btn--zalo:hover { background: #0068ff; color: #fff; transform: translateY(-2px); }
-  .s-quick__btn--call:hover { background: #f26b1d; color: #fff; transform: translateY(-2px); }
-}
-
 /* ==== Đồng bộ phần đầu các trang con với trang chủ: nền kem ấm, tiêu đề navy, chữ nhấn cam (thay gradient xanh cũ) ==== */
 .s-app .s-pagehead { background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%), radial-gradient(40% 60% at 0% 100%, rgba(242, 107, 29, .08), transparent 60%), linear-gradient(180deg, #fff7ec 0%, #fbf6ee 100%); }
 .s-app .s-pagehead .s-h1 { color: #13244f; }
 .s-app .s-hl, .s-app .s-hl--warm { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #f26b1d; -webkit-text-fill-color: currentColor; }
 .s-app .s-section--brand .s-hl { color: #ffb347; }
 
-/* App (điện thoại): Zalo + Gọi cùng kiểu nền nhạt, icon màu như trên máy tính */
-.s-quick__btn--zalo { background: #e8f0ff; border: 1px solid rgba(0, 104, 255, .2); color: #0068ff; }
-.s-quick__btn--call { background: #fff1e6; border: 1px solid rgba(242, 107, 29, .25); color: #f26b1d; }
-.s-quick__btn { box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .5); }
 /* Nút chính toàn site cùng tông cam với trang chủ và thanh menu */
 .s-app .s-btn--primary { background: linear-gradient(90deg, #ff8a2a, #f26b1d); border-color: transparent; color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }
 .s-app .s-btn--primary:hover { background: linear-gradient(90deg, #ff7a14, #e85f12); color: #fff; }

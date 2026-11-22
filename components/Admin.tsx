@@ -17,6 +17,7 @@ import { initial, validateContent, type SiteData, type Post } from '@/lib/conten
 import { useSite } from './SiteStore';
 import { ServicesEditor, TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
 import { BlockEditor, BlockPanel } from './AdminBlockEditor';
+import { ChannelsEditor } from './AdminChannels';
 import { BLOCK_META } from './adminBlockConfig';
 import { block, blockDefaults, savedBlock, withBlock, type BlockKey } from '@/lib/blocks';
 export const adminSections = [
@@ -587,6 +588,7 @@ function AdminWorkspace({ section }: { section: string }) {
         {section === 'trung-bay' && <ShowcaseEditor draft={draft} setDraft={setDraft} />}
         {(['cong-ty', 'menu-giai-phap', 'chu-tren-trang', 've-danava', 'he-sinh-thai', 'ho-so-nhan-su'] as const).includes(section as 'cong-ty') && blockPanel(({ 'cong-ty': 'company', 'menu-giai-phap': 'menu', 'chu-tren-trang': 'pages', 've-danava': 'about', 'he-sinh-thai': 'ecosystem', 'ho-so-nhan-su': 'staff' } as Record<string, BlockKey>)[section])}
         {section === 'anh-doanh-nghiep' && blockPanel('gallery')}
+        {section === 'kenh-lien-he' && <ChannelsEditor draft={draft} setDraft={setDraft} />}
         {section === 'chinh-sach' && <div className="blk-stack">{blockPanel('privacy')}{blockPanel('servicePolicy')}</div>}
         {section === 'cai-dat' && (
           <div className="admin-two">

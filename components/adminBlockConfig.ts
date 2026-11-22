@@ -15,6 +15,11 @@ export const PAGE_NAMES: Record<string, string> = {
 };
 
 export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config: BlockEditorConfig }> = {
+  contact: {
+    title: 'Kênh liên hệ',
+    desc: 'Sửa tại mục Kênh liên hệ & MXH (components/AdminChannels.tsx).',
+    config: { labels: { zalo: 'Zalo', messenger: 'Messenger', linkedin: 'LinkedIn', x: 'X' } }
+  },
   gallery: {
     title: 'Ảnh doanh nghiệp (Trang chủ)',
     desc: 'Ảnh đang hiển thị đứng đầu là ảnh lớn; dùng mũi tên để đổi thứ tự. Khung ảnh tỉ lệ 3:2, nên dùng ảnh ngang rộng từ 1200px. Chỉ dùng ảnh thật của DANAVA và đã có sự đồng ý của người trong ảnh. Tắt "Hiển thị" để ẩn cả khu vực hoặc từng ảnh.',

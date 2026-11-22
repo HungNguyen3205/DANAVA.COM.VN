@@ -136,7 +136,7 @@ export function publicContent(data: SiteData): SiteData {
     // Chỉ trang /du-an/ (client) cần showcase — chỉ gửi mục website đã xuất bản
     showcase: (data.showcase || []).filter(x => x.published && x.serviceId === 'website'),
     // Cấu hình bổ sung: chỉ gửi phần thành phần trình duyệt cần (ảnh doanh nghiệp render trên máy chủ)
-    extras: undefined,
+    extras: data.extras?.contact && { contact: data.extras.contact },
     // Khối chỉ dùng ở trang máy chủ (hệ sinh thái, chính sách) không gửi xuống trình duyệt
     blocks: data.blocks && { company: data.blocks.company, menu: data.blocks.menu, pages: data.blocks.pages, about: data.blocks.about, staff: data.blocks.staff }
   };
