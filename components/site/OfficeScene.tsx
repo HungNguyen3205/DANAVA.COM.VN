@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type * as T from 'three';
 import { RotateCcw, QrCode, ArrowLeft } from 'lucide-react';
-import { BOARD, drawBoard, drawStud, qrLayout, type Stud } from './qr-board';
+import { BOARD, SHADOW_SPAN, drawBeam, drawBoard, drawShadow, drawSheen, drawSheenMask, drawStud, qrLayout, type Stud } from './qr-board';
 
 type Ctl = { reset: () => void; toggleQr: () => void; dispose: () => void };
 
@@ -537,7 +537,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   const rimLight = new THREE.DirectionalLight(0xfff0dc, .7); rimLight.position.set(-3, 3, -9); scene.add(rimLight);
   // bóng đổ lớn, mềm dưới đế (nằm ngoài khối nổi; co giãn theo độ cao)
   const floorMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: .5, color: 0x3a2a1c }); disposables.push(floorMat);
-  const floor = new THREE.Mesh(g(new THREE.PlaneGeometry(W + 3.8, D + 3.8)), floorMat);
+  const floor = new THREE.Mesh(g(new THREE.PlaneGeometry(W + 2.6, D + 2.6)), floorMat);
   floor.rotation.x = -Math.PI / 2; floor.position.y = -.75; scene.add(floor);
   // đèn nội thất ấm (sáng dần trong màn mở đầu)
   const warm1 = new THREE.PointLight(0xffd7a0, 0, 5.5, 2); warm1.position.set(0, H - .3, -1.2); scene.add(warm1);
@@ -548,7 +548,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
 
   /* ================= văn phòng biến thành bảng mã QR ================= */
   // Vật liệu không chịu đèn, không tone-mapping: màu đúng như đã thử quét. Ô dữ liệu là lớp riêng để "mọc" từ tâm ra.
-  let qrGroup: T.Group | null = null, qrBoard: T.Group | null = null, qrLayers: { mesh: T.InstancedMesh; studs: Stud[] }[] = [], gone = false;
+  let qrGroup: T.Group | null = null, qrBoard: T.Group | null = null, qrShadow: T.Mesh | null = null, sheenTex: T.Texture | null = null, beam: T.Mesh | null = null, beamFrom = 0, beamSpan = 0, beamT = 0, qrLayers: { mesh: T.InstancedMesh; studs: Stud[] }[] = [], gone = false;
   const QS = W + .5;
   if (cb.qrUrl) {
     const url = cb.qrUrl;
@@ -574,6 +574,26 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       const body = new THREE.Mesh(g(new THREE.ExtrudeGeometry(shape, { depth: .18, bevelEnabled: false, curveSegments: 10 }).rotateX(-Math.PI / 2)), std({ color: 0xb98350, roughness: .5 }));
       board.add(body);
 
+      // bóng mềm theo hình bảng, nằm thấp hơn mép bảng lúc nghiêng hết cỡ
+      const square = (side: number) => g(new THREE.PlaneGeometry(side, side).rotateX(-Math.PI / 2));
+      qrShadow = new THREE.Mesh(square(QS * SHADOW_SPAN), flat(canvasTex(512, 512, c => drawShadow(c, 512))));
+      qrShadow.position.y = -.4; qrShadow.renderOrder = 1; qrGroup!.add(qrShadow);
+
+      if (!still) {
+        sheenTex = canvasTex(512, 4, c => drawSheen(c, 512, 4));
+        sheenTex.center.set(.5, .5); sheenTex.rotation = .45;
+        const shineMat = flat(sheenTex), mask = canvasTex(512, 512, c => drawSheenMask(c, 512));
+        mask.colorSpace = THREE.NoColorSpace; shineMat.alphaMap = mask;
+        const shine = new THREE.Mesh(square(QS), shineMat);
+        shine.position.y = .199; shine.renderOrder = 4; board.add(shine);
+
+        const span = layout.n * layout.cell;
+        beamFrom = (layout.origin.y - BOARD / 2) * k; beamSpan = span * k;
+        const beamMat = flat(canvasTex(256, 32, c => drawBeam(c, 256, 32))); beamMat.opacity = 0;
+        beam = new THREE.Mesh(g(new THREE.PlaneGeometry(span * k, 12 * k).rotateX(-Math.PI / 2)), beamMat);
+        beam.position.y = .202; beam.renderOrder = 5; board.add(beam);
+      }
+
       const tile = g(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2));
       qrLayers = (['navy', 'blue', 'orange'] as const).flatMap(ink => {
         const studs = layout.studs.filter(s => s.ink === ink);
@@ -586,12 +606,15 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       wake();
     }).catch(() => { /* không tải được ảnh: vẫn còn liên kết "Mở Zalo" */ });
   }
-  let qrK = 0, qrGoal = 0, builtNow = false, latched = false, lockUntil = 0, lockArmed = false;
-  // Vừa hoàn thiện: chặn lướt XUỐNG khoảng 5 s để nút QR rơi xuống và khách kịp chọn; lướt lên vẫn được
-  // Không giữ khi khách đang gõ (phím cách!) hoặc cuộn bên trong hộp thoại (ANNA, menu)
+  let qrK = 0, qrGoal = 0, builtNow = false, latched = false, lockUntil = 0, lockArmed = false, chose = false;
+  // Vừa hoàn thiện: chặn lướt XUỐNG khoảng 2 s để nút QR rơi xuống và khách kịp chọn; lướt lên vẫn được
+  // Không giữ khi khách đã chọn QR, khi bìa đã trôi khỏi màn hình (tải lại giữa trang, kéo thanh cuộn),
+  // khi đang gõ (phím cách!) hoặc cuộn bên trong hộp thoại (ANNA, menu). Không bao giờ giữ quá HOLD_MAX.
+  const HOLD = 2000, HOLD_MAX = 4000;
+  const holding = () => performance.now() < lockUntil && (pin?.getBoundingClientRect().bottom ?? 0) > window.innerHeight * .6;
   const ownInput = (e: Event) => e.target instanceof Element && !!e.target.closest('input, textarea, select, [contenteditable], dialog');
-  const onLockWheel = (e: WheelEvent) => { if (e.deltaY > 0 && performance.now() < lockUntil && !ownInput(e)) e.preventDefault(); };
-  const onLockKey = (e: KeyboardEvent) => { if (performance.now() < lockUntil && ['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key) && !ownInput(e)) e.preventDefault(); };
+  const onLockWheel = (e: WheelEvent) => { if (e.deltaY > 0 && !ownInput(e) && holding()) e.preventDefault(); };
+  const onLockKey = (e: KeyboardEvent) => { if (['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key) && !ownInput(e) && holding()) e.preventDefault(); };
   window.addEventListener('wheel', onLockWheel, { passive: false });
   window.addEventListener('keydown', onLockKey);
   const qrMtx = new THREE.Matrix4(), qrPos = new THREE.Vector3(), qrScale = new THREE.Vector3(), qrQuat = new THREE.Quaternion();
@@ -610,14 +633,15 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   }
   const toggleQr = () => {
     if (!qrGroup || !builtNow) return;
+    chose = true; lockArmed = false; lockUntil = 0;   // đã chọn rồi thì trả quyền cuộn ngay
     qrGoal = qrGoal ? 0 : 1; cb.qr(qrGoal === 1);
     wrap.classList.toggle('is-qr', qrGoal === 1);
-    vel = 0; resetting = true; fit(); wake();
+    vel = 0; resetting = true; aimX = aimY = beamT = 0; fit(); wake();
   };
 
   /* ================= camera & tương tác ================= */
   // Góc mặc định 3/4 phía trước-trái, hơi cao: thấy rõ bàn họp, TV và cửa kính bên phải
-  const AZ = .5, EL = .62;
+  const AZ = .5, EL = .62, QR_TILT = THREE.MathUtils.degToRad(6);
   const coarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
   let az = AZ, elv = EL, distK = 1;
   let yaw = 0, vel = 0, drag = false, lastX = 0, userMoved = false;
@@ -635,16 +659,18 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const r = 4.6, vf = THREE.MathUtils.degToRad(camera.fov) / 2, hf = Math.atan(Math.tan(vf) * camera.aspect);
     fitDist = Math.max(r / Math.sin(vf), r / Math.sin(hf)) * .84;
     // Bảng QR lấp gần hết khung, chừa chỗ cho nút và dòng hướng dẫn (máy hẹp: dòng hướng dẫn nằm dưới)
-    const narrow = w < 560, top = 64, bottom = narrow ? 50 : 12;
+    const narrow = w < 560, top = 76, bottom = narrow ? 50 : 2;
     // Laptop thấp: khung 3D cao hơn màn hình → chỉ tính phần nhìn thấy khi bìa đang ghim
     let seen = h;
     if (scrollMode && pinInner) {
       const pinnedTop = (parseFloat(getComputedStyle(pinInner).top) || 0) + el.getBoundingClientRect().top - pinInner.getBoundingClientRect().top;
       seen = Math.min(h, window.innerHeight - pinnedTop);
     }
-    const side = Math.max(120, Math.min(w - 8, seen - top - bottom)), unit = side / QS;
+    // chừa hai bên và phía dưới cho bóng đổ + độ nghiêng (máy hẹp: bóng rơi vào khoảng của dòng hướng dẫn)
+    const below = narrow ? 0 : .06, room = seen - top - bottom;
+    const side = Math.max(120, Math.min(w / 1.09, room / (1 + below))), unit = side / QS;
     qrDist = h / unit / 2 / Math.tan(vf);
-    qrTarget.z = -((top + (seen - top - bottom) / 2) - h / 2) / unit;   // ngắm lệch → bảng nằm giữa vùng trống
+    qrTarget.z = -((top + (room - side * below) / 2) - h / 2) / unit;   // ngắm lệch → bảng nằm giữa vùng trống
     wrap.classList.toggle('is-narrow', narrow);
     wrap.style.setProperty('--qr-cut', `${Math.max(0, h - seen)}px`);   // phần khung nằm dưới mép màn hình
     camera.updateProjectionMatrix();
@@ -675,6 +701,13 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
   const onHover = (e: PointerEvent) => {
     if (e.pointerType !== 'mouse') return;
+    if (qrGoal) {
+      // bảng QR nghiêng theo vị trí con trỏ so với chính khung 3D
+      const b = el.getBoundingClientRect();
+      aimX = THREE.MathUtils.clamp((e.clientX - b.left - b.width / 2) / (b.width / 2), -1, 1);
+      aimY = THREE.MathUtils.clamp((e.clientY - b.top - b.height / 2) / (b.height / 2), -1, 1);
+      return;
+    }
     const r = hero.getBoundingClientRect();
     aimX = THREE.MathUtils.clamp((e.clientX - (r.left + r.width * .62)) / (r.width * .45), -1, 1);
     aimY = THREE.MathUtils.clamp((e.clientY - (r.top + r.height * .45)) / (r.height * .55), -1, 1);
@@ -762,11 +795,11 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const prevP = pS;
     if (scrollMode) {
       const sp = scrollP();
-      if (!latched && sp >= .85) { latched = true; lockUntil = Infinity; lockArmed = true; }   // tới mốc hoàn thiện → giữ yên trang tới khi dựng xong
+      if (!latched && sp >= .85) { latched = true; if (!chose) { lockUntil = performance.now() + HOLD_MAX; lockArmed = true; } }   // tới mốc hoàn thiện → giữ yên trang tới khi dựng xong
       else if (latched && sp < .55) latched = false;                                            // lướt ngược xa mới tháo
       const tg = latched ? 1 : Math.min(1, sp / .85);
       pS += (tg - pS) * .14; if (Math.abs(tg - pS) < .0005) pS = tg;
-      if (lockArmed && pS > .97) { lockArmed = false; lockUntil = performance.now() + 5000; }   // dựng xong thật sự → dừng thêm ~5 s
+      if (lockArmed && pS > .97) { lockArmed = false; lockUntil = Math.min(lockUntil, performance.now() + HOLD); }   // dựng xong thật sự → dừng thêm ~2 s
       if (!latched && lockArmed) { lockArmed = false; lockUntil = 0; }
     }
     const lift = applyIntro(t);
@@ -783,6 +816,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
       });
       const pop = Math.max(.001, ease(Math.min(1, e2 * 2.4)));
       qrBoard?.scale.setScalar(pop);
+      qrShadow?.scale.setScalar(pop);
       if (qrK !== prevQr) paintStuds();
     }
     if (qrGroup) qrGroup.visible = qrK > 0;
@@ -801,11 +835,23 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     const calm = 1 - Math.min(1, qrK * 2);
     model.position.y = lift + bob * calm;
     floor.scale.setScalar(1 - bob * .35);
-    (floor.material as T.MeshBasicMaterial).opacity = Math.max(0, .5 - bob * .9 + lift * .6);
+    (floor.material as T.MeshBasicMaterial).opacity = Math.max(0, .5 - bob * .9 + lift * .6) * calm;
     // nghiêng theo con trỏ (chậm, biên độ nhỏ); nhãn trôi theo ít hơn để tạo chiều sâu
     tiltX += ((drag ? 0 : aimX) - tiltX) * .045; tiltY += ((drag ? 0 : aimY) - tiltY) * .045;
     model.rotation.y = yaw + tiltX * .08 * calm;
     model.rotation.x = tiltY * .035 * calm;
+    if (qrBoard && qrK > 0) {
+      const on = THREE.MathUtils.smoothstep(qrK, .5, 1);
+      qrBoard.rotation.set(tiltY * QR_TILT * on, 0, -tiltX * QR_TILT * on);
+      if (qrShadow) { qrShadow.position.x = -tiltX * .06 * on; qrShadow.position.z = -tiltY * .04 * on; }
+      if (sheenTex) sheenTex.offset.x = tiltX * .55 + tiltY * .3 + Math.sin(floatT * Math.PI * 2 / 9) * .6;
+      if (beam) {
+        if (qrK === 1) beamT += dt;
+        const p = Math.min(1, (beamT % 5.4) / 4.6);       // quét 4,6 s rồi nghỉ 0,8 s
+        beam.position.z = beamFrom + beamSpan * inOut(p);
+        (beam.material as T.MeshBasicMaterial).opacity = .25 * on * Math.min(1, p / .07, (1 - p) / .07);
+      }
+    }
     wrap.style.setProperty('--hx', (tiltX * 6).toFixed(2));
     wrap.style.setProperty('--hy', (tiltY * 4 - bob * 25).toFixed(2));
     if (!still && built) plants.forEach(p => { p.leaf.rotation.y = p.base + Math.sin(now * .0009 + p.phase) * .05; });

@@ -712,3 +712,5 @@
 @media (prefers-reduced-motion: no-preference) {
   .hb-office:not(.is-qr) .hb-office__qrbtn { animation: hb-qr-drop .8s cubic-bezier(.34, 1.56, .64, 1) both, hb-qr-glow 1.8s ease-out .8s 6; }
 }
+/* bảng QR đã có bóng riêng: bỏ vệt bóng của sa bàn */
+.hb-office.is-qr .hb-office__stage::before { opacity: 0; }

@@ -2,7 +2,8 @@
  * Bảng mã QR Zalo của sa bàn 3D: khung gỗ, nền navy, logo, và mã QR "mọc" thành chữ D của DANAVA.
  *
  * Vì sao vẫn quét được: chữ D KHÔNG đè lên dữ liệu mà chỉ đổi màu. Trong thân chữ, ô sáng là xanh/cam nhạt,
- * ô tối là xanh/cam đậm nên độ chênh sáng tối vẫn đủ cho máy quét. Chỉ lòng chữ D được làm thoáng (chấm nhỏ),
+ * ô tối là xanh/cam đậm nên độ chênh sáng tối vẫn đủ cho máy quét. Chữ D nổi khối nhờ cạnh dày, bóng và viền sáng
+ * chỉ lấn vào rìa ô; chấm navy bên ngoài nhỏ hơn cho chữ D bật lên. Lòng chữ D được làm thoáng (chấm nhỏ),
  * phần thiếu do mức sửa lỗi H bù. Ba ô định vị và các ô chức năng luôn nguyên vẹn.
  * Đổi màu, cỡ chấm hay vị trí chữ D thì phải quét thử lại bằng bộ giải mã (ở cỡ nhỏ và khi ảnh mờ).
  */
@@ -20,10 +21,12 @@ const MARK = { x: .165, y: .13, size: .75 };
 
 export const INKS: Record<Ink, { base: string; hi: string }> = {
   navy: { base: '#13244f', hi: '#2c4278' },
-  blue: { base: '#08226f', hi: '#17398f' },
-  orange: { base: '#962d00', hi: '#b13c06' }
+  blue: { base: '#082a86', hi: '#1645aa' },
+  orange: { base: '#9c3000', hi: '#bd420a' }
 };
-const TINT = { blue: [112, 164, 240], orange: [255, 160, 70] };
+const TINT = { blue: [140, 197, 255], orange: [255, 186, 78] };
+/** Khối nổi của chữ D, tính theo cạnh một ô: dày hơn .32 thì cạnh lấn vào tâm ô, khó quét. */
+const RELIEF = { depth: .32, rim: .06, blue: [24, 78, 178], orange: [206, 84, 8] };
 
 export function qrLayout(url: string, mark: CanvasImageSource) {
   // Tối thiểu bản 5 (37 ô): đủ mịn để vẽ chữ D. Địa chỉ dài hơn thì tự lên bản cao hơn
@@ -48,10 +51,10 @@ export function qrLayout(url: string, mark: CanvasImageSource) {
       if (!code.isDark(r, col)) continue;
       if ((r < 7 && (col < 7 || col >= n - 7)) || (r >= n - 7 && col < 7)) continue; // ô định vị vẽ riêng
       const u = ((col + .5) / n - MARK.x) / MARK.size, v = ((r + .5) / n - MARK.y) / MARK.size;
-      let ink: Ink = 'navy', size = .9;
+      let ink: Ink = 'navy', size = .86;
       if (u >= 0 && u < 1 && v >= 0 && v < 1) {
         const i = at(u, v), d = pixels.data;
-        if (d[i + 3] > 128) { ink = d[i] > d[i + 2] ? 'orange' : 'blue'; size = .95; }
+        if (d[i + 3] > 128) { ink = d[i] > d[i + 2] ? 'orange' : 'blue'; size = 1; }
         else if (inHole(u, v)) size = .5;
       }
       // Hàng định thời và ô căn chỉnh giữ cỡ đủ
@@ -71,7 +74,19 @@ export function qrLayout(url: string, mark: CanvasImageSource) {
   }
   c.putImageData(pixels, 0, 0);
 
-  return { n, cell, origin, studs, body: canvas };
+  // cùng hình chữ D, tô đặc: cạnh khối và viền bắt sáng
+  const sheet = (color: (orange: boolean) => number[]) => {
+    const out = document.createElement('canvas'); out.width = out.height = res;
+    const g = out.getContext('2d')!, image = g.createImageData(res, res);
+    for (let i = 0; i < d.length; i += 4) {
+      if (!d[i + 3]) continue;
+      image.data.set([...color(d[i] > d[i + 2]), d[i + 3]], i);
+    }
+    g.putImageData(image, 0, 0);
+    return out;
+  };
+
+  return { n, cell, origin, studs, body: canvas, side: sheet(orange => orange ? RELIEF.orange : RELIEF.blue), rim: sheet(() => [255, 255, 255]) };
 }
 export type QrLayout = ReturnType<typeof qrLayout>;
 
@@ -86,7 +101,7 @@ function round(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: 
 
 /** Mọi thứ trừ các ô dữ liệu nổi. ctx là canvas vuông, cạnh `size` điểm ảnh. */
 export function drawBoard(c: CanvasRenderingContext2D, size: number, layout: QrLayout, logo: CanvasImageSource, mark: CanvasImageSource, font: string) {
-  const { n, cell, origin, body } = layout;
+  const { n, cell, origin, body, side, rim } = layout;
   c.save();
   c.scale(size / BOARD, size / BOARD);
 
@@ -123,15 +138,24 @@ export function drawBoard(c: CanvasRenderingContext2D, size: number, layout: QrL
   c.restore();
 
   const span = n * cell;
-  c.drawImage(body, origin.x + MARK.x * span, origin.y + MARK.y * span, MARK.size * span, MARK.size * span);
+  const dx = origin.x + MARK.x * span, dy = origin.y + MARK.y * span, ds = MARK.size * span;
+  const depth = RELIEF.depth * cell, px = cell * size / BOARD, lift = RELIEF.rim * cell;
+  // chữ D nổi: bóng → cạnh khối → viền sáng phía trên trái → mặt chữ
+  c.save();
+  c.shadowColor = 'rgba(19, 36, 79, .42)'; c.shadowBlur = px * .9; c.shadowOffsetX = px * .2; c.shadowOffsetY = px * .3;
+  c.drawImage(side, dx + depth * .7, dy + depth, ds, ds);
+  c.restore();
+  for (let i = 7; i > 0; i--) c.drawImage(side, dx + depth * .7 * i / 8, dy + depth * i / 8, ds, ds);
+  c.drawImage(rim, dx - lift, dy - lift, ds, ds);
+  c.drawImage(body, dx, dy, ds, ds);
 
-  // ba ô định vị: nền trắng để thân chữ D không lẫn vào
+  // ba ô định vị: nền trắng để thân chữ D không lẫn vào. Góc chỉ bo nhẹ: bo tròn hơn .3 ô thì OpenCV không tìm ra mã
   for (const [col, row, color] of [[0, 0, '#13244f'], [n - 7, 0, '#13244f'], [0, n - 7, '#b03a04']] as const) {
     const x = origin.x + col * cell, y = origin.y + row * cell;
     round(c, x - cell, y - cell, cell * 9, cell * 9, cell * 1.6); c.fillStyle = '#fff'; c.fill();
-    c.beginPath(); c.roundRect(x, y, cell * 7, cell * 7, cell * 1.5); c.roundRect(x + cell, y + cell, cell * 5, cell * 5, cell * .8);
+    c.beginPath(); c.roundRect(x, y, cell * 7, cell * 7, cell * .3); c.roundRect(x + cell, y + cell, cell * 5, cell * 5, cell * .15);
     c.fillStyle = color; c.fill('evenodd');
-    round(c, x + cell * 2, y + cell * 2, cell * 3, cell * 3, cell * .7); c.fill();
+    round(c, x + cell * 2, y + cell * 2, cell * 3, cell * 3, cell * .15); c.fill();
   }
 
   c.textAlign = 'center'; c.textBaseline = 'middle';
@@ -140,6 +164,43 @@ export function drawBoard(c: CanvasRenderingContext2D, size: number, layout: QrL
   c.fillStyle = '#aebbd8'; c.font = `500 27px ${font}`;
   c.fillText('danava.vn · Đà Nẵng', BOARD / 2, 913);
   c.restore();
+}
+
+/** Tấm bóng đổ rộng gấp SHADOW_SPAN lần bảng: tắt hẳn trước mép nên không lộ khung vuông. */
+export const SHADOW_SPAN = 1.2;
+export function drawShadow(c: CanvasRenderingContext2D, size: number) {
+  const board = size / SHADOW_SPAN, at = (size - board) / 2, inset = board * .04;
+  // vẽ hình ở ngoài khung, chỉ để phần bóng rơi vào trong
+  c.shadowColor = 'rgba(62, 34, 12, .55)';
+  c.shadowBlur = board * .05; c.shadowOffsetX = size * 2; c.shadowOffsetY = board * .026;
+  round(c, at + inset - size * 2, at + inset, board - inset * 2, board - inset * 2, board * .08);
+  c.fill();
+}
+
+/** Chỗ được phép có ánh phản chiếu: mặt navy, chừa thẻ trắng để không làm nhiễu mã. */
+export function drawSheenMask(c: CanvasRenderingContext2D, size: number) {
+  c.scale(size / BOARD, size / BOARD);
+  c.fillStyle = '#000'; c.fillRect(0, 0, BOARD, BOARD);
+  round(c, 30, 30, BOARD - 60, BOARD - 60, 47); c.fillStyle = '#fff'; c.fill();
+  round(c, PANEL.x, PANEL.y, PANEL.size, PANEL.size, 44); c.fillStyle = '#000'; c.fill();
+}
+
+/** Dải phản chiếu mảnh; hai mép trong suốt để trượt ra ngoài không để vệt. */
+export function drawSheen(c: CanvasRenderingContext2D, w: number, h: number) {
+  const band = c.createLinearGradient(0, 0, w, 0);
+  ([[0, 0], [.4, 0], [.47, .1], [.485, .24], [.5, .07], [.56, 0], [1, 0]] as const).forEach(([at, a]) => band.addColorStop(at, `rgba(214, 230, 255, ${a})`));
+  c.fillStyle = band; c.fillRect(0, 0, w, h);
+}
+
+/** Tia quét cam: lõi mảnh, hai đầu tan dần. Độ mờ ~25% đặt ở vật liệu. */
+export function drawBeam(c: CanvasRenderingContext2D, w: number, h: number) {
+  const line = c.createLinearGradient(0, 0, 0, h);
+  ([[0, 0], [.3, .25], [.4, 1], [.6, 1], [.7, .25], [1, 0]] as const).forEach(([at, a]) => line.addColorStop(at, `rgba(255, 112, 20, ${a})`));
+  c.fillStyle = line; c.fillRect(0, 0, w, h);
+  const ends = c.createLinearGradient(0, 0, w, 0);
+  ([[0, 0], [.18, 1], [.82, 1], [1, 0]] as const).forEach(([at, a]) => ends.addColorStop(at, `rgba(0, 0, 0, ${a})`));
+  c.globalCompositeOperation = 'destination-in';
+  c.fillStyle = ends; c.fillRect(0, 0, w, h);
 }
 
 /** Mặt một ô nổi: đỉnh hơi sáng, viền dưới sậm. */

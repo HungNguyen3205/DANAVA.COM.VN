@@ -72,8 +72,18 @@ export default function HomePage({ data }: { data: SiteData }) {
       { year: 2018, title: 'Thành lập Công ty Cổ phần Giải pháp DANAVA' },
       ...MILESTONES.map(m => ({ year: Number(m.year), title: m.title }))
     ].filter(x => x.year >= 2016).sort((x, y) => x.year - y.year);
-    const W = 300, X0 = 16, X1 = 284, YB = 84, YT = 22;
-    const pts = steps.map((st, i) => ({ ...st, x: X0 + ((st.year - 2016) / 10) * (X1 - X0), y: YB - (i / Math.max(1, steps.length - 1)) * (YB - YT) }));
+    const W = 300, X0 = 16, X1 = 284, YB = 84, YT = 22, GAP = 37;
+    // mỗi năm một chấm: nhiều việc cùng năm gộp vào chung nhãn
+    const years = [...new Set(steps.map(x => x.year))].map(year => ({ year, title: steps.filter(x => x.year === year).map(x => x.title).join(' · ') }));
+    const xs = years.map(x => X0 + ((x.year - 2016) / 10) * (X1 - X0));
+    // hai năm sát nhau: tách đều về hai phía cho nhãn dễ đọc, mốc đầu và cuối đứng yên
+    for (let i = 1; i < xs.length; i++) {
+      const push = (GAP - (xs[i] - xs[i - 1])) / 2;
+      if (push <= 0) continue;
+      if (i > 1) xs[i - 1] -= push;
+      if (i < xs.length - 1) xs[i] += push;
+    }
+    const pts = years.map((st, i) => ({ ...st, x: xs[i], y: YB - (i / Math.max(1, years.length - 1)) * (YB - YT) }));
     const line = pts.map((p, i) => i === 0 ? `M${p.x.toFixed(1)} ${p.y.toFixed(1)}` : (() => { const q = pts[i - 1], mx = ((q.x + p.x) / 2).toFixed(1); return `C${mx} ${q.y.toFixed(1)} ${mx} ${p.y.toFixed(1)} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`; })()).join(' ');
     const area = `${line} L${pts[pts.length - 1].x.toFixed(1)} ${YB + 10} L${pts[0].x.toFixed(1)} ${YB + 10} Z`;
     return { W, pts, line, area, last: pts[pts.length - 1] };
