@@ -15,6 +15,19 @@ export const PAGE_NAMES: Record<string, string> = {
 };
 
 export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config: BlockEditorConfig }> = {
+  gallery: {
+    title: 'Ảnh doanh nghiệp (Trang chủ)',
+    desc: 'Ảnh đang hiển thị đứng đầu là ảnh lớn; dùng mũi tên để đổi thứ tự. Khung ảnh tỉ lệ 3:2, nên dùng ảnh ngang rộng từ 1200px. Chỉ dùng ảnh thật của DANAVA và đã có sự đồng ý của người trong ảnh. Tắt "Hiển thị" để ẩn cả khu vực hoặc từng ảnh.',
+    config: {
+      labels: { ...COMMON, kicker: 'Dòng chữ nhỏ phía trên', title: 'Tiêu đề (*phần nhấn mạnh*)', lead: 'Câu dẫn', photos: 'Danh sách ảnh', caption: 'Chú thích trên ảnh', alt: 'Mô tả ảnh cho người khiếm thị và Google', focus: 'Phần cần giữ khi ảnh bị cắt' },
+      long: ['lead'],
+      enums: { focus: [{ value: '', label: 'Giữa ảnh (mặc định)' }, { value: 'top', label: 'Phía trên (khuôn mặt ở trên cao)' }, { value: 'bottom', label: 'Phía dưới' }, { value: 'left', label: 'Bên trái' }, { value: 'right', label: 'Bên phải' }] },
+      itemTitle: (item, i) => {
+        const photo = item && typeof item === 'object' && !Array.isArray(item) ? item : null;
+        return photo ? `${i === 0 ? 'Ảnh lớn · ' : ''}${String(photo.caption || '') || 'Ảnh ' + (i + 1)}` : undefined;
+      }
+    }
+  },
   company: {
     title: 'Thông tin công ty',
     desc: 'Dùng ở chân trang, trang Liên hệ, Về DANAVA, Trang chủ và dữ liệu có cấu trúc cho Google. Email và hotline sửa ở mục Cài đặt.',

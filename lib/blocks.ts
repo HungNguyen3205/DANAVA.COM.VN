@@ -1,10 +1,10 @@
 /**
  * Khối nội dung chỉnh sửa được trong CMS (Thông tin công ty, Chữ trên các trang, Về DANAVA,
- * Hệ sinh thái, Hồ sơ nhân sự, Chính sách riêng tư, Chính sách dịch vụ).
+ * Hệ sinh thái, Hồ sơ nhân sự, Chính sách riêng tư, Chính sách dịch vụ) và cấu hình bổ sung (lib/site-extras.ts).
  *
  * - Giá trị mặc định lấy đúng nội dung đang có trong mã nguồn → website không đổi cho tới khi
  *   quản trị viên sửa và lưu.
- * - Dữ liệu lưu ở SiteData.blocks[key]; đọc bằng block(data, key): thiếu khóa nào thì lấy mặc định.
+ * - Dữ liệu lưu ở SiteData.blocks[key] (cấu hình bổ sung: SiteData.extras[key], ghi bằng withBlock); đọc bằng block(data, key): thiếu khóa nào thì lấy mặc định.
  * - validBlocks(): dữ liệu lưu phải cùng cấu trúc với mặc định (cùng kiểu, không thêm khóa lạ,
  *   giới hạn độ dài) để một lần sửa sai không làm hỏng trang công khai.
  */
@@ -13,6 +13,7 @@ import { CONTACT, SOCIAL, company } from './company.ts';
 import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, initialEcosystemUnits, type EcosystemCategory, type EcosystemUnit, type JourneyStage } from './ecosystem.ts';
 import { PROJECT_STAFF_ASSIGNMENTS, getStaffDetail, getStaffProfile, staffDetailFromEdit, staffProfileFromEdit } from './staff.ts';
 import { APPROVED_SERVICE_POLICIES, DRAFT_POLICY_CLAUSES, SERVICE_POLICY_METADATA, SLA_MATRIX, SUPPORT_CHANNELS } from './service-policy.ts';
+import { GALLERY, extraError, type ExtraValues } from './site-extras.ts';
 import { COLLAB_STEPS, GOALS, MILESTONES, MOMENTS, PRINCIPLES } from '../components/site/company-content.ts';
 
 /* ------------------------------------------------------------ Mặc định */
@@ -189,13 +190,19 @@ export function blockDefaults(staff: Person[] = []) {
     ecosystem: ECOSYSTEM,
     staff: staff.map(staffDefault),
     privacy: PRIVACY,
-    servicePolicy: SERVICE_POLICY
+    servicePolicy: SERVICE_POLICY,
+    gallery: GALLERY
   };
 }
 export type BlockDefaults = ReturnType<typeof blockDefaults>;
 export type BlockKey = keyof BlockDefaults;
-export type Blocks = { [K in BlockKey]?: BlockDefaults[K] };
-export const BLOCK_KEYS: BlockKey[] = ['company', 'menu', 'pages', 'about', 'ecosystem', 'staff', 'privacy', 'servicePolicy'];
+export type ExtraKey = keyof ExtraValues;
+type StoredKey = Exclude<BlockKey, ExtraKey>;
+export type Blocks = { [K in StoredKey]?: BlockDefaults[K] };
+export type Extras = { [K in ExtraKey]?: BlockDefaults[K] };
+/** Khối lưu trong SiteData.extras. Khối mới thêm vào đây, không thêm vào BLOCK_KEYS. */
+export const EXTRA_KEYS: ExtraKey[] = ['gallery'];
+export const BLOCK_KEYS: StoredKey[] = ['company', 'menu', 'pages', 'about', 'ecosystem', 'staff', 'privacy', 'servicePolicy'];
 
 /* ------------------------------------------------------------ Đọc */
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -209,9 +216,25 @@ function fillMissing<T>(value: unknown, def: T): T {
   return (value === undefined ? def : value) as T;
 }
 
-export function block<K extends BlockKey>(data: Pick<SiteData, 'blocks' | 'staff'>, key: K): BlockDefaults[K] {
+const isExtra = (key: string): key is ExtraKey => (EXTRA_KEYS as string[]).includes(key);
+type BlockSource = Pick<SiteData, 'blocks' | 'staff'> & Partial<Pick<SiteData, 'extras'>>;
+
+/** Giá trị quản trị viên đã lưu (undefined = đang dùng mặc định). */
+export function savedBlock(data: BlockSource, key: BlockKey): unknown {
+  return isExtra(key) ? data.extras?.[key] : data.blocks?.[key as StoredKey];
+}
+
+/** Bản sao dữ liệu với một khối được thay; value = undefined → khôi phục mặc định. */
+export function withBlock(data: SiteData, key: BlockKey, value: unknown): SiteData {
+  const field = isExtra(key) ? 'extras' : 'blocks';
+  const next: Record<string, unknown> = { ...(data[field] || {}) };
+  if (value === undefined) delete next[key]; else next[key] = value;
+  return { ...data, [field]: next };
+}
+
+export function block<K extends BlockKey>(data: BlockSource, key: K): BlockDefaults[K] {
   const def = (key === 'staff' ? blockDefaults(data.staff).staff : blockDefaults()[key]) as BlockDefaults[K];
-  const saved = (data.blocks as Blocks | undefined)?.[key];
+  const saved = savedBlock(data, key);
   if (key === 'staff' && Array.isArray(saved)) {
     // Theo đúng danh sách Nhân sự hiện tại: người mới → hồ sơ mặc định, người đã xóa → bỏ
     const list = saved as StaffBlock[];
@@ -302,7 +325,7 @@ function templates(): Partial<Record<BlockKey, Tpl>> {
   if (TPL) return TPL;
   const d = blockDefaults() as Record<BlockKey, unknown>;
   TPL = {};
-  for (const k of BLOCK_KEYS) TPL[k] = tplOf(k === 'staff' ? [STAFF_SAMPLE] : d[k])!;
+  for (const k of [...BLOCK_KEYS, ...EXTRA_KEYS]) TPL[k] = tplOf(k === 'staff' ? [STAFF_SAMPLE] : d[k])!;
   return TPL;
 }
 /** Hợp lệ khi: object, chỉ gồm khóa đã biết, mỗi khối đúng cấu trúc mặc định, tổng dung lượng ≤ 600 KB. */
@@ -313,10 +336,18 @@ export function validBlocks(v: unknown): boolean {
   const tpl = templates();
   // Khối "pages": các trang có thể được để trống từng trường → không bắt buộc đủ khóa
   return Object.entries(v).every(([k, x]) => {
+    if (!(BLOCK_KEYS as string[]).includes(k)) return false;
     const t = tpl[k as BlockKey];
     if (!t) return false;
     return fits(x, k === 'pages' || k === 'company' ? relax(t) : t) && (k !== 'menu' || safeMenu(x));
   });
+}
+/** Cấu hình bổ sung: khóa đã biết, đúng cấu trúc mặc định, giá trị hợp lệ. */
+export function validExtras(v: unknown): boolean {
+  if (v === undefined) return true;
+  if (!isObj(v) || JSON.stringify(v).length > 200_000) return false;
+  const tpl = templates();
+  return Object.entries(v).every(([k, x]) => isExtra(k) && fits(x, tpl[k]!)) && extraError(v as Extras) === '';
 }
 /** Đường dẫn menu chỉ được là trang trong website (/…), https://…, hoặc để trống. */
 export const safeHref = (h: string) => h === '' || /^\/(?!\/)[^\s]*$/.test(h) || /^https:\/\/[^\s"'<>]+$/.test(h);

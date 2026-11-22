@@ -18,7 +18,7 @@ import { useSite } from './SiteStore';
 import { ServicesEditor, TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
 import { BlockEditor, BlockPanel } from './AdminBlockEditor';
 import { BLOCK_META } from './adminBlockConfig';
-import { block, blockDefaults, type BlockKey } from '@/lib/blocks';
+import { block, blockDefaults, savedBlock, withBlock, type BlockKey } from '@/lib/blocks';
 export const adminSections = [
   'tong-quan',
   'khach-hang',
@@ -133,13 +133,13 @@ function AdminWorkspace({ section }: { section: string }) {
   const blockPanel = (key: BlockKey) => {
     const meta = BLOCK_META[key];
     const def = key === 'staff' ? blockDefaults(draft.staff).staff : blockDefaults()[key];
-    const saved = draft.blocks?.[key];
+    const saved = savedBlock(draft, key);
     return (
       <BlockPanel key={key} title={meta.title} desc={meta.desc} edited={saved !== undefined}
-        onReset={() => { const next = { ...(draft.blocks || {}) }; delete next[key]; setDraft({ ...draft, blocks: next }); }}>
+        onReset={() => setDraft(withBlock(draft, key, undefined))}>
         <BlockEditor value={block(draft, key) as never} def={def as never}
           config={key === 'staff' ? { ...meta.config, enums: { ...meta.config.enums, projectId: (draft.projects || []).map(p => ({ value: p.id, label: p.title })) }, itemTitle: (it, _i, k) => (k === '' && it && typeof it === 'object' && !Array.isArray(it) ? draft.staff.find(p => p.id === it.id)?.name : undefined) } : meta.config}
-          onChange={v => setDraft({ ...draft, blocks: { ...(draft.blocks || {}), [key]: v } })} />
+          onChange={v => setDraft(withBlock(draft, key, v))} />
       </BlockPanel>
     );
   };
@@ -586,6 +586,7 @@ function AdminWorkspace({ section }: { section: string }) {
         {section === 'bang-chung' && <ProofEditor draft={draft} setDraft={setDraft} />}
         {section === 'trung-bay' && <ShowcaseEditor draft={draft} setDraft={setDraft} />}
         {(['cong-ty', 'menu-giai-phap', 'chu-tren-trang', 've-danava', 'he-sinh-thai', 'ho-so-nhan-su'] as const).includes(section as 'cong-ty') && blockPanel(({ 'cong-ty': 'company', 'menu-giai-phap': 'menu', 'chu-tren-trang': 'pages', 've-danava': 'about', 'he-sinh-thai': 'ecosystem', 'ho-so-nhan-su': 'staff' } as Record<string, BlockKey>)[section])}
+        {section === 'anh-doanh-nghiep' && blockPanel('gallery')}
         {section === 'chinh-sach' && <div className="blk-stack">{blockPanel('privacy')}{blockPanel('servicePolicy')}</div>}
         {section === 'cai-dat' && (
           <div className="admin-two">

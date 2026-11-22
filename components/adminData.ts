@@ -50,6 +50,7 @@ export const adminNav: {
       { slug: 'giai-phap', icon: 'layers', label: 'Giải pháp', desc: 'Nội dung, FAQ, quy trình, chi phí, SEO của từng giải pháp và các trang dịch vụ con.' },
       { slug: 'chu-de', icon: 'menu', label: 'Danh mục kiến thức', desc: 'Nhóm chủ đề cho mục Blogs, gắn với giải pháp liên quan.' },
       { slug: 'bang-chung', icon: 'check', label: 'Đối tác & nhận xét', desc: 'Khách hàng tiêu biểu và nhận xét — chỉ hiển thị khi đã có quyền công bố.' },
+      { slug: 'anh-doanh-nghiep', icon: 'image', label: 'Ảnh doanh nghiệp', desc: 'Lưới ảnh thật trên trang chủ: tải ảnh, đổi thứ tự, chú thích và vị trí giữ khi cắt.' },
       { slug: 'so-lieu', icon: 'trend', label: 'Số liệu', desc: 'Các con số hiển thị trên trang chủ. Để trống khi chưa có số liệu xác nhận.' },
     ],
   },

@@ -664,3 +664,29 @@
 /* Mã QR đang hiện: dòng hướng dẫn nằm giữa phía trên, nút ở góc phải không chồng lên */
 .hb-office__qrcap { top: 16px; }
 @media (max-width: 600px) { .hb-office__qrcap { top: 64px; white-space: normal; text-align: center; width: max-content; max-width: 90%; } }
+
+/* ---- Ảnh doanh nghiệp: một ảnh lớn + các ảnh nhỏ, mọi khung tỉ lệ 3:2 ---- */
+.hb-gallery { background: #fff; }
+.hb-gallery__head { max-width: 720px; margin-bottom: 30px; }
+.hb-photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.hb-photos li { position: relative; min-width: 0; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 18px; background: var(--hb-cream); }
+.hb-photos li:first-child { grid-area: span 2 / span 2; aspect-ratio: auto; border-radius: 24px; }
+.hb-photos figure { position: absolute; inset: 0; margin: 0; }
+.hb-photos img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hb-photos figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 11px; background: linear-gradient(transparent, rgba(10, 18, 44, .88) 72%); color: #fff; font-size: 13.5px; font-weight: 700; line-height: 1.35; }
+.hb-photos li:first-child figcaption { padding: 48px 22px 18px; font-size: 16px; }
+.hb-photos[data-count='1'] { grid-template-columns: minmax(0, 1fr); max-width: 900px; }
+.hb-photos[data-count='1'] li, .hb-photos[data-count='2'] li { grid-area: auto; aspect-ratio: 3 / 2; }
+.hb-photos[data-count='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hb-photos[data-count='3'], .hb-photos[data-count='6'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.hb-photos[data-count='4'] li:first-child { grid-area: span 3 / span 3; }
+@media (max-width: 860px) {
+  /* Điện thoại: ảnh lớn → một cặp → ảnh lớn…; chú thích nằm dưới ảnh để không che khuôn mặt */
+  .hb-photos, .hb-photos[data-count] { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 10px; }
+  .hb-photos li, .hb-photos[data-count] li, .hb-photos[data-count] li:first-child { grid-area: auto / span 2; aspect-ratio: auto; overflow: visible; border-radius: 0; background: none; }
+  .hb-photos[data-count] li:is(:nth-child(4n + 2), :nth-child(4n + 3)) { grid-area: auto; }
+  .hb-photos[data-count] li:nth-child(4n + 2):last-child { grid-area: auto / span 2; }
+  .hb-photos figure { position: static; }
+  .hb-photos img { height: auto; aspect-ratio: 3 / 2; border-radius: 16px; background: var(--hb-cream); }
+  .hb-photos figcaption, .hb-photos li:first-child figcaption { position: static; padding: 7px 2px 0; background: none; color: var(--hb-text); font-size: 13px; }
+}

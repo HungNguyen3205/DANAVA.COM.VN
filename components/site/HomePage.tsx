@@ -4,7 +4,7 @@
  * Nội dung theo bộ "Company Profile 2026" (lib/about-danava.ts: PROFILE_2026, ABOUT_DANAVA).
  * Bố cục lấy ý tưởng trang agency (cleverads.vn), không có phiếu nhập thông tin:
  * Bìa → 4 giải pháp → Dự án tiêu biểu (tab lọc) → Toàn bộ khách hàng & đối tác → Vì sao chọn DANAVA + mạng lưới
- * → Sản phẩm tự phát triển → Quy trình 7 bước → Cảm nhận → Blogs → Liên hệ. Mỗi mục có icon nét mảnh (components/site/icons.tsx).
+ * → Ảnh doanh nghiệp → Sản phẩm tự phát triển → Quy trình 7 bước → Cảm nhận → Blogs → Liên hệ. Mỗi mục có icon nét mảnh (components/site/icons.tsx).
  */
 import Link from 'next/link';
 import { ArrowDown, ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
@@ -19,6 +19,7 @@ import { MARKETING_ENGAGEMENTS } from '@/lib/marketing-portfolio';
 import { MILESTONES } from './company-content';
 import { Reveal, CountUp } from './HomeClient';
 import { OfficeScene } from './OfficeScene';
+import { CompanyGallery } from './CompanyGallery';
 import { block } from '@/lib/blocks';
 import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { markOf } from '@/lib/partner-marks';
@@ -246,6 +247,8 @@ export default function HomePage({ data }: { data: SiteData }) {
           </div>
         </div>
       </section>
+
+      <CompanyGallery data={data} />
 
       {/* Hệ sinh thái sản phẩm */}
       <section className="hb-sec hb-cream" aria-labelledby="t-products">

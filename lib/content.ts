@@ -1,7 +1,7 @@
 import { legacyCatalog } from './legacy-catalog.ts';
 import { verifiedProjects } from './verified-projects.ts';
 import { defaultPresentation, type Presentation } from './presentation.ts';
-import { validBlocks, type Blocks } from './blocks.ts';
+import { validBlocks, validExtras, type Blocks, type Extras } from './blocks.ts';
 
 /*
  * Mô hình nội dung website. Toàn bộ nội dung được lưu thành MỘT bản JSON trong bảng `content`
@@ -180,6 +180,8 @@ export type SiteData = {
   showcase?: ShowcaseItem[];
   /** Khối nội dung chỉnh sửa được (lib/blocks.ts): công ty, chữ trên trang, Về DANAVA, hệ sinh thái, hồ sơ nhân sự, chính sách */
   blocks?: Blocks;
+  /** Cấu hình bổ sung (lib/site-extras.ts): ảnh doanh nghiệp… Tách khỏi blocks để bản build cũ vẫn đọc được. */
+  extras?: Extras;
 };
 
 /**
@@ -337,7 +339,7 @@ export function validateContent(v: unknown): v is SiteData {
   if (!object(v) || v.version !== 1 || !str(v.headline, 150) || !str(v.description, 1000) || !str(v.email, 200) || !str(v.phone, 50)) return false;
   if (!optStr(v.heroTitle, 150)) return false;
   if (v.presentation !== undefined && !validPresentation(v.presentation)) return false;
-  if (!validBlocks(v.blocks)) return false;
+  if (!validBlocks(v.blocks) || !validExtras(v.extras)) return false;
   if (!Array.isArray(v.staff) || v.staff.length > 100 || !v.staff.every(p => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image))))) return false;
   if (v.projects !== undefined && (!Array.isArray(v.projects) || v.projects.length > 500 || !v.projects.every(validProject) || !uniqueBy(v.projects as Project[], p => p.slug) || !uniqueBy(v.projects as Project[], p => p.id))) return false;
   if (!Array.isArray(v.posts) || v.posts.length > 500 || !v.posts.every(validPost)) return false;
