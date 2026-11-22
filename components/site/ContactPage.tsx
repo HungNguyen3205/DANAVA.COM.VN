@@ -157,7 +157,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
 
   return (
     <main id="main" className="c-page">
-      {/* Hero "Hãy nói xin chào": lời mời + nút liên hệ nhanh bên trái, danh thiếp DANAVA Solutions bên phải */}
+      {/* Đầu trang gọn một màn hình: lời mời | mặt trăng/mặt trời ở chính giữa | danh thiếp; hàng nút liên hệ bên dưới */}
       <section className="c-hero c-hero--hello c-hero--light">
         <div className="c-aurora" aria-hidden="true"><i /><i /><i /><b /></div>
         <div className="s-container">
@@ -171,23 +171,31 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 14 C 60 2, 120 20, 180 9 S 270 4, 298 12" /></svg>
               </p>
               <p className="c-hero__lead">{copy.lead}</p>
+            </div>
+
+            <div className="c-reach">
               <div className="c-dock">
                 <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><CutePhone /><span><small>Gọi ngay</small>{formatPhone(phone)}</span></a>
                 <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><CuteChat /><span><small>Nhắn tin</small>Chat Zalo</span><span className="c-sr"> (mở tab mới)</span></a>
                 <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><CuteMail /><span><small>Gửi email</small>{email}</span></a>
               </div>
-              <div className="c-meta">
-                {isOpen !== null && (
-                  <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
-                    {isOpen ? <CuteSun /> : <CuteMoon />}{isOpen ? 'Đang trong giờ làm việc' : 'Ngoài giờ làm việc · DANAVA gọi lại vào ngày làm việc kế tiếp'}<span>{co.hours}</span>
-                  </p>
-                )}
-                <p className="c-alt">
-                  <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />Fanpage<span className="c-sr"> (mở tab mới)</span></a>
-                  <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />YouTube<span className="c-sr"> (mở tab mới)</span></a>
-                  <a href={`mailto:${co.supportEmail}`}><CuteSupport />Hỗ trợ kỹ thuật</a>
+              <p className="c-alt">
+                <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />Fanpage<span className="c-sr"> (mở tab mới)</span></a>
+                <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />YouTube<span className="c-sr"> (mở tab mới)</span></a>
+                <a href={`mailto:${co.supportEmail}`}><CuteSupport />Hỗ trợ kỹ thuật</a>
+              </p>
+            </div>
+
+            {/* Giữ chỗ sẵn: giờ làm việc chỉ tính được trên trình duyệt */}
+            <div className="c-sky">
+              {isOpen !== null && (
+                <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
+                  {isOpen ? <CuteSun /> : <CuteMoon />}
+                  <strong>{isOpen ? 'Đang trong giờ làm việc' : 'Ngoài giờ làm việc'}</strong>
+                  {!isOpen && <small>DANAVA gọi lại vào ngày làm việc kế tiếp</small>}
+                  <span>{co.hours}</span>
                 </p>
-              </div>
+              )}
             </div>
 
             <div className="c-cardzone">

@@ -713,3 +713,72 @@ body:has(.s-app) { background: var(--s-bg); }
 /* Danh thiếp: logo tách nền đặt thẳng trên thẻ (bản chữ SOLUTIONS sáng cho nền tối — public/assets/danava-logo-light.png) */
 .c-namecard__logo { width: clamp(150px, 16vw, 190px); aspect-ratio: 554 / 135; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
 .c-hero--aurora .c-namecard__top .c-namecard__logo img { width: 100%; height: auto; transform: none; object-fit: contain; filter: drop-shadow(0 4px 10px #0006); }
+
+/* ==========================================================================
+   Liên hệ — đầu trang nền sáng (.c-hero--light), gom gọn trong một màn hình.
+   Các quy tắc .c-hero--aurora ở trên chỉ dành cho nền tối cũ, không áp vào đây.
+   ========================================================================== */
+.s-app .c-hero--light { padding: 18px 0 clamp(44px, 4vw, 60px); }
+.c-hero--light .c-hero__grid {
+  grid-template-columns: minmax(0, 1fr) 200px minmax(0, 1fr); /* hai cột bên bằng nhau → mặt trăng đúng giữa trang */
+  grid-template-areas: "copy sky card" "reach reach reach";
+  gap: 20px 28px; margin-top: 8px;
+}
+.c-hero--light .c-hero__copy { grid-area: copy; min-width: 0; }
+.s-app .c-hero--light .c-hero__title { margin: 10px 0 0; font-size: clamp(38px, 3.9vw, 54px); }
+.c-hero--light .c-motto { margin: 8px 0 16px; font-size: 21px; }
+.c-hero--light .c-hero__lead { font-size: 15.5px; line-height: 1.6; }
+
+.c-hero--light .c-sky { grid-area: sky; display: grid; place-items: center; min-height: 208px; }
+.c-hero--light .c-status { flex-direction: column; flex-wrap: nowrap; gap: 5px; margin: 0; color: #13244f; text-align: center; }
+.c-hero--light .c-status .cute { width: 104px; height: 104px; }
+.c-hero--light .c-status strong { font-size: 14.5px; font-weight: 800; line-height: 1.35; }
+.c-hero--light .c-status small { font-size: 13px; font-weight: 500; line-height: 1.4; color: #56607a; text-wrap: balance; }
+.c-hero--light .c-status span { padding: 3px 9px; color: #56607a; font-size: 11.5px; line-height: 1.4; text-wrap: balance; }
+
+.c-hero--light .c-cardzone { grid-area: card; min-width: 0; gap: 22px; padding: 12px 0; }
+.c-hero--light .c-namecard { width: min(370px, 92%); }
+.c-hero--light .c-namecard__face { aspect-ratio: auto; min-height: 226px; padding: 22px 24px; }
+.c-hero--light .c-namecard__top .c-namecard__logo { width: 158px; }
+.c-hero--light .c-namecard__top .c-namecard__logo img { width: 100%; height: auto; padding: 0; border-radius: 0; background: none; object-fit: contain; transform: none; }
+.c-hero--light .c-namecard__label { margin-top: 16px; }
+.c-hero--light .c-namecard__phone a { font-size: 29px; }
+.c-hero--light .c-namecard__lines { margin-top: 8px; font-size: 12.5px; }
+.c-hero--light .c-namecard__face .c-namecard__motto { position: static; margin-top: 6px; text-align: right; }
+.c-hero--light .c-namecard__back { transform: rotate(7deg) translate(12px, 8px); }
+.c-hero--light .c-orbit--a, .c-hero--light .c-halo { width: min(380px, 96%); }
+.c-hero--light .c-orbit--b { width: min(290px, 74%); }
+
+.c-hero--light .c-reach { grid-area: reach; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 22px; min-width: 0; }
+.c-hero--light .c-dock { width: 100%; max-width: 820px; margin: 0; }
+.c-hero--light .c-dock__btn { min-height: 58px; padding: 8px 14px; }
+.c-hero--light .c-dock__btn .cute { width: 38px; height: 38px; padding: 0; background: none; }
+.c-hero--light .c-alt { justify-content: center; }
+.c-hero--light .c-alt a { min-height: 44px; color: #3d4a6b; }
+.c-hero--light .c-alt a:hover { color: #b5420b; }
+
+/* Máy tính bảng: chữ | thẻ, mặt trăng vẫn giữa trang ở hàng dưới */
+@media (max-width: 1080px) {
+  .c-hero--light .c-hero__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "copy card" "sky sky" "reach reach"; gap: 14px 24px; }
+  .c-hero--light .c-sky { min-height: 148px; }
+  .c-hero--light .c-status .cute { width: 64px; height: 64px; }
+  .c-hero--light .c-namecard__phone a { font-size: 26px; }
+}
+/* Điện thoại: một cột, nút liên hệ trước, rồi mặt trăng, rồi danh thiếp */
+@media (max-width: 720px) {
+  .c-hero--light .c-hero__grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "reach" "sky" "card"; }
+  .s-app .c-hero--light .c-hero__title { font-size: clamp(30px, 10vw, 42px); }
+  .c-hero--light .c-hero__lead { font-size: 15px; }
+  .c-hero--light .c-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .c-hero--light .c-dock__btn { gap: 8px; padding: 8px 10px; }
+  .c-hero--light .c-dock__btn--mail { grid-column: 1 / -1; }
+  .c-hero--light .c-dock__btn .cute { width: 32px; height: 32px; }
+  .c-hero--light .c-dock__btn span:not(.c-sr) { font-size: 13.5px; }
+  .c-hero--light .c-alt { gap: 0 14px; }
+  .c-hero--light .c-alt a { gap: 5px; font-size: 13px; }
+}
+@media (max-width: 359px) {
+  .c-hero--light .c-dock { grid-template-columns: minmax(0, 1fr); }
+  .c-hero--light .c-namecard__phone a { font-size: 23px; }
+  .c-hero--light .c-namecard__top .c-namecard__logo { width: 134px; }
+}
