@@ -5,9 +5,9 @@
  */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Clock } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { BlogCardItem, type BlogCard } from './BlogCardItem';
 
-export type BlogCard = { id: string; href: string; title: string; excerpt: string; cover: string; date: string; dateLabel: string; minutes: number; topic: string };
 export type BlogTopic = { id: string; name: string; slug: string; tone: number; count: number; page?: string };
 
 export function BlogExplorer({ cards, topics, featuredId }: { cards: BlogCard[]; topics: BlogTopic[]; featuredId?: string }) {
@@ -51,19 +51,7 @@ export function BlogExplorer({ cards, topics, featuredId }: { cards: BlogCard[];
         {active?.page && <Link href={active.page}>Trang chủ đề <ArrowUpRight aria-hidden="true" /></Link>}
       </p>
       <ul className="bl-grid">
-        {shown.map((c, i) => (
-          <li key={c.id} className={`bl-card bl-tone-${toneOf(c.topic)}${i % 7 === 0 ? ' is-wide' : ''}`}>
-            <div className="bl-card__media">
-              {c.cover ? <img src={c.cover} alt="" loading="lazy" decoding="async" /> : <span className="bl-card__ph" aria-hidden="true">D</span>}
-            </div>
-            <div className="bl-card__body">
-              <p className="bl-card__meta"><span className="bl-pill">{nameOf(c.topic)}</span><time dateTime={c.date}>{c.dateLabel}</time></p>
-              <h3 className="bl-card__title"><Link className="bl-card__link" href={c.href}>{c.title}</Link></h3>
-              <p className="bl-card__text">{c.excerpt}</p>
-              <p className="bl-card__foot"><span><Clock aria-hidden="true" />{c.minutes} phút đọc</span><span className="bl-card__go">Đọc bài <ArrowRight aria-hidden="true" /></span></p>
-            </div>
-          </li>
-        ))}
+        {shown.map((c, i) => <BlogCardItem key={c.id} card={c} topicName={nameOf(c.topic)} tone={toneOf(c.topic)} wide={i % 7 === 0} />)}
       </ul>
     </div>
   );

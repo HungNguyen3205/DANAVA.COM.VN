@@ -5,6 +5,7 @@ import { findTopic, postsForTopic, sortServices, topicHasPage, topicHref } from 
 import { JsonLd, PostTile, ServiceLinks } from '@/components/site/blocks';
 import { PageHead, CtaBand } from '@/components/site/ui';
 import { TopicNav } from '@/components/site/NewsPage';
+import { BlogSearch } from '@/components/site/BlogSearch';
 import { pageCopy } from '@/lib/blocks';
 import { rich } from '@/components/site/rich';
 
@@ -47,7 +48,7 @@ export default async function Page({ params }: Params) {
       <JsonLd value={breadcrumbLD(crumbs)} />
       <main id="main">
         <PageHead eyebrow="Blogs" title={topic.name} lead={topic.description} crumbs={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Blogs' }, { label: topic.name }]} />
-        <div className="s-container"><TopicNav data={data} current={topic.id} /></div>
+        <div className="s-container bl-topicbar"><BlogSearch data={data} filter={{ q: '', topic: topic.slug }} /><TopicNav data={data} current={topic.id} /></div>
         <section className="s-section s-section--flush-top" aria-label={`Bài viết ${topic.name}`}>
           <div className="s-container">
             <div className="s-grid s-grid--3 s-list-m">

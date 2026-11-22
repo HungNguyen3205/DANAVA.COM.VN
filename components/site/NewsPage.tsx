@@ -1,6 +1,6 @@
 /**
  * /kien-thuc/ — trang Blogs (server component; mọi liên kết có trong HTML).
- * Bìa tạp chí → bài tiêu điểm + "Mới cập nhật" → lưới bài có bộ lọc chủ đề (BlogExplorer) →
+ * Bìa tạp chí có ô tìm kiếm (đang tìm thì chỉ hiện kết quả) → bài tiêu điểm + "Mới cập nhật" → lưới bài có bộ lọc chủ đề (BlogExplorer) →
  * cập nhật từ Fanpage & YouTube → lưu trữ từ website cũ chia theo năm.
  * Chủ đề đủ bài có trang riêng /kien-thuc/chu-de/[slug]/.
  */
@@ -15,7 +15,11 @@ import { formatDate, excerpt } from './catalog';
 import { postCover } from './blocks';
 import { pageCopy } from '@/lib/blocks';
 import { rich } from './rich';
-import { BlogExplorer, type BlogCard, type BlogTopic } from './BlogExplorer';
+import { BlogExplorer, type BlogTopic } from './BlogExplorer';
+import type { BlogCard } from './BlogCardItem';
+import { BlogSearch } from './BlogSearch';
+import { BlogResults } from './BlogResults';
+import { isFiltering, type BlogFilter } from '@/lib/blog-search';
 
 /** Ước lượng thời gian đọc (~220 từ/phút) */
 const minutesOf = (p: Post) => Math.max(1, Math.round((p.body || '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length / 220));
@@ -39,7 +43,8 @@ export function TopicNav({ data, current }: { data: SiteData; current?: string }
   );
 }
 
-export default function NewsPage({ data }: { data: SiteData }) {
+export default function NewsPage({ data, filter }: { data: SiteData; filter: BlogFilter }) {
+  const filtering = isFiltering(filter);
   const copy = pageCopy(data, 'kien-thuc');
   const posts = knowledgePosts(data);
   const featured = posts.find(p => postCover(p)) || posts[0];
@@ -50,10 +55,11 @@ export default function NewsPage({ data }: { data: SiteData }) {
     count: posts.filter(p => p.topicId === t.id).length,
     page: topicHasPage(data, t) ? topicHref(t) : undefined
   }));
-  const cards: BlogCard[] = posts.map(p => ({
+  const toCard = (p: Post): BlogCard => ({
     id: p.id, href: postHref(p), title: p.title, excerpt: excerpt(p.excerpt || p.body, 150), cover: postCover(p),
     date: p.date || '', dateLabel: p.date ? formatDate(p.date) : '', minutes: minutesOf(p), topic: p.topicId || ''
-  }));
+  });
+  const cards = posts.map(toCard);
   const archive = publishedPosts(data).filter(p => p.topicId === ARCHIVE_TOPIC);
   const years = Array.from(new Set(archive.map(p => (p.date || '').slice(0, 4) || 'Khác'))).sort((a, b) => b.localeCompare(a));
   const social = getPublicSocialPosts();
@@ -62,20 +68,21 @@ export default function NewsPage({ data }: { data: SiteData }) {
 
   return (
     <main id="main" className="bl">
-      <section className="bl-hero" aria-labelledby="bl-title">
+      <section className={`bl-hero${filtering ? ' bl-hero--compact' : ''}`} aria-labelledby="bl-title">
         <div className="s-container bl-hero__grid">
           <div className="bl-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Blogs' }]} />
             <p className="bl-hero__kicker">{copy.kicker || 'DANAVA Blogs'}</p>
             <h1 className="bl-hero__title" id="bl-title">{rich(copy.title)}</h1>
             <p className="bl-hero__lead">{copy.lead}</p>
-            <dl className="bl-hero__stats">
+            <BlogSearch data={data} filter={filter} />
+            {!filtering && <dl className="bl-hero__stats">
               <div><dt>Bài viết</dt><dd>{posts.length}</dd></div>
               <div><dt>Chủ đề</dt><dd>{topics.length}</dd></div>
               {latest && <div><dt>Mới nhất</dt><dd>{formatDate(latest)}</dd></div>}
-            </dl>
+            </dl>}
           </div>
-          <div className="bl-hero__collage" aria-hidden="true">
+          {!filtering && <div className="bl-hero__collage" aria-hidden="true">
             {collage.map((p, i) => (
               <figure key={p.id} className={`bl-polaroid bl-polaroid--${i}`}>
                 <img src={postCover(p)} alt="" {...(i === 0 ? { fetchPriority: 'high' as const } : { loading: 'lazy' as const })} />
@@ -83,10 +90,11 @@ export default function NewsPage({ data }: { data: SiteData }) {
               </figure>
             ))}
             <span className="bl-hero__stamp">Blogs<br /><small>DANAVA</small></span>
-          </div>
+          </div>}
         </div>
       </section>
 
+      {filtering ? <BlogResults data={data} filter={filter} toCard={toCard} /> : <>
       {featured && (
         <section className="bl-feature" aria-labelledby="bl-feature-title">
           <div className="s-container bl-feature__grid">
@@ -177,6 +185,8 @@ export default function NewsPage({ data }: { data: SiteData }) {
           </div>
         </section>
       )}
+
+      </>}
 
       <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
