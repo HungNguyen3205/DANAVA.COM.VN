@@ -1,19 +1,24 @@
 'use client';
-/** Các lối vào ANNA: khối trang chủ và nút nổi bên phải. */
-import { useState, type FormEvent } from 'react';
+/** Các lối vào ANNA: khối trang chủ và nút nổi bên phải (bé Mây). */
+import { useRef, useState, type FormEvent } from 'react';
 import { ArrowUp, Calculator, Sparkles } from 'lucide-react';
 import { useSite } from '../../SiteStore';
 import { block } from '@/lib/blocks';
 import { ANNA_LIMITS } from '@/lib/anna-shared';
 import { rich } from '../rich';
 import { useAnna } from './AnnaProvider';
+import { MayFigure } from './MayFigure';
+import { MayPerch } from './MayPerch';
+import { useMay } from './useMay';
 
 export function AnnaLauncher() {
   const { enabled, open, ask } = useAnna();
+  const button = useRef<HTMLButtonElement>(null);
+  useMay(button, enabled);
   if (!enabled) return null;
   return (
-    <button type="button" className={`an-launch${open ? ' is-hidden' : ''}`} onClick={() => ask()} aria-label="Hỏi ANNA, trợ lý AI của DANAVA" aria-haspopup="dialog" aria-expanded={open} aria-controls="s-anna">
-      <Sparkles aria-hidden="true" />
+    <button ref={button} type="button" className={`an-launch${open ? ' is-hidden' : ''}`} onClick={() => ask()} aria-label="Hỏi ANNA, trợ lý AI của DANAVA" aria-haspopup="dialog" aria-expanded={open} aria-controls="s-anna">
+      <span className="an-launch__pose" aria-hidden="true"><MayFigure /></span>
       <b>ANNA</b>
       <span className="an-launch__tip" aria-hidden="true">Trợ lý AI tư vấn</span>
     </button>
@@ -35,8 +40,10 @@ export function AnnaHome() {
 
   return (
     <section className="an-home" id="hoi-anna" aria-labelledby="t-anna">
+      <span className="an-home__clouds" aria-hidden="true"><i /><i /><i /><i /></span>
       <div className="s-container">
         <div className="an-home__inner">
+          <MayPerch onPick={() => ask()} />
           <p className="hb-eyebrow an-home__eyebrow"><Sparkles aria-hidden="true" />ANNA · Trợ lý AI DANAVA</p>
           <h2 className="hb-h2" id="t-anna">{rich(config.title)}</h2>
           <p className="hb-text">{config.lead}</p>

@@ -3,13 +3,32 @@
    Component: components/site/anna/*. Nạp sau site-shell.css.
    ========================================================================== */
 
-/* ---------- Khối trên trang chủ ---------- */
-.an-home { padding: clamp(40px, 6vw, 80px) 0; background: radial-gradient(48% 90% at 50% 110%, rgba(255, 179, 71, .3), transparent 70%), #fff; }
+/* ---------- Khối trên trang chủ: bầu trời nhỏ của bé Mây ---------- */
+.an-home {
+  position: relative; overflow: hidden; padding: clamp(18px, 2.4vw, 34px) 0 clamp(64px, 7vw, 100px);
+  /* mép trên cùng màu kem với khối Giải pháp, mép dưới về trắng: không còn vệt cắt ngang */
+  background: linear-gradient(180deg, #fbf6ee 0%, #eef8fd 30%, #f4fafc 58%, #fff8ef 80%, #fff 100%);
+}
+.an-home > .s-container { position: relative; z-index: 1; }
+.an-home__clouds { position: absolute; inset: 0; pointer-events: none; }
+.an-home__clouds i { position: absolute; width: 190px; height: 54px; border-radius: 99px; background: #fff; opacity: .85; }
+.an-home__clouds i::before, .an-home__clouds i::after { content: ""; position: absolute; border-radius: 50%; background: inherit; }
+.an-home__clouds i::before { left: 24px; bottom: 18px; width: 78px; height: 78px; }
+.an-home__clouds i::after { right: 28px; bottom: 20px; width: 58px; height: 58px; }
+.an-home__clouds i:nth-child(1) { left: 4%; top: 25%; }
+.an-home__clouds i:nth-child(2) { right: 6%; top: 20%; scale: .72; }
+.an-home__clouds i:nth-child(3) { left: 14%; top: 76%; scale: .56; }
+.an-home__clouds i:nth-child(4) { right: 12%; top: 70%; scale: .9; }
+.an-home__perch { position: relative; display: grid; place-items: center; height: 148px; margin-bottom: 4px; }
+.s-app .an-home__may {
+  width: 116px; height: 122px; padding: 0; border-radius: 45%; background: none;
+}
+.an-home__may .may { display: block; width: 100%; height: 100%; }
 .an-home__inner { max-width: 820px; margin: 0 auto; text-align: center; }
 .s-app .an-home__eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #b5420b; }
 .an-home__eyebrow svg { width: 16px; height: 16px; }
 .s-app .an-home .hb-text { max-width: 640px; margin-left: auto; margin-right: auto; }
-.an-ask { display: flex; align-items: center; gap: 8px; margin-top: 26px; padding: 7px 7px 7px 22px; border: 2px solid #f6c08a; border-radius: 999px; background: #fff; box-shadow: 0 22px 46px -30px rgba(242, 107, 29, .8); transition: border-color .2s; }
+.an-ask { display: flex; align-items: center; gap: 8px; margin-top: 26px; padding: 7px 7px 7px 22px; border: 2px solid #f6c08a; border-radius: 999px; background: #fff; box-shadow: 0 22px 46px -30px rgba(60, 120, 165, .7); transition: border-color .2s; }
 .an-ask:focus-within { border-color: #d9540d; }
 .an-ask input { flex: 1; width: 100%; min-width: 0; min-height: 50px; border: 0; background: transparent; color: #13244f; font: inherit; font-size: 16.5px; }
 .s-app .an-ask input:focus-visible { outline: none; }
@@ -17,36 +36,61 @@
 .s-app .an-ask button { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 22px; border-radius: 999px; background: #13244f; color: #fff; font-weight: 800; white-space: nowrap; }
 .an-ask button svg { width: 18px; height: 18px; }
 .s-app .an-home__chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
-.s-app .an-home__chips button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 9px 16px; border-radius: 999px; background: #fbf1e5; color: #13244f; font-size: 14.5px; font-weight: 600; line-height: 1.35; text-align: left; }
-.s-app .an-home__chips button:hover { background: #ffe3c8; }
+.s-app .an-home__chips button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 9px 16px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px #d6eaf4; color: #13244f; font-size: 14.5px; font-weight: 600; line-height: 1.35; text-align: left; }
+.s-app .an-home__chips button:hover { background: #e2f3fc; }
 .s-app .an-home__chips .is-quote { color: #a53c08; font-weight: 800; }
 .an-home__chips svg { width: 16px; height: 16px; }
 
-/* ---------- Nút nổi bên phải (máy tính) ---------- */
+/* ---------- Bé Mây: nét mặt dùng chung ---------- */
+.may { overflow: visible; }
+.may__smile, .may__cheeks { transition: opacity .18s; }
+.may__wow { display: none; }
+.may__eyes { transform-box: fill-box; transform-origin: center; }
+.cs__icon--anna .may { width: 36px; height: 38px; }
+.s-app .sm__may { width: 30px; height: 32px; }
+@media (prefers-reduced-motion: no-preference) {
+  .may__eyes { animation: may-blink 4.3s linear infinite; }
+}
+@keyframes may-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+
+/* ---------- Nút nổi bên phải (máy tính): chính là bé Mây ---------- */
 .s-app .an-launch { display: none; }
 @media (min-width: 861px) {
   .s-app .an-launch {
     position: fixed; z-index: 84; right: max(16px, env(safe-area-inset-right)); bottom: 26px;
-    display: grid; place-content: center; justify-items: center; gap: 2px; width: 62px; height: 62px; border-radius: 50%;
-    background: linear-gradient(145deg, #1f3a8a, #13244f); color: #fff; box-shadow: 0 0 0 3px #ffb347, 0 14px 28px -12px rgba(11, 19, 43, .7);
-    transition: transform .2s ease, opacity .2s ease, visibility .2s;
+    display: block; width: 62px; height: 66px; padding: 0; border-radius: 45%; background: none; color: #13244f;
+    user-select: none; -webkit-user-select: none; transition: opacity .2s ease, visibility .2s;
   }
-  .an-launch > svg { width: 20px; height: 20px; color: #ffb347; }
-  .an-launch b { font-size: 11px; font-weight: 800; line-height: 1; letter-spacing: .08em; }
-  .s-app .an-launch:hover { transform: translateY(-2px); }
-  .s-app .an-launch:focus-visible { outline: 3px solid #13244f; outline-offset: 6px; border-radius: 50%; }
+  .s-app .an-launch.is-live { will-change: transform; cursor: grab; touch-action: none; }
+  .s-app .an-launch.is-held { cursor: grabbing; }
+  /* đang bay vào khối hoặc về chỗ: bấm xuyên qua */
+  .s-app .an-launch.is-flying { pointer-events: none; }
+  .an-launch__pose, .an-launch__pose .may { display: block; width: 100%; height: 100%; pointer-events: none; }
+  .an-launch b {
+    position: absolute; left: 50%; bottom: -5px; padding: 3px 7px; border-radius: 99px; background: #13244f; color: #fff;
+    font-size: 9px; font-weight: 800; line-height: 1; letter-spacing: .08em; pointer-events: none;
+    transform: translateX(-50%) scale(var(--unscale, 1));
+  }
+  .an-launch :is(.may__smile, .may__cheeks) { opacity: .75; }
+  .an-launch:is(:hover, .is-held) :is(.may__smile, .may__cheeks) { opacity: 1; }
+  .s-app .an-launch:focus-visible { outline: 3px solid #13244f; outline-offset: 6px; }
   .an-launch__tip {
-    position: absolute; right: calc(100% + 12px); top: 50%; padding: 7px 11px; border-radius: 9px; background: #13244f; color: #fff;
-    font-size: 13px; font-weight: 700; white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(4px, -50%);
-    pointer-events: none; transition: opacity .18s, transform .18s, visibility .18s;
+    position: absolute; right: calc(100% + 8px); top: 38%; padding: 7px 11px; border-radius: 12px 12px 3px 12px;
+    background: #13244f; color: #fff; font-size: 13px; font-weight: 700; line-height: 1.3; white-space: nowrap;
+    opacity: 0; visibility: hidden; transform: translateY(-50%) scale(var(--unscale, 1)); transform-origin: right center;
+    pointer-events: none; transition: opacity .18s, visibility .18s;
   }
-  .an-launch:hover .an-launch__tip, .an-launch:focus-visible .an-launch__tip { opacity: 1; visibility: visible; transform: translate(0, -50%); }
+  .an-launch.tip-right .an-launch__tip { right: auto; left: calc(100% + 8px); border-radius: 12px 12px 12px 3px; transform-origin: left center; }
+  .an-launch:not(.is-held):hover .an-launch__tip, .an-launch:focus-visible .an-launch__tip { opacity: 1; visibility: visible; }
   .s-app .an-launch.is-hidden, html.has-modal .s-app .an-launch, html.is-cine .s-app .an-launch { opacity: 0; visibility: hidden; }
 }
 @media (min-width: 861px) and (max-width: 1367px) {
-  .s-app .an-launch { right: max(7px, env(safe-area-inset-right)); bottom: 18px; width: 50px; height: 50px; }
-  .an-launch > svg { width: 17px; height: 17px; }
-  .an-launch b { font-size: 9px; }
+  .s-app .an-launch { right: max(7px, env(safe-area-inset-right)); bottom: 18px; width: 50px; height: 53px; }
+  .an-launch b { font-size: 8px; }
+}
+/* máy tính có chuột: bé ở nút nổi bay vào chỗ đậu, không cần bé thứ hai */
+@media (min-width: 861px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .s-app .an-home__may { visibility: hidden; }
 }
 
 /* ---------- Bảng hội thoại ---------- */
@@ -65,8 +109,8 @@
 
 .an-head { display: flex; flex: none; align-items: center; gap: 10px; padding: 14px 12px 14px 16px; background: #13244f; color: #fff; }
 .an--modal .an-head { padding-top: calc(12px + env(safe-area-inset-top)); }
-.an-avatar { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #ffb347; color: #13244f; }
-.an-avatar svg { width: 22px; height: 22px; }
+.an-avatar { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #fff5e8; color: #13244f; }
+.an-avatar .may { width: 40px; height: 42px; }
 .an-head__name { flex: 1; min-width: 0; }
 .s-app .an-head h2 { color: #fff; font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.1; letter-spacing: .03em; }
 .s-app .an-head p { color: #c9d4f5; font-size: 12.5px; line-height: 1.4; }

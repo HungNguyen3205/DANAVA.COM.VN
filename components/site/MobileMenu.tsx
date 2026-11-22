@@ -6,7 +6,8 @@
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Sparkles, Users, X, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
+import { MayFigure } from './anna/MayFigure';
 import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
@@ -113,7 +114,7 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
         <div className="sm__end">
           {anna.enabled && (
             <button type="button" className="sm__row sm__anna" onClick={() => { onClose(); anna.ask(); }}>
-              <Sparkles className="sm__icon sm__icon--orange" aria-hidden="true" /><span className="sm__label">Hỏi trợ lý AI ANNA</span>
+              <MayFigure className="sm__icon sm__may" /><span className="sm__label">Hỏi trợ lý AI ANNA</span>
             </button>
           )}
           <Link className="sm__cta" href="/lien-he/" onClick={onClose}>Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>

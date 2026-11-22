@@ -205,11 +205,15 @@
 @media (prefers-reduced-motion: no-preference) {
   .td-live__idle { animation: td-sway 5.5s ease-in-out infinite; }
   .td-live__rig.is-pulled .td-live__idle { animation-play-state: paused; }
+  /* chờ thả thẻ từ trên xuống; không có JS thì sau 3 giây thẻ vẫn tự hiện */
+  .td-live:not(.td-live--compact) .td-live__rig:not(.is-in) { animation: td-wait 3s step-end both; }
+  .td-live__rig.is-waiting:not(.is-in) { animation: none !important; opacity: 0; }
   .td-live__stamp { animation: td-stamp .45s cubic-bezier(.2, 1.6, .4, 1); }
   .td.is-motion [data-reveal] { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .7s ease, transform .3s ease; }
   .td.is-motion [data-reveal].is-in { opacity: 1; translate: 0 0; }
 }
 @keyframes td-sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes td-wait { from { opacity: 0; } to { opacity: 1; } }
 @keyframes td-stamp { from { opacity: 0; transform: translate(-50%, -50%) rotate(-12deg) scale(1.8); } }
 @media (prefers-reduced-motion: reduce) {
   .td-door__leaf, .td-note, .td-tag, .td-polaroid { transition: none; }

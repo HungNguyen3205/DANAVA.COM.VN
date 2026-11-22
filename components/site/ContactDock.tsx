@@ -6,7 +6,8 @@
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { ChevronRight, Phone, PencilLine, Sparkles, X } from 'lucide-react';
+import { ChevronRight, Phone, PencilLine, X } from 'lucide-react';
+import { MayFigure } from './anna/MayFigure';
 import { useSite } from '../SiteStore';
 import { contactChannels } from '@/lib/contact-channels';
 import { formatPhone } from './catalog';
@@ -63,7 +64,7 @@ export function ContactSheet({ open, onClose }: { open: boolean; onClose: () => 
           {anna.enabled && (
             <li>
               <button type="button" className="cs__row cs__row--anna" onClick={() => { onClose(); anna.ask(); }}>
-                <span className="cs__icon cs__icon--anna"><Sparkles aria-hidden="true" /></span>
+                <span className="cs__icon cs__icon--anna"><MayFigure /></span>
                 <span><b>Hỏi ANNA</b><small>Trợ lý AI, báo giá nhanh</small></span><ChevronRight aria-hidden="true" />
               </button>
             </li>

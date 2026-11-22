@@ -5,7 +5,8 @@
  */
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { ArrowUp, Calculator, MessageCircle, Phone, RotateCcw, Sparkles, Square, X } from 'lucide-react';
+import { ArrowUp, Calculator, MessageCircle, Phone, RotateCcw, Square, X } from 'lucide-react';
+import { MayFigure } from './MayFigure';
 import { useSite } from '../../SiteStore';
 import { block } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
@@ -119,7 +120,7 @@ export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken,
     <dialog ref={ref} id="s-anna" className={`an${modal ? ' an--modal' : ''}`} aria-labelledby="an-title"
       onClick={event => { if (modal && (event.target as HTMLElement).closest('a')) onClose(); }}>
       <header className="an-head">
-        <span className="an-avatar" aria-hidden="true"><Sparkles /></span>
+        <span className="an-avatar" aria-hidden="true"><MayFigure /></span>
         <div className="an-head__name">
           <h2 id="an-title">ANNA</h2>
           <p>Trợ lý AI của DANAVA</p>
