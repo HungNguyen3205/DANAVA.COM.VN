@@ -73,6 +73,10 @@ git reset --hard f8a77a8 && touch tmp/restart.txt
 - **Ảnh**: upload trong admin, lưu ở `danava-data/media`, dùng qua đường dẫn `/assets/uploads/...`.
 - **Khách hàng liên hệ**: danh sách form liên hệ, phân công và ghi chú.
 - **Thống kê**: lượt xem, nguồn truy cập (không lưu IP).
+- **Ảnh doanh nghiệp**: lưới ảnh trên trang chủ (tải ảnh, đổi thứ tự, chú thích).
+- **Kênh liên hệ & MXH**: Hotline, Zalo, Messenger, mạng xã hội ở chân trang (trống = ẩn; Zalo và Messenger có thể tự lấy theo Hotline/Fanpage).
+- **Trợ lý ANNA**: lời chào, câu gợi ý, nguồn dữ liệu, trạng thái kết nối AI.
+- **Bảng giá & báo giá**: một nguồn giá cho trang Hello DANAVA, Báo giá nhanh và ANNA. Giá không tự đồng bộ từ hello.danava.vn.
 
 Nội dung chỉnh trong admin được lưu vào MySQL (bảng `content`) và **không** bị ghi đè khi cập nhật code.
 
@@ -89,6 +93,9 @@ Nội dung chỉnh trong admin được lưu vào MySQL (bảng `content`) và *
 | `DANAVA_DB_USER` | `khoaluan_danava` |
 | `DANAVA_DB_PASSWORD` | mật khẩu MySQL (giao riêng) |
 | `DANAVA_ADMIN_PASSWORD_HASH` | mã băm mật khẩu admin (không phải mật khẩu) |
+| `ANTHROPIC_API_KEY` | khóa API cho trợ lý ANNA (giao riêng; chỉ ở máy chủ). Thiếu thì ANNA báo chưa sẵn sàng |
+| `DANAVA_AI_MODEL` | tùy chọn, mặc định `claude-opus-5-5`. Đổi model phải hỏi thử lại vì chỉ nhận model hỗ trợ `effort` |
+| `DANAVA_AI_DAILY_LIMIT` | tùy chọn, số câu hỏi ANNA tối đa mỗi ngày cho cả website, mặc định 500 |
 
 Sau khi sửa biến: bấm **SAVE** rồi **RESTART**.
 
@@ -142,6 +149,9 @@ tail -50 ~/danava.com.vn/stderr.log
 | `git fetch origin deploy` báo *couldn't find remote ref* | Chưa có bản build thành công nào | Kiểm tra GitHub Actions |
 
 ### Điểm cần lưu ý
+- **Khối CMS mới lưu ở `extras`**, không ở `blocks`: bản build cũ từ chối khóa lạ trong `blocks` và sẽ lỗi 500 khi quay lại bản trước. Giữ quy tắc này khi thêm khối.
+- **ANNA** có giới hạn theo khách (8 câu/phút, 80 câu/ngày) và theo website. Giới hạn theo khách cần proxy chuyển đúng `X-Forwarded-For`. Nếu chữ không hiện dần mà ra một lượt, kiểm tra proxy có đang giữ bộ đệm phản hồi `/api/anna/`.
+- Log `[anna] blocked an answer…` nghĩa là AI đưa ra con số không có trong dữ liệu và đã bị chặn trước khi tới khách.
 - **Upload ảnh trong admin chưa được kiểm thử trên server.** Thư viện xử lý ảnh (`sharp`) có thể không chạy trên hệ điều hành cũ của hosting. Nếu upload báo *Không thể xử lý ảnh*, kiểm tra `stderr.log`; toàn bộ phần còn lại của web không bị ảnh hưởng.
 - Không chạy `npm install` / `npm run build` trên server — sẽ lỗi do glibc (xem mục 2).
 - Không xóa phần `# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION` trong `~/danava.com.vn/.htaccess`.

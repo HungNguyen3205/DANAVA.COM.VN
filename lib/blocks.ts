@@ -13,7 +13,7 @@ import { CONTACT, SOCIAL, company } from './company.ts';
 import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, initialEcosystemUnits, type EcosystemCategory, type EcosystemUnit, type JourneyStage } from './ecosystem.ts';
 import { PROJECT_STAFF_ASSIGNMENTS, getStaffDetail, getStaffProfile, staffDetailFromEdit, staffProfileFromEdit } from './staff.ts';
 import { APPROVED_SERVICE_POLICIES, DRAFT_POLICY_CLAUSES, SERVICE_POLICY_METADATA, SLA_MATRIX, SUPPORT_CHANNELS } from './service-policy.ts';
-import { CHANNELS, GALLERY, extraError, type ExtraValues } from './site-extras.ts';
+import { ANNA, CHANNELS, GALLERY, PRICING, extraError, type ExtraValues } from './site-extras.ts';
 import { COLLAB_STEPS, GOALS, MILESTONES, MOMENTS, PRINCIPLES } from '../components/site/company-content.ts';
 
 /* ------------------------------------------------------------ Mặc định */
@@ -192,7 +192,9 @@ export function blockDefaults(staff: Person[] = []) {
     privacy: PRIVACY,
     servicePolicy: SERVICE_POLICY,
     contact: CHANNELS,
-    gallery: GALLERY
+    gallery: GALLERY,
+    anna: ANNA,
+    pricing: PRICING
   };
 }
 export type BlockDefaults = ReturnType<typeof blockDefaults>;
@@ -202,7 +204,7 @@ type StoredKey = Exclude<BlockKey, ExtraKey>;
 export type Blocks = { [K in StoredKey]?: BlockDefaults[K] };
 export type Extras = { [K in ExtraKey]?: BlockDefaults[K] };
 /** Khối lưu trong SiteData.extras. Khối mới thêm vào đây, không thêm vào BLOCK_KEYS. */
-export const EXTRA_KEYS: ExtraKey[] = ['contact', 'gallery'];
+export const EXTRA_KEYS: ExtraKey[] = ['contact', 'gallery', 'anna', 'pricing'];
 export const BLOCK_KEYS: StoredKey[] = ['company', 'menu', 'pages', 'about', 'ecosystem', 'staff', 'privacy', 'servicePolicy'];
 
 /* ------------------------------------------------------------ Đọc */

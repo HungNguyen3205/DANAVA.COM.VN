@@ -3,7 +3,7 @@
  * nền kem ấm có quầng cam nhẹ, tiêu đề Playfair Display chữ đứng (navy + nhấn cam), nhãn mục chữ cam nhỏ in hoa.
  * Nội dung theo bộ "Company Profile 2026" (lib/about-danava.ts: PROFILE_2026, ABOUT_DANAVA).
  * Bố cục lấy ý tưởng trang agency (cleverads.vn), không có phiếu nhập thông tin:
- * Bìa → 4 giải pháp → Dự án tiêu biểu (tab lọc) → Toàn bộ khách hàng & đối tác → Vì sao chọn DANAVA + mạng lưới
+ * Bìa → 4 giải pháp → Hỏi ANNA → Dự án tiêu biểu (tab lọc) → Toàn bộ khách hàng & đối tác → Vì sao chọn DANAVA + mạng lưới
  * → Ảnh doanh nghiệp → Sản phẩm tự phát triển → Quy trình 7 bước → Cảm nhận → Blogs → Liên hệ. Mỗi mục có icon nét mảnh (components/site/icons.tsx).
  */
 import Link from 'next/link';
@@ -20,6 +20,7 @@ import { MILESTONES } from './company-content';
 import { Reveal, CountUp } from './HomeClient';
 import { OfficeScene } from './OfficeScene';
 import { CompanyGallery } from './CompanyGallery';
+import { AnnaHome } from './anna/AnnaEntry';
 import { block } from '@/lib/blocks';
 import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { markOf } from '@/lib/partner-marks';
@@ -162,6 +163,8 @@ export default function HomePage({ data }: { data: SiteData }) {
           </ul>
         </div>
       </section>
+
+      <AnnaHome />
 
       {/* Dự án tiêu biểu — có tab lọc */}
       {cases.length > 0 && (

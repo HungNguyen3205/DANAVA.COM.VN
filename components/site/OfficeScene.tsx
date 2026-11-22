@@ -582,8 +582,10 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   }
   let qrK = 0, qrGoal = 0, builtNow = false, latched = false, lockUntil = 0, lockArmed = false;
   // Vừa hoàn thiện: chặn lướt XUỐNG khoảng 5 s để nút QR rơi xuống và khách kịp chọn; lướt lên vẫn được
-  const onLockWheel = (e: WheelEvent) => { if (e.deltaY > 0 && performance.now() < lockUntil) e.preventDefault(); };
-  const onLockKey = (e: KeyboardEvent) => { if (performance.now() < lockUntil && ['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) e.preventDefault(); };
+  // Không giữ khi khách đang gõ (phím cách!) hoặc cuộn bên trong hộp thoại (ANNA, menu)
+  const ownInput = (e: Event) => e.target instanceof Element && !!e.target.closest('input, textarea, select, [contenteditable], dialog');
+  const onLockWheel = (e: WheelEvent) => { if (e.deltaY > 0 && performance.now() < lockUntil && !ownInput(e)) e.preventDefault(); };
+  const onLockKey = (e: KeyboardEvent) => { if (performance.now() < lockUntil && ['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key) && !ownInput(e)) e.preventDefault(); };
   window.addEventListener('wheel', onLockWheel, { passive: false });
   window.addEventListener('keydown', onLockKey);
   const qrMtx = new THREE.Matrix4(), qrPos = new THREE.Vector3(), qrScale = new THREE.Vector3(), qrQuat = new THREE.Quaternion();

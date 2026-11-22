@@ -6,13 +6,14 @@
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Sparkles, Users, X, type LucideIcon } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
 import { CONTACT, formatPhone } from './catalog';
 import { iconFor } from './icons';
 import { useDialog } from './useDialog';
+import { useAnna } from './anna/AnnaProvider';
 
 const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/giai-phap/', label: 'Tất cả giải pháp', icon: LayoutGrid },
@@ -32,6 +33,7 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
   const menu = block(data, 'menu');
   const company = block(data, 'company');
   const channels = contactChannels(data);
+  const anna = useAnna();
   const inGroups = new Set(menu.columns.flatMap(c => c.items.map(i => i.href)));
   const current = (href: string) => {
     const here = href === '/giai-phap/' || href === '/' ? path === href : href.startsWith('/') && path.startsWith(href);
@@ -108,6 +110,11 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
         </nav>
 
         <div className="sm__end">
+          {anna.enabled && (
+            <button type="button" className="sm__row sm__anna" onClick={() => { onClose(); anna.ask(); }}>
+              <Sparkles className="sm__icon sm__icon--orange" aria-hidden="true" /><span className="sm__label">Hỏi trợ lý AI ANNA</span>
+            </button>
+          )}
           <Link className="sm__cta" href="/lien-he/" onClick={onClose}>Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
           {channels.tel && <a className="sm__call" href={channels.tel} onClick={onClose}><Phone aria-hidden="true" />Gọi {formatPhone(channels.phone)}</a>}
           <p>{data.email || CONTACT.email}<br />{company.address}</p>

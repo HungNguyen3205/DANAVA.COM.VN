@@ -58,6 +58,8 @@ export const adminNav: {
     group: 'Trang & thông tin',
     items: [
       { slug: 'cong-ty', icon: 'building', label: 'Thông tin công ty', desc: 'Pháp nhân, địa chỉ, giờ làm việc, bản đồ, Facebook, YouTube, sứ mệnh — dùng ở chân trang, Liên hệ, Về DANAVA và dữ liệu cho Google.' },
+      { slug: 'anna', icon: 'type', label: 'Trợ lý ANNA', desc: 'Lời chào, câu hỏi gợi ý và nguồn dữ liệu tư vấn của trợ lý AI ANNA; trạng thái kết nối AI.' },
+      { slug: 'bang-gia', icon: 'trend', label: 'Bảng giá & báo giá', desc: 'Gói DANAVA Studio và tùy chọn mua thêm — dùng cho trang Hello DANAVA, Báo giá nhanh và ANNA.' },
       { slug: 'kenh-lien-he', icon: 'inbox', label: 'Kênh liên hệ & MXH', desc: 'Hotline, Zalo, Messenger cho nút liên hệ và các mạng xã hội ở chân trang.' },
       { slug: 'menu-giai-phap', icon: 'menu', label: 'Menu Giải pháp', desc: 'Các cột và mục trong menu Giải pháp ở đầu trang và menu điện thoại.' },
       { slug: 'chu-tren-trang', icon: 'type', label: 'Chữ trên các trang', desc: 'Tiêu đề, câu dẫn đầu trang và dải kêu gọi liên hệ cuối trang của từng trang.' },

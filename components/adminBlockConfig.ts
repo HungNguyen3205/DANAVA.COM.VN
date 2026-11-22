@@ -15,6 +15,27 @@ export const PAGE_NAMES: Record<string, string> = {
 };
 
 export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config: BlockEditorConfig }> = {
+  anna: {
+    title: 'Nội dung và nguồn tư vấn ANNA',
+    desc: 'ANNA tự đọc nội dung đang xuất bản của các nhóm được bật, không đọc bản nháp hay danh sách khách hàng. Không nhập bí mật nội bộ: mọi thông tin ở đây ANNA đều có thể nói lại cho khách.',
+    config: {
+      labels: { ...COMMON, enabled: 'Bật ANNA trên website', title: 'Tiêu đề khối trang chủ (*phần nhấn mạnh*)', lead: 'Câu dẫn khối trang chủ', placeholder: 'Chữ mờ trong ô nhập', greeting: 'Lời chào', unavailable: 'Lời nhắn khi AI chưa sẵn sàng',
+        suggestions: 'Câu hỏi gợi ý', sources: 'Nguồn dữ liệu trên website', services: 'Dịch vụ, FAQ, cách báo giá', products: 'Sản phẩm DANAVA', projects: 'Dự án, đối tác', posts: 'Tiêu đề bài Blogs',
+        knowledge: 'Thông tin bổ sung đã xác minh', instructions: 'Hướng dẫn thêm về cách tư vấn' },
+      long: ['lead', 'greeting', 'unavailable', 'instructions']
+    }
+  },
+  pricing: {
+    title: 'Bảng giá DANAVA Studio',
+    desc: 'Một nguồn giá cho trang Hello DANAVA, Báo giá nhanh và ANNA. Chỉ nhập giá đã được xác nhận và sửa ngày cập nhật mỗi khi đổi giá. Giá các dịch vụ khác mô tả ở mục Giải pháp → Chi phí / cách xác định báo giá.',
+    config: {
+      labels: { ...COMMON, enabled: 'Cho ANNA và Báo giá nhanh dùng bảng giá này', checked: 'Ngày cập nhật giá', termMonths: 'Kỳ hạn của giá gói (tháng)', note: 'Ghi chú về giá', plans: 'Các gói', desc: 'Mô tả gói',
+        price: 'Giá (chỉ chữ số)', members: 'Hội viên tối đa', staff: 'Nhân sự tối đa', branches: 'Chi nhánh tối đa', highlight: 'Gói nổi bật', perks: 'Điểm chính', addons: 'Tùy chọn mua thêm', monthly: 'Tính theo tháng (nhân với kỳ hạn)' },
+      hidden: ['id'],
+      long: ['note'],
+      hints: { price: 'Để trống = cần nhân viên báo giá. 0 = miễn phí.', members: 'Nhập số, hoặc "Không giới hạn".' }
+    }
+  },
   contact: {
     title: 'Kênh liên hệ',
     desc: 'Sửa tại mục Kênh liên hệ & MXH (components/AdminChannels.tsx).',

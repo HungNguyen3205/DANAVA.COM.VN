@@ -6,12 +6,13 @@
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { ChevronRight, Phone, PencilLine, X } from 'lucide-react';
+import { ChevronRight, Phone, PencilLine, Sparkles, X } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { contactChannels } from '@/lib/contact-channels';
 import { formatPhone } from './catalog';
 import { BrandIcon } from './BrandIcons';
 import { useDialog } from './useDialog';
+import { useAnna } from './anna/AnnaProvider';
 
 export function ContactDock() {
   const { data } = useSite();
@@ -40,6 +41,7 @@ export function ContactDock() {
 export function ContactSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { data } = useSite();
   const ref = useDialog(open, onClose);
+  const anna = useAnna();
   const { zalo, messenger, tel, phone } = contactChannels(data);
 
   useEffect(() => {
@@ -58,6 +60,14 @@ export function ContactSheet({ open, onClose }: { open: boolean; onClose: () => 
           <button type="button" className="cs__close" onClick={onClose} aria-label="Đóng" data-autofocus><X aria-hidden="true" /></button>
         </div>
         <ul>
+          {anna.enabled && (
+            <li>
+              <button type="button" className="cs__row cs__row--anna" onClick={() => { onClose(); anna.ask(); }}>
+                <span className="cs__icon cs__icon--anna"><Sparkles aria-hidden="true" /></span>
+                <span><b>Hỏi ANNA</b><small>Trợ lý AI, báo giá nhanh</small></span><ChevronRight aria-hidden="true" />
+              </button>
+            </li>
+          )}
           {zalo && (
             <li>
               <a className="cs__row" href={zalo} target="_blank" rel="noopener noreferrer" onClick={onClose}>

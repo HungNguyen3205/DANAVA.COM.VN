@@ -88,6 +88,9 @@ export const HELLO = {
   url: 'https://hello.danava.vn/',
   registerUrl: 'https://studio.danava.vn/register',
   models: ['Gym', 'Yoga', 'Pilates', 'Bể bơi', 'Spa'],
+  /** Mã cố định của các gói, cùng thứ tự với plans và cột v trong modules */
+  planIds: ['khoi-dau', 'pro', 'premium', 'doanh-nghiep'],
+  /** plans và addons là giá trị mặc định: website đọc bảng giá từ CMS (Quản trị → Bảng giá & báo giá). */
   plans: [
     { name: 'Khởi đầu', desc: 'Quản lý phòng tập nhỏ với các tính năng cơ bản.', price: 'Miễn phí', perMonth: '', members: '50', staff: '2', branches: '1', highlight: false, perks: ['Lịch lớp & điểm danh'] },
     { name: 'Pro', desc: 'Tự động hóa vận hành và bán gói tập.', price: '5.000.000 ₫', perMonth: '≈ 416.667 ₫/tháng', members: '1.000', staff: '10', branches: '1', highlight: false, perks: ['POS bán hàng & kho', 'Lịch lớp & điểm danh', 'Cổng thanh toán online riêng', 'Chiến dịch & khuyến mãi'] },

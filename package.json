@@ -15,6 +15,7 @@
     "local:prod": "node scripts/run-local.mjs --prod"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.12.0",
     "gsap": "^3.13.0",
     "lucide-react": "^1.71.0",
     "mysql2": "^3.24.6",

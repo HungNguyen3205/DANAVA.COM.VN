@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, BadgeCheck, Bus, CalendarCheck, CalendarDays, Gauge, LayoutDashboard, Store, UserRound, Wallet, Check, ClipboardList, KeyRound, MapPin, QrCode, Smartphone, Ticket, Users, Armchair, Eye, ListChecks, Route } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { GO, HELLO, WORK, PRODUCTS_CHECKED } from '@/lib/products';
+import { block } from '@/lib/blocks';
+import { perMonth, priceText } from '@/lib/quote';
 import { Crumbs } from './ui';
 import { BrowserFrame } from './showcase';
 import { HelloCompare } from './HelloCompare';
@@ -203,7 +205,11 @@ export function GoPage(_: { data: SiteData }) {
 /* =====================================================================
  * Hello DANAVA
  * ===================================================================== */
-export function HelloPage(_: { data: SiteData }) {
+export function HelloPage({ data }: { data: SiteData }) {
+  const pricing = block(data, 'pricing');
+  // Bảng so sánh chỉ có dữ liệu cho các gói gốc; gói thêm mới trong CMS không được suy đoán tính năng
+  const compared = pricing.plans.filter(p => HELLO.planIds.includes(p.id));
+  const modules = HELLO.modules.map(m => ({ ...m, v: compared.map(p => m.v[HELLO.planIds.indexOf(p.id)]) }));
   return (
     <main id="main" className="phl">
       <section className="phl-hero" aria-labelledby="phl-title">
@@ -231,15 +237,15 @@ export function HelloPage(_: { data: SiteData }) {
       <section className="phl-sec" aria-labelledby="phl-plans-title">
         <div className="s-container">
           <p className="phl-eyebrow">Bảng giá</p>
-          <h2 className="phl-h2" id="phl-plans-title">Bốn gói, <em>một phần mềm.</em></h2>
+          <h2 className="phl-h2" id="phl-plans-title">{pricing.plans.length === 4 ? 'Bốn gói,' : 'Các gói,'} <em>một phần mềm.</em></h2>
           <ul className="phl-plans">
-            {HELLO.plans.map(p => (
-              <li key={p.name} className={`phl-plan${p.highlight ? ' is-hl' : ''}`}>
+            {pricing.plans.map(p => (
+              <li key={p.id} className={`phl-plan${p.highlight ? ' is-hl' : ''}`}>
                 {p.highlight && <span className="phl-plan__flag">Gói nổi bật</span>}
                 <h3>{p.name}</h3>
                 <p className="phl-plan__desc">{p.desc}</p>
-                <p className="phl-plan__price">{p.price}</p>
-                <p className="phl-plan__per">{p.perMonth ? <>/12 tháng · {p.perMonth}</> : <>&nbsp;</>}</p>
+                <p className="phl-plan__price">{priceText(p.price)}</p>
+                <p className="phl-plan__per">{perMonth(p.price, pricing.termMonths) ? <>/{pricing.termMonths} tháng · {perMonth(p.price, pricing.termMonths)}</> : <>&nbsp;</>}</p>
                 <dl className="phl-plan__lim">
                   <div><dt>Hội viên</dt><dd>{p.members}</dd></div>
                   <div><dt>Nhân sự</dt><dd>{p.staff}</dd></div>
@@ -249,7 +255,7 @@ export function HelloPage(_: { data: SiteData }) {
               </li>
             ))}
           </ul>
-          <p className="phl-note">{HELLO.termNote} Giá theo Hello DANAVA ngày {PRODUCTS_CHECKED}.</p>
+          <p className="phl-note">{pricing.note} Giá theo Hello DANAVA ngày {pricing.checked}.</p>
         </div>
       </section>
 
@@ -257,9 +263,9 @@ export function HelloPage(_: { data: SiteData }) {
         <div className="s-container">
           <p className="phl-eyebrow">Chi tiết</p>
           <h2 className="phl-h2" id="phl-cmp-title">So sánh <em>từng module.</em></h2>
-          <HelloCompare plans={HELLO.plans.map(p => p.name)} modules={HELLO.modules} />
+          <HelloCompare plans={compared.map(p => p.name)} modules={modules} highlight={compared.findIndex(p => p.highlight)} />
           <ul className="phl-addons">
-            {HELLO.addons.map(a => <li key={a.name}><ListChecks aria-hidden="true" /><span><b>{a.name}</b>{a.price}</span></li>)}
+            {pricing.addons.map(a => <li key={a.id}><ListChecks aria-hidden="true" /><span><b>{a.name}</b>{priceText(a.price)} / {a.monthly ? 'tháng' : 'lần'}</span></li>)}
           </ul>
         </div>
       </section>

@@ -668,6 +668,7 @@
 /* ---- Ảnh doanh nghiệp: một ảnh lớn + các ảnh nhỏ, mọi khung tỉ lệ 3:2 ---- */
 .hb-gallery { background: #fff; }
 .hb-gallery__head { max-width: 720px; margin-bottom: 30px; }
+.hb-gallery__head .hb-eyebrow { color: #b5420b; }
 .hb-photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
 .hb-photos li { position: relative; min-width: 0; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 18px; background: var(--hb-cream); }
 .hb-photos li:first-child { grid-area: span 2 / span 2; aspect-ratio: auto; border-radius: 24px; }

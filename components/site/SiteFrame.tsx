@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { Header, Footer, MobileBar } from '../Shell';
 import { ContactDock } from './ContactDock';
+import { AnnaProvider } from './anna/AnnaProvider';
+import { AnnaLauncher } from './anna/AnnaEntry';
 
 /** Khung chung của website công khai: skip link, header, nội dung, footer. */
 export function SiteFrame({ children }: { children: ReactNode }) {
@@ -8,11 +10,14 @@ export function SiteFrame({ children }: { children: ReactNode }) {
     <div className="s-app">
       <div className="s-blobs" aria-hidden="true"><span /><span /><span /></div>
       <a className="s-skip" href="#main">Đến nội dung chính</a>
-      <Header />
-      {children}
-      <Footer />
-      <MobileBar />
-      <ContactDock />
+      <AnnaProvider>
+        <Header />
+        {children}
+        <Footer />
+        <MobileBar />
+        <ContactDock />
+        <AnnaLauncher />
+      </AnnaProvider>
     </div>
   );
 }
