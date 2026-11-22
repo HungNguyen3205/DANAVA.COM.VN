@@ -46,17 +46,17 @@
 .td-live__rig.is-held { cursor: grabbing; }
 .td-live__idle { position: relative; transform-origin: 50% 0; }
 .td-live__strap {
-  position: absolute; left: 50%; top: 0; width: 46px; height: var(--strap); margin-left: -23px; overflow: hidden;
-  display: flex; flex-direction: column-reverse; align-items: center; padding-bottom: 4px; transform-origin: 50% 0; touch-action: none;
-  /* viền xanh + chỉ cam hai mép như dây đeo trong bộ nhận diện */
-  background: linear-gradient(90deg, var(--brand-blue) 0 3px, var(--brand-orange) 3px 5px, var(--brand-navy) 5px 41px, var(--brand-orange) 41px 43px, var(--brand-blue) 43px);
+  position: absolute; left: 50%; top: 0; width: 46px; height: var(--strap); margin-left: -23px; touch-action: none;
+  /* trước khi dây vật lý chạy: dải dây trơn cùng màu */
+  --band: linear-gradient(90deg, var(--brand-blue) 0 3px, var(--brand-orange) 3px 5px, var(--brand-navy) 5px 41px, var(--brand-orange) 41px 43px, var(--brand-blue) 43px);
+  background: var(--band);
 }
-/* mỗi nhịp in: biểu tượng D + DANAVA SOLUTIONS; dây dài ra bao nhiêu hiện thêm bấy nhiêu nhịp */
-.td-live__print { display: grid; flex: none; grid-template-columns: 13px 11px; align-content: start; justify-content: center; gap: 5px 1px; width: 100%; height: 94px; padding-top: 7px; line-height: 1; }
-.td-live__print i { grid-column: 1 / -1; justify-self: center; width: 20px; height: 20px; background: url("/assets/danava-mark.png") center / contain no-repeat; }
-.td-live__print :is(b, small) { align-self: center; justify-self: center; writing-mode: vertical-rl; white-space: nowrap; line-height: 11px; }
-.td-live__print b { order: 1; color: var(--brand-amber); font-size: 11.5px; font-weight: 800; letter-spacing: .1em; }
-.td-live__print small { order: 0; color: var(--brand-white); font-size: 7.5px; font-weight: 700; letter-spacing: .14em; }
+.td-live__strap.is-rope { background: none; }
+/* từng đốt của dây mềm; chữ in liền qua các đốt */
+.td-live__link {
+  position: absolute; left: 0; top: 0; display: block; width: 46px; transform-origin: 50% 0; touch-action: none;
+  background-image: var(--print, var(--band)); background-size: 46px 94px; background-repeat: repeat-y;
+}
 .td-live__reel {
   position: absolute; z-index: 1; left: 50%; top: -20px; display: grid; place-items: center; width: 60px; height: 34px; margin-left: -30px;
   border: 3px solid var(--brand-blue); border-radius: 12px 12px 16px 16px; background: var(--brand-navy); box-shadow: 0 8px 14px -8px rgba(10, 43, 107, .7); touch-action: none;
@@ -203,7 +203,7 @@
 
 /* ---------- Chuyển động ---------- */
 @media (prefers-reduced-motion: no-preference) {
-  .td-live__idle { animation: td-sway 5.5s ease-in-out infinite; }
+  .td-live__idle { animation: td-sway 7s ease-in-out infinite; }
   .td-live__rig.is-pulled .td-live__idle { animation-play-state: paused; }
   /* chờ thả thẻ từ trên xuống; không có JS thì sau 3 giây thẻ vẫn tự hiện */
   .td-live:not(.td-live--compact) .td-live__rig:not(.is-in) { animation: td-wait 3s step-end both; }
@@ -212,7 +212,7 @@
   .td.is-motion [data-reveal] { opacity: 0; translate: 0 22px; transition: opacity .7s ease, translate .7s ease, transform .3s ease; }
   .td.is-motion [data-reveal].is-in { opacity: 1; translate: 0 0; }
 }
-@keyframes td-sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes td-sway { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-.8deg); } 75% { transform: rotate(.8deg); } }
 @keyframes td-wait { from { opacity: 0; } to { opacity: 1; } }
 @keyframes td-stamp { from { opacity: 0; transform: translate(-50%, -50%) rotate(-12deg) scale(1.8); } }
 @media (prefers-reduced-motion: reduce) {

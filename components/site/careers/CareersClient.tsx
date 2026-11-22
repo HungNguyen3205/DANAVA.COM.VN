@@ -58,9 +58,6 @@ export function PickPosition({ value, className, label, children }: { value?: st
 
 const initials = (name: string) => name.trim().split(/\s+/).filter(Boolean).slice(-2).map(word => Array.from(word)[0]).join('').toUpperCase();
 
-// đủ lấp kín dây lúc giãn hết cỡ
-const STRAP_PRINTS = Array.from({ length: 12 }, (_, i) => i);
-
 /** Thẻ đeo: đổi theo tên và vị trí; kéo dây để giãn (chữ lặp thêm theo độ dài), thả ra búng về. */
 export function LiveBadge({ motto, compact = false }: { motto: string; compact?: boolean }) {
   const { positions, name, position, sent } = useCareers();
@@ -73,9 +70,7 @@ export function LiveBadge({ motto, compact = false }: { motto: string; compact?:
     <div className={`td-live${compact ? ' td-live--compact' : ''}`} aria-hidden="true">
       <div ref={rig} className="td-live__rig">
         <div className="td-live__idle">
-          <span className="td-live__strap">
-            {STRAP_PRINTS.map(i => <span key={i} className="td-live__print"><i /><b>DANAVA</b><small>SOLUTIONS</small></span>)}
-          </span>
+          <span className="td-live__strap" />
           <span className="td-live__reel"><i /></span>
           <div className="td-live__hanger">
             <span className="td-live__clip" />

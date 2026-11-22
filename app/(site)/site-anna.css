@@ -44,7 +44,7 @@
 /* ---------- Bé Mây: nét mặt dùng chung ---------- */
 .may { overflow: visible; }
 .may__smile, .may__cheeks { transition: opacity .18s; }
-.may__wow { display: none; }
+.may__wow { opacity: 0; transition: opacity .12s; }
 .may__eyes { transform-box: fill-box; transform-origin: center; }
 .cs__icon--anna .may { width: 36px; height: 38px; }
 .s-app .sm__may { width: 30px; height: 32px; }
@@ -63,8 +63,7 @@
   }
   .s-app .an-launch.is-live { will-change: transform; cursor: grab; touch-action: none; }
   .s-app .an-launch.is-held { cursor: grabbing; }
-  /* đang bay vào khối hoặc về chỗ: bấm xuyên qua */
-  .s-app .an-launch.is-flying { pointer-events: none; }
+  /* đang bay: vẫn nắm được (có thể chụp bé giữa chừng) */
   .an-launch__pose, .an-launch__pose .may { display: block; width: 100%; height: 100%; pointer-events: none; }
   .an-launch b {
     position: absolute; left: 50%; bottom: -5px; padding: 3px 7px; border-radius: 99px; background: #13244f; color: #fff;
@@ -73,6 +72,9 @@
   }
   .an-launch :is(.may__smile, .may__cheeks) { opacity: .75; }
   .an-launch:is(:hover, .is-held) :is(.may__smile, .may__cheeks) { opacity: 1; }
+  .an-launch.is-thrown .may__wow { opacity: 1; }
+  .an-launch.is-thrown .may__smile { opacity: 0; }
+  .an-launch.is-thrown .an-launch__tip { visibility: hidden; opacity: 0; }
   .s-app .an-launch:focus-visible { outline: 3px solid #13244f; outline-offset: 6px; }
   .an-launch__tip {
     position: absolute; right: calc(100% + 8px); top: 38%; padding: 7px 11px; border-radius: 12px 12px 3px 12px;
