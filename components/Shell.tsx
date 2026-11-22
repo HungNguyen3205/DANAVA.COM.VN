@@ -43,7 +43,8 @@ const NAV = [
   { href: '/du-an/', label: 'Dự án' },
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
   { href: '/kien-thuc/', label: 'Blogs' },
-  { href: '/ve-danava/', label: 'Về chúng tôi' }
+  { href: '/ve-danava/', label: 'Về chúng tôi' },
+  { href: '/tuyen-dung/', label: 'Tuyển dụng' }
 ];
 
 export function Header() {
@@ -200,6 +201,7 @@ export function Footer() {
             <ul className="s-footer__list">
               <li><Link href="/ve-danava/">Về DANAVA</Link></li>
               <li><Link href="/doi-ngu/">Đội ngũ</Link></li>
+              <li><Link href="/tuyen-dung/">Tuyển dụng</Link></li>
               <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
               <li><Link href="/doi-tac/">Đối tác đồng hành</Link></li>
               <li><Link href="/du-an/">Dự án</Link></li>

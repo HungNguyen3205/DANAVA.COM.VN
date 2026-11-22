@@ -3,7 +3,8 @@
  *
  * Vì sao không nằm trong SiteData.blocks: bản build cũ từ chối khóa lạ trong `blocks`, nên khi quay lại
  * bản trước (docs/BAN-GIAO.md mục 3) cả website sẽ lỗi 500. Trường cấp cao nhất thì bản cũ bỏ qua và giữ nguyên.
- * Khối mới thêm sau này cũng nên đặt ở đây.
+ * Các bản build 755cd6b..4700737 lại từ chối khóa lạ trong `extras`; từ bản có trang Tuyển dụng thì khóa lạ được bỏ qua.
+ * Còn có thể quay lại các bản đó thì khối mới phải dùng trường cấp cao nhất riêng (xem SiteData.careers).
  */
 import { HELLO, PRODUCTS_CHECKED } from './products.ts';
 import { validPrice } from './quote.ts';

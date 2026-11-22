@@ -75,6 +75,7 @@ git reset --hard f8a77a8 && touch tmp/restart.txt
 - **Thống kê**: lượt xem, nguồn truy cập (không lưu IP).
 - **Ảnh doanh nghiệp**: lưới ảnh trên trang chủ (tải ảnh, đổi thứ tự, chú thích).
 - **Kênh liên hệ & MXH**: Hotline, Zalo, Messenger, mạng xã hội ở chân trang (trống = ẩn; Zalo và Messenger có thể tự lấy theo Hotline/Fanpage).
+- **Tuyển dụng**: vị trí đang tuyển (tự ẩn sau hạn nộp) và chữ trên trang `/tuyen-dung/`. Hồ sơ ứng viên nằm chung mục Khách hàng: tìm "Ứng tuyển".
 - **Trợ lý ANNA**: lời chào, câu gợi ý, nguồn dữ liệu, trạng thái kết nối AI.
 - **Bảng giá & báo giá**: một nguồn giá cho trang Hello DANAVA, Báo giá nhanh và ANNA. Giá không tự đồng bộ từ hello.danava.vn.
 
@@ -149,7 +150,7 @@ tail -50 ~/danava.com.vn/stderr.log
 | `git fetch origin deploy` báo *couldn't find remote ref* | Chưa có bản build thành công nào | Kiểm tra GitHub Actions |
 
 ### Điểm cần lưu ý
-- **Khối CMS mới lưu ở `extras`**, không ở `blocks`: bản build cũ từ chối khóa lạ trong `blocks` và sẽ lỗi 500 khi quay lại bản trước. Giữ quy tắc này khi thêm khối.
+- **Khối CMS mới không được thêm vào `blocks`**: bản build cũ từ chối khóa lạ và lỗi 500 khi quay lại bản trước. Các bản `755cd6b`..`4700737` cũng từ chối khóa lạ trong `extras`, nên khối mới dùng trường cấp cao nhất riêng (như `careers`) khi còn có thể quay lại các bản đó.
 - **ANNA** có giới hạn theo khách (8 câu/phút, 80 câu/ngày) và theo website. Giới hạn theo khách cần proxy chuyển đúng `X-Forwarded-For`. Nếu chữ không hiện dần mà ra một lượt, kiểm tra proxy có đang giữ bộ đệm phản hồi `/api/anna/`.
 - Log `[anna] blocked an answer…` nghĩa là AI đưa ra con số không có trong dữ liệu và đã bị chặn trước khi tới khách.
 - **Upload ảnh trong admin chưa được kiểm thử trên server.** Thư viện xử lý ảnh (`sharp`) có thể không chạy trên hệ điều hành cũ của hosting. Nếu upload báo *Không thể xử lý ảnh*, kiểm tra `stderr.log`; toàn bộ phần còn lại của web không bị ảnh hưởng.

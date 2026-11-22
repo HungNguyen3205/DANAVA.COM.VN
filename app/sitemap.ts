@@ -41,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/kien-thuc/', latest(...posts.map(p => p.updated || p.date))),
     ...topics.map(t => entry(topicHref(t), latest(...postsForTopic(data, t.id).map(p => p.updated || p.date)))),
     ...posts.map(p => entry(`/kien-thuc/${p.slug}/`, p.updated || p.date || undefined)),
+    entry('/tuyen-dung/'),
     entry('/lien-he/'),
     entry('/chinh-sach-rieng-tu/'),
     entry('/chinh-sach-dich-vu/')

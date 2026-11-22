@@ -1,6 +1,7 @@
 /** Nhãn tiếng Việt và cấu hình biểu mẫu cho từng khối nội dung (components/AdminBlockEditor.tsx). */
 import type { BlockEditorConfig } from './AdminBlockEditor';
 import type { BlockKey } from '@/lib/blocks';
+import { JOB_TYPES, TEAMS } from '@/lib/careers';
 
 const COMMON: Record<string, string> = {
   title: 'Tiêu đề', text: 'Nội dung', name: 'Tên', label: 'Nhãn', description: 'Mô tả', badge: 'Nhãn nổi bật', href: 'Đường dẫn',
@@ -15,6 +16,19 @@ export const PAGE_NAMES: Record<string, string> = {
 };
 
 export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config: BlockEditorConfig }> = {
+  careers: {
+    title: 'Trang Tuyển dụng',
+    desc: 'Bấm "Thêm" để tạo vị trí, điền nội dung rồi bật "Đang tuyển" và Lưu. Vị trí tự ẩn sau hạn nộp. Không có vị trí nào thì trang chuyển sang nhận hồ sơ mở. Chỉ ghi lương, quyền lợi đã được duyệt. Hồ sơ ứng viên về mục Khách hàng (tìm "Ứng tuyển").',
+    config: {
+      labels: { ...COMMON, kicker: 'Dòng chữ nhỏ phía trên', title: 'Tiêu đề', lead: 'Câu dẫn', emptyTitle: 'Khi chưa có vị trí: tiêu đề', emptyText: 'Khi chưa có vị trí: hướng dẫn', letter: 'Lời nhắn của nhà sáng lập (ký tên người thật, cần được duyệt)',
+        jobs: 'Vị trí tuyển dụng', team: 'Mảng', type: 'Hình thức', location: 'Nơi làm việc', salary: 'Mức lương (trống = không hiện)', deadline: 'Hạn nộp', summary: 'Mô tả ngắn',
+        tasks: 'Công việc', requirements: 'Yêu cầu', benefits: 'Quyền lợi', open: 'Đang tuyển (hiện công khai)' },
+      hidden: ['id'],
+      long: ['lead', 'emptyText', 'letter', 'summary'],
+      enums: { team: [{ value: '', label: '(chọn mảng)' }, ...TEAMS.map(t => ({ value: t.id, label: t.label }))], type: JOB_TYPES.map(value => ({ value, label: value || '(không ghi)' })) },
+      hints: { deadline: 'Dạng năm-tháng-ngày, ví dụ 2026-12-31. Để trống = không có hạn.', title: 'Tiêu đề trang: đặt *dấu sao* quanh phần nhấn mạnh.' }
+    }
+  },
   anna: {
     title: 'Nội dung và nguồn tư vấn ANNA',
     desc: 'ANNA tự đọc nội dung đang xuất bản của các nhóm được bật, không đọc bản nháp hay danh sách khách hàng. Không nhập bí mật nội bộ: mọi thông tin ở đây ANNA đều có thể nói lại cho khách.',

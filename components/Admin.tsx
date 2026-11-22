@@ -19,6 +19,7 @@ import { ServicesEditor, TopicsEditor, ProofEditor, ShowcaseEditor, ServiceCheck
 import { BlockEditor, BlockPanel } from './AdminBlockEditor';
 import { ChannelsEditor } from './AdminChannels';
 import { AnnaStatus } from './AdminAnnaStatus';
+import { CAREERS_SAMPLE } from '@/lib/careers';
 import { BLOCK_META } from './adminBlockConfig';
 import { block, blockDefaults, savedBlock, withBlock, type BlockKey } from '@/lib/blocks';
 export const adminSections = [
@@ -134,7 +135,7 @@ function AdminWorkspace({ section }: { section: string }) {
   // Khối nội dung (lib/blocks.ts): sửa trong bản nháp, ghi vào database khi bấm Lưu
   const blockPanel = (key: BlockKey) => {
     const meta = BLOCK_META[key];
-    const def = key === 'staff' ? blockDefaults(draft.staff).staff : blockDefaults()[key];
+    const def = key === 'staff' ? blockDefaults(draft.staff).staff : key === 'careers' ? CAREERS_SAMPLE : blockDefaults()[key];
     const saved = savedBlock(draft, key);
     return (
       <BlockPanel key={key} title={meta.title} desc={meta.desc} edited={saved !== undefined}
@@ -591,6 +592,7 @@ function AdminWorkspace({ section }: { section: string }) {
         {section === 'anh-doanh-nghiep' && blockPanel('gallery')}
         {section === 'anna' && <div className="blk-stack"><AnnaStatus />{blockPanel('anna')}</div>}
         {section === 'bang-gia' && blockPanel('pricing')}
+        {section === 'tuyen-dung' && blockPanel('careers')}
         {section === 'kenh-lien-he' && <ChannelsEditor draft={draft} setDraft={setDraft} />}
         {section === 'chinh-sach' && <div className="blk-stack">{blockPanel('privacy')}{blockPanel('servicePolicy')}</div>}
         {section === 'cai-dat' && (

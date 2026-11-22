@@ -171,3 +171,11 @@ html.has-modal { overflow: hidden; }
   .s-app .sm__title { gap: 6px; font-size: 16px; letter-spacing: .01em; }
   .sm__no { min-width: 36px; font-size: 26px; }
 }
+
+/* Header 7 mục (thêm Tuyển dụng): thu gọn ở laptop nhỏ để không xuống dòng */
+.s-nav__link { white-space: nowrap; }
+@media (min-width: 1081px) and (max-width: 1340px) {
+  .s-header .s-header__bar { gap: 14px; }
+  .s-header .s-nav__list { gap: 0; }
+  .s-header .s-nav__link { padding: 0 7px; font-size: 14.5px; }
+}

@@ -6,7 +6,7 @@
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Sparkles, Users, X, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Sparkles, Users, X, type LucideIcon } from 'lucide-react';
 import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
@@ -21,6 +21,7 @@ const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper },
   { href: '/ve-danava/', label: 'Về chúng tôi', icon: Info },
   { href: '/doi-ngu/', label: 'Đội ngũ', icon: Users },
+  { href: '/tuyen-dung/', label: 'Tuyển dụng', icon: BriefcaseBusiness },
   { href: '/lien-he/', label: 'Liên hệ', icon: MessageCircle }
 ];
 

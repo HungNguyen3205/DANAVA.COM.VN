@@ -142,6 +142,8 @@ export function publicContent(data: SiteData): SiteData {
       // Nguồn tư vấn và chỉ dẫn của ANNA chỉ dùng trên máy chủ
       anna: data.extras.anna && { ...data.extras.anna, knowledge: [], instructions: '' }
     },
+    // Tuyển dụng render trên máy chủ; vị trí chưa mở không được gửi xuống trình duyệt
+    careers: undefined,
     // Khối chỉ dùng ở trang máy chủ (hệ sinh thái, chính sách) không gửi xuống trình duyệt
     blocks: data.blocks && { company: data.blocks.company, menu: data.blocks.menu, pages: data.blocks.pages, about: data.blocks.about, staff: data.blocks.staff }
   };

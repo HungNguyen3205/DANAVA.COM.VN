@@ -10,6 +10,7 @@ import { GO, HELLO, WORK } from './products.ts';
 import { ABOUT_DANAVA } from './about-danava.ts';
 import { knowledgePosts, postHref, projectHref, publicPartners, publishedProjects, publishedSubServices, serviceHref, sortServices, subServiceHref } from './site-queries.ts';
 import { priceText } from './quote.ts';
+import { openJobs } from './careers.ts';
 
 const list = (items: string[] | undefined) => (items || []).filter(Boolean).join('; ');
 const line = (label: string, value: string | undefined) => (value ? `${label}: ${value}\n` : '');
@@ -23,7 +24,13 @@ export function buildKnowledge(data: SiteData): string {
   const parts: string[] = [];
 
   parts.push(`## Doanh nghiệp và liên hệ
-${line('Tên', company.companyName)}${line('Giới thiệu', company.overview)}${line('Sứ mệnh', company.mission)}${line('Địa chỉ', company.address)}${line('Đăng ký doanh nghiệp', ABOUT_DANAVA.company)}${line('Các mốc phát triển', list(about.milestones.map(m => `${m.year} ${m.title}`)))}${line('Giờ làm việc', company.hours)}${line('Hotline', channels.phone)}${line('Email', data.email)}${line('Email hỗ trợ', company.supportEmail)}${line('Zalo', channels.zalo)}${line('Messenger', channels.messenger)}${line('Trang gửi yêu cầu tư vấn', '/lien-he/')}Các trang: /giai-phap/ (giải pháp), /he-sinh-thai/ (hệ sinh thái), /du-an/ (dự án), /doi-tac/ (đối tác), /doi-ngu/ (đội ngũ), /ve-danava/ (giới thiệu), /kien-thuc/ (Blogs), /chinh-sach-dich-vu/ (chính sách dịch vụ).
+${line('Tên', company.companyName)}${line('Giới thiệu', company.overview)}${line('Sứ mệnh', company.mission)}${line('Địa chỉ', company.address)}${line('Đăng ký doanh nghiệp', ABOUT_DANAVA.company)}${line('Các mốc phát triển', list(about.milestones.map(m => `${m.year} ${m.title}`)))}${line('Giờ làm việc', company.hours)}${line('Hotline', channels.phone)}${line('Email', data.email)}${line('Email hỗ trợ', company.supportEmail)}${line('Zalo', channels.zalo)}${line('Messenger', channels.messenger)}${line('Trang gửi yêu cầu tư vấn', '/lien-he/')}Các trang: /giai-phap/ (giải pháp), /he-sinh-thai/ (hệ sinh thái), /du-an/ (dự án), /doi-tac/ (đối tác), /doi-ngu/ (đội ngũ), /ve-danava/ (giới thiệu), /kien-thuc/ (Blogs), /tuyen-dung/ (tuyển dụng, gửi hồ sơ ứng tuyển), /chinh-sach-dich-vu/ (chính sách dịch vụ).
+`);
+
+  const jobs = openJobs(block(data, 'careers'));
+  parts.push(`## Tuyển dụng
+${jobs.length ? `Vị trí đang tuyển: ${list(jobs.map(j => j.title))}.` : 'Hiện chưa công bố vị trí đang tuyển; vẫn nhận hồ sơ mở.'}
+Chi tiết và nộp hồ sơ: /tuyen-dung/. Không tư vấn mức lương hay hứa kết quả xét tuyển.
 `);
 
   if (anna.sources.services) {

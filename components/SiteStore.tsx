@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import { initial, validateContent, type SiteData } from '@/lib/content';
 import { extraError } from '@/lib/site-extras';
+import { careersError } from '@/lib/careers';
 
 type Store = { data: SiteData; save: (next: SiteData) => Promise<boolean>; refresh: () => Promise<void>; ready: boolean; error: string };
 const Context = createContext<Store>({ data: initial, save: async () => false, refresh: async () => {}, ready: false, error: '' });
@@ -31,7 +32,7 @@ export function SiteStore({ children, initialData = initial }: { children: React
 
   async function save(next: SiteData) {
     if (!full) { setError('Chưa tải nội dung đầy đủ từ máy chủ nên không thể lưu. Hãy tải lại trang.'); return false; }
-    const invalid = extraError(next.extras);
+    const invalid = extraError(next.extras) || careersError(next.careers);
     if (invalid || !validateContent(next)) { setError(invalid || 'Nội dung không đúng cấu trúc.'); return false; }
     try {
       const auth = await fetch('/api/admin/session/', { cache: 'no-store' }).then(r => r.json());
