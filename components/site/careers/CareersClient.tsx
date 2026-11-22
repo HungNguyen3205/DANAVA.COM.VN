@@ -1,9 +1,10 @@
 'use client';
 /** Phần tương tác của trang Tuyển dụng: tên + vị trí dùng chung cho thẻ đeo, các cánh cửa và biểu mẫu. */
 import Link from 'next/link';
-import { createContext, useContext, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from 'react';
+import { createContext, useContext, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowRight, Check } from 'lucide-react';
 import { APPLY_LIMITS, parseApplication, type Position } from '@/lib/careers';
+import { useLanyard } from './useLanyard';
 
 type State = {
   positions: Position[];
@@ -57,43 +58,36 @@ export function PickPosition({ value, className, label, children }: { value?: st
 
 const initials = (name: string) => name.trim().split(/\s+/).filter(Boolean).slice(-2).map(word => Array.from(word)[0]).join('').toUpperCase();
 
-/** Thẻ đeo: đổi theo tên và vị trí; kéo ngang để đung đưa. */
+// đủ lấp kín dây lúc giãn hết cỡ
+const STRAP_PRINTS = Array.from({ length: 12 }, (_, i) => i);
+
+/** Thẻ đeo: đổi theo tên và vị trí; kéo dây để giãn (chữ lặp thêm theo độ dài), thả ra búng về. */
 export function LiveBadge({ motto, compact = false }: { motto: string; compact?: boolean }) {
   const { positions, name, position, sent } = useCareers();
-  const hanger = useRef<HTMLDivElement>(null);
-  const start = useRef<number | null>(null);
+  const rig = useRef<HTMLDivElement>(null);
+  useLanyard(rig);
   const role = positions.find(p => p.value === position)?.badge || 'Đồng đội tương lai';
   const shown = name.trim();
 
-  const down = (event: PointerEvent<HTMLDivElement>) => {
-    start.current = event.clientX;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    hanger.current?.classList.add('is-held');
-  };
-  const move = (event: PointerEvent<HTMLDivElement>) => {
-    if (start.current === null) return;
-    const angle = Math.max(-24, Math.min(24, (start.current - event.clientX) / 7));
-    hanger.current?.style.setProperty('--swing', `${angle}deg`);
-  };
-  const up = () => {
-    start.current = null;
-    hanger.current?.classList.remove('is-held');
-    hanger.current?.style.setProperty('--swing', '0deg');
-  };
-
   return (
     <div className={`td-live${compact ? ' td-live--compact' : ''}`} aria-hidden="true">
-      <div ref={hanger} className="td-live__hanger" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+      <div ref={rig} className="td-live__rig">
         <div className="td-live__idle">
-          <span className="td-live__strap"><span>DANAVA</span></span>
-          <span className="td-live__clip" />
-          <div className="td-live__card">
-            <img className="td-live__logo" src="/assets/danava-logo-trim.png" alt="" width={554} height={135} draggable={false} />
-            <span className="td-live__photo">{shown ? initials(shown) : '?'}</span>
-            <span className={`td-live__name${shown.length > 22 ? ' is-long' : ''}`}>{shown || 'Tên của bạn'}</span>
-            <span className="td-live__role">{role}</span>
-            <span className="td-live__motto">{motto}</span>
-            {sent && <span className="td-live__stamp">Đã gửi hồ sơ</span>}
+          <span className="td-live__strap">
+            {STRAP_PRINTS.map(i => <span key={i} className="td-live__print"><i /><b>DANAVA</b><small>SOLUTIONS</small></span>)}
+          </span>
+          <span className="td-live__reel"><i /></span>
+          <div className="td-live__hanger">
+            <span className="td-live__clip" />
+            <div className="td-live__card">
+              <img className="td-live__logo" src="/assets/danava-logo-trim.png" alt="" width={554} height={135} draggable={false} />
+              <span className="td-live__photo">{shown ? initials(shown) : '?'}</span>
+              <span className={`td-live__name${shown.length > 22 ? ' is-long' : ''}`}>{shown || 'Tên của bạn'}</span>
+              <span className="td-live__role">{role}</span>
+              <span className="td-live__wave" />
+              <span className="td-live__motto">{motto}</span>
+              {sent && <span className="td-live__stamp">Đã gửi hồ sơ</span>}
+            </div>
           </div>
         </div>
       </div>
