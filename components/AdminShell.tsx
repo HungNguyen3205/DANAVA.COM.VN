@@ -174,8 +174,12 @@ export default function AdminShell({
 
   async function logout() {
     if (dirty && !confirm('Bạn có thay đổi chưa lưu. Vẫn đăng xuất?')) return;
-    await fetch('/api/admin/session/', { method: 'DELETE', headers: { 'x-csrf-token': await csrfToken() } });
-    location.reload();
+    // 403 = phiên đã hết sẵn → tải lại sẽ về màn đăng nhập. Lỗi khác: phiên vẫn còn, phải báo cho người dùng.
+    try {
+      const res = await fetch('/api/admin/session/', { method: 'DELETE', headers: { 'x-csrf-token': await csrfToken() } });
+      if (res.ok || res.status === 403) return location.reload();
+    } catch {}
+    alert('CHƯA đăng xuất được, phiên vẫn còn hiệu lực. Kiểm tra kết nối rồi thử lại.');
   }
 
   const toggleCollapsed = () =>
