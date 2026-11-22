@@ -32,3 +32,11 @@
 - [ ] **Điện thoại.** Không còn nút nổi. Zalo, Messenger, Hotline và ANNA nằm trong nút "Tư vấn" ở thanh dưới.
 - [ ] **Đối chiếu ảnh tham khảo.** Ảnh hội thoại, NAVI và SEODO không có khi thực hiện. Giao diện được làm theo mô tả bằng chữ, cần khách xem lại.
 - [ ] **Bài Blog.** Bài mới nhất đề ngày 15/05/2024 và mục lưu trữ còn nhiều bài ngoài lĩnh vực (ô tô, bất động sản). Cần chốt giữ, ẩn hay viết mới.
+
+## Trang Tuyển dụng và mã QR
+
+- [ ] **Vị trí tuyển dụng.** Trang chưa có vị trí nào, đang nhận hồ sơ mở theo bốn mảng. Nhập vị trí, yêu cầu và quyền lợi đã duyệt tại Quản trị → Tuyển dụng.
+- [ ] **Lời nhà sáng lập.** Lá thư đang dùng câu đã công bố trên trang chủ. Nếu muốn thư dài hơn, anh Lê Tấn Thành cần viết hoặc duyệt.
+- [ ] **Chia sẻ của nhân viên.** Chưa có lời chia sẻ thật nên trang dùng thẻ đội ngũ. Cần lời viết và sự đồng ý của từng người nếu muốn bổ sung.
+- [ ] **Dữ liệu ứng viên.** Chốt người được xem, thời gian lưu hồ sơ và bổ sung vào Chính sách quyền riêng tư. Hồ sơ hiện nằm chung mục Khách hàng, tìm "Ứng tuyển".
+- [ ] **Quét thử mã QR.** Quét bằng camera iPhone, camera Android và máy quét trong Zalo, xác nhận mở đúng tài khoản. Quét lại mỗi khi đổi link Zalo.
