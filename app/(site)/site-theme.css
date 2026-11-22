@@ -782,3 +782,11 @@ body:has(.s-app) { background: var(--s-bg); }
   .c-hero--light .c-namecard__phone a { font-size: 23px; }
   .c-hero--light .c-namecard__top .c-namecard__logo { width: 134px; }
 }
+
+/* Về DANAVA: bỏ khoảng trống trên breadcrumb, cùng khoảng cách với trang Liên hệ */
+.s-app .s-about-hero { padding-top: 18px; }
+
+/* Liên hệ: cột biểu mẫu hẹp → mỗi ô một hàng, không cắt chữ trong ô chọn */
+@media (min-width: 961px) and (max-width: 1180px) {
+  .c-contact .c-form__grid { grid-template-columns: minmax(0, 1fr); }
+}

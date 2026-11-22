@@ -185,7 +185,7 @@
 .bl-search__q svg { flex: none; width: 21px; height: 21px; color: #c2410c; }
 .bl-search input, .bl-search select { width: 100%; min-width: 0; min-height: 48px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 16px; }
 .bl-search input::placeholder { color: #5b6684; opacity: 1; }
-.bl-search__topic { display: flex; flex: 0 1 190px; min-width: 0; padding: 0 8px; border-left: 1px solid #e8e1d3; }
+.bl-search__topic { display: flex; flex: 0 0 218px; min-width: 0; padding: 0 8px; border-left: 1px solid #e8e1d3; }
 .bl-search select { cursor: pointer; text-overflow: ellipsis; }
 .bl-search :is(input, select):focus-visible { outline: 2px solid #13244f; outline-offset: -2px; border-radius: 12px; }
 .bl-search__go { display: inline-flex; flex: none; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border: 0; border-radius: 16px; background: #13244f; color: #fff; font: inherit; font-size: 15px; font-weight: 800; white-space: nowrap; cursor: pointer; }
@@ -206,4 +206,16 @@
   .bl-search { flex-wrap: wrap; margin-top: 22px; }
   .bl-search__q { flex-basis: 100%; border-bottom: 1px solid #e8e1d3; }
   .bl-search__topic { flex: 1 1 0; border: 0; }
+}
+
+/* Cột hẹp (kể cả trên máy tính): ô từ khóa một hàng riêng, chủ đề + nút hàng dưới → không cắt chữ */
+.bl-hero__copy, .bl-topicbar { container-type: inline-size; }
+.bl-search__go { padding: 0 18px; }
+@container (max-width: 559px) {
+  .bl-search { flex-wrap: wrap; }
+  .bl-search__q { flex-basis: 100%; border-bottom: 1px solid #e8e1d3; }
+  .bl-search__topic { flex: 1 1 0; border-left: 0; }
+}
+@container (max-width: 339px) {
+  .bl-search__topic, .bl-search .bl-search__go { flex: 1 1 100%; }
 }

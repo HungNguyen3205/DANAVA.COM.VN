@@ -12,7 +12,7 @@ export function BlogSearch({ data, filter }: { data: SiteData; filter: BlogFilte
       <label className="bl-search__q">
         <span className="s-sr">Từ khóa</span>
         <Search aria-hidden="true" />
-        <input type="search" name="q" defaultValue={filter.q} maxLength={QUERY_MAX} placeholder="Tìm bài viết theo từ khóa…" autoComplete="off" enterKeyHint="search" />
+        <input type="search" name="q" defaultValue={filter.q} maxLength={QUERY_MAX} placeholder="Tìm theo từ khóa…" autoComplete="off" enterKeyHint="search" />
       </label>
       {topics.length > 0 && (
         <label className="bl-search__topic">
