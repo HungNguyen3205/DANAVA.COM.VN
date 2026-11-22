@@ -691,3 +691,24 @@
   .hb-photos img { height: auto; aspect-ratio: 3 / 2; border-radius: 16px; background: var(--hb-cream); }
   .hb-photos figcaption, .hb-photos li:first-child figcaption { position: static; padding: 7px 2px 0; background: none; color: var(--hb-text); font-size: 13px; }
 }
+
+/* ==== Bảng QR chữ D: nổi bật hơn ==== */
+.hb-cover__3d.is-qr::before {
+  left: 0; right: 0; top: 6%; bottom: 0; opacity: 1; filter: none;
+  background: radial-gradient(closest-side, rgba(255, 179, 71, .62), rgba(255, 196, 92, .3) 62%, rgba(255, 196, 92, 0));
+}
+.hb-office__qrbtn { height: 44px; padding: 0 18px; font-size: 14px; }
+.hb-office__qrbtn svg { width: 19px; height: 19px; }
+.hb-office.is-qr .hb-office__reset, .hb-cover__3d.is-qr .hb-build { opacity: 0; pointer-events: none; }
+/* dòng hướng dẫn bên trái, nút bên phải: không chồng lên nhau, không che bảng */
+.hb-office.is-qr .hb-office__qrcap {
+  left: 8px; top: 16px; right: 162px; width: fit-content; max-width: calc(100% - 178px); min-height: 44px;
+  display: flex; flex-wrap: wrap; align-items: center; align-content: center; column-gap: 4px; padding: 6px 14px; transform: none; line-height: 1.3; white-space: normal;
+}
+/* khung 3D hẹp (điện thoại, laptop nhỏ chia đôi cột): dòng hướng dẫn xuống dưới bảng */
+.hb-cover__3d.is-narrow .hb-office.is-qr .hb-office__qrcap {
+  top: auto; bottom: var(--qr-cut, 0px); left: 50%; right: auto; width: max-content; max-width: 100%; justify-content: center; transform: translateX(-50%); font-size: 12px; text-align: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hb-office:not(.is-qr) .hb-office__qrbtn { animation: hb-qr-drop .8s cubic-bezier(.34, 1.56, .64, 1) both, hb-qr-glow 1.8s ease-out .8s 6; }
+}
