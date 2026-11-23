@@ -123,7 +123,7 @@ const bentoItems: BentoItem[] = [
  * - Soft rounded cards (rounded-2xl)
  * - Glowing gradient borders
  * - Accordion tương tác thu gọn/mở rộng trên điện thoại
- * - Tông màu semantic chuẩn DANAVA (#0B132B / #1C2541 / #3A506B / #5BC0DE / #f26b1d)
+ * - Tông màu semantic chuẩn DANAVA (#0B132B / #1C2541 / #3A506B / #5BC0DE / #F4D6B0)
  */
 export default function BentoServices() {
   // Quản lý trạng thái mở rộng Accordion trên mobile

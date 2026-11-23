@@ -27,7 +27,7 @@ function drawPrint(mark: HTMLImageElement | null, font: string) {
   c.scale(3, 3);
   const band = (color: string, x: number, w: number) => { c.fillStyle = color; c.fillRect(x, 0, w, PRINT); };
   band('#2f6fce', 0, WIDTH);
-  band('#f26b1d', 3, WIDTH - 6);
+  band('#f4511e', 3, WIDTH - 6);
   band('#0a2b6b', 5, WIDTH - 10);
   if (mark) c.drawImage(mark, 13, 5, 20, 20);
   // chữ chạy dọc theo dây
@@ -38,7 +38,7 @@ function drawPrint(mark: HTMLImageElement | null, font: string) {
     c.fillText(text, 0, 0, 62);
     c.restore();
   };
-  write('DANAVA', 28.5, 12, 800, '#f26b1d');
+  write('DANAVA', 28.5, 12, 800, '#ffb000');
   write('SOLUTIONS', 16, 8, 700, '#f4f7fb');
   return canvas.toDataURL();
 }

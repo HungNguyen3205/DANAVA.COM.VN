@@ -7,7 +7,7 @@
 .an-home {
   position: relative; overflow: hidden; padding: clamp(18px, 2.4vw, 34px) 0 clamp(64px, 7vw, 100px);
   /* mép trên cùng màu kem với khối Giải pháp, mép dưới về trắng: không còn vệt cắt ngang */
-  background: linear-gradient(180deg, #fff1e6 0%, #eef8fd 30%, #f4fafc 58%, #fff1e6 80%, #fff 100%);
+  background: linear-gradient(180deg, #fbf6ee 0%, #eef8fd 30%, #f4fafc 58%, #fff8ef 80%, #fff 100%);
 }
 .an-home > .s-container { position: relative; z-index: 1; }
 .an-home__clouds { position: absolute; inset: 0; pointer-events: none; }
@@ -25,11 +25,11 @@
 }
 .an-home__may .may { display: block; width: 100%; height: 100%; }
 .an-home__inner { max-width: 820px; margin: 0 auto; text-align: center; }
-.s-app .an-home__eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #f26b1d; }
+.s-app .an-home__eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #b5420b; }
 .an-home__eyebrow svg { width: 16px; height: 16px; }
 .s-app .an-home .hb-text { max-width: 640px; margin-left: auto; margin-right: auto; }
-.an-ask { display: flex; align-items: center; gap: 8px; margin-top: 26px; padding: 7px 7px 7px 22px; border: 2px solid #f26b1d; border-radius: 999px; background: #fff; box-shadow: 0 22px 46px -30px rgba(60, 120, 165, .7); transition: border-color .2s; }
-.an-ask:focus-within { border-color: #f26b1d; }
+.an-ask { display: flex; align-items: center; gap: 8px; margin-top: 26px; padding: 7px 7px 7px 22px; border: 2px solid #f6c08a; border-radius: 999px; background: #fff; box-shadow: 0 22px 46px -30px rgba(60, 120, 165, .7); transition: border-color .2s; }
+.an-ask:focus-within { border-color: #d9540d; }
 .an-ask input { flex: 1; width: 100%; min-width: 0; min-height: 50px; border: 0; background: transparent; color: #13244f; font: inherit; font-size: 16.5px; }
 .s-app .an-ask input:focus-visible { outline: none; }
 .an-ask input::placeholder { color: #5b6684; opacity: 1; }
@@ -38,7 +38,7 @@
 .s-app .an-home__chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
 .s-app .an-home__chips button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 9px 16px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px #d6eaf4; color: #13244f; font-size: 14.5px; font-weight: 600; line-height: 1.35; text-align: left; }
 .s-app .an-home__chips button:hover { background: #e2f3fc; }
-.s-app .an-home__chips .is-quote { color: #13244f; font-weight: 800; }
+.s-app .an-home__chips .is-quote { color: #a53c08; font-weight: 800; }
 .an-home__chips svg { width: 16px; height: 16px; }
 
 /* ---------- Bé Mây: nét mặt dùng chung ---------- */
@@ -111,7 +111,7 @@
 
 .an-head { display: flex; flex: none; align-items: center; gap: 10px; padding: 14px 12px 14px 16px; background: #13244f; color: #fff; }
 .an--modal .an-head { padding-top: calc(12px + env(safe-area-inset-top)); }
-.an-avatar { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #fff1e6; color: #13244f; }
+.an-avatar { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #fff5e8; color: #13244f; }
 .an-avatar .may { width: 40px; height: 42px; }
 .an-head__name { flex: 1; min-width: 0; }
 .s-app .an-head h2 { color: #fff; font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.1; letter-spacing: .03em; }
@@ -120,15 +120,15 @@
 .s-app .an-icon:hover { background: rgba(255, 255, 255, .12); }
 .an-icon svg { width: 21px; height: 21px; }
 
-.an-tabs { display: grid; flex: none; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #f26b1d; }
+.an-tabs { display: grid; flex: none; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #ede6da; }
 .s-app .an-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 46px; color: #56607a; font-size: 14px; font-weight: 700; }
-.s-app .an-tabs button[aria-pressed='true'] { color: #13244f; box-shadow: inset 0 -3px #f26b1d; }
+.s-app .an-tabs button[aria-pressed='true'] { color: #a53c08; box-shadow: inset 0 -3px #f26b1d; }
 .s-app .an-tabs button:focus-visible { outline: 2px solid #13244f; outline-offset: -3px; }
 .an-tabs svg { width: 17px; height: 17px; }
 
 .an-chat { display: flex; flex: 1; flex-direction: column; min-height: 0; }
 .an-chat[hidden], .an-quote[hidden] { display: none; }
-.an-log { position: relative; flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 16px 14px; background: #fff1e6; }
+.an-log { position: relative; flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 16px 14px; background: #fbf8f3; }
 .s-app .an-log:focus-visible { outline: 2px solid #13244f; outline-offset: -3px; }
 .an-msg { width: fit-content; max-width: 90%; padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.55; overflow-wrap: anywhere; }
 .an-msg--bot { border-bottom-left-radius: 5px; background: #fff; box-shadow: 0 1px 2px rgba(19, 36, 79, .08); }
@@ -146,11 +146,11 @@
 @keyframes an-dot { 0%, 100% { opacity: .3; transform: none; } 50% { opacity: 1; transform: translateY(-3px); } }
 
 .s-app .an-suggest { display: grid; justify-items: start; gap: 8px; margin-top: 14px; }
-.s-app .an-suggest button { min-height: 44px; padding: 9px 14px; border-radius: 16px; background: #fff1e6; color: #13244f; font-size: 14px; font-weight: 600; line-height: 1.4; text-align: left; }
+.s-app .an-suggest button { min-height: 44px; padding: 9px 14px; border-radius: 16px; background: #ffeddc; color: #7c2f07; font-size: 14px; font-weight: 600; line-height: 1.4; text-align: left; }
 .an-notice, .an-human { margin-top: 12px; padding: 12px 14px; border-radius: 16px; font-size: 14px; line-height: 1.55; }
-.an-notice { background: #fff1e6; color: #13244f; }
+.an-notice { background: #fff0e3; color: #6b2a08; }
 .an-human { padding: 4px 2px; color: #56607a; }
-.s-app .an-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #13244f; font-size: 14px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.s-app .an-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #8f3306; font-size: 14px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .an-link svg { width: 16px; height: 16px; }
 .s-app .an-channels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .s-app .an-channels a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 12px; border-radius: 999px; background: #fff; color: #13244f; font-size: 13px; font-weight: 700; box-shadow: inset 0 0 0 1px rgba(19, 36, 79, .12); }
@@ -160,9 +160,9 @@
 
 .an-form { display: flex; flex: none; align-items: flex-end; gap: 8px; padding: 10px 12px 6px; background: #fff; }
 .s-app .an-form textarea { flex: 1; min-width: 0; min-height: 48px; max-height: 128px; padding: 12px 14px; border: 1.5px solid #d9dfe9; border-radius: 22px; background: #fff; font: inherit; font-size: 16px; line-height: 1.4; resize: none; field-sizing: content; }
-.s-app .an-form textarea:focus-visible { border-color: #f26b1d; outline: none; box-shadow: 0 0 0 2px rgba(217, 84, 13, .28); border-radius: 22px; }
+.s-app .an-form textarea:focus-visible { border-color: #d9540d; outline: none; box-shadow: 0 0 0 2px rgba(217, 84, 13, .28); border-radius: 22px; }
 .an-form textarea::placeholder { color: #5b6684; opacity: 1; }
-.s-app .an-send { display: grid; flex: none; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #f26b1d; color: #fff; }
+.s-app .an-send { display: grid; flex: none; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #d9540d; color: #fff; }
 .s-app .an-send:disabled { background: #d3d9e4; color: #56607a; cursor: default; }
 .an-send svg { width: 20px; height: 20px; }
 .s-app .an-legal { flex: none; padding: 0 14px calc(10px + env(safe-area-inset-bottom)); color: #56607a; font-size: 11.5px; line-height: 1.45; }
@@ -180,22 +180,22 @@
 .qq-addons legend { padding: 0; font-size: 13px; font-weight: 700; }
 .qq-addon { display: flex; align-items: center; gap: 10px; }
 .qq-addon label { display: flex; flex: 1; align-items: center; gap: 10px; min-width: 0; min-height: 52px; font-size: 14.5px; line-height: 1.35; cursor: pointer; }
-.qq-addon input { flex: none; width: 20px; height: 20px; accent-color: #f26b1d; }
+.qq-addon input { flex: none; width: 20px; height: 20px; accent-color: #d9540d; }
 .qq-addon small { display: block; color: #56607a; }
 .s-app .qq .qq-addon select { width: 72px; }
-.qq-result { padding: 14px; border-radius: 18px; background: #fff1e6; font-size: 14.5px; line-height: 1.55; }
-.s-app .qq-kind { display: inline-block; margin-bottom: 8px; padding: 4px 10px; border-radius: 999px; background: #eef2fb; color: #1f3a8a; font-size: 12px; font-weight: 800; }
-.s-app .qq-kind--staff { background: #f26b1d; color: #13244f; }
+.qq-result { padding: 14px; border-radius: 18px; background: #fbf6ee; font-size: 14.5px; line-height: 1.55; }
+.s-app .qq-kind { display: inline-block; margin-bottom: 8px; padding: 4px 10px; border-radius: 999px; background: #dff3e8; color: #0b5c3f; font-size: 12px; font-weight: 800; }
+.s-app .qq-kind--staff { background: #ffe3c8; color: #7c2f07; }
 .qq-result dl > div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; }
 .qq-result dd { flex: none; margin: 0; font-weight: 700; font-variant-numeric: lining-nums tabular-nums; }
-.qq-result .qq-total { margin-top: 4px; padding-top: 9px; border-top: 1px solid #f26b1d; font-size: 17px; font-weight: 800; }
+.qq-result .qq-total { margin-top: 4px; padding-top: 9px; border-top: 1px solid #e3d8c6; font-size: 17px; font-weight: 800; }
 .s-app .qq-note { margin-top: 8px; color: #56607a; font-size: 12.5px; }
 .s-app .qq-send { display: flex; align-items: center; justify-content: center; min-height: 46px; margin-top: 12px; border-radius: 999px; background: #13244f; color: #fff; font-weight: 800; }
 
 /* ---------- Lối vào ANNA trong menu và bảng "Tư vấn" ---------- */
 .s-app .sm__anna { justify-content: center; width: 100%; padding-left: 0; font-weight: 800; }
 .s-app button.cs__row { width: 100%; text-align: left; }
-.cs__icon--anna { background: #13244f; color: #f26b1d; }
+.cs__icon--anna { background: #13244f; color: #ffb347; }
 
 @media (max-width: 480px) {
   .an-ask { padding-left: 16px; }

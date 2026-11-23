@@ -13,7 +13,7 @@
 .st-btn-ghost:hover { background: rgba(255, 255, 255, .16); color: #fff; }
 .st-hero__facts { display: grid; gap: 8px; margin: 26px 0 0; padding: 0; list-style: none; font-size: 14.5px; color: rgba(233, 238, 252, .82); }
 .st-hero__facts li { display: flex; gap: 10px; align-items: center; }
-.st-hero__facts li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #f26b1d; flex: none; }
+.st-hero__facts li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ffc233; flex: none; }
 .st-hero__stage { position: relative; padding: 0 12% 10% 0; }
 .st-hero__laptop { margin: 0; overflow: hidden; border-radius: 14px; border: 8px solid #0b132b; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .12); background: #fff; }
 .st-hero__laptop img { display: block; width: 100%; height: auto; }
@@ -39,7 +39,7 @@
 .st-users a:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 2px; }
 .st-users img { width: 72px; height: 48px; object-fit: cover; border-radius: 10px; }
 .st-users strong { display: block; font-size: 14.5px; }
-.st-users small { display: inline-flex; align-items: center; gap: 4px; color: #f26b1d; font-size: 12.5px; font-weight: 700; }
+.st-users small { display: inline-flex; align-items: center; gap: 4px; color: #ffc233; font-size: 12.5px; font-weight: 700; }
 .st-users small svg { width: 14px; height: 14px; }
 
 .st-head { max-width: 760px; margin-bottom: clamp(24px, 4vw, 40px); }
@@ -48,7 +48,7 @@
 .st-head__title { margin: 0; font-family: var(--h-serif); font-weight: 500; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.08; color: var(--s-navy); }
 .st-head__title em { color: var(--s-blue); }
 .st-head__title--light { color: #fff; }
-.st-head__title--light em { color: #f26b1d; }
+.st-head__title--light em { color: #ffc233; }
 .st-head__lead { margin: 12px 0 0; font-size: 16px; line-height: 1.7; color: var(--s-muted); }
 
 /* Tham quan theo vai trò */
@@ -143,7 +143,7 @@
 
 .st-fan-wrap { margin: 0; }
 .st-fan-wrap figcaption { margin-top: 18px; text-align: center; font-size: 13px; color: rgba(233, 238, 252, .7); }
-.st-fan-wrap figcaption a { color: #f26b1d; font-weight: 700; }
+.st-fan-wrap figcaption a { color: #ffc233; font-weight: 700; }
 .st-fan li { width: clamp(150px, 16vw, 210px); }
 @media (max-width: 860px) { .st-fan-wrap figcaption { text-align: left; } }
 
@@ -162,16 +162,16 @@
 .smx { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.5fr); gap: clamp(24px, 3.5vw, 56px); align-items: start; }
 .smx__nav { display: grid; gap: 22px; }
 .smx__glabel { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 8px; padding: 0 4px 8px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
-.smx__glabel span { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #f26b1d; }
+.smx__glabel span { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #ffc233; }
 .smx__glabel small { font-size: 12.5px; color: rgba(233, 238, 252, .55); }
 .smx__nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0; padding: 0; list-style: none; }
 .smx__nav button { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 8px 10px; border: 1px solid transparent; border-radius: 14px; background: rgba(255, 255, 255, .04); color: rgba(233, 238, 252, .86); font: inherit; text-align: left; cursor: pointer; transition: background .25s ease, border-color .25s ease, color .25s ease; }
 .smx__nav button:hover { background: rgba(255, 255, 255, .08); color: #fff; }
-.smx__nav button[aria-pressed="true"] { color: #fff; background: linear-gradient(#16224d, #16224d) padding-box, linear-gradient(120deg, #53a5db, #f26b1d 60%, #f26b1d) border-box; border-color: transparent; box-shadow: 0 10px 30px -12px rgba(83, 165, 219, .6); }
-.smx__nav button:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
+.smx__nav button[aria-pressed="true"] { color: #fff; background: linear-gradient(#16224d, #16224d) padding-box, linear-gradient(120deg, #53a5db, #ffc233 60%, #f08a1c) border-box; border-color: transparent; box-shadow: 0 10px 30px -12px rgba(83, 165, 219, .6); }
+.smx__nav button:focus-visible { outline: 3px solid #ffc233; outline-offset: 2px; }
 .smx__icon { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 10px; background: rgba(83, 165, 219, .14); color: #9cd2f2; transition: background .25s, color .25s; }
 .smx__icon svg { width: 18px; height: 18px; }
-[aria-pressed="true"] .smx__icon { background: linear-gradient(135deg, #f26b1d, #f26b1d); color: #0b132b; }
+[aria-pressed="true"] .smx__icon { background: linear-gradient(135deg, #ffc233, #f08a1c); color: #0b132b; }
 .smx__t { min-width: 0; }
 .smx__t strong { display: block; font-size: 14.5px; font-weight: 700; line-height: 1.3; }
 /* Mô tả có trong HTML (người đọc màn hình, công cụ tìm kiếm); hiển thị lớn ở khung bên phải */
@@ -182,24 +182,24 @@
 .smx__stage:hover .smx__frame { transform: rotateY(0) rotateX(0); }
 .smx__bar { display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px; border-radius: 16px 16px 0 0; background: #121c3f; }
 .smx__bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4a7a; }
-.smx__bar i:first-child { background: #f26b1d; }
-.smx__bar i:nth-child(2) { background: #f26b1d; }
-.smx__bar i:nth-child(3) { background: #1f3a8a; }
+.smx__bar i:first-child { background: #ff6b5f; }
+.smx__bar i:nth-child(2) { background: #ffc233; }
+.smx__bar i:nth-child(3) { background: #2ac56b; }
 .smx__bar b { margin-left: 10px; padding: 2px 12px; border-radius: 6px; background: rgba(255, 255, 255, .06); font-size: 11px; font-weight: 600; color: rgba(233, 238, 252, .6); }
 .smx__screen { overflow: hidden; border-radius: 0 0 16px 16px; background: #fff; aspect-ratio: 16 / 10; }
 .smx__screen img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; animation: smx-in .55s cubic-bezier(.22, .8, .24, 1) both; }
 @keyframes smx-in { from { opacity: 0; transform: scale(1.025); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 .smx__caption { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-top: 22px; padding: 16px 18px; border-radius: 18px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); backdrop-filter: blur(8px); }
-.smx__cicon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #f26b1d, #f26b1d); color: #0b132b; box-shadow: 0 10px 30px -10px rgba(240, 138, 28, .7); }
+.smx__cicon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #ffc233, #f08a1c); color: #0b132b; box-shadow: 0 10px 30px -10px rgba(240, 138, 28, .7); }
 .smx__cicon svg { width: 26px; height: 26px; }
-.smx__count { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .14em; color: #f26b1d; }
+.smx__count { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .14em; color: #ffc233; }
 .smx__count span { color: rgba(233, 238, 252, .45); }
 .smx__ctitle { margin: 2px 0; font-family: var(--h-serif); font-size: clamp(22px, 2.2vw, 30px); line-height: 1.15; color: #fff; }
 .smx__ctext { margin: 0; font-size: 15px; line-height: 1.55; color: rgba(233, 238, 252, .78); }
 .smx__arrows { display: flex; gap: 8px; }
 .smx__arrows button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .25); background: transparent; color: #fff; cursor: pointer; transition: background .2s, border-color .2s; }
 .smx__arrows button:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .5); }
-.smx__arrows button:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
+.smx__arrows button:focus-visible { outline: 3px solid #ffc233; outline-offset: 2px; }
 .smx__arrows svg { width: 18px; height: 18px; }
 .smx__note { margin: 12px 4px 0; font-size: 12.5px; color: rgba(233, 238, 252, .5); }
 

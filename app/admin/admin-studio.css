@@ -3,15 +3,15 @@
    Nạp SAU app/globals.css. Khung (thanh bên, dải icon thu gọn, topbar, menu tài khoản)
    chép từ studio-navy.css / studio-rail.css / account-menu.css bên DatVeXeONL;
    phần nội dung dùng lại các thành phần .adm-* cũ nhưng đổi bảng màu sang
-   nền sáng #f4f6fa, khối trắng bo 20px, nhấn cam #f26b1d.
+   nền sáng #f4f6fa, khối trắng bo 20px, nhấn cam #f2730e.
    ========================================================================== */
 
 .adm.ds-root {
-  --lt-orange: #f26b1d;
-  --lt-orange-bright: #f26b1d;
-  --lt-orange-dark: #f26b1d;
-  --lt-orange-soft: #fff1e6;
-  --lt-orange-grad: linear-gradient(135deg, #f26b1d 0%, #f26b1d 100%);
+  --lt-orange: #f2730e;
+  --lt-orange-bright: #ffa64a;
+  --lt-orange-dark: #c85a0a;
+  --lt-orange-soft: #fff4e9;
+  --lt-orange-grad: linear-gradient(135deg, #ffa64a 0%, #f2730e 100%);
   --lt-orange-shadow: 0 8px 22px rgba(242, 115, 14, 0.35);
 
   --ds-bg-canvas: #f4f6fa;
@@ -39,11 +39,11 @@
   --adm-muted: #64748b;
   --adm-faint: #8a99ad;
   --adm-input: #ffffff;
-  --adm-accent: #f26b1d;
-  --adm-accent-strong: #f26b1d;
+  --adm-accent: #f2730e;
+  --adm-accent-strong: #e2630a;
   --adm-accent-text: #ffffff;
   --adm-accent-grad: var(--lt-orange-grad);
-  --adm-accent-soft: #fff1e6;
+  --adm-accent-soft: #fff1e4;
   --adm-shadow: var(--ds-shadow-card);
   --adm-radius: 20px;
 
@@ -175,7 +175,7 @@
   font-size: 11px;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(135deg, #f26b1d, #f26b1d);
+  background: linear-gradient(135deg, #f58a33, #e2630a);
 }
 
 /* Menu đầy đủ */
@@ -247,7 +247,7 @@
   bottom: 9px;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background: #f26b1d;
+  background: #ffb36b;
 }
 .ds-root .ds-nav-icon-badge {
   display: flex;
@@ -550,10 +550,10 @@
   box-shadow: 0 24px 50px -16px rgba(15, 23, 42, 0.35);
 }
 .ds-root .am-card { display: flex; gap: 12px; align-items: center; padding: 8px 12px 10px; }
-.ds-root .am-avatar { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #f26b1d, #f26b1d); color: #fff; font-size: 16px; font-weight: 800; }
+.ds-root .am-avatar { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #f2730e); color: #fff; font-size: 16px; font-weight: 800; }
 .ds-root .am-card > div:last-child { display: flex; flex-direction: column; min-width: 0; }
 .ds-root .am-card strong { font-size: 15.5px; color: #0f172a; }
-.ds-root .am-card span { font-size: 13px; font-weight: 700; color: #f26b1d; }
+.ds-root .am-card span { font-size: 13px; font-weight: 700; color: #c2410c; }
 .ds-root .am-card small { font-size: 12.5px; color: #64748b; }
 .ds-root .am-where { position: relative; margin: 0 0 8px; padding: 9px 12px 9px 39px; border-radius: 12px; background: #f1f5f9; color: #334155; font-size: 13px; line-height: 1.45; }
 .ds-root .am-where svg { position: absolute; left: 12px; top: 11px; color: #64748b; }
@@ -581,9 +581,9 @@
 .ds-root .am-pop > button:hover,
 .ds-root .am-pop > a:hover { background: #f8fafc; }
 .ds-root .am-pop > :is(button, a) svg { flex: none; color: #64748b; }
-.ds-root .am-pop > button.am-logout { color: #f26b1d; background: #fff1e6; font-weight: 800; }
-.ds-root .am-pop > button.am-logout svg { color: #f26b1d; }
-.ds-root .am-pop > button.am-logout:hover { background: #fff1e6; }
+.ds-root .am-pop > button.am-logout { color: #b91c1c; background: #fef2f2; font-weight: 800; }
+.ds-root .am-pop > button.am-logout svg { color: #b91c1c; }
+.ds-root .am-pop > button.am-logout:hover { background: #fee2e2; }
 .ds-root .am-sep { height: 1px; margin: 6px 4px; background: #eef2f7; }
 
 /* Nội dung trang */
@@ -666,9 +666,9 @@
     bottom: 12px;
     width: 3px;
     border-radius: 0 3px 3px 0;
-    background: #f26b1d;
+    background: #ffb36b;
   }
-  .ds-root .ds-rail-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: #f26b1d; border: 2px solid #19213a; }
+  .ds-root .ds-rail-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: #ff8a3d; border: 2px solid #19213a; }
   .ds-root .ds-rail-btn:focus-visible,
   .ds-root .ds-rail-toggle:focus-visible,
   .ds-root .ds-rail-pop button:focus-visible { outline: 2px solid rgba(255, 179, 107, 0.8); outline-offset: 2px; }
@@ -689,7 +689,7 @@
     animation: ds-rail-pop-in 0.14s ease-out;
   }
   .ds-root .ds-rail-pop-head { display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid #f0f2f6; font-size: 13px; font-weight: 750; color: #121826; }
-  .ds-root .ds-rail-pop-head svg { color: #f26b1d; }
+  .ds-root .ds-rail-pop-head svg { color: #f2730e; }
   .ds-root .ds-rail-pop-list { display: grid; gap: 1px; padding: 6px; overflow-y: auto; overscroll-behavior: contain; }
   .ds-root .ds-rail-pop-list button {
     display: flex;
@@ -711,10 +711,10 @@
   }
   .ds-root .ds-rail-pop-list button > span:nth-child(2) { flex: 1; }
   .ds-root .ds-rail-pop-list button:hover { color: #121826; background: #f5f7fb; }
-  .ds-root .ds-rail-pop-list button.is-active { color: #f26b1d; font-weight: 700; background: #fff1e6; }
+  .ds-root .ds-rail-pop-list button.is-active { color: #c2560a; font-weight: 700; background: #fff1e4; }
   .ds-root .ds-rail-pop-icon { display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 7px; color: #4b5468; background: #f1f3f8; }
-  .ds-root .ds-rail-pop-list button.is-active .ds-rail-pop-icon { color: #fff; background: linear-gradient(135deg, #f26b1d, #f26b1d); }
-  .ds-root .ds-rail-pop .ds-count { color: #f26b1d; background: #fff1e6; }
+  .ds-root .ds-rail-pop-list button.is-active .ds-rail-pop-icon { color: #fff; background: linear-gradient(135deg, #f58a33, #e2630a); }
+  .ds-root .ds-rail-pop .ds-count { color: #c2560a; background: #fff1e4; }
 }
 @keyframes ds-menu-fade { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
 @keyframes ds-rail-fade { from { opacity: 0; } to { opacity: 1; } }
@@ -820,7 +820,7 @@
 .adm-card[open] > summary { margin-bottom: 8px; border-bottom: 1px solid #eef0f5; }
 .adm-subsection { margin-top: 24px; padding-top: 18px; border-top: 2px solid #eef0f5; }
 .adm-subeditor { margin-top: 12px; padding: 14px; border-radius: 12px; background: #fafbfe; border: 1px solid #e3e7ef; }
-.adm-note { padding: 10px 12px; border-radius: 10px; background: #fff1e6; color: #13244f; font-size: 14px; }
+.adm-note { padding: 10px 12px; border-radius: 10px; background: #fff4e8; color: #7a3d00; font-size: 14px; }
 .project-admin-row[aria-pressed='true'] { outline: 2px solid #2b4294; outline-offset: -2px; }
 
 .adm-row { display: flex; gap: 8px; align-items: center; }
@@ -830,13 +830,13 @@
 /* ---- Danh sách dài (đối tác, địa điểm): thanh tìm + lọc, hàng có logo và trạng thái ---- */
 .adm-listbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0 12px; }
 .adm-listbar__search { flex: 1 1 240px; min-width: 0; height: 42px; padding: 0 14px; border: 1px solid #dde3ee; border-radius: 12px; background: #f8fafd; font: inherit; font-size: 14px; }
-.adm-listbar__search:focus { outline: none; border-color: #f26b1d; background: #fff; box-shadow: 0 0 0 3px rgba(255, 138, 61, .15); }
+.adm-listbar__search:focus { outline: none; border-color: #ff8a3d; background: #fff; box-shadow: 0 0 0 3px rgba(255, 138, 61, .15); }
 .adm-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
 .adm-tabs button { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid #e3e7ef; border-radius: 999px; background: #fff; color: #3a4766; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }
 .adm-tabs button span { min-width: 22px; padding: 1px 7px; border-radius: 999px; background: #eef1f7; font-size: 11.5px; text-align: center; }
 .adm-tabs button.is-on { background: #1c2541; border-color: #1c2541; color: #fff; }
-.adm-tabs button.is-on span { background: #f26b1d; color: #fff; }
-.adm-tabs button:focus-visible { outline: 2px solid #f26b1d; outline-offset: 2px; }
+.adm-tabs button.is-on span { background: #ff8a3d; color: #fff; }
+.adm-tabs button:focus-visible { outline: 2px solid #ff8a3d; outline-offset: 2px; }
 .adm-empty { padding: 24px; border: 1px dashed #dde3ee; border-radius: 12px; color: #7a869e; text-align: center; }
 .adm-entity > summary { display: flex; align-items: center; gap: 12px; list-style: none; }
 .adm-entity > summary::-webkit-details-marker { display: none; }
@@ -848,7 +848,7 @@
 .adm-entity__main b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; color: #1c2541; }
 .adm-entity__main small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12.5px; color: #7a869e; }
 .adm-pill { flex: none; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-.adm-pill--green { background: #eef2fb; color: #1f3a8a; }
+.adm-pill--green { background: #e6f6ee; color: #11804d; }
 .adm-pill--muted { background: #eef1f7; color: #6b778f; }
 .adm-pill--blue { background: #e8f0ff; color: #2b4294; }
 @media (max-width: 560px) { .adm-entity .adm-pill--blue { display: none; } }
@@ -890,8 +890,8 @@
 .blk-icon { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #e3e7ef; border-radius: 9px; background: #fff; color: #3a4766; cursor: pointer; }
 .blk-icon:hover:not(:disabled) { background: #f3f5fa; }
 .blk-icon:disabled { opacity: .35; cursor: default; }
-.blk-icon--danger { color: #f26b1d; }
-.blk-icon:focus-visible { outline: 2px solid #f26b1d; outline-offset: 2px; }
+.blk-icon--danger { color: #c53030; }
+.blk-icon:focus-visible { outline: 2px solid #ff8a3d; outline-offset: 2px; }
 @media (max-width: 760px) {
   .blk-grid { grid-template-columns: minmax(0, 1fr); }
   .blk-item > summary { padding-right: 0; flex-wrap: wrap; }

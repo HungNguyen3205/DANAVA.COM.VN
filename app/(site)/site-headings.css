@@ -8,7 +8,7 @@
 .s-ico { display: inline-grid; place-items: center; flex: none; width: 46px; height: 46px; border-radius: 14px; }
 .s-ico svg { width: 23px; height: 23px; }
 .s-ico--blue { background: #eef2fb; color: #1f3a8a; }
-.s-ico--orange { background: #fff1e6; color: #f26b1d; }
+.s-ico--orange { background: #fff1e6; color: #ef6c1e; }
 .s-mega__link { display: flex !important; align-items: center; gap: 14px; }
 a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
 .s-mega__link .s-ico { transition: transform .2s ease; }
@@ -17,28 +17,28 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
 .s-mega__no { font-family: var(--font-display), serif; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: 0; color: #f26b1d; }
 
 /* Thanh cuối menu Giải pháp: nền kem cam nhạt, câu chữ serif nghiêng, nút cam bo tròn */
-.s-mega__foot { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding: 14px 16px 14px 26px !important; border: 0 !important; border-radius: 18px; background: linear-gradient(90deg, #fff1e6 0%, #fff1e6 100%) !important; }
+.s-mega__foot { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding: 14px 16px 14px 26px !important; border: 0 !important; border-radius: 18px; background: linear-gradient(90deg, #fff4ea 0%, #fdf8f2 100%) !important; }
 .s-mega__slogan { font-family: var(--font-display), serif; font-size: 20px; font-style: normal; font-weight: 600; letter-spacing: -.01em; color: #13244f; }
-.s-mega__cta { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 20px; border-radius: 999px; background: linear-gradient(90deg, #f26b1d, #f26b1d); color: #fff !important; font-size: 14.5px; font-weight: 800; text-decoration: none; box-shadow: 0 12px 24px -12px rgba(242, 107, 29, .8); transition: transform .2s; }
+.s-mega__cta { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 20px; border-radius: 999px; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff !important; font-size: 14.5px; font-weight: 800; text-decoration: none; box-shadow: 0 12px 24px -12px rgba(242, 107, 29, .8); transition: transform .2s; }
 .s-mega__cta svg { width: 16px; height: 16px; transition: transform .2s; }
 .s-mega__cta:hover { transform: translateY(-1px); }
 .s-mega__cta:hover svg { transform: translateX(3px); }
 .s-mega__cta:focus-visible { outline: 3px solid #13244f; outline-offset: 2px; }
 
 /* ==== Đồng bộ phần đầu các trang con với trang chủ: nền kem ấm, tiêu đề navy, chữ nhấn cam (thay gradient xanh cũ) ==== */
-.s-app .s-pagehead { background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%), radial-gradient(40% 60% at 0% 100%, rgba(242, 107, 29, .08), transparent 60%), linear-gradient(180deg, #fff1e6 0%, #fff1e6 100%); }
+.s-app .s-pagehead { background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%), radial-gradient(40% 60% at 0% 100%, rgba(242, 107, 29, .08), transparent 60%), linear-gradient(180deg, #fff7ec 0%, #fbf6ee 100%); }
 .s-app .s-pagehead .s-h1 { color: #13244f; }
 .s-app .s-hl, .s-app .s-hl--warm { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #f26b1d; -webkit-text-fill-color: currentColor; }
-.s-app .s-section--brand .s-hl { color: #f26b1d; }
+.s-app .s-section--brand .s-hl { color: #ffb347; }
 
 /* Nút chính toàn site cùng tông cam với trang chủ và thanh menu */
-.s-app .s-btn--primary { background: linear-gradient(90deg, #f26b1d, #f26b1d); border-color: transparent; color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }
-.s-app .s-btn--primary:hover { background: linear-gradient(90deg, #f26b1d, #f26b1d); color: #fff; }
+.s-app .s-btn--primary { background: linear-gradient(90deg, #ff8a2a, #f26b1d); border-color: transparent; color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }
+.s-app .s-btn--primary:hover { background: linear-gradient(90deg, #ff7a14, #e85f12); color: #fff; }
 
 /* ==== Làm sáng phần đầu DANAVA Studio, Hệ sinh thái, Liên hệ cho đồng bộ (nền kem, chữ navy, nhấn cam) ==== */
 .s-app :is(.st-hero, .hx-hero, .c-hero--light) {
   color: #3d4a6b;
-  background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%), radial-gradient(40% 60% at 0% 100%, rgba(242, 107, 29, .08), transparent 60%), linear-gradient(180deg, #fff1e6 0%, #fff1e6 100%);
+  background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%), radial-gradient(40% 60% at 0% 100%, rgba(242, 107, 29, .08), transparent 60%), linear-gradient(180deg, #fff7ec 0%, #fbf6ee 100%);
 }
 .s-app :is(.st-hero, .hx-hero, .c-hero--light) :is(.s-crumbs, .s-crumbs a, nav[aria-label]) { color: #6b7590; }
 
@@ -85,4 +85,4 @@ a.s-mega__link:hover .s-ico { transform: translateY(-2px) rotate(-4deg); }
 .s-app .c-hero--light .c-brand { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #f26b1d; -webkit-text-fill-color: currentColor; animation: none; }
 .s-app .c-hero--light .c-hero__lead { color: #3d4a6b; }
 .s-app .c-hero--light .c-motto { color: #f26b1d; }
-.s-app .hx-hero .hx-btn--sun { background: linear-gradient(90deg, #f26b1d, #f26b1d); color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }
+.s-app .hx-hero .hx-btn--sun { background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }

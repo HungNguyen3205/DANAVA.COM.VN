@@ -22,7 +22,7 @@
   font-size: clamp(26px, 3.2vw, 44px);
   line-height: 1.2;
   padding: .06em .08em .1em 0;
-  background: linear-gradient(95deg, #f26b1d 0%, var(--h-gold) 45%, var(--h-orange) 100%);
+  background: linear-gradient(95deg, #ffe08a 0%, var(--h-gold) 45%, var(--h-orange) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: h-rise 1.2s .35s both;
 }
@@ -81,7 +81,7 @@
 .u-contact-card__actions .s-btn--secondary:hover { background: rgba(255, 255, 255, .08); }
 .u-contact-card__list { display: grid; gap: 12px; margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgba(255, 255, 255, .14); font-size: 15px; }
 .u-contact-card__list li { display: flex; gap: 10px; align-items: flex-start; color: rgba(255, 255, 255, .86); }
-.u-contact-card__list svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--h-gold, #f26b1d); }
+.u-contact-card__list svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--h-gold, #ffc233); }
 .u-contact-card__list a { color: #fff; text-decoration: none; min-height: 24px; }
 .u-contact-card__list a:hover { text-decoration: underline; }
 @media (max-width: 900px) {
@@ -91,8 +91,8 @@
 
 /* ---------- Trang dịch vụ: vấn đề thường gặp ---------- */
 .u-problems { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-.u-problems li { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: var(--s-radius); background: var(--s-orange-soft); border: 1px solid #f26b1d; color: var(--s-ink); line-height: 1.55; }
-.u-problems svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: #f26b1d; }
+.u-problems li { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: var(--s-radius); background: var(--s-orange-soft); border: 1px solid #fde3c4; color: var(--s-ink); line-height: 1.55; }
+.u-problems svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: #c2620a; }
 
 /* ---------- Chi phí & báo giá ---------- */
 .u-pricing { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 18px 24px; align-items: center; padding: clamp(20px, 3vw, 32px); border-radius: var(--s-radius-lg); border: 1px solid var(--s-line); background: #fff; box-shadow: var(--s-shadow); }
@@ -112,7 +112,7 @@
 .u-quote figcaption strong { display: block; color: var(--s-ink); }
 
 /* ---------- Bản nháp (chỉ admin nhìn thấy) ---------- */
-.u-draft { position: sticky; top: var(--s-header-h); z-index: 30; padding: 10px var(--s-gutter); background: #fff1e6; border-bottom: 1px solid #f26b1d; color: #13244f; font-size: 14px; text-align: center; }
+.u-draft { position: sticky; top: var(--s-header-h); z-index: 30; padding: 10px var(--s-gutter); background: #fff4e8; border-bottom: 1px solid #f6c58f; color: #7a3d00; font-size: 14px; text-align: center; }
 
 /* ---------- Danh sách liên kết ---------- */
 .u-linklist { display: grid; gap: 4px; margin: 16px 0 0; padding: 0; list-style: none; }

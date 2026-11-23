@@ -1,5 +1,5 @@
 /* Trang Dịch vụ (/dich-vu/): hero kem ấm, lưới thẻ trắng, tiêu đề Playfair chữ đứng */
-.svc { background: #fff1e6; color: #13244f; padding-bottom: clamp(56px, 8vw, 96px); }
+.svc { background: #fbf6ee; color: #13244f; padding-bottom: clamp(56px, 8vw, 96px); }
 .svc-hero { padding: clamp(18px, 3vw, 28px) 0 clamp(36px, 5vw, 60px); background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%); }
 .svc-kicker { display: inline-block; margin: 22px 0 0; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #f26b1d; }
 .svc .svc-title { margin: 12px 0 0; font-family: var(--font-display); font-style: normal; font-weight: 600; font-size: clamp(34px, 4.6vw, 60px); line-height: 1.06; letter-spacing: -.02em; color: #13244f; }
@@ -11,7 +11,7 @@
 .svc-card:focus-visible { outline: 3px solid #13244f; outline-offset: 3px; }
 .svc-card__no { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: #f26b1d; line-height: 1; }
 .svc-card__ico { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #eef2fb; color: #1f3a8a; }
-.svc-card:nth-child(even) .svc-card__ico { background: #fff1e6; color: #f26b1d; }
+.svc-card:nth-child(even) .svc-card__ico { background: #fff1e6; color: #ef6c1e; }
 .svc-card__ico svg { width: 24px; height: 24px; }
 .svc .svc-card__title { margin: 4px 0 0; font-family: var(--font-display); font-style: normal; font-weight: 600; font-size: 24px; line-height: 1.2; color: #13244f; }
 .svc-card__text { margin: 0; font-size: 15px; line-height: 1.65; color: #3d4a6b; }
@@ -22,7 +22,7 @@
 .svc-card__go svg { width: 18px; height: 18px; color: #f26b1d; transition: transform .2s ease; }
 .svc-card:hover .svc-card__go svg { transform: translateX(3px); }
 /* Trang thiết kế landing page (/dich-vu/landing-page/): giới thiệu + form nhập yêu cầu */
-.lp { background: #fff1e6; color: #13244f; padding-bottom: clamp(56px, 8vw, 96px); }
+.lp { background: #fbf6ee; color: #13244f; padding-bottom: clamp(56px, 8vw, 96px); }
 .lp-hero { padding: clamp(24px, 4vw, 48px) 0 clamp(40px, 6vw, 72px); background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%); }
 .lp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 440px); gap: clamp(28px, 5vw, 64px); align-items: start; }
 .lp-kicker { margin: 0; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #f26b1d; }
@@ -41,8 +41,8 @@
 .lp-field span { font-size: 14px; font-weight: 600; color: #3d4a6b; }
 .lp-field input, .lp-field select, .lp-field textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid #d6dcea; font: inherit; font-size: 16px; color: #13244f; background: #fff; }
 .lp-field input:focus, .lp-field select:focus, .lp-field textarea:focus { outline: 3px solid #13244f; outline-offset: 1px; }
-.lp-error { margin: 0 0 12px; color: #f26b1d; font-weight: 600; font-size: 14px; }
-.lp-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 50px; border: 0; border-radius: 14px; background: linear-gradient(90deg, #f26b1d, #f26b1d); color: #fff; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }
+.lp-error { margin: 0 0 12px; color: #b42318; font-weight: 600; font-size: 14px; }
+.lp-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 50px; border: 0; border-radius: 14px; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); }
 .lp-btn:disabled { opacity: .6; cursor: default; }
 .lp-btn svg { width: 18px; height: 18px; }
 .lp-note { margin: 12px 0 0; font-size: 13px; color: #5c6785; text-align: center; }
@@ -68,7 +68,7 @@
 .lp-grid.is-typing .lp-may { transform: rotate(-6deg) translateX(6px); }
 /* Khối hỏi nhanh trên trang Dịch vụ (kiểu khối hỏi ANNA) */
 .ask { padding: clamp(56px, 8vw, 96px) 0; text-align: center; background: radial-gradient(60% 80% at 50% 0%, rgba(255, 196, 120, .28), transparent 70%); }
-.ask-kicker { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #f26b1d; }
+.ask-kicker { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #b8500f; }
 .ask-kicker svg { width: 16px; height: 16px; }
 .ask-title { margin: 12px 0 0; font-size: clamp(30px, 4vw, 48px); font-weight: 800; color: #13244f; line-height: 1.15; }
 .ask-title span { color: #f26b1d; }
@@ -78,7 +78,7 @@
 .ask-chip:hover { transform: translateY(-2px); border-color: #f26b1d; }
 .ask-chip svg { width: 18px; height: 18px; color: #f26b1d; }
 .ask-chip.is-on { background: #13244f; border-color: #13244f; color: #fff; }
-.ask-chip.is-on svg { color: #f26b1d; }
+.ask-chip.is-on svg { color: #ffb347; }
 .ask-chip:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
 .ask-panel { margin: 32px auto 0; max-width: 1100px; text-align: left; }
 @media (prefers-reduced-motion: reduce) { .ask-chip { transition: none; } }

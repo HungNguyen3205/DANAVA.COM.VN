@@ -4480,7 +4480,7 @@ export function TeamPage() {
    - Link nghề nghiệp được duyệt (email, hotline, kênh tư vấn)
    - Link quay lại Đội ngũ DANAVA (/doi-ngu/)
    - Ưu tiên dự án thật thay cho hiệu ứng trang trí
-   - Bảng màu chuẩn #0B132B, #1C2541, #3A506B, #5BC0DE, #f26b1d, #f26b1d
+   - Bảng màu chuẩn #0B132B, #1C2541, #3A506B, #5BC0DE, #F4D6B0, #D97706
    ========================================================================== */
 export function StaffPortfolioPage({ profile }: { profile: StaffFullProfile }) {
   const photo = personPhoto({ id: profile.id, name: profile.name, role: profile.role, visible: true });
