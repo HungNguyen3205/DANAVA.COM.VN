@@ -126,3 +126,81 @@
 .s-app .h-btn-glass {
   color: #fff !important;
 }
+
+/* ==========================================================================
+   Nút kiểu mây: bo tròn, sắc nhạt, bóng mềm như đám mây, chuyển động nhẹ.
+   Vẫn chỉ dùng navy và cam.
+   ========================================================================== */
+
+/* Nút chính: cam nhạt, bóng cam mềm */
+.s-app .s-btn--primary,
+.s-app .s-btn--sun,
+.s-app .lp-btn,
+.s-app .qc__btn,
+.s-app .wq__btn--primary,
+.s-app .hx-btn--sun,
+.s-app .hp-btn--sun,
+.s-app .s-mega__cta {
+  background: linear-gradient(135deg, #ffb27a 0%, #f58a4a 55%, #f26b1d 100%) !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  box-shadow: 0 16px 30px -18px rgba(242, 107, 29, .65), inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease !important;
+}
+.s-app .s-btn--primary:hover,
+.s-app .lp-btn:hover,
+.s-app .qc__btn:hover,
+.s-app .wq__btn--primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 22px 36px -18px rgba(242, 107, 29, .7), inset 0 1px 0 rgba(255, 255, 255, .4) !important;
+  filter: brightness(1.04) !important;
+}
+
+/* Nút tối: navy nhạt, bóng xanh mềm */
+.s-app .s-btn--dark,
+.s-app .s-btn--blue,
+.s-app .s-cta .s-btn--primary,
+.s-app .studio-cta-secondary,
+.s-app .hotline-btn,
+.s-app .email-btn {
+  background: linear-gradient(135deg, #2b4294 0%, #13244f 100%) !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  box-shadow: 0 16px 30px -18px rgba(19, 36, 79, .6), inset 0 1px 0 rgba(255, 255, 255, .15) !important;
+  transition: transform .25s ease, box-shadow .25s ease !important;
+}
+.s-app .s-btn--dark:hover,
+.s-app .s-btn--blue:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 22px 36px -18px rgba(19, 36, 79, .7) !important;
+}
+
+/* Nút phụ: trắng như mây, viền xanh rất nhạt */
+.s-app .s-btn--secondary,
+.s-app .s-btn--light,
+.s-app .s-btn--outline-light,
+.s-app [class*="btn-ghost"],
+.s-app [class*="btn--ghost"] {
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, .92) !important;
+  border: 1px solid rgba(43, 66, 148, .12) !important;
+  color: #13244f !important;
+  box-shadow: 0 12px 26px -20px rgba(19, 36, 79, .45) !important;
+  transition: transform .25s ease, box-shadow .25s ease !important;
+}
+.s-app .s-btn--secondary:hover,
+.s-app .s-btn--light:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 18px 30px -20px rgba(19, 36, 79, .5) !important;
+}
+
+/* Chip đang chọn: navy nhạt bo tròn */
+.s-app button[aria-pressed="true"],
+.s-app button[aria-selected="true"],
+.s-app .qc__chip.is-on,
+.s-app .ask-chip.is-on {
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #2b4294 0%, #13244f 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 22px -16px rgba(19, 36, 79, .6) !important;
+}
