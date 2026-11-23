@@ -7,7 +7,7 @@ import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
 import { HrefIcon, IconBox, type Tone } from './site/icons';
-import { DICH_VU } from '@/lib/dich-vu';
+import { DICH_VU, SHOW_DICH_VU_MENU } from '@/lib/dich-vu';
 import { Megaphone, MonitorSmartphone, CalendarDays, Plane } from 'lucide-react';
 
 /** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
@@ -167,7 +167,7 @@ export function Header() {
                   )}
                 </div>
               </li>
-              <li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onMouseEnter={() => setSvc(true)} onMouseLeave={() => setSvc(false)}>
+              {SHOW_DICH_VU_MENU && (<li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onMouseEnter={() => setSvc(true)} onMouseLeave={() => setSvc(false)}>
                 <button
                   type="button"
                   className="s-nav__link"
@@ -190,7 +190,7 @@ export function Header() {
                     </div>
                   </div>
                 </div>
-              </li>
+              </li>)}
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}>Hệ sinh thái</Link>
               </li>

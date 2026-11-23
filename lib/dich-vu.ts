@@ -97,3 +97,6 @@ export const DICH_VU: Service[] = [
 ];
 
 export const dichVuBySlug = (slug: string) => DICH_VU.find(s => s.slug === slug);
+
+/** Bật/tắt mục Dịch vụ trên menu. Các trang vẫn truy cập được bằng đường dẫn. */
+export const SHOW_DICH_VU_MENU = false;

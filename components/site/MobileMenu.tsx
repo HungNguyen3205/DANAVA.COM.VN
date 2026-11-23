@@ -12,7 +12,7 @@ import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
 import { CONTACT, formatPhone } from './catalog';
-import { DICH_VU } from '@/lib/dich-vu';
+import { DICH_VU, SHOW_DICH_VU_MENU } from '@/lib/dich-vu';
 import { CalendarDays, Megaphone, MonitorSmartphone, Plane } from 'lucide-react';
 
 /** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
@@ -107,7 +107,7 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
             </section>
           ))}
 
-          <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-services">
+          {SHOW_DICH_VU_MENU && (<section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-services">
             <h2 className="sm__subtitle" id="sm-group-services">Dịch vụ</h2>
             <ul>
               {DICH_VU.map((s, i) => {
@@ -121,7 +121,7 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
                 );
               })}
             </ul>
-          </section>
+          </section>)}
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-about">
             <h2 className="sm__subtitle" id="sm-group-about">Về chúng tôi</h2>
