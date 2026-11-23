@@ -1,0 +1,499 @@
+/* ==========================================================================
+   DANAVA Admin UI — design token + khung + component (components/admin/kit.tsx, AdminShell.tsx).
+   Nạp SAU globals.css và admin-studio.css, chỉ trong app/admin (website công khai không nạp file này).
+   Thang khoảng cách 4/8/12/16/24/32 · bo góc 12px · viền mảnh · bóng nhẹ · một hệ chữ (Be Vietnam Pro).
+   ========================================================================== */
+.ax-scope {
+  /* Màu */
+  --ax-side-bg: #0c1838;
+  --ax-side-bg-2: #13244f;
+  --ax-side-text: #c3cce0;
+  --ax-side-muted: #7f8bab;
+  --ax-side-hover: rgba(255, 255, 255, .06);
+  --ax-side-active: rgba(242, 107, 29, .14);
+  --ax-navy: #13244f;
+  --ax-navy-2: #2b4294;
+  --ax-accent: #f26b1d;
+  --ax-accent-hover: #e05d12;
+  --ax-accent-soft: #fff1e7;
+  --ax-accent-text: #b84c0d;
+  --ax-bg: #f4f6fa;
+  --ax-surface: #ffffff;
+  --ax-surface-2: #f8f9fc;
+  --ax-border: #e3e8f0;
+  --ax-border-strong: #cdd5e3;
+  --ax-text: #111a33;
+  --ax-text-2: #3a4664;
+  --ax-muted: #6b7690;
+  --ax-success: #127a50; --ax-success-bg: #e6f5ee;
+  --ax-warning: #9a5b00; --ax-warning-bg: #fff4dc;
+  --ax-danger: #b42318;  --ax-danger-bg: #fdeceb;
+  --ax-info: #2b4294;    --ax-info-bg: #eaf0ff;
+  --ax-focus: 0 0 0 3px rgba(242, 107, 29, .28);
+  /* Khoảng cách */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  /* Hình khối */
+  --ax-radius: 12px; --ax-radius-sm: 8px; --ax-radius-lg: 16px;
+  --ax-shadow: 0 1px 2px rgba(17, 26, 51, .04), 0 2px 8px rgba(17, 26, 51, .04);
+  --ax-shadow-lg: 0 12px 32px -8px rgba(17, 26, 51, .18), 0 2px 6px rgba(17, 26, 51, .06);
+  /* Khung */
+  --ax-side-w: 256px; --ax-side-w-mini: 72px; --ax-top-h: 64px;
+  /* Chuyển động */
+  --ax-fast: 150ms; --ax-base: 200ms; --ax-slow: 250ms; --ax-ease: cubic-bezier(.2, .8, .2, 1);
+
+  color: var(--ax-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.adm.ds-root.ax { display: grid; grid-template-columns: var(--ax-side-w) minmax(0, 1fr); min-height: 100vh; padding: 0; background: var(--ax-bg); }
+.adm.ds-root.ax.is-collapsed { grid-template-columns: var(--ax-side-w-mini) minmax(0, 1fr); }
+.ax *, .ax *::before, .ax *::after { box-sizing: border-box; }
+.ax :focus-visible { outline: none; box-shadow: var(--ax-focus); }
+.ax-sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.ax-spin { animation: ax-spin .8s linear infinite; }
+@keyframes ax-spin { to { transform: rotate(360deg); } }
+
+/* ---------------------------------------------------------------- Sidebar */
+.ax-scope .ax-side {
+  position: sticky; top: 0; z-index: 40; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+  background: linear-gradient(180deg, var(--ax-side-bg) 0%, #0f1d44 100%); color: var(--ax-side-text);
+  border-right: 1px solid rgba(255, 255, 255, .04);
+}
+.ax-scope .ax-side__brand { display: flex; align-items: center; gap: var(--s3); height: var(--ax-top-h); padding: 0 var(--s4); border-bottom: 1px solid rgba(255, 255, 255, .06); }
+.ax-scope .ax-side__brand a { display: flex; align-items: center; gap: var(--s3); min-width: 0; color: #fff; text-decoration: none; }
+.ax-scope .ax-side__brand img { flex: none; width: 32px; height: 32px; border-radius: 9px; background: #fff; padding: 3px; }
+.ax-scope .ax-side__brand b { display: block; font-size: 15px; letter-spacing: .02em; }
+.ax-scope .ax-side__brand small { display: block; color: var(--ax-side-muted); font-size: 11.5px; white-space: nowrap; }
+.ax-scope .ax-side__nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--s3) var(--s3) var(--s4); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
+.ax-scope .ax-side__group + .ax-side__group { margin-top: var(--s1); }
+.ax-scope .ax-side__group-btn {
+  display: flex; align-items: center; gap: var(--s3); width: 100%; height: 38px; padding: 0 var(--s3); border: 0; border-radius: var(--ax-radius-sm);
+  background: none; color: var(--ax-side-text); font: inherit; font-size: 13.5px; font-weight: 600; text-align: left; cursor: pointer;
+  transition: background var(--ax-fast) var(--ax-ease), color var(--ax-fast) var(--ax-ease);
+}
+.ax-scope .ax-side__group-btn:hover { background: var(--ax-side-hover); color: #fff; }
+.ax-scope .ax-side__group-btn.has-active { color: #fff; }
+.ax-scope .ax-side__group-btn svg { flex: none; }
+.ax-scope .ax-side__group-btn .ax-side__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-side__chev { color: var(--ax-side-muted); transition: transform var(--ax-base) var(--ax-ease); }
+.ax-scope .ax-side__group-btn[aria-expanded='true'] .ax-side__chev { transform: rotate(90deg); }
+.ax-scope .ax-side__items { overflow: hidden; }
+.ax-scope .ax-side__items ul { display: grid; gap: 2px; margin: 2px 0 var(--s2); padding: 0 0 0 var(--s5); list-style: none; border-left: 1px solid rgba(255, 255, 255, .08); margin-left: 21px; }
+.ax-scope .ax-side__link {
+  position: relative; display: flex; align-items: center; gap: var(--s2); min-height: 34px; padding: 0 var(--s3); border-radius: var(--ax-radius-sm);
+  color: var(--ax-side-text); font-size: 13.5px; text-decoration: none; transition: background var(--ax-fast) var(--ax-ease), color var(--ax-fast) var(--ax-ease);
+}
+.ax-scope .ax-side__link:hover { background: var(--ax-side-hover); color: #fff; }
+.ax-scope .ax-side__link.is-active { background: var(--ax-side-active); color: #fff; font-weight: 600; }
+.ax-scope .ax-side__link.is-active::before { content: ""; position: absolute; left: -26px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: var(--ax-accent); }
+.ax-scope .ax-side__count { margin-left: auto; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--ax-accent); color: #fff; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; }
+.ax-scope .ax-side__single.is-active { background: var(--ax-side-active); color: #fff; }
+.ax-scope .ax-side__single.is-active::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 3px; border-radius: 3px; background: var(--ax-accent); }
+.ax-scope .ax-side__single { position: relative; }
+.ax-scope .ax-side__foot { padding: var(--s3); border-top: 1px solid rgba(255, 255, 255, .06); display: grid; gap: var(--s1); }
+.ax-scope .ax-side__foot a, .ax-scope .ax-side__foot button { display: flex; align-items: center; gap: var(--s3); height: 38px; padding: 0 var(--s3); border: 0; border-radius: var(--ax-radius-sm); background: none; color: var(--ax-side-text); font: inherit; font-size: 13.5px; text-decoration: none; cursor: pointer; }
+.ax-scope .ax-side__foot a:hover, .ax-scope .ax-side__foot button:hover { background: var(--ax-side-hover); color: #fff; }
+/* Thu gọn: chỉ icon nhóm, tooltip + menu bay ra */
+.ax.is-collapsed .ax-side__brand { justify-content: center; padding: 0; }
+.ax.is-collapsed .ax-side__brand-text, .ax.is-collapsed .ax-side__label, .ax.is-collapsed .ax-side__chev, .ax.is-collapsed .ax-side__foot span { display: none; }
+.ax.is-collapsed .ax-side__nav { padding: var(--s3) var(--s2); }
+.ax.is-collapsed .ax-side__group-btn, .ax.is-collapsed .ax-side__foot a, .ax.is-collapsed .ax-side__foot button { justify-content: center; padding: 0; }
+.ax.is-collapsed .ax-side__group-btn.has-active { background: var(--ax-side-active); }
+.ax-scope .ax-side__dot { position: absolute; top: 7px; right: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--ax-accent); }
+
+/* ---------------------------------------------------------------- Topbar */
+.ax-scope .ax-main { display: flex; flex-direction: column; min-width: 0; }
+.ax-scope .ax-top {
+  position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: var(--s3); height: var(--ax-top-h); padding: 0 var(--s5);
+  border-bottom: 1px solid var(--ax-border); background: rgba(255, 255, 255, .88); backdrop-filter: saturate(1.4) blur(10px);
+}
+.ax-scope .ax-top__title { flex: 1; min-width: 0; }
+.ax-scope .ax-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1); margin: 0; padding: 0; list-style: none; color: var(--ax-muted); font-size: 12px; }
+.ax-scope .ax-crumbs li + li::before { content: "/"; margin-right: var(--s1); color: var(--ax-border-strong); }
+.ax-scope .ax-crumbs a { color: inherit; text-decoration: none; }
+.ax-scope .ax-crumbs a:hover { color: var(--ax-text); }
+.ax-scope .ax-top h1 { margin: 0; overflow: hidden; color: var(--ax-text); font-size: 17px; font-weight: 700; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-top__right { display: flex; align-items: center; gap: var(--s2); }
+.ax-scope .ax-searchbtn {
+  display: flex; align-items: center; gap: var(--s2); width: 240px; height: 38px; padding: 0 var(--s3); border: 1px solid var(--ax-border); border-radius: 10px;
+  background: var(--ax-surface-2); color: var(--ax-muted); font: inherit; font-size: 13px; cursor: pointer; transition: border-color var(--ax-fast), background var(--ax-fast);
+}
+.ax-scope .ax-searchbtn:hover { border-color: var(--ax-border-strong); background: #fff; }
+.ax-scope .ax-searchbtn kbd { margin-left: auto; padding: 1px 6px; border: 1px solid var(--ax-border); border-radius: 6px; background: #fff; font: inherit; font-size: 11px; }
+.ax-scope .ax-save-state { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.ax-scope .ax-save-state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ax-scope .ax-save-state.is-dirty { background: var(--ax-accent-soft); color: var(--ax-accent-text); }
+.ax-scope .ax-save-state.is-draft { background: var(--ax-info-bg); color: var(--ax-info); }
+.ax-scope .ax-save-state.is-live { background: var(--ax-success-bg); color: var(--ax-success); }
+.ax-scope .ax-save-state.is-saving { background: var(--ax-surface-2); color: var(--ax-muted); }
+.ax-scope .ax-avatar { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #ff9a4d, var(--ax-accent)); color: #fff; font-size: 12.5px; font-weight: 800; }
+.ax-scope .ax-account { display: flex; align-items: center; gap: var(--s2); height: 42px; padding: 0 var(--s2) 0 4px; border: 1px solid transparent; border-radius: 12px; background: none; font: inherit; cursor: pointer; }
+.ax-scope .ax-account:hover { border-color: var(--ax-border); background: #fff; }
+.ax-scope .ax-account__meta { display: grid; text-align: left; line-height: 1.25; }
+.ax-scope .ax-account__meta b { font-size: 13px; }
+.ax-scope .ax-account__meta small { color: var(--ax-muted); font-size: 11.5px; }
+.ax-scope .ax-bell { position: relative; }
+.ax-scope .ax-bell__dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border: 2px solid #fff; border-radius: 50%; background: var(--ax-accent); }
+.ax-menu-btn { display: none; }
+
+/* ---------------------------------------------------------------- Nội dung */
+.ax-scope .ax-content { width: 100%; max-width: 1440px; margin: 0 auto; padding: var(--s5) var(--s5) 96px; }
+.ax-scope .ax-intro { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s3) var(--s4); margin-bottom: var(--s5); }
+.ax-scope .ax-intro h1, .ax-scope .ax-intro h2 { margin: 0 0 var(--s1); font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.ax-scope .ax-intro p { margin: 0; color: var(--ax-muted); max-width: 760px; }
+.ax-scope .ax-intro__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ax-scope .ax-screen-tabs { margin: 0 0 var(--s5); }
+
+/* ---------------------------------------------------------------- Button */
+.ax-scope .ax-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); height: 38px; padding: 0 var(--s4); border: 1px solid transparent; border-radius: 10px;
+  font: inherit; font-size: 13.5px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer;
+  transition: background var(--ax-fast) var(--ax-ease), border-color var(--ax-fast) var(--ax-ease), color var(--ax-fast) var(--ax-ease), box-shadow var(--ax-fast) var(--ax-ease), transform var(--ax-fast) var(--ax-ease);
+}
+.ax-scope .ax-btn:active:not(:disabled) { transform: translateY(1px); }
+.ax-scope .ax-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ax-scope .ax-btn.is-loading { cursor: progress; }
+.ax-scope .ax-btn--sm { height: 32px; padding: 0 var(--s3); font-size: 13px; }
+.ax-scope .ax-btn--icon { width: 38px; padding: 0; }
+.ax-scope .ax-btn--primary { background: var(--ax-accent); color: #fff; box-shadow: 0 1px 2px rgba(184, 76, 13, .25); }
+.ax-scope .ax-btn--primary:hover:not(:disabled) { background: var(--ax-accent-hover); }
+.ax-scope .ax-btn--navy { background: var(--ax-navy); color: #fff; }
+.ax-scope .ax-btn--navy:hover:not(:disabled) { background: var(--ax-navy-2); }
+.ax-scope .ax-btn--secondary { border-color: var(--ax-border); background: #fff; color: var(--ax-text); }
+.ax-scope .ax-btn--secondary:hover:not(:disabled) { border-color: var(--ax-border-strong); background: var(--ax-surface-2); }
+.ax-scope .ax-btn--ghost { background: transparent; color: var(--ax-text-2); }
+.ax-scope .ax-btn--ghost:hover:not(:disabled) { background: rgba(17, 26, 51, .05); color: var(--ax-text); }
+.ax-scope .ax-btn--danger { background: var(--ax-danger); color: #fff; }
+.ax-scope .ax-btn--danger:hover:not(:disabled) { background: #93190f; }
+.ax-scope .ax-icon-btn { display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid transparent; border-radius: 10px; background: none; color: var(--ax-text-2); cursor: pointer; transition: background var(--ax-fast), color var(--ax-fast); }
+.ax-scope .ax-icon-btn:hover { background: rgba(17, 26, 51, .06); color: var(--ax-text); }
+.ax-scope .ax-side .ax-icon-btn { color: var(--ax-side-text); }
+.ax-scope .ax-side .ax-icon-btn:hover { background: var(--ax-side-hover); color: #fff; }
+
+/* ---------------------------------------------------------------- Tooltip, menu, dialog, sheet (render trong portal) */
+.ax-tooltip { z-index: 200; padding: 6px 10px; border-radius: 8px; background: #0c1838; color: #fff; font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; box-shadow: 0 6px 18px rgba(12, 24, 56, .28); animation: ax-pop var(--ax-fast) var(--ax-ease); }
+.ax-menu { z-index: 200; min-width: 200px; padding: 6px; border: 1px solid #e3e8f0; border-radius: 12px; background: #fff; font-family: var(--font-sans); font-size: 13.5px; box-shadow: 0 12px 32px -8px rgba(17, 26, 51, .2); animation: ax-pop var(--ax-fast) var(--ax-ease); }
+.ax-scope .ax-menu__label { padding: 6px 10px 4px; color: #6b7690; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.ax-scope .ax-menu__item { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 10px; border-radius: 8px; color: #111a33; outline: none; cursor: pointer; user-select: none; }
+.ax-scope .ax-menu__item[data-highlighted] { background: #fff1e7; color: #b84c0d; }
+.ax-scope .ax-menu__item[data-disabled] { opacity: .45; cursor: not-allowed; }
+.ax-scope .ax-menu__item.is-danger { color: #b42318; }
+.ax-scope .ax-menu__item.is-danger[data-highlighted] { background: #fdeceb; }
+.ax-scope .ax-menu__item.is-active { font-weight: 700; color: #b84c0d; }
+.ax-scope .ax-menu__sep { height: 1px; margin: 6px 0; background: #e3e8f0; }
+@keyframes ax-pop { from { opacity: 0; transform: translateY(-4px) scale(.98); } }
+.ax-overlay { position: fixed; inset: 0; z-index: 150; background: rgba(12, 24, 56, .42); backdrop-filter: blur(2px); }
+.ax-dialog { position: fixed; left: 50%; top: 14vh; z-index: 160; width: min(560px, calc(100vw - 32px)); max-height: 76vh; display: flex; flex-direction: column; margin-left: calc(min(560px, calc(100vw - 32px)) / -2); border: 1px solid #e3e8f0; border-radius: 16px; background: #fff; color: #111a33; font-family: var(--font-sans); font-size: 14px; box-shadow: 0 24px 60px -12px rgba(12, 24, 56, .35); }
+.ax-dialog--sm { width: min(440px, calc(100vw - 32px)); margin-left: calc(min(440px, calc(100vw - 32px)) / -2); }
+.ax-dialog--lg { width: min(720px, calc(100vw - 32px)); margin-left: calc(min(720px, calc(100vw - 32px)) / -2); }
+.ax-scope .ax-dialog__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 0 24px; }
+.ax-scope .ax-dialog__title { margin: 0; font-size: 17px; font-weight: 700; }
+.ax-scope .ax-dialog__desc { margin: 8px 24px 0; color: #3a4664; line-height: 1.6; }
+.ax-scope .ax-dialog__body { padding: 16px 24px; overflow: auto; }
+.ax-scope .ax-dialog__foot { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 24px 20px; }
+.ax-sheet { position: fixed; top: 0; bottom: 0; z-index: 160; width: min(300px, 86vw); display: flex; flex-direction: column; }
+.ax-sheet--left { left: 0; }
+.ax-sheet--right { right: 0; }
+.ax-sheet .ax-side { position: relative; height: 100%; width: 100%; }
+
+/* Tìm kiếm nhanh (Ctrl + K) */
+.ax-cmd { padding: 0 !important; }
+.ax-scope .ax-cmd__input { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #e3e8f0; }
+.ax-scope .ax-cmd__input input { flex: 1; height: 36px; border: 0; outline: none; background: none; font: inherit; font-size: 15px; }
+.ax-scope .ax-cmd__list { max-height: 50vh; margin: 0; padding: 8px; overflow: auto; list-style: none; }
+.ax-scope .ax-cmd__group { padding: 8px 10px 4px; color: #6b7690; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.ax-scope .ax-cmd__item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 0 10px; border: 0; border-radius: 8px; background: none; font: inherit; text-align: left; cursor: pointer; }
+.ax-scope .ax-cmd__item small { margin-left: auto; color: #6b7690; font-size: 12px; }
+.ax-scope .ax-cmd__item.is-on { background: #fff1e7; color: #b84c0d; }
+.ax-scope .ax-cmd__empty { padding: 24px 16px; color: #6b7690; text-align: center; }
+.ax-scope .ax-cmd__hint { display: flex; gap: 12px; padding: 10px 16px; border-top: 1px solid #e3e8f0; color: #6b7690; font-size: 12px; }
+
+/* ---------------------------------------------------------------- Tabs */
+.ax-scope .ax-tabs { display: inline-flex; flex-wrap: nowrap; gap: 2px; max-width: 100%; padding: 4px; border: 1px solid var(--ax-border); border-radius: 12px; background: var(--ax-surface-2); overflow-x: auto; scrollbar-width: none; }
+.ax-scope .ax-tabs::-webkit-scrollbar { display: none; }
+.ax-scope .ax-tab { position: relative; flex: none; height: 34px; padding: 0 14px; border: 0; border-radius: 9px; background: none; color: var(--ax-text-2); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: color var(--ax-fast); }
+.ax-scope .ax-tab:hover { color: var(--ax-text); }
+.ax-scope .ax-tab.is-on { color: var(--ax-text); }
+.ax-scope .ax-tab__pill { position: absolute; inset: 0; z-index: 0; border-radius: 9px; background: #fff; box-shadow: 0 1px 2px rgba(17, 26, 51, .08), 0 0 0 1px rgba(17, 26, 51, .04); }
+.ax-scope .ax-tab__label { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; }
+.ax-scope .ax-tab__label i { min-width: 20px; padding: 0 6px; border-radius: 999px; background: rgba(17, 26, 51, .06); font-size: 11.5px; font-style: normal; line-height: 18px; text-align: center; }
+.ax-scope .ax-tabs--sm .ax-tab { height: 30px; padding: 0 10px; font-size: 13px; }
+
+/* ---------------------------------------------------------------- Card, page header, form section */
+.ax-scope .ax-card { padding: var(--s5); border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: var(--ax-surface); box-shadow: var(--ax-shadow); }
+.ax-scope .ax-card--flush { padding: 0; overflow: hidden; }
+.ax-scope .ax-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s4); }
+.ax-scope .ax-card--flush .ax-card__head { margin: 0; padding: var(--s4) var(--s5); border-bottom: 1px solid var(--ax-border); }
+.ax-scope .ax-card__head h3 { margin: 0; font-size: 15px; font-weight: 700; }
+.ax-scope .ax-card__head p { margin: 2px 0 0; color: var(--ax-muted); font-size: 13px; }
+.ax-scope .ax-card__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ax-scope .ax-pagehead { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
+.ax-scope .ax-pagehead__text { flex: 1; min-width: 200px; }
+.ax-scope .ax-pagehead h2 { margin: 0; font-size: 19px; font-weight: 800; }
+.ax-scope .ax-pagehead p { margin: 2px 0 0; color: var(--ax-muted); font-size: 13px; }
+.ax-scope .ax-pagehead__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ax-scope .ax-formsec { border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: var(--ax-surface); }
+.ax-scope .ax-formsec + .ax-formsec { margin-top: var(--s3); }
+.ax-scope .ax-formsec__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); width: 100%; padding: var(--s4) var(--s5); border: 0; border-radius: var(--ax-radius); background: none; font: inherit; text-align: left; cursor: pointer; }
+.ax-scope .ax-formsec__head b { display: block; font-size: 14.5px; }
+.ax-scope .ax-formsec__head small { display: block; color: var(--ax-muted); font-size: 12.5px; }
+.ax-scope .ax-formsec__chev { display: grid; color: var(--ax-muted); }
+.ax-scope .ax-formsec__body { overflow: hidden; }
+.ax-scope .ax-formsec__inner { display: grid; gap: var(--s4); padding: 0 var(--s5) var(--s5); }
+.ax-scope .ax-formsec.is-advanced { background: var(--ax-surface-2); }
+
+/* ---------------------------------------------------------------- Badge, state */
+.ax-scope .ax-badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.ax-scope .ax-badge i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ax-scope .ax-badge--neutral { background: #eef1f6; color: #4a5573; }
+.ax-scope .ax-badge--success { background: var(--ax-success-bg); color: var(--ax-success); }
+.ax-scope .ax-badge--warning { background: var(--ax-warning-bg); color: var(--ax-warning); }
+.ax-scope .ax-badge--info { background: var(--ax-info-bg); color: var(--ax-info); }
+.ax-scope .ax-badge--danger { background: var(--ax-danger-bg); color: var(--ax-danger); }
+.ax-scope .ax-badge--accent { background: var(--ax-accent-soft); color: var(--ax-accent-text); }
+.ax-scope .ax-state { display: grid; justify-items: center; gap: var(--s2); padding: var(--s6) var(--s5); border: 1px dashed var(--ax-border-strong); border-radius: var(--ax-radius); background: var(--ax-surface); color: var(--ax-muted); text-align: center; }
+.ax-scope .ax-state b { color: var(--ax-text); font-size: 15px; }
+.ax-scope .ax-state p { margin: 0; max-width: 520px; }
+.ax-scope .ax-state__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--ax-surface-2); color: var(--ax-muted); }
+.ax-scope .ax-state--error { border-color: #f3c1bc; background: #fffafa; }
+.ax-scope .ax-state--error .ax-state__icon { background: var(--ax-danger-bg); color: var(--ax-danger); }
+.ax-scope .ax-state--loading { justify-items: stretch; border-style: solid; }
+.ax-scope .ax-skeleton { display: block; height: 14px; border-radius: 6px; background: linear-gradient(90deg, #edf0f5 0%, #f6f7fa 50%, #edf0f5 100%); background-size: 200% 100%; animation: ax-shimmer 1.2s linear infinite; }
+@keyframes ax-shimmer { to { background-position: -200% 0; } }
+
+/* ---------------------------------------------------------------- Filter bar + table */
+.ax-scope .ax-filterbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin-bottom: var(--s4); }
+.ax-scope .ax-search { flex: 1 1 260px; min-width: 0; }
+.ax-scope .ax-search input, .ax-scope .ax-filterbar select { width: 100%; height: 38px; padding: 0 var(--s3); border: 1px solid var(--ax-border); border-radius: 10px; background: #fff; color: var(--ax-text); font: inherit; font-size: 13.5px; }
+.ax-scope .ax-search input { padding-left: 36px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236b7690' stroke-width='2' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") 12px 50% no-repeat; }
+.ax-scope .ax-filterbar__filters { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ax-scope .ax-filterbar__filters select { width: auto; min-width: 150px; }
+.ax-scope .ax-filterbar__actions { display: flex; gap: var(--s2); margin-left: auto; }
+.ax-scope .ax-table-wrap { overflow-x: auto; border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: #fff; }
+.ax-scope .ax-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ax-scope .ax-table th { position: sticky; top: 0; padding: 10px var(--s4); border-bottom: 1px solid var(--ax-border); background: var(--ax-surface-2); color: var(--ax-muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; text-align: left; text-transform: none; white-space: nowrap; }
+.ax-scope .ax-table td { padding: 12px var(--s4); border-bottom: 1px solid var(--ax-border); vertical-align: middle; }
+.ax-scope .ax-table tr:last-child td { border-bottom: 0; }
+.ax-scope .ax-table tbody tr { transition: background var(--ax-fast); }
+.ax-scope .ax-table tbody tr:hover { background: #fafbfd; }
+.ax-scope .ax-table tr.is-clickable { cursor: pointer; }
+.ax-scope .ax-table .ax-col-actions { width: 52px; text-align: right; }
+.ax-scope .ax-cell-title { display: grid; gap: 2px; min-width: 0; }
+.ax-scope .ax-cell-title b { color: var(--ax-text); font-weight: 600; }
+.ax-scope .ax-cell-title small { overflow: hidden; color: var(--ax-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+.ax-scope .ax-pager { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-top: var(--s3); color: var(--ax-muted); font-size: 13px; }
+
+/* ---------------------------------------------------------------- Kéo thả */
+.ax-scope .ax-sortable { display: grid; gap: var(--s2); margin: 0; padding: 0; list-style: none; }
+.ax-scope .ax-sortable--grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.ax-scope .ax-sortable__item { position: relative; touch-action: manipulation; }
+.ax-scope .ax-sortable__item.is-dragging { z-index: 5; }
+.ax-scope .ax-sortable__item.is-dragging > * { box-shadow: var(--ax-shadow-lg), 0 0 0 2px var(--ax-accent) !important; }
+.ax-scope .ax-handle { display: inline-grid; place-items: center; flex: none; width: 30px; height: 36px; padding: 0; border: 0; border-radius: 8px; background: none; color: #9aa4ba; cursor: grab; touch-action: none; }
+.ax-scope .ax-handle:hover { background: var(--ax-surface-2); color: var(--ax-text); }
+.ax-scope .ax-handle:active { cursor: grabbing; }
+.ax-scope .ax-row { display: flex; align-items: center; gap: var(--s3); min-height: 52px; padding: 6px var(--s3) 6px 6px; border: 1px solid var(--ax-border); border-radius: 10px; background: #fff; transition: box-shadow var(--ax-fast), border-color var(--ax-fast); }
+.ax-scope .ax-row:hover { border-color: var(--ax-border-strong); }
+.ax-scope .ax-row__main { flex: 1; min-width: 0; display: grid; }
+.ax-scope .ax-row__main b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-row__main small { overflow: hidden; color: var(--ax-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-row__thumb { flex: none; width: 52px; height: 40px; object-fit: cover; border-radius: 8px; background: var(--ax-surface-2); }
+.ax-scope .ax-tile { position: relative; display: grid; gap: 6px; padding: 6px; border: 1px solid var(--ax-border); border-radius: 12px; background: #fff; }
+.ax-scope .ax-tile img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 8px; background: var(--ax-surface-2); }
+.ax-scope .ax-tile__bar { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.ax-scope .ax-tile__bar small { flex: 1; min-width: 0; overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-tile__first { position: absolute; top: 12px; left: 12px; }
+
+/* ---------------------------------------------------------------- Thông báo & thanh lưu */
+.ax-scope .ax-toasts { position: fixed; top: 76px; right: 20px; z-index: 120; display: grid; gap: 8px; width: min(400px, calc(100vw - 32px)); pointer-events: none; }
+.ax-scope .ax-toast { display: flex; align-items: flex-start; gap: 10px; padding: 12px 12px 12px 14px; border: 1px solid var(--ax-border); border-left: 4px solid var(--ax-success); border-radius: 12px; background: #fff; box-shadow: var(--ax-shadow-lg); pointer-events: auto; }
+.ax-scope .ax-toast.is-error { border-left-color: var(--ax-danger); }
+.ax-scope .ax-toast__icon { flex: none; margin-top: 1px; color: var(--ax-success); }
+.ax-scope .ax-toast.is-error .ax-toast__icon { color: var(--ax-danger); }
+.ax-scope .ax-toast p { flex: 1; margin: 0; font-size: 13.5px; }
+.ax-scope .ax-savebar { position: fixed; left: 50%; bottom: 20px; z-index: 60; display: flex; align-items: center; gap: var(--s3); padding: 8px 8px 8px 16px; border-radius: 14px; background: var(--ax-navy); color: #fff; box-shadow: 0 16px 40px -10px rgba(12, 24, 56, .5); font-weight: 600; }
+.ax.is-collapsed .ax-savebar { margin-left: calc(var(--ax-side-w-mini) / 2); }
+.ax:not(.is-collapsed) .ax-savebar { margin-left: calc(var(--ax-side-w) / 2); }
+.ax-scope .ax-savebar.is-draft { background: #fff; color: var(--ax-text); border: 1px solid var(--ax-border); }
+.ax-scope .ax-savebar__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ax-accent); }
+.ax-scope .ax-savebar.is-draft .ax-savebar__dot { background: var(--ax-info); }
+.ax-scope .ax-savebar .ax-btn--ghost { color: #dbe2f2; }
+.ax-scope .ax-savebar .ax-btn--ghost:hover:not(:disabled) { background: rgba(255, 255, 255, .1); color: #fff; }
+.ax-scope .ax-savebar.is-draft .ax-btn--ghost { color: var(--ax-text-2); }
+.ax-scope .ax-savebar.is-draft .ax-btn--ghost:hover:not(:disabled) { background: rgba(17, 26, 51, .05); color: var(--ax-text); }
+
+/* ==========================================================================
+   Chuẩn hóa thành phần cũ trong vùng nội dung (màn hình chưa viết lại vẫn thống nhất)
+   ========================================================================== */
+.ax .ax-content .admin-panel, .ax .ax-content .adm-card, .ax .ax-content .blk-panel {
+  padding: var(--s5); border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: var(--ax-surface); box-shadow: var(--ax-shadow);
+}
+.ax .ax-content .admin-panel h2, .ax .ax-content .blk-panel h2 { margin: 0 0 var(--s3); color: var(--ax-text); font-size: 16px; font-weight: 700; letter-spacing: 0; }
+.ax .ax-content .admin-two { gap: var(--s4); }
+.ax .ax-content .blk-stack { display: grid; gap: var(--s4); }
+.ax .ax-content label { color: var(--ax-text-2); font-size: 13px; font-weight: 600; }
+.ax .ax-content :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea) {
+  border: 1px solid var(--ax-border-strong); border-radius: 10px; background: #fff; color: var(--ax-text); font: inherit; font-size: 14px; font-weight: 400;
+  transition: border-color var(--ax-fast), box-shadow var(--ax-fast);
+}
+.ax .ax-content :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select) { min-height: 38px; padding: 0 var(--s3); }
+.ax .ax-content textarea { padding: 10px var(--s3); line-height: 1.6; }
+.ax .ax-content :is(input, select, textarea):hover:not(:disabled):not(:focus) { border-color: #b6c0d3; }
+.ax .ax-content :is(input, select, textarea):focus { outline: none; border-color: var(--ax-accent); box-shadow: var(--ax-focus); }
+.ax .ax-content :is(input, select, textarea):disabled { background: var(--ax-surface-2); color: var(--ax-muted); cursor: not-allowed; }
+.ax .ax-content [aria-invalid='true'] { border-color: var(--ax-danger) !important; box-shadow: 0 0 0 3px rgba(180, 35, 24, .15) !important; }
+.ax .ax-content .field-note { color: var(--ax-muted); font-size: 12.5px; font-weight: 400; }
+.ax .ax-content table:not(.ax-table) { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ax .ax-content table:not(.ax-table) th { padding: 10px var(--s3); border-bottom: 1px solid var(--ax-border); background: var(--ax-surface-2); color: var(--ax-muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; text-align: left; text-transform: none; }
+.ax .ax-content table:not(.ax-table) td { padding: 12px var(--s3); border-bottom: 1px solid var(--ax-border); }
+.ax .ax-content .table-wrap { overflow-x: auto; border: 1px solid var(--ax-border); border-radius: var(--ax-radius); }
+.ax .ax-content .admin-primary, .ax .ax-content .adm-btn-primary { min-height: 38px; padding: 0 var(--s4); border: 0; border-radius: 10px; background: var(--ax-accent); color: #fff; font-weight: 600; box-shadow: none; transition: background var(--ax-fast); }
+.ax .ax-content .admin-primary:hover:not(:disabled), .ax .ax-content .adm-btn-primary:hover:not(:disabled) { background: var(--ax-accent-hover); filter: none; }
+.ax .ax-content .admin-secondary, .ax .ax-content .adm-btn-ghost, .ax .ax-content .adm-btn { min-height: 38px; padding: 0 var(--s4); border: 1px solid var(--ax-border); border-radius: 10px; background: #fff; color: var(--ax-text); font-weight: 600; box-shadow: none; display: inline-flex; align-items: center; gap: var(--s2); transition: background var(--ax-fast), border-color var(--ax-fast); }
+.ax .ax-content .admin-secondary:hover:not(:disabled), .ax .ax-content .adm-btn-ghost:hover:not(:disabled) { border-color: var(--ax-border-strong); background: var(--ax-surface-2); }
+.ax .ax-content :is(.admin-primary, .admin-secondary, .adm-btn):disabled { opacity: .5; cursor: not-allowed; }
+.ax .ax-content button.danger { min-height: 34px; padding: 0 var(--s3); border: 1px solid #f3c1bc; border-radius: 10px; background: #fff; color: var(--ax-danger); font-weight: 600; }
+.ax .ax-content button.danger:hover { background: var(--ax-danger-bg); }
+.ax .ax-content .badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: #eef1f6; color: #4a5573; font-size: 12px; font-weight: 600; }
+.ax .ax-content .badge.green { background: var(--ax-success-bg); color: var(--ax-success); }
+.ax .ax-content .badge.muted { background: #f1f2f5; color: #8a93a8; }
+.ax .ax-content .adm-tabs button { border-radius: 9px; }
+.ax .ax-content .adm-tabs button.is-on, .ax .ax-content .adm-tabs button[aria-selected='true'] { border-color: var(--ax-accent); background: var(--ax-accent-soft); color: var(--ax-accent-text); box-shadow: none; }
+.ax .ax-content .adm-fieldset { padding: var(--s4); border: 1px solid var(--ax-border); border-radius: var(--ax-radius); }
+.ax .ax-content .adm-fieldset legend { padding: 0 6px; color: var(--ax-text); font-weight: 700; }
+.ax .ax-content .text-link { color: var(--ax-accent-text); font-weight: 600; }
+.ax .ax-content .adm-inline-msg { border-radius: 10px; }
+.ax .ax-content .adm-record-head { margin-bottom: 0; }
+.ax .ax-content .adm-record-head__title h2 { font-size: 19px; font-weight: 800; }
+.ax .ax-content .adm-screen-tabs { margin: 0; }
+.ax .ax-content .adm-record-save { border-radius: var(--ax-radius); }
+.ax .ax-content .lpe-tree, .ax .ax-content .lpe-props { border-radius: var(--ax-radius); }
+
+/* ---------------------------------------------------------------- Tổng quan */
+.ax-scope .ax-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s4); margin-bottom: var(--s4); }
+.ax-scope .ax-kpi { position: relative; display: grid; gap: var(--s1); padding: var(--s4) var(--s5); border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: #fff; color: inherit; text-decoration: none; box-shadow: var(--ax-shadow); transition: border-color var(--ax-fast), box-shadow var(--ax-fast), transform var(--ax-fast); }
+a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-shadow-lg); transform: translateY(-1px); }
+.ax-scope .ax-kpi__label { display: flex; align-items: center; gap: var(--s2); color: var(--ax-muted); font-size: 12.5px; font-weight: 600; }
+.ax-scope .ax-kpi__icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--ax-accent-soft); color: var(--ax-accent-text); }
+.ax-scope .ax-kpi__icon.is-navy { background: var(--ax-info-bg); color: var(--ax-info); }
+.ax-scope .ax-kpi__icon.is-green { background: var(--ax-success-bg); color: var(--ax-success); }
+.ax-scope .ax-kpi b { font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.ax-scope .ax-kpi small { color: var(--ax-muted); font-size: 12px; }
+.ax-scope .ax-grid-2 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--s4); }
+.ax-scope .ax-tasks { display: grid; gap: var(--s2); margin: 0; padding: 0; list-style: none; }
+.ax-scope .ax-tasks a { display: flex; align-items: center; gap: var(--s3); padding: 10px var(--s3); border: 1px solid var(--ax-border); border-radius: 10px; color: var(--ax-text); font-weight: 500; text-decoration: none; transition: background var(--ax-fast), border-color var(--ax-fast); }
+.ax-scope .ax-tasks a:hover { border-color: var(--ax-border-strong); background: var(--ax-surface-2); }
+.ax-scope .ax-tasks a > svg:last-child { margin-left: auto; color: var(--ax-muted); }
+.ax-scope .ax-shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); }
+.ax-scope .ax-shortcuts a { display: flex; align-items: center; gap: var(--s2); min-height: 44px; padding: 0 var(--s3); border: 1px solid var(--ax-border); border-radius: 10px; color: var(--ax-text); font-weight: 600; text-decoration: none; transition: background var(--ax-fast), border-color var(--ax-fast); }
+.ax-scope .ax-shortcuts a:hover { border-color: var(--ax-accent); background: var(--ax-accent-soft); color: var(--ax-accent-text); }
+
+/* ---------------------------------------------------------------- Responsive */
+@media (max-width: 1100px) {
+  .ax-scope .ax-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ax-scope .ax-grid-2 { grid-template-columns: minmax(0, 1fr); }
+  .ax-scope .ax-searchbtn { width: 38px; padding: 0; justify-content: center; }
+  .ax-scope .ax-searchbtn span, .ax-scope .ax-searchbtn kbd { display: none; }
+  .ax-scope .ax-account__meta { display: none; }
+}
+@media (max-width: 860px) {
+  .adm.ds-root.ax, .adm.ds-root.ax.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+  .ax > .ax-side { display: none; }
+  .ax-menu-btn { display: inline-grid; }
+  .ax-scope .ax-top { padding: 0 var(--s3); gap: var(--s2); }
+  .ax-scope .ax-content { padding: var(--s4) var(--s3) 120px; }
+  .ax .ax-savebar { left: 12px; right: 12px; bottom: 12px; margin-left: 0 !important; transform: none !important; flex-wrap: wrap; justify-content: flex-end; }
+  .ax-scope .ax-savebar > span:first-of-type { flex: 1 1 100%; }
+  .ax .ax-content .admin-panel, .ax .ax-content .ax-card { padding: var(--s4); }
+  .ax-scope .ax-save-state { display: none; }
+  .ax-scope .ax-top__save-label { display: none; }
+}
+@media (max-width: 720px) {
+  .ax-scope .ax-kpis { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s2); }
+  .ax-scope .ax-kpi { padding: var(--s3); }
+  .ax-scope .ax-kpi b { font-size: 22px; }
+  .ax-scope .ax-shortcuts { grid-template-columns: minmax(0, 1fr); }
+  .ax-scope .ax-intro h1, .ax-scope .ax-intro h2 { font-size: 19px; }
+  /* Bảng thành danh sách thẻ */
+  .ax-scope .ax-table-wrap { border: 0; background: none; overflow: visible; }
+  .ax-scope .ax-table, .ax-scope .ax-table tbody, .ax-scope .ax-table tr, .ax-scope .ax-table td { display: block; width: 100%; }
+  .ax-scope .ax-table thead { display: none; }
+  .ax-scope .ax-table tr { position: relative; margin-bottom: var(--s2); padding: var(--s3) 48px var(--s3) var(--s3); border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: #fff; }
+  .ax-scope .ax-table td { display: flex; justify-content: space-between; gap: var(--s3); padding: 4px 0; border: 0; text-align: left !important; }
+  .ax-scope .ax-table td::before { content: attr(data-label); color: var(--ax-muted); font-size: 12px; font-weight: 600; }
+  .ax-scope .ax-table td.is-primary { display: block; padding-bottom: var(--s2); }
+  .ax-scope .ax-table td.is-primary::before, .ax-scope .ax-table td.ax-col-actions::before { content: none; }
+  .ax-scope .ax-table td.ax-col-actions { position: absolute; top: 8px; right: 6px; width: auto; padding: 0; }
+  .ax-scope .ax-hide-m { display: none !important; }
+  .ax-scope .ax-filterbar__filters { width: 100%; }
+  .ax-scope .ax-filterbar__filters select { flex: 1 1 140px; }
+  .ax-scope .ax-btn, .ax-scope .ax-icon-btn { min-height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ax *, .ax *::before, .ax *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .ax-scope .ax-skeleton { animation: none; }
+}
+.ax-scope .ax-pager__btns { display: inline-flex; align-items: center; gap: var(--s2); }
+
+/* Sửa sau kiểm tra giao diện */
+.ax-scope .ax-icon-btn.ax-menu-btn { display: none; }
+.ax-scope .ax-top__save { display: flex; align-items: center; gap: var(--s2); }
+.ax-scope .ax-cell-title b { font-size: 14px; line-height: 1.45; text-transform: none; letter-spacing: 0; }
+.ax-scope .ax-nowrap { white-space: nowrap; }
+@media (max-width: 860px) { .ax-scope .ax-icon-btn.ax-menu-btn { display: inline-grid; } }
+@media (max-width: 480px) {
+  .ax-scope .ax-crumbs, .ax-scope .ax-top__save, .ax-scope .ax-top__create { display: none; }
+  .ax-scope .ax-top h1 { font-size: 16px; }
+  .ax-scope .ax-pagehead__actions { width: 100%; }
+  .ax-scope .ax-pagehead__actions > * { flex: 1; }
+}
+
+/* Kéo thả: menu, ảnh, cây khối */
+.ax-scope .ax-menucols { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); align-items: start; }
+.ax-scope .ax-menucol { display: grid; gap: var(--s3); padding: var(--s3); border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: var(--ax-surface-2); }
+.ax-scope .ax-menucol__head { display: flex; align-items: center; gap: var(--s2); }
+.ax-scope .ax-menucol__head input { flex: 1; min-width: 0; font-weight: 700; }
+.ax-scope .ax-row--stack { display: grid; gap: 0; padding: 6px var(--s2) 6px 6px; }
+.ax-scope .ax-row__line { display: flex; align-items: center; gap: var(--s2); min-width: 0; }
+.ax-scope .ax-row__more { overflow: hidden; }
+.ax-scope .ax-row__more > .ax-grid-form { padding: var(--s3) var(--s2) var(--s2) 38px; }
+.ax-scope .ax-grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--s3); }
+.ax-scope .ax-grid-form label { display: grid; gap: 6px; }
+.ax-scope .ax-row__thumb--round { width: 40px; height: 40px; border-radius: 50%; }
+.ax-scope .ax-star { color: var(--ax-accent); vertical-align: -2px; }
+.ax-scope .lpe-list { gap: 6px; }
+.ax-scope .lpe-node { display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: center; gap: 2px 4px; padding: 6px; border: 1px solid var(--ax-border); border-radius: 10px; background: #fff; transition: border-color var(--ax-fast), background var(--ax-fast); }
+.ax-scope .lpe-node:hover { border-color: var(--ax-border-strong); }
+.ax-scope .lpe-node.is-on { border-color: var(--ax-accent); background: var(--ax-accent-soft); }
+.ax-scope .lpe-node.is-hidden { opacity: .6; }
+.ax-scope .lpe-node .lpe-tools { grid-column: 2; }
+/* globals.css cũ ẩn mọi <nav> ở màn ≤ 700px: giữ nav của sidebar mới luôn hiện */
+.ax-scope .ax-side__nav { display: block; position: static; background: none; box-shadow: none; }
+
+/* Hộp thoại & ngăn kéo: chuyển động CSS theo data-state (Radix chờ animationend trước khi gỡ khỏi DOM) */
+.ax-overlay[data-state='open'] { animation: ax-fade-in 200ms cubic-bezier(.2, .8, .2, 1); }
+.ax-overlay[data-state='closed'] { animation: ax-fade-out 150ms ease-in forwards; }
+.ax-dialog[data-state='open'] { animation: ax-dialog-in 200ms cubic-bezier(.2, .8, .2, 1); }
+.ax-dialog[data-state='closed'] { animation: ax-dialog-out 150ms ease-in forwards; }
+.ax-sheet--left[data-state='open'] { animation: ax-slide-in-left 250ms cubic-bezier(.2, .8, .2, 1); }
+.ax-sheet--left[data-state='closed'] { animation: ax-slide-out-left 200ms ease-in forwards; }
+.ax-sheet--right[data-state='open'] { animation: ax-slide-in-right 250ms cubic-bezier(.2, .8, .2, 1); }
+.ax-sheet--right[data-state='closed'] { animation: ax-slide-out-right 200ms ease-in forwards; }
+@keyframes ax-fade-in { from { opacity: 0; } }
+@keyframes ax-fade-out { to { opacity: 0; } }
+@keyframes ax-dialog-in { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+@keyframes ax-dialog-out { to { opacity: 0; transform: translateY(8px) scale(.98); } }
+@keyframes ax-slide-in-left { from { transform: translateX(-100%); } }
+@keyframes ax-slide-out-left { to { transform: translateX(-100%); } }
+@keyframes ax-slide-in-right { from { transform: translateX(100%); } }
+@keyframes ax-slide-out-right { to { transform: translateX(100%); } }
+/* Giảm chuyển động: TẮT hẳn hiệu ứng (không rút ngắn) để Radix gỡ phần tử ngay khi đóng.
+   Hiệu ứng quá ngắn kết thúc trước khi Radix kịp nghe animationend → hộp thoại/menu kẹt lại. */
+@media (prefers-reduced-motion: reduce) {
+  .ax-overlay, .ax-dialog, .ax-sheet, .ax-menu, .ax-tooltip { animation: none !important; }
+}
+.ax-scope .ax-tile { margin: 0; min-width: 0; }
+.ax-scope .ax-sortable--grid > .ax-sortable__item { min-width: 0; }

@@ -7,6 +7,7 @@ import type { SiteData } from '@/lib/content';
 import { csrfToken, timeAgo } from '../adminData';
 import { useSite } from '../SiteStore';
 import { Empty, ErrorBox, Loading, SearchBar, matches, useAdminUser, usePaged } from './ui';
+import { ask } from './kit';
 
 const fmt = (ms: number) => new Date(ms).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'short' });
 
@@ -54,7 +55,7 @@ export function UsersScreen() {
     setBusy(false);
   }
   async function remove(u: User) {
-    if (!confirm(`Xóa tài khoản ${u.username}? Người này sẽ bị đăng xuất ngay.`)) return;
+    if (!(await ask(`Xóa tài khoản ${u.username}?`, { body: 'Người này sẽ bị đăng xuất ngay.', confirmLabel: 'Xóa tài khoản' }))) return;
     setBusy(true); setMsg('');
     try { await call(`/api/admin/users/?id=${encodeURIComponent(u.id)}`, { method: 'DELETE' }); setMsg('Đã xóa tài khoản.'); load(); }
     catch (err) { setMsg((err as Error).message); }
@@ -163,9 +164,7 @@ export function RevisionsScreen({ onRestored }: { onRestored: (message: string) 
   }
   async function restore(r: Revision, publish: boolean) {
     const when = fmt(r.createdAt);
-    if (!confirm(publish
-      ? `Khôi phục phiên bản ${when} và XUẤT BẢN ngay lên website?`
-      : `Đưa phiên bản ${when} vào bản nháp? Website chưa thay đổi cho tới khi bạn bấm Xuất bản.`)) return;
+    if (!(await ask(publish ? `Khôi phục phiên bản ${when} và xuất bản ngay?` : `Đưa phiên bản ${when} vào bản nháp?`, { body: publish ? 'Website sẽ hiển thị nội dung của phiên bản này ngay lập tức.' : 'Website chưa thay đổi cho tới khi bạn bấm Xuất bản.', confirmLabel: publish ? 'Khôi phục & xuất bản' : 'Khôi phục vào nháp', tone: publish ? 'danger' : 'primary' }))) return;
     setBusy(r.id);
     try {
       await call('/api/admin/revisions/', { method: 'POST', body: JSON.stringify({ id: r.id, revision, publish }) });

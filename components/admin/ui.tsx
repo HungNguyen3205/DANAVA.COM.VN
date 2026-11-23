@@ -3,6 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { can, type Permission, type Role } from '@/lib/permissions';
 import type { AdminTab } from '../adminNav';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button, EmptyState, ErrorState, FilterBar, LoadingState, TabBar } from './kit';
 
 export type AdminUser = { id: string; name: string; role: Role };
 
@@ -37,20 +39,12 @@ export function useQueryParam(name: string, fallback = ''): [string, (value: str
   return [value, update];
 }
 
-/** Thanh tab trong một màn hình. Trả về tab đang chọn (mặc định tab đầu). */
+/** Thanh tab trong một màn hình (TabBar có chỉ báo trượt). Trả về tab đang chọn (mặc định tab đầu). */
 export function useTabs(tabs: AdminTab[]) {
   const first = tabs[0]?.id || '';
   const [tab, setTab] = useQueryParam('tab', first);
   const current = tabs.some(t => t.id === tab) ? tab : first;
-  const bar = tabs.length > 1 ? (
-    <div className="adm-tabs adm-screen-tabs" role="tablist" aria-label="Các phần trong màn hình">
-      {tabs.map(t => (
-        <button key={t.id} type="button" role="tab" aria-selected={current === t.id} className={current === t.id ? 'is-on' : ''} onClick={() => setTab(t.id)}>
-          {t.label}
-        </button>
-      ))}
-    </div>
-  ) : null;
+  const bar = tabs.length > 1 ? <TabBar tabs={tabs} value={current} onChange={id => setTab(id)} label="Các phần trong màn hình" /> : null;
   return { tab: current, setTab, bar };
 }
 
@@ -70,37 +64,34 @@ export function usePaged<T>(items: T[], size = 25) {
   const current = Math.min(page, pages);
   useEffect(() => { if (page > pages) setPage(pages); }, [page, pages]);
   const slice = items.slice((current - 1) * size, current * size);
-  const pager = pages > 1 ? (
-    <nav className="adm-pager" aria-label="Phân trang">
-      <button type="button" disabled={current === 1} onClick={() => setPage(current - 1)}>← Trước</button>
-      <span>Trang {current}/{pages} · {items.length} mục</span>
-      <button type="button" disabled={current === pages} onClick={() => setPage(current + 1)}>Sau →</button>
+  const from = (current - 1) * size + 1, to = Math.min(items.length, current * size);
+  const pager = items.length > 0 ? (
+    <nav className="ax-pager" aria-label="Phân trang">
+      <span>{pages > 1 ? `${from}–${to} trên ${items.length} mục` : `${items.length} mục`}</span>
+      {pages > 1 && (
+        <span className="ax-pager__btns">
+          <Button size="sm" variant="secondary" disabled={current === 1} onClick={() => setPage(current - 1)} aria-label="Trang trước"><ChevronLeft size={15} /></Button>
+          <span aria-live="polite">Trang {current}/{pages}</span>
+          <Button size="sm" variant="secondary" disabled={current === pages} onClick={() => setPage(current + 1)} aria-label="Trang sau"><ChevronRight size={15} /></Button>
+        </span>
+      )}
     </nav>
-  ) : items.length > 0 ? <p className="adm-pager adm-pager--single">{items.length} mục</p> : null;
+  ) : null;
   return { slice, pager, reset: () => setPage(1) };
 }
 
-export function SearchBar({ value, onChange, placeholder, children }: { value: string; onChange: (v: string) => void; placeholder: string; children?: ReactNode }) {
-  return (
-    <div className="adm-listbar">
-      <input type="search" className="adm-listbar__search" placeholder={placeholder} aria-label={placeholder} value={value} onChange={e => onChange(e.target.value)} />
-      {children}
-    </div>
-  );
+/** Ô tìm kiếm + bộ lọc (FilterBar). */
+export function SearchBar({ value, onChange, placeholder, children, actions }: { value: string; onChange: (v: string) => void; placeholder: string; children?: ReactNode; actions?: ReactNode }) {
+  return <FilterBar search={value} onSearch={onChange} placeholder={placeholder} actions={actions}>{children}</FilterBar>;
 }
 
-/** Trạng thái rỗng / lỗi / đang tải thống nhất. */
-export function Empty({ children, action }: { children: ReactNode; action?: ReactNode }) {
-  return <div className="adm-empty adm-state">{children}{action && <div className="adm-state__action">{action}</div>}</div>;
+/** Trạng thái rỗng / lỗi / đang tải thống nhất (EmptyState, ErrorState, LoadingState). */
+export function Empty({ children, action, title }: { children: ReactNode; action?: ReactNode; title?: string }) {
+  return <EmptyState title={title || 'Không có dữ liệu'} action={action}>{children}</EmptyState>;
 }
 export function Loading({ label = 'Đang tải…' }: { label?: string }) {
-  return <div className="adm-state adm-state--loading" role="status">{label}</div>;
+  return <LoadingState label={label} />;
 }
 export function ErrorBox({ children, retry }: { children: ReactNode; retry?: () => void }) {
-  return (
-    <div className="adm-state adm-state--error" role="alert">
-      {children}
-      {retry && <button type="button" className="admin-secondary" onClick={retry}>Thử lại</button>}
-    </div>
-  );
+  return <ErrorState retry={retry}>{children}</ErrorState>;
 }

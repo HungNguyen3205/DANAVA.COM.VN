@@ -1,51 +1,85 @@
 'use client';
-/** Tổng quan → Việc cần xử lý: tổng hợp từ dữ liệu thật, mỗi việc dẫn tới đúng chỗ xử lý. */
+/** Tổng quan: chỉ số chính (dữ liệu thật từ BE), việc cần xử lý, lối tắt. Mỗi mục dẫn tới đúng chỗ xử lý. */
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { ArrowRight, ChartColumn, FileText, Inbox, Package, Plus, Rocket, Users } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { can } from '@/lib/permissions';
 import type { AdminLead } from '../adminData';
 import type { DraftInfo } from '../SiteStore';
+import { Card, EmptyState } from './kit';
 import { useAdminUser } from './ui';
+
+function useVisitors(enabled: boolean) {
+  const [v, setV] = useState<{ visitors: number; pageviews: number } | null>(null);
+  useEffect(() => {
+    if (!enabled) return;
+    let alive = true;
+    fetch('/api/admin/analytics/?days=30', { cache: 'no-store' }).then(r => (r.ok ? r.json() : null))
+      .then(d => alive && d && setV({ visitors: Number(d.totals?.visitors || 0), pageviews: Number(d.totals?.pageviews || 0) })).catch(() => {});
+    return () => { alive = false; };
+  }, [enabled]);
+  return v;
+}
 
 export function OverviewTasks({ data, leads, draft }: { data: SiteData; leads: AdminLead[]; draft: DraftInfo }) {
   const user = useAdminUser();
-  const tasks: { text: string; href: string; tone?: string }[] = [];
-  if (can(user.role, 'content.read')) {
-    if (draft.hasDraft) tasks.push({ text: 'Có bản nháp chưa xuất bản — kiểm tra rồi bấm Xuất bản hoặc Bỏ nháp.', href: '/admin/nhat-ky/', tone: 'warn' });
-    const hiddenProducts = data.services.filter(s => s.published === false);
-    if (hiddenProducts.length) tasks.push({ text: `${hiddenProducts.length} sản phẩm đang ẩn (${hiddenProducts.slice(0, 3).map(s => s.title).join(', ')}).`, href: '/admin/san-pham/' });
-    const draftLandings = (data.landings || []).filter(l => l.status === 'draft');
-    if (draftLandings.length) tasks.push({ text: `${draftLandings.length} landing page ở trạng thái Nháp.`, href: '/admin/landing-page/' });
-    const draftPosts = data.posts.filter(p => !p.published && !p.archived);
-    if (draftPosts.length) tasks.push({ text: `${draftPosts.length} bài viết nháp chưa công khai.`, href: '/admin/bai-viet/' });
+  const content = can(user.role, 'content.read');
+  const sales = can(user.role, 'leads.read');
+  const visitors = useVisitors(can(user.role, 'reports.read'));
+  const fresh = leads.filter(l => (l.status || 'new') === 'new').length;
+  const month = leads.filter(l => l.created_at >= Date.now() - 30 * 86400_000).length;
+
+  const kpis = [
+    sales && { label: 'Yêu cầu mới', value: fresh, note: `${month} yêu cầu trong 30 ngày`, href: '/admin/khach-hang/', icon: Inbox, tone: '' },
+    can(user.role, 'reports.read') && { label: 'Người xem 30 ngày', value: visitors ? visitors.visitors : '—', note: visitors ? `${visitors.pageviews} lượt xem trang` : 'Đang tải…', href: '/admin/thong-ke/', icon: ChartColumn, tone: 'is-navy' },
+    content && { label: 'Bài viết công khai', value: data.posts.filter(p => p.published && !p.archived).length, note: `${data.posts.filter(p => !p.published && !p.archived).length} bài nháp`, href: '/admin/bai-viet/', icon: FileText, tone: 'is-green' },
+    content && { label: 'Sản phẩm & dịch vụ', value: data.services.filter(s => s.published !== false).length, note: `${(data.landings || []).filter(l => l.status === 'published').length} landing page công khai`, href: '/admin/san-pham/', icon: Package, tone: '' }
+  ].filter(Boolean) as { label: string; value: number | string; note: string; href: string; icon: typeof Inbox; tone: string }[];
+
+  const tasks: { text: string; href: string }[] = [];
+  if (sales && fresh) tasks.push({ text: `${fresh} yêu cầu tư vấn mới chưa phân công`, href: '/admin/khach-hang/' });
+  if (content) {
+    if (draft.hasDraft) tasks.push({ text: 'Bản nháp chưa xuất bản — kiểm tra rồi Xuất bản hoặc Bỏ nháp', href: '/admin/nhat-ky/' });
+    const hidden = data.services.filter(s => s.published === false).length;
+    if (hidden) tasks.push({ text: `${hidden} sản phẩm đang ẩn`, href: '/admin/san-pham/' });
+    const lp = (data.landings || []).filter(l => l.status === 'draft').length;
+    if (lp) tasks.push({ text: `${lp} landing page ở trạng thái Nháp`, href: '/admin/landing-page/' });
     const noSeo = data.posts.filter(p => p.published && !p.archived && !p.seoDescription && !p.excerpt).length + data.services.filter(s => s.published !== false && !s.seoDescription).length;
-    if (noSeo) tasks.push({ text: `${noSeo} trang công khai chưa có mô tả SEO.`, href: '/admin/seo/?tab=kiem-tra' });
-  }
-  if (can(user.role, 'leads.read')) {
-    const fresh = leads.filter(l => (l.status || 'new') === 'new').length;
-    if (fresh) tasks.unshift({ text: `${fresh} yêu cầu tư vấn mới chưa phân công.`, href: '/admin/khach-hang/', tone: 'hot' });
+    if (noSeo) tasks.push({ text: `${noSeo} trang công khai chưa có mô tả SEO`, href: '/admin/seo/?tab=kiem-tra' });
   }
   const shortcuts = [
-    can(user.role, 'content.draft') && { label: 'Viết bài', href: '/admin/bai-viet/?new=1' },
-    can(user.role, 'content.draft') && { label: 'Thêm sản phẩm', href: '/admin/san-pham/?new=1' },
-    can(user.role, 'content.draft') && { label: 'Tạo landing page', href: '/admin/landing-page/?new=1' },
-    can(user.role, 'content.read') && { label: 'Sửa trang chủ', href: '/admin/trang/?page=trang-chu' },
-    can(user.role, 'leads.read') && { label: 'Danh bạ khách hàng', href: '/admin/danh-ba/' },
-    can(user.role, 'reports.read') && { label: 'Hiệu quả nội dung', href: '/admin/hieu-qua/' }
-  ].filter(Boolean) as { label: string; href: string }[];
+    can(user.role, 'content.draft') && { label: 'Viết bài', href: '/admin/bai-viet/?new=1', icon: Plus },
+    can(user.role, 'content.draft') && { label: 'Thêm sản phẩm', href: '/admin/san-pham/?new=1', icon: Package },
+    can(user.role, 'content.draft') && { label: 'Tạo landing page', href: '/admin/landing-page/?new=1', icon: Rocket },
+    content && { label: 'Sửa trang chủ', href: '/admin/trang/?page=trang-chu', icon: FileText },
+    sales && { label: 'Danh bạ khách hàng', href: '/admin/danh-ba/', icon: Users },
+    can(user.role, 'reports.read') && { label: 'Hiệu quả nội dung', href: '/admin/hieu-qua/', icon: ChartColumn }
+  ].filter(Boolean) as { label: string; href: string; icon: typeof Plus }[];
 
   return (
-    <div className="admin-two adm-overview-tasks">
-      <section className="admin-panel">
-        <h2>Việc cần xử lý</h2>
-        {tasks.length ? (
-          <ul className="adm-tasks">{tasks.map(t => <li key={t.text} className={t.tone ? `is-${t.tone}` : ''}><Link href={t.href}>{t.text}</Link></li>)}</ul>
-        ) : <p className="adm-ok">Không có việc tồn đọng.</p>}
-      </section>
-      <section className="admin-panel">
-        <h2>Lối tắt</h2>
-        <div className="adm-shortcuts">{shortcuts.map(s => <Link key={s.href} className="adm-btn adm-btn-ghost" href={s.href}>{s.label}</Link>)}</div>
-      </section>
-    </div>
+    <>
+      {kpis.length > 0 && (
+        <div className="ax-kpis">
+          {kpis.map(k => (
+            <Link key={k.label} href={k.href} className="ax-kpi">
+              <span className="ax-kpi__label"><span className={`ax-kpi__icon ${k.tone}`}><k.icon size={16} /></span>{k.label}</span>
+              <b>{k.value}</b>
+              <small>{k.note}</small>
+            </Link>
+          ))}
+        </div>
+      )}
+      <div className="ax-grid-2" style={{ marginBottom: 16 }}>
+        <Card title="Việc cần xử lý" description="Tổng hợp từ dữ liệu hiện tại">
+          {tasks.length
+            ? <ul className="ax-tasks">{tasks.map(t => <li key={t.text}><Link href={t.href}><span>{t.text}</span><ArrowRight size={15} /></Link></li>)}</ul>
+            : <EmptyState title="Không có việc tồn đọng">Mọi yêu cầu và nội dung đã được xử lý.</EmptyState>}
+        </Card>
+        <Card title="Lối tắt">
+          <div className="ax-shortcuts">{shortcuts.map(s => <Link key={s.href} href={s.href}><s.icon size={16} />{s.label}</Link>)}</div>
+        </Card>
+      </div>
+    </>
   );
 }

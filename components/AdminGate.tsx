@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, type FormEvent } from 'react';
 import { ArrowRight, Eye, EyeOff, Loader2, Moon, Sun } from 'lucide-react';
 import { useSite } from './SiteStore';
 import { AdminSessionProvider, type AdminUser } from './admin/ui';
+import { AdminProviders } from './admin/kit';
 import { isRole } from '@/lib/permissions';
 
 const OWNER: AdminUser = { id: 'owner', name: 'Chủ website', role: 'owner' };
@@ -90,7 +91,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     setBusy(false);
   }
 
-  if (state === 'ready') return <AdminSessionProvider user={user}>{children}</AdminSessionProvider>;
+  if (state === 'ready') return <AdminSessionProvider user={user}><AdminProviders>{children}</AdminProviders></AdminSessionProvider>;
 
   const brand = (
     <>

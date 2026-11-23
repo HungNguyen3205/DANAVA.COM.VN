@@ -120,6 +120,8 @@ export type Service = {
   signupUrl?: string;
   /** Ảnh khi chia sẻ lên mạng xã hội (trống = ảnh đại diện) */
   ogImage?: string;
+  /** Thứ tự hiển thị do quản trị viên kéo sắp xếp (trống = thứ tự mặc định) */
+  order?: number;
 };
 
 /** Trang dịch vụ con: /giai-phap/{dịch vụ cha}/{slug}/ */
@@ -376,6 +378,7 @@ function validService(s: unknown) {
     && (s.type === undefined || PRODUCT_TYPE_IDS.includes(s.type as string)) && optStr(s.groupId, 60)
     && optBool(s.published) && optBool(s.featured) && (s.features === undefined || featureList(s.features))
     && (s.packages === undefined || (Array.isArray(s.packages) && s.packages.length <= 8 && s.packages.every(validPackage)))
+    && (s.order === undefined || (typeof s.order === 'number' && Number.isInteger(s.order) && s.order >= 0 && s.order < 1000))
     && (s.template === undefined || s.template === 'chuan') && optImage(s.cover) && optImage(s.ogImage) && optLink(s.demoUrl) && optLink(s.signupUrl);
 }
 

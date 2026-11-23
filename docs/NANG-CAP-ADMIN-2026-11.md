@@ -119,3 +119,34 @@ Giới hạn hiện tại:
 - **Biểu mẫu**: là báo cáo các form có sẵn trên website; chưa có trình tạo form mới.
 - Gói & giá chỉ hiện trên trang sản phẩm chuẩn và landing page; 4 trang sản phẩm thiết kế riêng (Studio, Website, Marketing, Sự kiện) giữ giao diện cũ.
 - Nghiệp vụ mới (đặt phòng, thanh toán, kho hàng) cần module riêng — xem điểm mở rộng ở đầu `lib/product-types.ts`.
+
+## 8. Giao diện admin (đợt làm đẹp 11/2026)
+
+### Thư viện
+- `radix-ui` — primitives mà shadcn/ui dựng lên (Dialog, DropdownMenu, Tooltip). Component viết theo cấu trúc shadcn trong `components/admin/kit.tsx`, tô bằng token DANAVA.
+- `motion` — chuyển động phối hợp trạng thái: mở/đóng nhóm menu, tab có chỉ báo trượt, thanh lưu, thông báo, phần thu gọn.
+- `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` — kéo sắp xếp (chuột, cảm ứng giữ 180ms, bàn phím: Space nhấc, mũi tên di chuyển, Space thả, Esc hủy), có thông báo cho trình đọc màn hình.
+- **Không thêm Tailwind**: shadcn/ui là mã chép vào dự án dựa trên Tailwind + CSS reset; website công khai dùng chung `globals.css`, thêm reset có rủi ro làm lệch giao diện công khai. Thay vào đó các component shadcn được viết lại bằng CSS có phạm vi (`app/admin/admin-ui.css`, lớp `.ax-scope`), chỉ nạp trong `app/admin/layout.tsx`. Đã kiểm tra: trang công khai không nạp CSS admin, bundle trang chủ không có radix/motion/dnd-kit.
+- GSAP chỉ dùng ở website công khai (Hero, HomeMotion); admin không dùng GSAP → không có phần tử nào bị hai thư viện cùng điều khiển.
+
+### Hệ thống thiết kế (`app/admin/admin-ui.css`)
+- Token: sidebar navy sâu `#0c1838`, nền nội dung `#f4f6fa`, màu nhấn cam DANAVA `#f26b1d` dùng tiết chế (nút chính, mục đang chọn, focus), trạng thái success/warning/info/danger.
+- Khoảng cách 4/8/12/16/24/32px; card bo 12px, viền mảnh, bóng nhẹ; một hệ chữ Be Vietnam Pro (dự án chưa có Manrope); icon Lucide.
+- Trạng thái hover, focus (vòng cam 3px), active, disabled, loading (nút có spinner, skeleton), error (viền đỏ cho ô `aria-invalid`).
+- Các lớp cũ trong nội dung (`admin-panel`, input, bảng, nút) được chuẩn hóa theo token → màn hình chưa viết lại vẫn thống nhất.
+
+### Khung & component
+- `AdminShell`: sidebar 256px / thu gọn 72px (lưu theo trình duyệt), nhóm hiện menu bay ra + tooltip khi thu gọn; drawer trên điện thoại (đóng khi chọn trang); topbar có breadcrumb, Tìm nhanh (Ctrl + K, điều khiển bằng phím), Tạo mới, Lưu nháp / Xuất bản theo ngữ cảnh, thông báo, tài khoản.
+- `kit.tsx`: Button, Tip, ActionMenu, Modal, Sheet, ConfirmDialog (`useConfirm`, `ask`) thay mọi `window.confirm/alert`, TabBar, PageHeader, Card, FormSection (phần nâng cao thu gọn), StatusBadge, EmptyState / LoadingState / ErrorState, FilterBar, DataTable (thành thẻ trên màn < 720px), SortableList, useListIds.
+- Màn chuẩn hóa: Tổng quan (chỉ số thật), Bài viết, Sản phẩm, Landing page, hồ sơ sản phẩm/landing/trang; Menu điều hướng, Ảnh doanh nghiệp, Đội ngũ, cây khối landing có kéo thả.
+- Hộp thoại xóa: focus mặc định vào **Hủy**; Esc luôn đóng; focus quay về nút đã mở.
+- Giảm chuyển động: Motion tự tắt (`MotionConfig reducedMotion="user"`), hiệu ứng CSS của Dialog/Menu/Tooltip **tắt hẳn** (hiệu ứng quá ngắn làm Radix kẹt phần tử khi đóng).
+
+### Thứ tự lưu qua BE
+- Kéo sắp xếp thay đổi bản đang soạn; lưu bằng Lưu nháp / Xuất bản như mọi nội dung (có kiểm tra xung đột). Lưu lỗi: thông báo lỗi, thay đổi vẫn giữ để thử lại hoặc Hoàn tác.
+- Sản phẩm: trường `order` (website hiển thị theo thứ tự đã kéo; chưa kéo thì giữ thứ tự cũ).
+- Menu, ảnh: thứ tự mảng trong khối; ID ổn định giữ phía giao diện (`useListIds`) để không thêm khóa lạ vào dữ liệu khối — bản build cũ vẫn đọc được.
+
+### Đánh giá Puck và React Grid Layout
+- **Puck** (trình dựng trang kéo thả): mô hình dữ liệu của Puck (`{ content: [{ type, props }] }`) gần với khối landing hiện có, nhưng trình chỉnh sửa hiện tại đã đủ chọn-để-sửa, thuộc tính, kéo thả, ẩn/nhân bản, xem trước 3 thiết bị, và dùng chung renderer với trang công khai. Chuyển sang Puck đáng cân nhắc khi cần: khối lồng nhau (cột trong cột), kéo thả trực tiếp trên khung xem trước, hoặc nhiều loại trang dựng bằng khối. Cách tích hợp đề xuất: map `BLOCKS` → `config.components` của Puck, giữ `validPageBlock()` làm bước kiểm tra ở máy chủ. **Chưa cài** trong đợt này.
+- **React Grid Layout** (dashboard kéo/giãn ô): Tổng quan hiện có 4 chỉ số + 2 khối, chưa có nhu cầu tùy biến bố cục theo người dùng. Cài khi có yêu cầu thực tế (lưu bố cục theo tài khoản: thêm cột `dashboard_layout` cho bảng `users` qua migration mới). **Chưa cài**.

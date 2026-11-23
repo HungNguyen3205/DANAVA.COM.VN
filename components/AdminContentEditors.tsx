@@ -6,6 +6,7 @@
  */
 import { useState } from 'react';
 import MediaPicker from './MediaPicker';
+import { ask } from './admin/kit';
 import { CLIENT_SEEDS } from '@/lib/content-defaults';
 import type { Client, Faq, Feature, Service, ShowcaseItem, SiteData, SubService, Testimonial, Topic } from '@/lib/content';
 
@@ -186,7 +187,7 @@ export function SubServicesEditor({ draft, setDraft, parent }: { draft: SiteData
           <Toggle label={ready(sub) ? 'Xuất bản công khai' : 'Xuất bản công khai (cần tiêu đề, đoạn mở đầu và ít nhất một tính năng)'} checked={sub.published} onChange={published => editSub({ published: published && !!ready(sub), features: cleanFeatures(sub.features), process: cleanFeatures(sub.process), faqs: cleanFeatures(sub.faqs) })} />
           <div className="panel-heading">
             <a className="text-link" href={`/giai-phap/${parent.slug}/${sub.slug}/`} target="_blank" rel="noopener">Xem trước (sau khi lưu) ↗</a>
-            <button type="button" className="danger" onClick={() => { if (confirm('Xóa trang dịch vụ con này khỏi bản chỉnh sửa?')) { setDraft({ ...draft, subServices: (draft.subServices || []).filter(x => x.id !== sub.id) }); setSel(''); } }}>Xóa trang</button>
+            <button type="button" className="danger" onClick={async () => { if (await ask('Xóa trang dịch vụ con này?', { body: 'Thay đổi áp dụng khi lưu.', confirmLabel: 'Xóa trang' })) { setDraft({ ...draft, subServices: (draft.subServices || []).filter(x => x.id !== sub.id) }); setSel(''); } }}>Xóa trang</button>
           </div>
         </div>
       )}
@@ -446,7 +447,7 @@ export function ShowcaseEditor({ draft, setDraft }: { draft: SiteData; setDraft:
           <Text label="Tiêu đề SEO" value={it.seoTitle || ''} max={200} onChange={seoTitle => edit({ seoTitle })} />
           <Text label="Mô tả SEO" value={it.seoDescription || ''} max={300} onChange={seoDescription => edit({ seoDescription })} />
           <Text label="Ngày cập nhật" type="date" value={it.updated} onChange={updated => edit({ updated })} />
-          <button type="button" className="danger" onClick={() => { if (confirm('Xóa mục này khỏi bản chỉnh sửa?')) { save(all.filter(x => x.id !== it.id)); setSel(''); } }}>Xóa</button>
+          <button type="button" className="danger" onClick={async () => { if (await ask('Xóa mục này?', { body: 'Thay đổi áp dụng khi lưu.', confirmLabel: 'Xóa' })) { save(all.filter(x => x.id !== it.id)); setSel(''); } }}>Xóa</button>
         </section>
       )}
     </div>

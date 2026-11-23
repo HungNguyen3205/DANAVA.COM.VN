@@ -10,6 +10,7 @@
 import { useState, type ReactNode } from 'react';
 import { ArrowDown, ArrowUp, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import MediaPicker from './MediaPicker';
+import { ask } from './admin/kit';
 
 type Json = string | number | boolean | Json[] | { [k: string]: Json };
 export type EnumMap = Record<string, { value: string; label: string }[]>;
@@ -137,7 +138,7 @@ function ListEditor({ items, tpl, onChange, cfg, k, depth }: { items: Json[]; tp
           <div className="blk-item__tools">
             <button type="button" className="blk-icon" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Đưa lên"><ArrowUp size={15} /></button>
             <button type="button" className="blk-icon" onClick={() => move(i, 1)} disabled={i === items.length - 1} aria-label="Đưa xuống"><ArrowDown size={15} /></button>
-            {!fixed && <button type="button" className="blk-icon blk-icon--danger" onClick={() => { if (confirm('Xóa mục này?')) { onChange(items.filter((_, j) => j !== i)); setOpen(null); } }} aria-label="Xóa"><Trash2 size={15} /></button>}
+            {!fixed && <button type="button" className="blk-icon blk-icon--danger" onClick={async () => { if (await ask('Xóa mục này?', { confirmLabel: 'Xóa' })) { onChange(items.filter((_, j) => j !== i)); setOpen(null); } }} aria-label="Xóa"><Trash2 size={15} /></button>}
           </div>
           {open === i && node(it, tpl, v => onChange(items.map((x, j) => (j === i ? v : x))), cfg, k + '[]', 0)}
         </details>
@@ -152,7 +153,7 @@ export function BlockPanel({ title, desc, edited, onReset, children }: { title: 
     <section className="admin-panel blk-panel">
       <div className="panel-heading">
         <h2>{title}</h2>
-        {edited && <button type="button" className="admin-secondary blk-btn" onClick={() => { if (confirm('Khôi phục nội dung mặc định cho mục này? Thay đổi chỉ được ghi khi bấm Lưu.')) onReset(); }}><RotateCcw size={15} aria-hidden="true" /> Khôi phục mặc định</button>}
+        {edited && <button type="button" className="admin-secondary blk-btn" onClick={async () => { if (await ask('Khôi phục nội dung mặc định cho mục này?', { body: 'Thay đổi chỉ được ghi khi bấm Lưu.', confirmLabel: 'Khôi phục' })) onReset(); }}><RotateCcw size={15} aria-hidden="true" /> Khôi phục mặc định</button>}
       </div>
       {desc && <p className="field-note">{desc}</p>}
       {children}

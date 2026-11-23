@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { SITE_PAGES, findSitePage, type PageTab, type SitePage } from './websitePages';
 import { pageFields } from './PageVisualEditor';
 import { useQueryParam } from './ui';
+import { Button, PageHeader, TabBar } from './kit';
 
 export function WebsitePagesScreen({ renderTab, edited }: { renderTab: (page: SitePage, tab: PageTab) => ReactNode; edited: (page: SitePage) => boolean }) {
   const [pageId, setPageId] = useQueryParam('page');
@@ -38,17 +39,16 @@ export function WebsitePagesScreen({ renderTab, edited }: { renderTab: (page: Si
   const tab = tabs.find(t => t.id === tabId) || tabs[0];
   return (
     <div className="blk-stack">
-      <div className="adm-record-head">
-        <button type="button" className="adm-btn adm-btn-ghost" onClick={() => { setTabId(''); setPageId('', true); }}><ArrowLeft size={16} /> Tất cả trang</button>
-        <div className="adm-record-head__title"><h2>{page.label}</h2><small>{page.path}</small></div>
-        {tabs.some(t => t.kind === 'visual') && tab.kind !== 'visual' && <button type="button" className="adm-btn adm-btn-ghost" onClick={() => setTabId('giao-dien')}><Wand2 size={15} /> Chỉnh giao diện</button>}
-        <a className="adm-btn adm-btn-ghost" href={page.path} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>
-      </div>
-      {tabs.length > 1 && (
-        <div className="adm-tabs adm-screen-tabs" role="tablist" aria-label={`Các phần của trang ${page.label}`}>
-          {tabs.map(t => <button key={t.id} type="button" role="tab" aria-selected={t.id === tab.id} className={t.id === tab.id ? 'is-on' : ''} onClick={() => setTabId(t.id)}>{t.label}</button>)}
-        </div>
-      )}
+      <PageHeader
+        back={<Button variant="ghost" onClick={() => { setTabId(''); setPageId('', true); }}><ArrowLeft size={16} /> Tất cả trang</Button>}
+        title={page.label}
+        description={page.path}
+        actions={<>
+          {tabs.some(t => t.kind === 'visual') && tab.kind !== 'visual' && <Button variant="primary" onClick={() => setTabId('giao-dien')}><Wand2 size={15} /> Chỉnh giao diện</Button>}
+          <a className="ax-btn ax-btn--secondary" href={page.path} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>
+        </>}
+      />
+      {tabs.length > 1 && <TabBar tabs={tabs} value={tab.id} onChange={id => setTabId(id)} label={`Các phần của trang ${page.label}`} />}
       <div key={`${page.id}-${tab.id}`}>{renderTab(page, tab)}</div>
     </div>
   );

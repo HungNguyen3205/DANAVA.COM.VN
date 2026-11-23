@@ -1,5 +1,6 @@
 'use client';
 import MediaPicker from './MediaPicker';
+import { ask } from './admin/kit';
 import { useRef, useState } from 'react';
 import { initial, validateContent, type Project, type Service } from '@/lib/content';
 import { Lines, ServiceChecks, Text } from './AdminContentEditors';
@@ -189,8 +190,8 @@ export default function ProjectManager({
           </label>
           <button
             className="danger"
-            onClick={() => {
-              if (confirm('Xóa dự án khỏi bản chỉnh sửa? Thay đổi áp dụng sau khi lưu.')) {
+            onClick={async () => {
+              if (await ask('Xóa dự án này?', { body: 'Thay đổi áp dụng sau khi lưu.', confirmLabel: 'Xóa dự án' })) {
                 onChange(projects.filter((p) => p.id !== project.id));
                 setSelected('');
               }

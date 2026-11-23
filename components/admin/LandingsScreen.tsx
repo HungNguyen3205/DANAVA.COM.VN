@@ -7,13 +7,15 @@
  * Website → Mẫu & khối: thư viện khối và mẫu trang.
  */
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Plus } from 'lucide-react';
+import { Archive, ArrowLeft, ExternalLink, Pencil, Plus, Trash2, Wand2 } from 'lucide-react';
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import MediaPicker from '../MediaPicker';
 import { ServiceChecks, Text, Toggle } from '../AdminContentEditors';
 import type { Landing, LandingStatus, SiteData } from '@/lib/content';
 import { BLOCKS, LANDING_TEMPLATES, blocksFromTemplate } from '@/lib/page-blocks';
 import { LandingEditor } from './LandingEditor';
+import { Button, DataTable, PageHeader, StatusBadge, TabBar, ask, type Tone } from './kit';
+const STATUS_TONE: Record<string, Tone> = { draft: 'warning', published: 'success', archived: 'neutral' };
 import { RecordHistory } from './RecordHistory';
 import { slugify } from './ProductsScreen';
 import { Empty, SearchBar, matches, useQueryParam, usePaged } from './ui';
@@ -38,6 +40,7 @@ function LandingList({ draft, setDraft, open }: Props & { open: (id: string) => 
   const [creating, setCreating] = useState(false);
   const [fresh, setFresh] = useQueryParam('new');
   const [tpl, setTpl] = useQueryParam('mau');
+  const [, setTabParam] = useQueryParam('tab');
   const [newKind, setNewKind] = useState<'internal' | 'external'>('internal');
   useEffect(() => { if (fresh) { setCreating(true); setFresh(''); } }, [fresh, setFresh]);
   const shown = landings.filter(l => matches(q, l.title, l.slug, l.url, l.purpose) && (!kind || l.kind === kind) && (status ? l.status === status : l.status !== 'archived'));
@@ -63,12 +66,9 @@ function LandingList({ draft, setDraft, open }: Props & { open: (id: string) => 
   }
 
   return (
-    <section className="admin-panel">
-      <div className="panel-heading">
-        <h2>Landing page</h2>
-        <button type="button" className="admin-secondary" onClick={() => setCreating(v => !v)}><Plus size={15} /> Tạo landing page</button>
-      </div>
-      <p className="field-note">Landing page đã làm cho khách hàng được quản lý ở <Link className="text-link" href="/admin/du-an/?tab=portfolio">Dự án & Portfolio</Link>.</p>
+    <>
+      <PageHeader title="Landing page" description={<>Trang nội bộ dựng trên website và liên kết landing page bên ngoài. Landing đã làm cho khách hàng nằm ở <Link className="text-link" href="/admin/du-an/?tab=portfolio">Dự án & Portfolio</Link>.</>}
+        actions={<Button variant="primary" onClick={() => setCreating(v => !v)}><Plus size={16} /> Tạo landing page</Button>} />
       {creating && (
         <form className="adm-create-row adm-create-row--landing" onSubmit={create}>
           <label>Tên landing page<input name="title" required maxLength={200} autoFocus placeholder="vd. Ưu đãi DANAVA Studio tháng 12" /></label>
@@ -82,7 +82,7 @@ function LandingList({ draft, setDraft, open }: Props & { open: (id: string) => 
                 <select name="template" defaultValue={tpl || 'san-pham'}>{LANDING_TEMPLATES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}</select>
               </label>
             : <label>URL trang bên ngoài<input name="url" type="url" required pattern="https://.+" placeholder="https://…" /></label>}
-          <button className="admin-primary">Tạo</button>
+          <Button variant="primary" type="submit">Tạo</Button>
           <p className="field-note">{newKind === 'internal' ? 'Trang nội bộ có địa chỉ /lp/{đường-dẫn}/, chỉnh trực quan ở tab Thiết kế. Trang mới ở trạng thái Nháp.' : 'Liên kết ngoài chỉ được lưu để quản lý, website không tạo trang nội bộ cho nó.'}</p>
         </form>
       )}
@@ -90,25 +90,26 @@ function LandingList({ draft, setDraft, open }: Props & { open: (id: string) => 
         <select aria-label="Lọc theo loại" value={kind} onChange={e => setKind(e.target.value)}><option value="">Mọi loại</option><option value="internal">Trang nội bộ</option><option value="external">Liên kết ngoài</option></select>
         <select aria-label="Lọc theo trạng thái" value={status} onChange={e => setStatus(e.target.value)}><option value="">Nháp & công khai</option><option value="published">Công khai</option><option value="draft">Nháp</option><option value="archived">Lưu trữ</option></select>
       </SearchBar>
-      {!landings.length ? <Empty>Chưa có landing page nào.</Empty> : !shown.length ? <Empty>Không có landing page nào khớp bộ lọc.</Empty> : (
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>Landing page</th><th>Loại</th><th>Sản phẩm</th><th>Trạng thái</th></tr></thead>
-            <tbody>
-              {slice.map(l => (
-                <tr key={l.id}>
-                  <td><button type="button" className="adm-link-cell" onClick={() => open(l.id)}><b>{l.title}</b><small>{l.kind === 'internal' ? `/lp/${l.slug}/` : l.url}</small></button></td>
-                  <td>{KIND[l.kind]}</td>
-                  <td><small>{l.serviceIds.map(id => draft.services.find(s => s.id === id)?.title).filter(Boolean).join(', ') || '—'}</small></td>
-                  <td><span className={`badge ${STATUS[l.status].tone}`}>{STATUS[l.status].label}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DataTable caption="Danh sách landing page" rows={slice} rowKey={l => l.id} onRowClick={l => open(l.id)}
+        empty={<Empty title={landings.length ? 'Không có landing page nào khớp bộ lọc' : 'Chưa có landing page'} action={!landings.length && <Button variant="primary" onClick={() => setCreating(true)}><Plus size={16} /> Tạo landing page đầu tiên</Button>}>{landings.length ? 'Thử đổi từ khóa hoặc bộ lọc.' : 'Tạo từ mẫu có sẵn rồi chỉnh trực quan ở tab Thiết kế.'}</Empty>}
+        columns={[
+          { key: 'title', header: 'Landing page', primary: true, cell: l => <span className="ax-cell-title"><b>{l.title}</b><small>{l.kind === 'internal' ? `/lp/${l.slug}/` : l.url}</small></span> },
+          { key: 'kind', header: 'Loại', cell: l => KIND[l.kind] },
+          { key: 'products', header: 'Sản phẩm', hideOnMobile: true, cell: l => <small>{l.serviceIds.map(id => draft.services.find(s => s.id === id)?.title).filter(Boolean).join(', ') || '—'}</small> },
+          { key: 'status', header: 'Trạng thái', width: '130px', cell: l => <StatusBadge tone={STATUS_TONE[l.status]}>{STATUS[l.status].label}</StatusBadge> }
+        ]}
+        actions={l => [
+          { label: 'Sửa', icon: <Pencil size={15} />, onSelect: () => open(l.id) },
+          { label: 'Chỉnh thiết kế', icon: <Wand2 size={15} />, onSelect: () => { setTabParam('thiet-ke'); open(l.id); }, hidden: l.kind !== 'internal' },
+          { label: l.kind === 'internal' ? 'Xem trên website' : 'Mở liên kết', icon: <ExternalLink size={15} />, onSelect: () => window.open(l.kind === 'internal' ? `/lp/${l.slug}/` : l.url, '_blank', 'noopener'), hidden: l.kind === 'internal' && l.status !== 'published' },
+          { label: 'Lưu trữ', icon: <Archive size={15} />, onSelect: () => setDraft({ ...draft, landings: landings.map(x => (x.id === l.id ? { ...x, status: 'archived' as const } : x)) }), hidden: l.status === 'archived' },
+          { label: 'Xóa', icon: <Trash2 size={15} />, danger: true, onSelect: async () => {
+            if (await ask(`Xóa landing page “${l.title}”?`, { body: 'Nên dùng Lưu trữ nếu chỉ muốn ẩn. Thay đổi áp dụng khi lưu.', confirmLabel: 'Xóa' }))
+              setDraft({ ...draft, landings: landings.filter(x => x.id !== l.id) });
+          } }
+        ]} />
       {pager}
-    </section>
+    </>
   );
 }
 
@@ -121,22 +122,21 @@ function LandingProfile({ draft, setDraft, saveBar, landing: l, onBack }: Props 
   const edit = (patch: Partial<Landing>) => setDraft({ ...draft, landings: (draft.landings || []).map(x => (x.id === l.id ? { ...x, ...patch, updated: today() } : x)) });
   const href = l.kind === 'internal' ? `/lp/${l.slug}/?ban-nhap=1` : l.url;
 
-  function remove() {
-    if (!confirm(`Xóa landing page “${l.title}”? Nên dùng trạng thái Lưu trữ nếu chỉ muốn ẩn. Thay đổi chỉ áp dụng khi lưu.`)) return;
+  async function remove() {
+    if (!(await ask(`Xóa landing page “${l.title}”?`, { body: 'Nên dùng trạng thái Lưu trữ nếu chỉ muốn ẩn. Thay đổi chỉ áp dụng khi lưu.', confirmLabel: 'Xóa landing page' }))) return;
     setDraft({ ...draft, landings: (draft.landings || []).filter(x => x.id !== l.id) });
     onBack();
   }
 
   return (
     <div className={`blk-stack${tab === 'thiet-ke' ? ' is-wide' : ''}`}>
-      <div className="adm-record-head">
-        <button type="button" className="adm-btn adm-btn-ghost" onClick={onBack}><ArrowLeft size={16} /> Danh sách</button>
-        <div className="adm-record-head__title"><h2>{l.title}</h2><small>{KIND[l.kind]} · {STATUS[l.status].label}{l.kind === 'internal' ? ` · /lp/${l.slug}/` : ''}</small></div>
-        {href && <a className="adm-btn adm-btn-ghost" href={href} target="_blank" rel="noopener"><ExternalLink size={15} /> {l.kind === 'internal' ? 'Xem bản nháp đã lưu' : 'Mở trang'}</a>}
-      </div>
-      <div className="adm-tabs adm-screen-tabs" role="tablist" aria-label="Các phần của landing page">
-        {tabs.map(t => <button key={t.id} type="button" role="tab" aria-selected={t.id === tab} className={t.id === tab ? 'is-on' : ''} onClick={() => setTab(t.id)}>{t.label}</button>)}
-      </div>
+      <PageHeader
+        back={<Button variant="ghost" onClick={onBack}><ArrowLeft size={16} /> Landing page</Button>}
+        title={l.title}
+        description={<>{KIND[l.kind]}{l.kind === 'internal' ? ` · /lp/${l.slug}/` : ''} · <StatusBadge tone={STATUS_TONE[l.status]}>{STATUS[l.status].label}</StatusBadge></>}
+        actions={href && <a className="ax-btn ax-btn--secondary" href={href} target="_blank" rel="noopener"><ExternalLink size={15} /> {l.kind === 'internal' ? 'Xem bản nháp đã lưu' : 'Mở trang'}</a>}
+      />
+      <TabBar tabs={tabs} value={tab} onChange={setTab} label="Các phần của landing page" />
 
       {tab === 'thong-tin' && (
         <section className="admin-panel">

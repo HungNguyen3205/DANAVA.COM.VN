@@ -1,26 +1,27 @@
 'use client';
-
+/**
+ * Khung quản trị DANAVA: sidebar navy (256px, thu gọn 72px, drawer trên điện thoại) · topbar (breadcrumb, tìm nhanh Ctrl+K,
+ * tạo mới, lưu nháp/xuất bản, thông báo, tài khoản) · vùng nội dung · thanh lưu · thông báo kết quả.
+ * Component: components/admin/kit.tsx (Radix + Motion). Giao diện: app/admin/admin-ui.css.
+ */
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { DropdownMenu } from 'radix-ui';
+import { AnimatePresence, motion } from 'motion/react';
 import {
-  ArrowUpRight, Bell, Briefcase, Check, ChevronDown, ChevronRight, ExternalLink, FileText, Globe, Image as ImageIcon,
-  Inbox, Layers, LayoutGrid, LogOut, Menu, PanelLeftClose, PanelLeftOpen, PanelsTopLeft, Plus, Save,
-  Search, Settings, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, Building2, type LucideIcon,
-  Rocket, Navigation, Palette, Blocks, Tags, ContactRound, ClipboardList, PieChart, Gauge, KeyRound, Link2, Plug, History, Package,
+  ArrowUpRight, Bell, Blocks, Briefcase, Building2, ChartColumn, Check, ChevronRight, ClipboardList, ContactRound, ExternalLink, FileText, FolderOpen,
+  Gauge, Globe, History, Image as ImageIcon, Inbox, KeyRound, Layers, LayoutGrid, Link2, LogOut, Menu, Navigation, Package, Palette, PanelLeftClose,
+  PanelLeftOpen, PanelsTopLeft, PieChart, Plug, Plus, Rocket, Save, Search, Settings, Tags, Undo2, Users, Wrench, X, CircleAlert, type LucideIcon
 } from 'lucide-react';
-import { AdminNavRail, type RailSection } from './AdminNavRail';
 import { allAdminItems, sectionInfo, timeAgo, csrfToken, visibleNav, type AdminLead } from './adminData';
 import { ROLES, can } from '@/lib/permissions';
 import { fold, useAdminUser } from './admin/ui';
+import { Button, DUR, EASE, Modal, Sheet, Tip, useConfirm } from './admin/kit';
 import type { DraftInfo, SaveMode } from './SiteStore';
 
 /** Bản ghi cho ô tìm kiếm toàn admin. */
 export type SearchRecord = { label: string; kind: string; href: string };
-
-/* Khung quản trị theo hệ thống DriveAdmin (DatVeXeONL): thanh bên navy bo góc với nhóm menu gập được,
-   thu gọn thành dải icon có danh sách nổi; topbar gồm tiêu đề trang + breadcrumb, ô "Đi tới trang…",
-   chuông thông báo và menu tài khoản; vùng nội dung nền sáng, khối trắng bo góc. */
 
 type Props = {
   section: string;
@@ -48,570 +49,397 @@ type Props = {
 };
 
 const ICONS: Record<string, LucideIcon> = {
-  'tong-quan': LayoutGrid,
-  trang: PanelsTopLeft,
-  'landing-page': Rocket,
-  menu: Navigation,
-  'giao-dien': Palette,
-  'mau-khoi': Blocks,
-  'san-pham': Package,
-  'nhom-loai': Tags,
-  'bai-viet': FileText,
-  'du-an': Briefcase,
-  'thuong-hieu': Building2,
-  'khach-hang': Inbox,
-  'danh-ba': ContactRound,
-  'bieu-mau': ClipboardList,
-  'thu-vien': ImageIcon,
-  'thong-ke': ChartColumn,
-  'nguon-khach': PieChart,
-  'hieu-qua': Gauge,
-  'cai-dat': Settings,
-  'tai-khoan': KeyRound,
-  seo: Link2,
-  'tich-hop': Plug,
-  'nhat-ky': History,
+  'tong-quan': LayoutGrid, trang: PanelsTopLeft, 'landing-page': Rocket, menu: Navigation, 'giao-dien': Palette, 'mau-khoi': Blocks,
+  'san-pham': Package, 'nhom-loai': Tags, 'bai-viet': FileText, 'du-an': Briefcase, 'thuong-hieu': Building2,
+  'khach-hang': Inbox, 'danh-ba': ContactRound, 'bieu-mau': ClipboardList, 'thu-vien': ImageIcon,
+  'thong-ke': ChartColumn, 'nguon-khach': PieChart, 'hieu-qua': Gauge,
+  'cai-dat': Settings, 'tai-khoan': KeyRound, seo: Link2, 'tich-hop': Plug, 'nhat-ky': History
 };
 const GROUP_ICONS: Record<string, LucideIcon> = {
   'Tổng quan': LayoutGrid, Website: Globe, 'Sản phẩm & Dịch vụ': Layers, 'Nội dung': FileText,
-  'Khách hàng': Users, 'Tài nguyên': FolderOpen, 'Báo cáo': ChartColumn, 'Hệ thống': Wrench,
+  'Khách hàng': Users, 'Tài nguyên': FolderOpen, 'Báo cáo': ChartColumn, 'Hệ thống': Wrench
 };
 
-const read = (key: string) => {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-};
-const write = (key: string, value: string) => {
-  try {
-    localStorage.setItem(key, value);
-  } catch {}
+/** Chờ menu Radix đóng hẳn (trả focus trong setTimeout 0) trước khi mở hộp thoại. */
+const settle = () => new Promise(r => setTimeout(r, 40));
+
+const store = {
+  get: (k: string) => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} }
 };
 
-export default function AdminShell({
-  section,
-  dirty,
-  ready,
-  saving,
-  onSave,
-  onDiscard,
-  onDiscardDraft,
-  draft,
-  notice,
-  error,
-  onDismissNotice,
-  leads,
-  records = [],
-  counts,
-  tabs,
-  heading,
-  actions,
-  children,
+export default function AdminShell(props: Props) {
+  return <Shell {...props} />;
+}
+
+function Shell({
+  section, dirty, ready, saving, onSave, onDiscard, onDiscardDraft, draft, notice, error, onDismissNotice, leads, records = [], counts, tabs, heading, actions, children
 }: Props) {
   const router = useRouter();
+  const confirm = useConfirm();
   const user = useAdminUser();
   const info = sectionInfo(section);
-  const SECTIONS = visibleNav(user.role);
+  const groups = useMemo(() => visibleNav(user.role), [user.role]);
   const canDraft = can(user.role, 'content.draft');
   const canPublish = can(user.role, 'content.publish');
-  const [createOpen, setCreateOpen] = useState(false);
-  const createRef = useRef<HTMLDivElement>(null);
-  // Chỉ các loại đã tạo được thật trong admin
-  const creatable = [
-    { label: 'Bài viết', href: '/admin/bai-viet/?new=1', show: can(user.role, 'content.draft') },
-    { label: 'Sản phẩm / dịch vụ', href: '/admin/san-pham/?new=1', show: can(user.role, 'content.draft') },
-    { label: 'Landing page', href: '/admin/landing-page/?new=1', show: can(user.role, 'content.draft') },
-  ].filter(x => x.show);
   const [collapsed, setCollapsed] = useState(false);
-  const [sideOpen, setSideOpen] = useState(false);
-  const [bellOpen, setBellOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const searchRef = useRef<HTMLInputElement>(null);
-  const bellRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (read('danava-admin-collapsed') === '1') setCollapsed(true);
-  }, []);
-
-  // Phím tắt: Ctrl/⌘ + K tới ô "Đi tới trang…", Ctrl/⌘ + S lưu, Esc đóng menu/thông báo
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        searchRef.current?.focus();
-      }
-      // Ctrl/⌘ + S = lưu nháp (an toàn: website chưa đổi). Xuất bản luôn bấm nút.
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && dirty) {
-        e.preventDefault();
-        onSave('draft');
-      }
-      if (e.key === 'Escape') {
-        setBellOpen(false);
-        setSideOpen(false);
-        setCreateOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [dirty, onSave]);
-
-  // Bấm ra ngoài thì đóng thông báo / menu Tạo mới
-  useEffect(() => {
-    if (!bellOpen && !createOpen) return;
-    const down = (e: MouseEvent) => {
-      if (!bellRef.current?.contains(e.target as Node)) setBellOpen(false);
-      if (!createRef.current?.contains(e.target as Node)) setCreateOpen(false);
-    };
-    document.addEventListener('mousedown', down);
-    return () => document.removeEventListener('mousedown', down);
-  }, [bellOpen, createOpen]);
-
-  // Ngăn kéo điện thoại mở thì khóa cuộn trang phía sau
-  useEffect(() => {
-    if (!sideOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [sideOpen]);
-
-  // Thông báo tự ẩn sau 6 giây
-  useEffect(() => {
-    if (!notice) return;
-    const t = setTimeout(onDismissNotice, 6000);
-    return () => clearTimeout(t);
-  }, [notice, onDismissNotice]);
-
+  const [drawer, setDrawer] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const newLeads = leads.filter(l => (l.status || 'new') === 'new');
 
-  function leave() {
-    if (dirty && !confirm('Bạn có thay đổi chưa lưu. Rời màn hình này?')) return false;
-    setSideOpen(false);
-    setBellOpen(false);
-    setQuery('');
-    return true;
-  }
-  function navigate(slug: string) {
-    if (leave()) router.push(`/admin/${slug}/`);
-  }
-  function go(href: string) {
-    if (leave()) router.push(href);
-  }
+  useEffect(() => { if (store.get('danava-admin-collapsed') === '1') setCollapsed(true); }, []);
+  const toggleCollapsed = () => setCollapsed(v => { store.set('danava-admin-collapsed', v ? '0' : '1'); return !v; });
+
+  /** Rời màn hình: hỏi khi có thay đổi chưa lưu (theo cơ chế hiện có), rồi điều hướng. */
+  const go = useCallback(async (href: string) => {
+    // Gọi từ menu: đợi menu đóng và trả focus xong rồi mới mở hộp xác nhận
+    if (dirty) await settle();
+    if (dirty && !(await confirm({ title: 'Rời màn hình này?', body: 'Bạn có thay đổi chưa lưu. Rời đi thì thay đổi chưa lưu sẽ mất.', confirmLabel: 'Rời đi', tone: 'danger' }))) return;
+    setDrawer(false);
+    setSearchOpen(false);
+    router.push(href);
+  }, [dirty, confirm, router]);
+
+  // Phím tắt: Ctrl/⌘ + K tìm nhanh · Ctrl/⌘ + S lưu nháp
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setSearchOpen(true); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && dirty && canDraft) { e.preventDefault(); onSave('draft'); }
+    };
+    addEventListener('keydown', onKey);
+    return () => removeEventListener('keydown', onKey);
+  }, [dirty, onSave, canDraft]);
+
+  // Thông báo thành công tự ẩn sau 5 giây (lỗi giữ tới khi đóng)
+  useEffect(() => {
+    if (!notice || error) return;
+    const t = setTimeout(onDismissNotice, 5000);
+    return () => clearTimeout(t);
+  }, [notice, error, onDismissNotice]);
 
   async function logout() {
-    if (dirty && !confirm('Bạn có thay đổi chưa lưu. Vẫn đăng xuất?')) return;
-    // 403 = phiên đã hết sẵn → tải lại sẽ về màn đăng nhập. Lỗi khác: phiên vẫn còn, phải báo cho người dùng.
+    await settle();
+    if (dirty && !(await confirm({ title: 'Đăng xuất?', body: 'Bạn có thay đổi chưa lưu. Đăng xuất thì thay đổi chưa lưu sẽ mất.', confirmLabel: 'Đăng xuất', tone: 'danger' }))) return;
     try {
       const res = await fetch('/api/admin/session/', { method: 'DELETE', headers: { 'x-csrf-token': await csrfToken() } });
       if (res.ok || res.status === 403) return location.reload();
     } catch {}
-    alert('CHƯA đăng xuất được, phiên vẫn còn hiệu lực. Kiểm tra kết nối rồi thử lại.');
+    await confirm({ title: 'Chưa đăng xuất được', body: 'Phiên vẫn còn hiệu lực. Kiểm tra kết nối rồi thử lại.', confirmLabel: 'Đã hiểu' });
   }
 
-  const toggleCollapsed = () =>
-    setCollapsed(v => {
-      write('danava-admin-collapsed', v ? '0' : '1');
-      return !v;
-    });
+  const creatable = [
+    { label: 'Bài viết', href: '/admin/bai-viet/?new=1', icon: FileText },
+    { label: 'Sản phẩm / dịch vụ', href: '/admin/san-pham/?new=1', icon: Package },
+    { label: 'Landing page', href: '/admin/landing-page/?new=1', icon: Rocket }
+  ].filter(() => canDraft);
 
-  const railSections: RailSection[] = SECTIONS.map(g => ({
-    group: g.group,
-    icon: GROUP_ICONS[g.group] || LayoutGrid,
-    items: g.items.map(i => ({
-      slug: i.slug,
-      label: i.label,
-      icon: ICONS[i.slug] || FileText,
-      count: i.slug === 'khach-hang' ? counts[i.slug] : undefined,
-    })),
-  }));
-
-  const words = fold(query).split(/\s+/).filter(Boolean);
-  const visible = new Set(SECTIONS.flatMap(g => g.items.map(i => i.slug)));
-  const has = (text: string) => { const hay = fold(text); return words.every(w => hay.includes(w)); };
-  const hits: { key: string; label: string; sub: string; href: string }[] = words.length
-    ? [
-        ...allAdminItems.filter(i => visible.has(i.slug) && has(`${i.label} ${i.group} ${i.desc}`))
-          .map(i => ({ key: 'm-' + i.slug, label: i.label, sub: i.group, href: `/admin/${i.slug}/` })),
-        ...records.filter(r => has(`${r.label} ${r.kind}`)).map((r, n) => ({ key: `r-${n}-${r.href}`, label: r.label, sub: r.kind, href: r.href })),
-      ].slice(0, 10)
-    : [];
+  const sidebar = (mini: boolean, inDrawer = false) => (
+    <Sidebar groups={groups} active={info.slug} mini={mini} counts={counts} onNavigate={go} onToggle={toggleCollapsed} inDrawer={inDrawer} />
+  );
 
   return (
-    <div className="adm ds-root" data-theme="light">
-      {sideOpen && <div className="ds-sidebar-backdrop" onClick={() => setSideOpen(false)} aria-hidden="true" />}
+    <div className={`adm ds-root ax ax-scope${collapsed ? ' is-collapsed' : ''}`} data-theme="light">
+      {sidebar(collapsed)}
+      <Sheet open={drawer} onOpenChange={setDrawer} title="Menu quản trị">{sidebar(false, true)}</Sheet>
 
-      {/* ---------- Thanh bên ---------- */}
-      <aside className={'ds-sidebar' + (sideOpen ? ' open' : '') + (collapsed ? ' collapsed' : '')} aria-label="Menu quản trị">
-        <div className="ds-sidebar-header-row">
-          <Link
-            className="ds-wordmark"
-            href="/admin/tong-quan/"
-            title="DANAVA · Quản trị website"
-            onClick={e => {
-              if (!leave()) e.preventDefault();
-            }}
-          >
-            <img src="/assets/danava-mark.png" alt="" className="ds-brand-mark" width={158} height={158} />
-            <span className="ds-brand-text">
-              <strong>DANAVA</strong>
-              <small>Quản trị website</small>
-            </span>
-          </Link>
-          <button
-            type="button"
-            className="ds-rail-toggle"
-            onClick={toggleCollapsed}
-            aria-label={collapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
-            aria-expanded={!collapsed}
-            title={collapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
-          >
-            {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
-          </button>
-          <button type="button" className="ds-sidebar-close-btn" onClick={() => setSideOpen(false)} aria-label="Đóng menu">
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="ds-workspace">
-          <div className="ws-trigger ws-trigger--static">
-            <span className="ws-avatar">D</span>
-            <span className="ws-trigger-text">
-              <small>Đang quản lý</small>
-              <strong>danava.com.vn</strong>
-            </span>
+      <div className="ax-main">
+        <header className="ax-top">
+          <button type="button" className="ax-icon-btn ax-menu-btn" aria-label="Mở menu" onClick={() => setDrawer(true)}><Menu size={20} /></button>
+          <div className="ax-top__title">
+            <ol className="ax-crumbs" aria-label="Vị trí">
+              <li><Link href="/admin/tong-quan/" onClick={e => { e.preventDefault(); go('/admin/tong-quan/'); }}>DANAVA</Link></li>
+              {info.group !== info.label && <li>{info.group}</li>}
+            </ol>
+            <h1>{info.label}</h1>
           </div>
-        </div>
-
-        <AdminNavRail sections={railSections} active={info.slug} onNavigate={navigate} />
-
-        <nav className="ds-nav-full" aria-label="Quản trị DANAVA">
-          {SECTIONS.map(g => (
-            // Chỉ mở sẵn nhóm đang dùng; nhóm khác bấm để mở
-            <details key={g.group} className="ds-nav-group" open={g.items.some(i => i.slug === info.slug) || undefined}>
-              <summary>
-                <span>{g.group}</span>
-                <ChevronRight size={13} />
-              </summary>
-              <div className="ds-nav-group-items">
-                {g.items.map(item => {
-                  const Icon = ICONS[item.slug] || FileText;
-                  const on = info.slug === item.slug;
-                  const count = counts[item.slug];
-                  return (
-                    <Link
-                      key={item.slug}
-                      href={`/admin/${item.slug}/`}
-                      className={on ? 'active' : undefined}
-                      aria-current={on ? 'page' : undefined}
-                      title={item.label}
-                      onClick={e => {
-                        if (!leave()) e.preventDefault();
-                      }}
-                    >
-                      <span className="ds-nav-icon-badge">
-                        <Icon size={16} />
-                      </span>
-                      <span className="ds-nav-label">{item.label}</span>
-                      {count !== undefined && count > 0 && (
-                        <span className={'ds-count' + (item.slug === 'khach-hang' ? ' is-hot' : '')}>{count}</span>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            </details>
-          ))}
-        </nav>
-
-        <div className="ds-footer-nav">
-          <a className="ds-footer-btn" href="/" target="_blank" rel="noopener noreferrer" title="Xem website">
-            <Globe size={16} />
-            <span>Xem website</span>
-            <ExternalLink size={13} className="ds-footer-trail" />
-          </a>
-        </div>
-      </aside>
-
-      {/* ---------- Vùng chính ---------- */}
-      <div className={'ds-main' + (collapsed ? ' collapsed' : '')}>
-        <header className="ds-topbar">
-          <div className="ds-topbar-left">
-            <div className="ds-topbar-title-row">
-              <button type="button" className="ds-mobile-menu" aria-label="Mở menu" aria-expanded={sideOpen} onClick={() => setSideOpen(true)}>
-                <Menu size={18} />
-              </button>
-              {heading ? (
-                <p key={section} className="ds-topbar-page-title">{info.label}</p>
-              ) : (
-                <h1 key={section} className="ds-topbar-page-title">{info.label}</h1>
-              )}
-            </div>
-            <div className="ds-topbar-breadcrumb-wrap" role="navigation" aria-label="Vị trí">
-              <span>DANAVA</span>
-              <span aria-hidden="true">&gt;</span>
-              {info.group !== info.label && (
-                <>
-                  <span>{info.group}</span>
-                  <span aria-hidden="true">&gt;</span>
-                </>
-              )}
-              <span className="current">{info.label}</span>
-            </div>
-          </div>
-
-          <div className="ds-topbar-right">
-            <div className="ds-topbar-search-pill">
-              <Search size={15} />
-              <input
-                ref={searchRef}
-                aria-label="Tìm trong admin (Ctrl + K)"
-                placeholder="Tìm mục, bài viết, sản phẩm…"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Escape') setQuery('');
-                  if (e.key === 'Enter' && hits[0]) go(hits[0].href);
-                }}
-              />
-              {query.trim() && (
-                <div className="ds-search-popover-results">
-                  {hits.length ? (
-                    hits.map(n => (
-                      <button key={n.key} type="button" onClick={() => go(n.href)}>
-                        <span className="ds-search-hit">
-                          <b>{n.label}</b>
-                          <small>{n.sub}</small>
-                        </span>
-                        <ArrowUpRight size={13} />
-                      </button>
-                    ))
-                  ) : (
-                    <p className="ds-search-empty">
-                      Không tìm thấy kết quả cho “{query.trim()}”. Thử gõ tên bài viết, sản phẩm, dự án hoặc tên mục.
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
+          <div className="ax-top__right">
+            <button type="button" className="ax-searchbtn" onClick={() => setSearchOpen(true)} aria-label="Tìm nhanh (Ctrl + K)">
+              <Search size={16} /><span>Tìm nhanh…</span><kbd>Ctrl K</kbd>
+            </button>
 
             {creatable.length > 0 && (
-              <div className="ds-create" ref={createRef}>
-                <button type="button" className="adm-btn adm-btn-ghost ds-create-btn" aria-haspopup="menu" aria-expanded={createOpen} onClick={() => setCreateOpen(v => !v)}>
-                  <Plus size={16} /> <span>Tạo mới</span>
-                </button>
-                {createOpen && (
-                  <div className="ds-create-pop" role="menu" aria-label="Tạo mới">
-                    {creatable.map(c => (
-                      <button key={c.href} type="button" role="menuitem" onClick={() => { setCreateOpen(false); go(c.href); }}>{c.label}</button>
+              <DropdownMenu.Root>
+                <Tip label="Tạo mới" side="bottom">
+                  <DropdownMenu.Trigger asChild><button type="button" className="ax-icon-btn ax-top__create" aria-label="Tạo mới"><Plus size={19} /></button></DropdownMenu.Trigger>
+                </Tip>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content className="ax-menu" align="end" sideOffset={6}>
+                    <div className="ax-menu__label">Tạo mới</div>
+                    {creatable.map(c => <DropdownMenu.Item key={c.href} className="ax-menu__item" onSelect={() => go(c.href)}><c.icon size={16} />{c.label}</DropdownMenu.Item>)}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+            )}
+
+            {can(user.role, 'leads.read') && (
+              <DropdownMenu.Root>
+                <Tip label={`Thông báo: ${newLeads.length} khách hàng mới`} side="bottom">
+                  <DropdownMenu.Trigger asChild>
+                    <button type="button" className="ax-icon-btn ax-bell" aria-label={`Thông báo: ${newLeads.length} khách hàng mới`}><Bell size={19} />{newLeads.length > 0 && <span className="ax-bell__dot" />}</button>
+                  </DropdownMenu.Trigger>
+                </Tip>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content className="ax-menu" align="end" sideOffset={6} style={{ width: 320 }}>
+                    <div className="ax-menu__label">Khách hàng mới · {newLeads.length}</div>
+                    {!newLeads.length && <p style={{ margin: '6px 10px 10px', color: '#6b7690' }}>Không có yêu cầu mới.</p>}
+                    {newLeads.slice(0, 5).map(l => (
+                      <DropdownMenu.Item key={l.id} className="ax-menu__item" onSelect={() => go('/admin/khach-hang/')}>
+                        <span className="ax-avatar" style={{ width: 28, height: 28, fontSize: 11 }}>{initials(l.name)}</span>
+                        <span style={{ display: 'grid', minWidth: 0 }}><b style={{ fontWeight: 600 }}>{l.name}</b><small style={{ color: '#6b7690', fontSize: 12 }}>{l.service || 'Tư vấn chung'} · {timeAgo(l.created_at)}</small></span>
+                      </DropdownMenu.Item>
                     ))}
-                  </div>
+                    <div className="ax-menu__sep" />
+                    <DropdownMenu.Item className="ax-menu__item" onSelect={() => go('/admin/khach-hang/')}><ArrowUpRight size={15} />Xem tất cả yêu cầu</DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+            )}
+
+            {canDraft && (
+              <div className="ax-top__save">
+                <span className={`ax-save-state is-${saving ? 'saving' : dirty ? 'dirty' : draft.hasDraft ? 'draft' : 'live'}`} role="status">
+                  {saving ? 'Đang lưu…' : dirty ? 'Chưa lưu' : draft.hasDraft ? 'Đã lưu nháp' : 'Đã xuất bản'}
+                </span>
+                <Tip label="Lưu trên máy chủ, website chưa đổi (Ctrl + S)" side="bottom">
+                  <Button variant="secondary" onClick={() => onSave('draft')} disabled={!ready || !dirty || saving} aria-label="Lưu nháp"><Save size={16} /><span className="ax-top__save-label">Lưu nháp</span></Button>
+                </Tip>
+                {canPublish && (
+                  <Button variant="primary" onClick={() => onSave('publish')} disabled={!ready || (!dirty && !draft.hasDraft) || saving} loading={saving} aria-label="Xuất bản">
+                    {!saving && (dirty || draft.hasDraft ? <Rocket size={16} /> : <Check size={16} />)}<span className="ax-top__save-label">Xuất bản</span>
+                  </Button>
                 )}
               </div>
             )}
 
-            {can(user.role, 'leads.read') && <div className="ds-bell" ref={bellRef}>
-              <button
-                type="button"
-                className="ds-topbar-bell-btn"
-                aria-label={`Thông báo: ${newLeads.length} khách hàng mới`}
-                aria-expanded={bellOpen}
-                onClick={() => setBellOpen(v => !v)}
-              >
-                <Bell size={18} />
-                {newLeads.length > 0 && <span className="ds-bell-dot-indicator" />}
-              </button>
-              {bellOpen && (
-                <div className="ds-bell-pop" role="dialog" aria-label="Khách hàng mới">
-                  <h4>
-                    Khách hàng mới <span>{newLeads.length}</span>
-                  </h4>
-                  {newLeads.length === 0 && <p className="ds-bell-empty">Không có yêu cầu mới. Mọi khách hàng đã được xử lý.</p>}
-                  {newLeads.slice(0, 5).map(l => (
-                    <Link
-                      key={l.id}
-                      href="/admin/khach-hang/"
-                      className="ds-bell-item"
-                      onClick={e => {
-                        if (!leave()) e.preventDefault();
-                      }}
-                    >
-                      <span className="ds-bell-avatar">{initials(l.name)}</span>
-                      <span>
-                        <b>{l.name}</b>
-                        <small>
-                          {l.service || 'Tư vấn chung'} · {timeAgo(l.created_at)}
-                        </small>
-                      </span>
-                    </Link>
-                  ))}
-                  <Link
-                    href="/admin/khach-hang/"
-                    className="ds-bell-foot"
-                    onClick={e => {
-                      if (!leave()) e.preventDefault();
-                    }}
-                  >
-                    Xem tất cả khách hàng <ArrowUpRight size={13} />
-                  </Link>
-                </div>
-              )}
-            </div>}
-
-            {canDraft && (
-              <>
-                <span className={`ds-save-state is-${saving ? 'saving' : dirty ? 'dirty' : draft.hasDraft ? 'draft' : 'live'}`} role="status">
-                  {saving ? 'Đang lưu…' : dirty ? 'Chưa lưu' : draft.hasDraft ? 'Đã lưu nháp' : 'Đã xuất bản'}
-                </span>
-                <button type="button" className="adm-btn adm-btn-ghost ds-draft-btn" onClick={() => onSave('draft')} disabled={!ready || !dirty || saving} title="Lưu trên máy chủ, website chưa thay đổi (Ctrl + S)">
-                  <Save size={16} /> <span>Lưu nháp</span>
-                </button>
-                {canPublish && (
-                  <button type="button" className="ds-save-btn" onClick={() => onSave('publish')} disabled={!ready || (!dirty && !draft.hasDraft) || saving} title="Cập nhật lên website">
-                    {dirty || draft.hasDraft ? <Rocket size={16} /> : <Check size={16} />}
-                    <span>Xuất bản</span>
-                  </button>
-                )}
-              </>
-            )}
-
-            <AccountMenu onLogout={logout} onSettings={can(user.role, 'system.manage') ? () => navigate('cai-dat') : undefined} />
+            <AccountMenu onLogout={logout} onSettings={can(user.role, 'system.manage') ? () => go('/admin/cai-dat/') : undefined} />
           </div>
         </header>
 
-        <main id="main" className="ds-content" key={section}>
-          {(heading || actions || info.desc) && (
-            <div className="ds-page-head">
-              <div className="ds-page-head-text">{heading || <p>{info.desc}</p>}</div>
-              {actions && <div className="ds-page-head-actions">{actions}</div>}
-            </div>
-          )}
-          {tabs}
-          {children}
+        <main id="main" className="ax-content" key={section}>
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.base, ease: EASE }}>
+            {(heading || actions || info.desc) && (
+              <div className="ax-intro">
+                <div>{heading || <p>{info.desc}</p>}</div>
+                {actions && <div className="ax-intro__actions">{actions}</div>}
+              </div>
+            )}
+            {tabs && <div className="ax-screen-tabs">{tabs}</div>}
+            {children}
+          </motion.div>
         </main>
       </div>
 
-      {/* ---------- Thanh thay đổi chưa lưu / bản nháp chưa xuất bản ---------- */}
-      <div className={`adm-savebar ${dirty || (canDraft && draft.hasDraft) ? 'is-visible' : ''}${!dirty && draft.hasDraft ? ' is-draft' : ''}`} role="region" aria-label="Trạng thái lưu" aria-hidden={!dirty && !draft.hasDraft}>
-        <span className="adm-savebar-dot" aria-hidden="true" />
-        {dirty ? (
-          <span>Bạn có thay đổi chưa lưu</span>
-        ) : (
-          <span>
-            Bản nháp chưa xuất bản{draft.updatedAt ? ` · lưu ${timeAgo(draft.updatedAt)}` : ''}{draft.author ? ` bởi ${draft.author}` : ''}. Website vẫn hiển thị bản cũ.
-          </span>
+      {/* Thanh lưu: thay đổi chưa lưu / bản nháp chưa xuất bản */}
+      <AnimatePresence>
+        {canDraft && (dirty || draft.hasDraft) && (
+          <motion.div key={dirty ? 'dirty' : 'draft'} className={`ax-savebar${dirty ? '' : ' is-draft'}`} role="region" aria-label="Trạng thái lưu"
+            initial={{ opacity: 0, y: 16, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 16, x: '-50%' }} transition={{ duration: DUR.base, ease: EASE }}>
+            <span className="ax-savebar__dot" aria-hidden="true" />
+            <span>{dirty ? 'Bạn có thay đổi chưa lưu' : `Bản nháp chưa xuất bản${draft.updatedAt ? ` · lưu ${timeAgo(draft.updatedAt)}` : ''}${draft.author ? ` bởi ${draft.author}` : ''}`}</span>
+            {dirty
+              ? <Button variant="ghost" size="sm" onClick={onDiscard}><Undo2 size={15} /> Hoàn tác</Button>
+              : canPublish && <Button variant="ghost" size="sm" onClick={onDiscardDraft} disabled={saving}><Undo2 size={15} /> Bỏ nháp</Button>}
+            {dirty && <Button variant="secondary" size="sm" onClick={() => onSave('draft')} disabled={saving}><Save size={15} /> Lưu nháp</Button>}
+            {canPublish && <Button variant="primary" size="sm" onClick={() => onSave('publish')} loading={saving}>{!saving && <Rocket size={15} />} Xuất bản</Button>}
+          </motion.div>
         )}
-        {dirty ? (
-          <button className="adm-btn adm-btn-ghost" onClick={onDiscard} tabIndex={0}>
-            <Undo2 size={16} /> Hoàn tác
-          </button>
-        ) : canPublish && (
-          <button className="adm-btn adm-btn-ghost" onClick={onDiscardDraft} disabled={saving}>
-            <Undo2 size={16} /> Bỏ nháp
-          </button>
-        )}
-        {dirty && (
-          <button className="adm-btn adm-btn-ghost" onClick={() => onSave('draft')} disabled={saving}>
-            <Save size={16} /> Lưu nháp
-          </button>
-        )}
-        {canPublish && (
-          <button className="adm-btn adm-btn-primary" onClick={() => onSave('publish')} disabled={saving}>
-            <Rocket size={16} /> {saving ? 'Đang lưu…' : 'Xuất bản'}
-          </button>
-        )}
+      </AnimatePresence>
+
+      {/* Thông báo kết quả thao tác */}
+      <div className="ax-toasts" aria-live="polite">
+        <AnimatePresence>
+          {(notice || error) && (
+            <motion.div key={error || notice} className={`ax-toast${error ? ' is-error' : ''}`} role={error ? 'alert' : 'status'}
+              initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: DUR.base, ease: EASE }}>
+              <span className="ax-toast__icon">{error ? <CircleAlert size={18} /> : <Check size={18} />}</span>
+              <p>{error || notice}</p>
+              <button type="button" className="ax-icon-btn" style={{ width: 28, height: 28 }} aria-label="Đóng thông báo" onClick={onDismissNotice}><X size={15} /></button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* ---------- Thông báo ---------- */}
-      {(notice || error) && (
-        <div className={`adm-toast ${error ? 'is-error' : ''}`} role="status">
-          {error ? <X size={18} /> : <Check size={18} />}
-          <span>{error || notice}</span>
-          <button className="adm-icon-btn" aria-label="Đóng thông báo" onClick={onDismissNotice}>
-            <X size={16} />
-          </button>
-        </div>
-      )}
+      <CommandSearch open={searchOpen} onOpenChange={setSearchOpen} groups={groups} records={records} onGo={go} />
     </div>
   );
 }
 
-/** Nút tài khoản góc phải: ai đang đăng nhập, lối tắt và Đăng xuất. */
+/* ================================================================ Sidebar */
+type NavGroup = ReturnType<typeof visibleNav>[number];
+
+function Sidebar({ groups, active, mini, counts, onNavigate, onToggle, inDrawer }: {
+  groups: NavGroup[]; active: string; mini: boolean; counts: Record<string, number | undefined>; onNavigate: (href: string) => void; onToggle: () => void; inDrawer: boolean;
+}) {
+  const activeGroup = groups.find(g => g.items.some(i => i.slug === active))?.group;
+  // Chỉ mở nhóm đang dùng; người dùng mở thêm nhóm khác khi cần
+  const [open, setOpen] = useState<Set<string>>(() => new Set(activeGroup ? [activeGroup] : []));
+  useEffect(() => { if (activeGroup) setOpen(s => (s.has(activeGroup) ? s : new Set([...s, activeGroup]))); }, [activeGroup]);
+  const link = (slug: string) => `/admin/${slug}/`;
+  const click = (slug: string) => (e: React.MouseEvent) => { e.preventDefault(); onNavigate(link(slug)); };
+
+  return (
+    <aside className="ax-side" aria-label="Menu quản trị">
+      <div className="ax-side__brand">
+        <Link href="/admin/tong-quan/" onClick={click('tong-quan')} title="DANAVA · Quản trị website">
+          <img src="/assets/danava-mark.png" alt="" width={32} height={32} />
+          <span className="ax-side__brand-text"><b>DANAVA</b><small>Quản trị website</small></span>
+        </Link>
+      </div>
+      <nav className="ax-side__nav" aria-label="Quản trị DANAVA">
+        {groups.map(g => {
+          const Icon = GROUP_ICONS[g.group] || LayoutGrid;
+          const has = g.items.some(i => i.slug === active);
+          const count = g.items.reduce((n, i) => n + (counts[i.slug] || 0), 0);
+          // Nhóm một mục: đi thẳng
+          if (g.items.length === 1) {
+            const item = g.items[0];
+            return (
+              <div key={g.group} className="ax-side__group">
+                <Tip label={item.label} disabled={!mini}>
+                  <a href={link(item.slug)} onClick={click(item.slug)} className={`ax-side__group-btn ax-side__single${has ? ' is-active has-active' : ''}`} aria-current={has ? 'page' : undefined} style={{ position: 'relative' }}>
+                    <Icon size={18} /><span className="ax-side__label">{g.group}</span>
+                    {mini && count > 0 && <span className="ax-side__dot" />}
+                  </a>
+                </Tip>
+              </div>
+            );
+          }
+          // Thu gọn: icon nhóm + menu bay ra bên phải
+          if (mini) {
+            return (
+              <div key={g.group} className="ax-side__group">
+                <DropdownMenu.Root>
+                  <Tip label={g.group}>
+                    <DropdownMenu.Trigger asChild>
+                      <button type="button" className={`ax-side__group-btn${has ? ' has-active' : ''}`} aria-label={g.group} style={{ position: 'relative' }}>
+                        <Icon size={18} />{count > 0 && <span className="ax-side__dot" />}
+                      </button>
+                    </DropdownMenu.Trigger>
+                  </Tip>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content className="ax-menu" side="right" align="start" sideOffset={10}>
+                      <div className="ax-menu__label">{g.group}</div>
+                      {g.items.map(it => {
+                        const ItemIcon = ICONS[it.slug] || FileText;
+                        return <DropdownMenu.Item key={it.slug} className={`ax-menu__item${it.slug === active ? ' is-active' : ''}`} onSelect={() => onNavigate(link(it.slug))}><ItemIcon size={16} />{it.label}{!!counts[it.slug] && <span className="ax-side__count">{counts[it.slug]}</span>}</DropdownMenu.Item>;
+                      })}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+              </div>
+            );
+          }
+          const isOpen = open.has(g.group);
+          return (
+            <div key={g.group} className="ax-side__group">
+              <button type="button" className={`ax-side__group-btn${has ? ' has-active' : ''}`} aria-expanded={isOpen}
+                onClick={() => setOpen(s => { const n = new Set(s); if (n.has(g.group)) n.delete(g.group); else n.add(g.group); return n; })}>
+                <Icon size={18} /><span className="ax-side__label">{g.group}</span>
+                {!isOpen && count > 0 && <span className="ax-side__count">{count}</span>}
+                <ChevronRight size={15} className="ax-side__chev" />
+              </button>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div className="ax-side__items" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: DUR.base, ease: EASE }}>
+                    <ul>
+                      {g.items.map(it => (
+                        <li key={it.slug}>
+                          <a href={link(it.slug)} onClick={click(it.slug)} className={`ax-side__link${it.slug === active ? ' is-active' : ''}`} aria-current={it.slug === active ? 'page' : undefined}>
+                            <span className="ax-side__label">{it.label}</span>
+                            {!!counts[it.slug] && <span className="ax-side__count">{counts[it.slug]}</span>}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </nav>
+      <div className="ax-side__foot">
+        <Tip label="Xem website" disabled={!mini}>
+          <a href="/" target="_blank" rel="noopener noreferrer"><Globe size={18} /><span>Xem website</span></a>
+        </Tip>
+        {!inDrawer && (
+          <Tip label={mini ? 'Mở rộng menu' : 'Thu gọn menu'} disabled={!mini}>
+            <button type="button" onClick={onToggle} aria-label={mini ? 'Mở rộng menu' : 'Thu gọn menu'} aria-expanded={!mini}>
+              {mini ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}<span>Thu gọn menu</span>
+            </button>
+          </Tip>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+/* ================================================================ Tìm nhanh (Ctrl + K) */
+function CommandSearch({ open, onOpenChange, groups, records, onGo }: { open: boolean; onOpenChange: (o: boolean) => void; groups: NavGroup[]; records: SearchRecord[]; onGo: (href: string) => void }) {
+  const [q, setQ] = useState('');
+  const [index, setIndex] = useState(0);
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => { if (open) { setQ(''); setIndex(0); } }, [open]);
+  const words = fold(q).split(/\s+/).filter(Boolean);
+  const has = (t: string) => { const h = fold(t); return words.every(w => h.includes(w)); };
+  const visible = new Set(groups.flatMap(g => g.items.map(i => i.slug)));
+  const menu = allAdminItems.filter(i => visible.has(i.slug) && (!words.length || has(`${i.label} ${i.group} ${i.desc}`)))
+    .map(i => ({ key: 'm' + i.slug, label: i.label, sub: i.group, href: `/admin/${i.slug}/`, kind: 'Chức năng' }));
+  const recs = words.length ? records.filter(r => has(`${r.label} ${r.kind}`)).slice(0, 30).map((r, n) => ({ key: `r${n}${r.href}`, label: r.label, sub: r.kind, href: r.href, kind: 'Nội dung' })) : [];
+  const hits = [...menu.slice(0, words.length ? 8 : 24), ...recs];
+  useEffect(() => { setIndex(0); }, [q]);
+  useEffect(() => { listRef.current?.querySelector('.is-on')?.scrollIntoView({ block: 'nearest' }); }, [index]);
+
+  return (
+    <Modal open={open} onOpenChange={onOpenChange} title="Tìm nhanh" size="lg">
+      <div className="ax-cmd" onKeyDown={e => {
+        if (e.key === 'ArrowDown') { e.preventDefault(); setIndex(i => Math.min(hits.length - 1, i + 1)); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); setIndex(i => Math.max(0, i - 1)); }
+        if (e.key === 'Enter' && hits[index]) { e.preventDefault(); onGo(hits[index].href); }
+      }}>
+        <div className="ax-cmd__input">
+          <Search size={18} color="#6b7690" />
+          <input autoFocus value={q} onChange={e => setQ(e.target.value)} placeholder="Tìm chức năng, bài viết, sản phẩm, landing page, khách hàng…" aria-label="Tìm nhanh" aria-controls="ax-cmd-list" aria-activedescendant={hits[index] ? `cmd-${index}` : undefined} />
+        </div>
+        <ul className="ax-cmd__list" id="ax-cmd-list" role="listbox" ref={listRef}>
+          {!hits.length && <li className="ax-cmd__empty">Không tìm thấy kết quả cho “{q}”.</li>}
+          {hits.map((h, i) => (
+            <li key={h.key} role="presentation">
+              {(i === 0 || hits[i - 1].kind !== h.kind) && <div className="ax-cmd__group">{h.kind}</div>}
+              <button type="button" id={`cmd-${i}`} role="option" aria-selected={i === index} className={`ax-cmd__item${i === index ? ' is-on' : ''}`} onMouseEnter={() => setIndex(i)} onClick={() => onGo(h.href)}>
+                <span>{h.label}</span><small>{h.sub}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className="ax-cmd__hint"><span>↑↓ di chuyển</span><span>Enter mở</span><span>Esc đóng</span></div>
+      </div>
+    </Modal>
+  );
+}
+
+/* ================================================================ Tài khoản */
 function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSettings?: () => void }) {
   const user = useAdminUser();
   const role = ROLES[user.role]?.label || user.role;
-  const short = initials(user.name);
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const down = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const key = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    document.addEventListener('mousedown', down);
-    document.addEventListener('keydown', key);
-    return () => {
-      document.removeEventListener('mousedown', down);
-      document.removeEventListener('keydown', key);
-    };
-  }, [open]);
-
   return (
-    <div className="am" ref={ref}>
-      <button type="button" className="ds-topbar-user-profile am-trigger" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)}>
-        <span className="ds-topbar-user-avatar">{short}</span>
-        <span className="ds-topbar-user-meta">
-          <span className="ds-topbar-user-name">{user.name}</span>
-          <span className="ds-topbar-user-role">{role}</span>
-        </span>
-        <ChevronDown size={14} className="ds-topbar-user-chevron" />
-      </button>
-      {open && (
-        <div className="am-pop" role="menu" aria-label="Tài khoản">
-          <div className="am-card">
-            <div className="am-avatar">{short}</div>
-            <div>
-              <strong>{user.name}</strong>
-              <span>{role}</span>
-              <small>Phiên bảo mật · 8 giờ</small>
-            </div>
-          </div>
-          <p className="am-where">
-            <Globe size={15} /> Đang quản lý <b>danava.com.vn</b>
-          </p>
-          <a role="menuitem" href="/" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
-            <ExternalLink size={17} /> Xem website
-          </a>
-          {onSettings && (
-            <button
-              type="button"
-              role="menuitem"
-              onClick={() => {
-                setOpen(false);
-                onSettings();
-              }}
-            >
-              <Settings size={17} /> Cài đặt
-            </button>
-          )}
-          <div className="am-sep" />
-          <button
-            type="button"
-            role="menuitem"
-            className="am-logout"
-            onClick={() => {
-              setOpen(false);
-              onLogout();
-            }}
-          >
-            <LogOut size={17} /> Đăng xuất
-          </button>
-        </div>
-      )}
-    </div>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button type="button" className="ax-account" aria-label={`Tài khoản: ${user.name}`}>
+          <span className="ax-avatar">{initials(user.name)}</span>
+          <span className="ax-account__meta"><b>{user.name}</b><small>{role}</small></span>
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className="ax-menu" align="end" sideOffset={6}>
+          <div className="ax-menu__label">{user.name} · {role}</div>
+          <DropdownMenu.Item className="ax-menu__item" onSelect={() => window.open('/', '_blank', 'noopener')}><ExternalLink size={16} />Xem website</DropdownMenu.Item>
+          {onSettings && <DropdownMenu.Item className="ax-menu__item" onSelect={onSettings}><Settings size={16} />Cài đặt</DropdownMenu.Item>}
+          <div className="ax-menu__sep" />
+          <DropdownMenu.Item className="ax-menu__item is-danger" onSelect={onLogout}><LogOut size={16} />Đăng xuất</DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
 

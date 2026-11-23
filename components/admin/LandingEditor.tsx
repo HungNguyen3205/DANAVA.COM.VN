@@ -5,9 +5,10 @@
  * · Phải: thuộc tính khối đang chọn (Nội dung: chữ, ảnh, liên kết, nút · Hiển thị: cỡ chữ, căn lề, màu, độ rộng, chiều cao, khoảng cách).
  * Dữ liệu khối được kiểm tra hợp lệ khi lưu (lib/page-blocks.ts); giới hạn hiển thị giữ bố cục responsive.
  */
-import { ArrowDown, ArrowUp, Copy, Eye, EyeOff, GripVertical, Monitor, Plus, RotateCcw, Smartphone, Tablet, Trash2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Copy, Eye, EyeOff, Monitor, Plus, RotateCcw, Smartphone, Tablet, Trash2, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import MediaPicker from '../MediaPicker';
+import { SortableList, ask } from './kit';
 import type { Service } from '@/lib/content';
 import {
   BLOCKS, STYLE_LIMITS, STYLE_OPTIONS, STYLE_STEP, blockDef, cloneBlock, newBlock, okLink,
@@ -32,7 +33,6 @@ export function LandingEditor({ blocks, services, slug, onChange }: { blocks: Pa
   const [device, setDevice] = useState<Device>('desktop');
   const [panel, setPanel] = useState<'noi-dung' | 'hien-thi'>('noi-dung');
   const [library, setLibrary] = useState(false);
-  const [drag, setDrag] = useState<number | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const propsRef = useRef<HTMLDivElement>(null);
   const current = blocks.find(b => b.id === selected);
@@ -92,8 +92,8 @@ export function LandingEditor({ blocks, services, slug, onChange }: { blocks: Pa
     onChange(next);
     setSelected(copy.id);
   };
-  const remove = (b: PageBlock) => {
-    if (!confirm(`Xóa khối “${blockDef(b.type)?.label}”?`)) return;
+  const remove = async (b: PageBlock) => {
+    if (!(await ask(`Xóa khối “${blockDef(b.type)?.label}”?`, { confirmLabel: 'Xóa khối' }))) return;
     const at = blocks.findIndex(x => x.id === b.id);
     const next = blocks.filter(x => x.id !== b.id);
     onChange(next);
@@ -120,32 +120,26 @@ export function LandingEditor({ blocks, services, slug, onChange }: { blocks: Pa
             ))}
           </div>
         )}
-        <ol className="lpe-list">
-          {blocks.map((b, i) => (
-            <li
-              key={b.id}
-              className={`${b.id === selected ? 'is-on' : ''}${b.hidden ? ' is-hidden' : ''}${drag === i ? ' is-drag' : ''}`}
-              draggable
-              onDragStart={e => { setDrag(i); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', b.id); }}
-              onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
-              onDrop={e => { e.preventDefault(); if (drag !== null) move(drag, i); setDrag(null); }}
-              onDragEnd={() => setDrag(null)}
-            >
-              <span className="lpe-grip" aria-hidden="true"><GripVertical size={14} /></span>
-              <button type="button" className="lpe-pick" onClick={() => pick(b.id)} aria-current={b.id === selected}>
-                <b>{blockDef(b.type)?.label || b.type}</b>
-                <small>{b.hidden ? 'Đang ẩn · ' : ''}{summary(b) || ' '}</small>
-              </button>
-              <span className="lpe-tools">
-                <button type="button" aria-label="Đưa lên" disabled={i === 0} onClick={() => move(i, i - 1)}><ArrowUp size={13} /></button>
-                <button type="button" aria-label="Đưa xuống" disabled={i === blocks.length - 1} onClick={() => move(i, i + 1)}><ArrowDown size={13} /></button>
-                <button type="button" aria-label={b.hidden ? 'Hiện khối' : 'Ẩn khối'} onClick={() => update(b.id, { hidden: b.hidden ? undefined : true })}>{b.hidden ? <EyeOff size={13} /> : <Eye size={13} />}</button>
-                <button type="button" aria-label="Nhân bản" onClick={() => duplicate(b)}><Copy size={13} /></button>
-                <button type="button" aria-label="Xóa khối" onClick={() => remove(b)}><Trash2 size={13} /></button>
-              </span>
-            </li>
-          ))}
-        </ol>
+        <SortableList className="lpe-list" items={blocks} getId={b => b.id} getLabel={b => blockDef(b.type)?.label || b.type} onReorder={onChange}
+          render={(b, handle) => {
+            const i = blocks.findIndex(x => x.id === b.id);
+            return (
+              <div className={`lpe-node${b.id === selected ? ' is-on' : ''}${b.hidden ? ' is-hidden' : ''}`}>
+                {handle}
+                <button type="button" className="lpe-pick" onClick={() => pick(b.id)} aria-current={b.id === selected}>
+                  <b>{blockDef(b.type)?.label || b.type}</b>
+                  <small>{b.hidden ? 'Đang ẩn · ' : ''}{summary(b) || ' '}</small>
+                </button>
+                <span className="lpe-tools">
+                  <button type="button" aria-label="Đưa lên" disabled={i === 0} onClick={() => move(i, i - 1)}><ArrowUp size={13} /></button>
+                  <button type="button" aria-label="Đưa xuống" disabled={i === blocks.length - 1} onClick={() => move(i, i + 1)}><ArrowDown size={13} /></button>
+                  <button type="button" aria-label={b.hidden ? 'Hiện khối' : 'Ẩn khối'} onClick={() => update(b.id, { hidden: b.hidden ? undefined : true })}>{b.hidden ? <EyeOff size={13} /> : <Eye size={13} />}</button>
+                  <button type="button" aria-label="Nhân bản" onClick={() => duplicate(b)}><Copy size={13} /></button>
+                  <button type="button" aria-label="Xóa khối" onClick={() => remove(b)}><Trash2 size={13} /></button>
+                </span>
+              </div>
+            );
+          }} />
         {!blocks.length && <p className="field-note">Chưa có khối nào. Bấm “Thêm khối”.</p>}
       </aside>
 

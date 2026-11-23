@@ -34,6 +34,8 @@ import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
 import { PageVisualEditor } from './admin/PageVisualEditor';
 import { ContentPerformance, SeoScreen } from './admin/SeoScreens';
 import { OverviewTasks } from './admin/OverviewTasks';
+import { GalleryOrder, MenuEditor, StaffOrder } from './admin/SortEditors';
+import { ask } from './admin/kit';
 import type { PageTab, SitePage } from './admin/websitePages';
 import { Empty, Loading, useAdminUser, useQueryParam, useTabs } from './admin/ui';
 
@@ -112,7 +114,7 @@ function AdminWorkspace({ section }: { section: string }) {
     }
   }
   async function dropDraft() {
-    if (!confirm('Bỏ bản nháp đã lưu và quay về nội dung đang hiển thị trên website?')) return;
+    if (!(await ask('Bỏ bản nháp đã lưu?', { body: 'Quay về nội dung đang hiển thị trên website. Bản nháp sẽ mất.', confirmLabel: 'Bỏ nháp' }))) return;
     setSaving(true);
     try { if (await discardDraft()) setNotice('Đã bỏ bản nháp. Đang hiển thị nội dung của website.'); } finally { setSaving(false); }
   }
@@ -141,8 +143,8 @@ function AdminWorkspace({ section }: { section: string }) {
     }
     if (importInput.current) importInput.current.value = '';
   }
-  function removePerson(id: string) {
-    if (confirm('Xóa hồ sơ nhân sự này khỏi bản chỉnh sửa?'))
+  async function removePerson(id: string) {
+    if (await ask('Xóa hồ sơ nhân sự này?', { body: 'Thay đổi áp dụng khi Lưu nháp hoặc Xuất bản.', confirmLabel: 'Xóa' }))
       setDraft({ ...draft, staff: draft.staff.filter((p) => p.id !== id) });
   }
   const newLeadCount = leads.filter((l) => (l.status || 'new') === 'new').length;
@@ -218,6 +220,7 @@ function AdminWorkspace({ section }: { section: string }) {
   const renderPageTab = (_page: SitePage, t: PageTab) => {
     if (t.kind === 'hero') return heroEditor;
     if (t.kind === 'presentation') return <PresentationEditor value={draft.presentation || defaultPresentation} onChange={(presentation) => setDraft({ ...draft, presentation })} />;
+    if (t.kind === 'block' && t.block === 'gallery') return <div className="blk-stack"><GalleryOrder draft={draft} setDraft={setDraft} />{blockPanel('gallery')}</div>;
     if (t.kind === 'block') return blockPanel(t.block);
     if (t.kind === 'visual') return <PageVisualEditor page={_page} draft={draft} setDraft={setDraft} />;
     return <div className="blk-stack">{t.keys.map(pageTextPanel)}</div>;
@@ -328,7 +331,7 @@ function AdminWorkspace({ section }: { section: string }) {
         <button
           className="danger"
           onClick={async () => {
-            if (confirm('Khôi phục nội dung mặc định? Hãy xuất bản sao trước nếu cần.')) {
+            if (await ask('Khôi phục nội dung mặc định?', { body: 'Toàn bộ nội dung hiện tại sẽ bị thay. Hãy xuất bản sao JSON trước nếu cần.', confirmLabel: 'Khôi phục mặc định' })) {
               if (await save(structuredClone(initial))) setNotice('Đã khôi phục dữ liệu mặc định trên máy chủ.');
             }
           }}
@@ -357,7 +360,7 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'trang': return <WebsitePagesScreen renderTab={renderPageTab} edited={pageEdited} />;
       case 'landing-page': return <LandingsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
       case 'mau-khoi': return <BlockLibraryScreen />;
-      case 'menu': return blockPanel('menu');
+      case 'menu': return <MenuEditor draft={draft} setDraft={setDraft} />;
       case 'giao-dien': return blockPanel('anna');
       case 'san-pham': return <ProductsScreen draft={draft} setDraft={setDraft} studioPricing={blockPanel('pricing')} ctaText={pageTextPanel} saveBar={recordSave} />;
       case 'nhom-loai': return <GroupsScreen draft={draft} setDraft={setDraft} />;
@@ -368,7 +371,7 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'thuong-hieu':
         switch (tab) {
           case 'kenh-lien-he': return <ChannelsEditor draft={draft} setDraft={setDraft} />;
-          case 'doi-ngu': return staffEditor;
+          case 'doi-ngu': return <div className="blk-stack"><StaffOrder draft={draft} setDraft={setDraft} />{staffEditor}</div>;
           case 'ho-so-nhan-su': return blockPanel('staff');
           case 'doi-tac': return <ProofEditor draft={draft} setDraft={setDraft} />;
           case 'so-lieu': return metricsEditor;
@@ -418,8 +421,8 @@ function AdminWorkspace({ section }: { section: string }) {
       ready={ready && canEdit}
       saving={saving}
       onSave={persist}
-      onDiscard={() => {
-        if (confirm('Bỏ mọi thay đổi chưa lưu và quay về bản đang lưu trên máy chủ?')) setDraft(data);
+      onDiscard={async () => {
+        if (await ask('Hoàn tác thay đổi chưa lưu?', { body: 'Quay về bản đang lưu trên máy chủ.', confirmLabel: 'Hoàn tác' })) setDraft(data);
       }}
       onDiscardDraft={dropDraft}
       draft={serverDraft}

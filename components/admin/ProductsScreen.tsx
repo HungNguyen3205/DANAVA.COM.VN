@@ -3,7 +3,8 @@
  * Sản phẩm & Dịch vụ: danh sách + hồ sơ từng sản phẩm (tab Thông tin chung, Nội dung, Gói & giá, Hiển thị, SEO, Lịch sử).
  * Một nguồn dữ liệu: SiteData.services. Trang chủ, hệ sinh thái, landing page, ANNA đọc bản đã xuất bản của hồ sơ này.
  */
-import { ArrowLeft, ArrowDown, ArrowUp, ExternalLink, Plus, Star, Trash2 } from 'lucide-react';
+import { ArrowLeft, ArrowUpDown, ExternalLink, Eye, EyeOff, Pencil, Plus, Star, Trash2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import MediaPicker from '../MediaPicker';
 import { FaqList, FeatureList, Lines, SubServicesEditor, Text, Toggle } from '../AdminContentEditors';
@@ -11,6 +12,8 @@ import type { ProductGroup, ProductPackage, ProductType, Service, SiteData } fro
 import { PRODUCT_TYPES, isCoreProduct, missingForPublish, packagePrice, typeOf, type ProductSection } from '@/lib/product-types';
 import { RecordHistory } from './RecordHistory';
 import { Empty, SearchBar, matches, useQueryParam, usePaged } from './ui';
+import { Button, Card, DataTable, PageHeader, SortableList, StatusBadge, TabBar, ask, useConfirm } from './kit';
+import { sortServices } from '@/lib/site-queries';
 
 export const slugify = (v: string) => v.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
 const today = () => new Date(Date.now() + 7 * 3600_000).toISOString().slice(0, 10);
@@ -39,28 +42,28 @@ export function ProductsScreen(props: Props) {
 
 /* ================================================================ Danh sách */
 function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => void }) {
+  const confirm = useConfirm();
   const [q, setQ] = useState('');
   const [type, setType] = useState('');
   const [group, setGroup] = useState('');
   const [status, setStatus] = useState('');
   const [creating, setCreating] = useState(false);
+  const [sorting, setSorting] = useState(false);
   // Nút Tạo mới trên thanh trên cùng mở /admin/san-pham/?new=1
   const [fresh, setFresh] = useQueryParam('new');
   useEffect(() => { if (fresh) { setCreating(true); setFresh(''); } }, [fresh, setFresh]);
   const groups = draft.productGroups || [];
   const groupName = (gid?: string) => groups.find(g => g.id === gid)?.name || '';
-  const list = draft.services.filter(s =>
+  // Hiển thị theo đúng thứ tự trên website
+  const ordered = sortServices(draft.services);
+  const list = ordered.filter(s =>
     matches(q, s.title, s.description, s.slug) && (!type || typeOf(s) === type) && (!group || (group === '-' ? !s.groupId : s.groupId === group))
     && (!status || (status === 'an' ? s.published === false : s.published !== false)));
   const { slice, pager } = usePaged(list, 20);
+  const patch = (id: string, change: Partial<Service>) => setDraft({ ...draft, services: draft.services.map(s => (s.id === id ? { ...s, ...change } : s)) });
 
-  const move = (sid: string, dir: -1 | 1) => {
-    const services = [...draft.services];
-    const i = services.findIndex(s => s.id === sid), j = i + dir;
-    if (j < 0 || j >= services.length) return;
-    [services[i], services[j]] = [services[j], services[i]];
-    setDraft({ ...draft, services });
-  };
+  /** Kéo sắp xếp: ghi thứ tự cho mọi sản phẩm → website hiển thị theo thứ tự này sau khi lưu. */
+  const reorder = (next: Service[]) => setDraft({ ...draft, services: next.map((s, i) => ({ ...s, order: i })) });
 
   function create(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -70,9 +73,11 @@ function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => 
     const taken = new Set(draft.services.flatMap(s => [s.id, s.slug]));
     const sid = uniqueSlug(slugify(title), taken);
     const t = String(f.get('type')) as ProductType;
+    const hasOrder = draft.services.every(s => typeof s.order === 'number');
     const product: Service = {
       id: sid, slug: sid, title, description: '', items: [], type: t, groupId: String(f.get('group') || '') || undefined,
-      published: false, heroLead: '', audience: [], problems: [], process: [], faqs: [], features: [], packages: [], pricing: '', updated: today()
+      published: false, heroLead: '', audience: [], problems: [], process: [], faqs: [], features: [], packages: [], pricing: '', updated: today(),
+      ...(hasOrder ? { order: draft.services.length } : {})
     };
     setDraft({ ...draft, services: [...draft.services, product] });
     setCreating(false);
@@ -80,14 +85,15 @@ function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => 
   }
 
   return (
-    <div className="blk-stack">
-      <section className="admin-panel">
-        <div className="panel-heading">
-          <h2>Sản phẩm & dịch vụ</h2>
-          <button type="button" className="admin-secondary" onClick={() => setCreating(v => !v)}><Plus size={15} /> Thêm sản phẩm</button>
-        </div>
+    <>
+      <PageHeader title="Sản phẩm & dịch vụ" description={`${draft.services.filter(s => s.published !== false).length} đang hiển thị · ${draft.services.filter(s => s.published === false).length} đang ẩn`}
+        actions={<>
+          <Button variant="secondary" onClick={() => setSorting(v => !v)} aria-pressed={sorting}><ArrowUpDown size={16} /> {sorting ? 'Xong sắp xếp' : 'Sắp xếp thứ tự'}</Button>
+          <Button variant="primary" onClick={() => setCreating(v => !v)}><Plus size={16} /> Thêm sản phẩm</Button>
+        </>} />
+      <AnimatePresence initial={false}>
         {creating && (
-          <form className="adm-create-row" onSubmit={create}>
+          <motion.form className="adm-create-row" onSubmit={create} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
             <label>Tên sản phẩm / dịch vụ<input name="title" required maxLength={200} autoFocus placeholder="vd. DANAVA Booking" /></label>
             <label>Loại
               <select name="type" defaultValue="phan-mem">{Object.entries(PRODUCT_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>
@@ -95,39 +101,52 @@ function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => 
             <label>Nhóm
               <select name="group" defaultValue=""><option value="">(chưa phân nhóm)</option>{groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select>
             </label>
-            <button className="admin-primary">Tạo hồ sơ</button>
+            <Button variant="primary" type="submit">Tạo hồ sơ</Button>
             <p className="field-note">Hồ sơ mới ở trạng thái ẩn. Điền đủ nội dung rồi bật “Hiển thị trên website” và Xuất bản. Đường dẫn: /giai-phap/{'{đường-dẫn}'}/</p>
-          </form>
+          </motion.form>
         )}
-        <SearchBar value={q} onChange={setQ} placeholder="Tìm theo tên, mô tả, đường dẫn…">
-          <select aria-label="Lọc theo loại" value={type} onChange={e => setType(e.target.value)}><option value="">Mọi loại</option>{Object.entries(PRODUCT_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>
-          <select aria-label="Lọc theo nhóm" value={group} onChange={e => setGroup(e.target.value)}><option value="">Mọi nhóm</option><option value="-">(chưa phân nhóm)</option>{groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select>
-          <select aria-label="Lọc theo trạng thái" value={status} onChange={e => setStatus(e.target.value)}><option value="">Mọi trạng thái</option><option value="hien">Đang hiển thị</option><option value="an">Đang ẩn</option></select>
-        </SearchBar>
-        {!list.length ? <Empty>Không có sản phẩm nào khớp bộ lọc.</Empty> : (
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>Sản phẩm</th><th>Loại</th><th>Nhóm</th><th>Trạng thái</th><th>Thứ tự</th></tr></thead>
-              <tbody>
-                {slice.map(s => (
-                  <tr key={s.id}>
-                    <td><button type="button" className="adm-link-cell" onClick={() => open(s.id)}><b>{s.featured && <Star size={13} aria-label="Nổi bật" />} {s.title}</b><small>/giai-phap/{s.slug}/</small></button></td>
-                    <td>{PRODUCT_TYPES[typeOf(s)].label}</td>
-                    <td>{groupName(s.groupId) || <span className="field-note">—</span>}</td>
-                    <td><span className={`badge ${s.published === false ? '' : 'green'}`}>{s.published === false ? 'Đang ẩn' : 'Đang hiển thị'}</span></td>
-                    <td><span className="adm-btn-row">
-                      <button type="button" className="adm-icon-btn" aria-label={`Đưa ${s.title} lên`} onClick={() => move(s.id, -1)}><ArrowUp size={15} /></button>
-                      <button type="button" className="adm-icon-btn" aria-label={`Đưa ${s.title} xuống`} onClick={() => move(s.id, 1)}><ArrowDown size={15} /></button>
-                    </span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {pager}
-      </section>
-    </div>
+      </AnimatePresence>
+
+      {sorting ? (
+        <Card title="Kéo để sắp xếp thứ tự hiển thị" description="Kéo tay nắm (hoặc chọn tay nắm, nhấn Space rồi dùng phím mũi tên). Thứ tự áp dụng cho website sau khi Lưu nháp → Xuất bản.">
+          <SortableList items={ordered} getId={s => s.id} getLabel={s => s.title} onReorder={reorder}
+            render={(s, handle) => (
+              <div className="ax-row">
+                {handle}
+                {s.image ? <img className="ax-row__thumb" src={s.image} alt="" /> : <span className="ax-row__thumb" />}
+                <span className="ax-row__main"><b>{s.title}</b><small>{PRODUCT_TYPES[typeOf(s)].label}{groupName(s.groupId) ? ` · ${groupName(s.groupId)}` : ''}</small></span>
+                <StatusBadge tone={s.published === false ? 'neutral' : 'success'}>{s.published === false ? 'Đang ẩn' : 'Hiển thị'}</StatusBadge>
+              </div>
+            )} />
+        </Card>
+      ) : (
+        <>
+          <SearchBar value={q} onChange={setQ} placeholder="Tìm theo tên, mô tả, đường dẫn…">
+            <select aria-label="Lọc theo loại" value={type} onChange={e => setType(e.target.value)}><option value="">Mọi loại</option>{Object.entries(PRODUCT_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>
+            <select aria-label="Lọc theo nhóm" value={group} onChange={e => setGroup(e.target.value)}><option value="">Mọi nhóm</option><option value="-">(chưa phân nhóm)</option>{groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select>
+            <select aria-label="Lọc theo trạng thái" value={status} onChange={e => setStatus(e.target.value)}><option value="">Mọi trạng thái</option><option value="hien">Đang hiển thị</option><option value="an">Đang ẩn</option></select>
+          </SearchBar>
+          <DataTable caption="Danh sách sản phẩm & dịch vụ" rows={slice} rowKey={s => s.id} onRowClick={s => open(s.id)}
+            empty={<Empty title="Không có sản phẩm nào khớp bộ lọc">Thử đổi từ khóa hoặc bộ lọc.</Empty>}
+            columns={[
+              { key: 'title', header: 'Sản phẩm', primary: true, cell: s => <span className="ax-cell-title"><b>{s.featured && <Star size={13} aria-label="Nổi bật" className="ax-star" />} {s.title}</b><small>/giai-phap/{s.slug}/</small></span> },
+              { key: 'type', header: 'Loại', cell: s => PRODUCT_TYPES[typeOf(s)].label },
+              { key: 'group', header: 'Nhóm', hideOnMobile: true, cell: s => groupName(s.groupId) || <span className="field-note">—</span> },
+              { key: 'status', header: 'Trạng thái', width: '140px', cell: s => <StatusBadge tone={s.published === false ? 'neutral' : 'success'}>{s.published === false ? 'Đang ẩn' : 'Đang hiển thị'}</StatusBadge> }
+            ]}
+            actions={s => [
+              { label: 'Sửa hồ sơ', icon: <Pencil size={15} />, onSelect: () => open(s.id) },
+              { label: 'Xem trang', icon: <Eye size={15} />, onSelect: () => window.open(`/giai-phap/${s.slug}/`, '_blank', 'noopener'), hidden: s.published === false },
+              { label: s.featured ? 'Bỏ nổi bật' : 'Đánh dấu nổi bật', icon: <Star size={15} />, onSelect: () => patch(s.id, { featured: s.featured ? undefined : true }) },
+              { label: s.published === false ? 'Hiển thị trên website' : 'Ẩn khỏi website', icon: s.published === false ? <Eye size={15} /> : <EyeOff size={15} />, onSelect: async () => {
+                if (s.published !== false && !(await confirm({ title: `Ẩn “${s.title}” khỏi website?`, body: 'Trang sản phẩm sẽ trả 404 sau khi Xuất bản.', confirmLabel: 'Ẩn sản phẩm' }))) return;
+                patch(s.id, { published: s.published === false ? (isCoreProduct(s.id) ? undefined : true) : false });
+              } }
+            ]} />
+          {pager}
+        </>
+      )}
+    </>
   );
 }
 
@@ -143,7 +162,7 @@ function ProductProfile({ draft, setDraft, product: s, onBack, studioPricing, ct
   const missing = missingForPublish(s);
   const groups = draft.productGroups || [];
 
-  function remove() {
+  async function remove() {
     const refs = [
       draft.posts.filter(p => p.serviceIds?.includes(s.id)).length && 'bài viết',
       (draft.projects || []).filter(p => p.serviceIds?.includes(s.id)).length && 'dự án',
@@ -152,10 +171,10 @@ function ProductProfile({ draft, setDraft, product: s, onBack, studioPricing, ct
       (draft.subServices || []).some(x => x.parentId === s.id) && 'trang con'
     ].filter(Boolean);
     if ((draft.showcase || []).some(x => x.serviceId === s.id) || (draft.subServices || []).some(x => x.parentId === s.id)) {
-      alert('Sản phẩm này còn mục portfolio hoặc trang con gắn kèm. Chuyển hoặc xóa chúng trước.');
+      await ask('Chưa xóa được sản phẩm này', { body: 'Sản phẩm còn mục portfolio hoặc trang con gắn kèm. Chuyển hoặc xóa chúng trước.', confirmLabel: 'Đã hiểu', tone: 'primary' });
       return;
     }
-    if (!confirm(`Xóa hồ sơ “${s.title}”?${refs.length ? ` Liên kết từ ${refs.join(', ')} sẽ được gỡ.` : ''} Thay đổi chỉ áp dụng khi lưu.`)) return;
+    if (!(await ask(`Xóa hồ sơ “${s.title}”?`, { body: `${refs.length ? `Liên kết từ ${refs.join(', ')} sẽ được gỡ. ` : ''}Thay đổi chỉ áp dụng khi lưu.`, confirmLabel: 'Xóa hồ sơ' }))) return;
     const strip = (ids?: string[]) => ids?.filter(x => x !== s.id);
     setDraft({
       ...draft,
@@ -169,18 +188,14 @@ function ProductProfile({ draft, setDraft, product: s, onBack, studioPricing, ct
 
   return (
     <div className="blk-stack">
-      <div className="adm-record-head">
-        <button type="button" className="adm-btn adm-btn-ghost" onClick={onBack}><ArrowLeft size={16} /> Danh sách</button>
-        <div className="adm-record-head__title">
-          <h2>{s.title || 'Sản phẩm chưa đặt tên'}</h2>
-          <small>{def.label} · <span className={s.published === false ? '' : 'adm-ok'}>{s.published === false ? 'đang ẩn' : 'đang hiển thị'}</span></small>
-        </div>
-        <a className="adm-btn adm-btn-ghost" href={`/giai-phap/${s.slug}/`} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>
-      </div>
+      <PageHeader
+        back={<Button variant="ghost" onClick={onBack}><ArrowLeft size={16} /> Sản phẩm & dịch vụ</Button>}
+        title={s.title || 'Sản phẩm chưa đặt tên'}
+        description={<>{def.label} · <StatusBadge tone={s.published === false ? 'neutral' : 'success'}>{s.published === false ? 'Đang ẩn' : 'Đang hiển thị'}</StatusBadge></>}
+        actions={<a className="ax-btn ax-btn--secondary" href={`/giai-phap/${s.slug}/`} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>}
+      />
       {s.published !== false && !core && missing.length > 0 && <p className="adm-inline-msg">Còn thiếu để hiển thị công khai: {missing.join(', ')}.</p>}
-      <div className="adm-tabs adm-screen-tabs" role="tablist" aria-label="Các phần của hồ sơ">
-        {TABS.map(t => <button key={t.id} type="button" role="tab" aria-selected={t.id === tab} className={t.id === tab ? 'is-on' : ''} onClick={() => setTab(t.id)}>{t.label}</button>)}
-      </div>
+      <TabBar tabs={TABS} value={tab} onChange={setTab} label="Các phần của hồ sơ" />
 
       {tab === 'chung' && (
         <section className="admin-panel">
@@ -322,8 +337,8 @@ export function GroupsScreen({ draft, setDraft }: { draft: SiteData; setDraft: (
           <div key={g.id} className="adm-group-row">
             <Text label={`Tên nhóm · ${count(g.id)} sản phẩm`} value={g.name} max={80} onChange={name => set(groups.map((x, j) => (j === i ? { ...x, name } : x)))} />
             <Text label="Mô tả" value={g.description} max={500} onChange={description => set(groups.map((x, j) => (j === i ? { ...x, description } : x)))} />
-            <button type="button" className="danger" onClick={() => {
-              if (!confirm(`Xóa nhóm “${g.name}”?`)) return;
+            <button type="button" className="danger" onClick={async () => {
+              if (!(await ask(`Xóa nhóm “${g.name}”?`, { body: 'Sản phẩm trong nhóm trở về “chưa phân nhóm”.', confirmLabel: 'Xóa nhóm' }))) return;
               setDraft({ ...draft, productGroups: groups.filter(x => x.id !== g.id), services: draft.services.map(s => (s.groupId === g.id ? { ...s, groupId: undefined } : s)) });
             }}>Xóa</button>
           </div>

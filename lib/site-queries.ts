@@ -11,8 +11,11 @@ export const TOPIC_PAGE_MIN_POSTS = 3;
 
 /** Thứ tự ưu tiên hiển thị giải pháp: sản phẩm chủ lực trước. */
 export const SERVICE_ORDER = ['studio', 'website', 'marketing', 'events', 'travel', 'community'];
+/** Thứ tự đã kéo sắp xếp trong admin (Service.order) nếu có; không thì thứ tự mặc định. */
 export const sortServices = (list: Service[]) =>
-  [...list].sort((a, b) => (SERVICE_ORDER.indexOf(a.id) + 99) % 99 - (SERVICE_ORDER.indexOf(b.id) + 99) % 99);
+  list.length && list.every(s => typeof s.order === 'number')
+    ? [...list].sort((a, b) => a.order! - b.order!)
+    : [...list].sort((a, b) => (SERVICE_ORDER.indexOf(a.id) + 99) % 99 - (SERVICE_ORDER.indexOf(b.id) + 99) % 99);
 
 export const serviceHref = (s: Pick<Service, 'slug'>) => `/giai-phap/${s.slug}/`;
 export const projectHref = (p: Pick<Project, 'slug'>) => `/du-an/${p.slug}/`;
