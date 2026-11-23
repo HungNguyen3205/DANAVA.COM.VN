@@ -259,3 +259,6 @@
 .s-app .s-article-head .s-container, .s-app .s-article-cover-wrap > .s-container, .s-app .s-article-layout { max-width: 1036px; margin-inline: auto; }
 .s-app .s-article-head .s-container > * { max-width: 720px; }
 .s-app .s-article-cover { max-width: 720px; margin-inline: 0; }
+/* Chỉ khối ngoài (.s-article-toc) dính khi cuộn; khối mục lục bên trong không dính nữa để khỏi chồng lên bài nổi bật */
+.s-app .s-article-toc__desktop { position: static; }
+.s-app .s-article-toc { max-height: calc(100vh - var(--s-header-h, 72px) - 32px); overflow-y: auto; scrollbar-width: thin; }
