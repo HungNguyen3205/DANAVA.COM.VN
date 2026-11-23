@@ -129,7 +129,7 @@ export function Header() {
                   aria-current={active('/giai-phap/') ? 'page' : undefined}
                   onClick={() => setMega(v => !v)}
                 >
-                  Dịch vụ <ChevronDown aria-hidden="true" />
+                  Giải pháp <ChevronDown aria-hidden="true" />
                 </button>
                 <div className="s-mega s-mega--cols" id="s-mega-solutions">
                   <div className="s-mega__cols" style={menu.columns.length === 3 ? undefined : { gridTemplateColumns: `repeat(${menu.columns.length}, minmax(0, 1fr))` }}>
@@ -243,7 +243,7 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="s-footer__title">Dịch vụ</p>
+            <p className="s-footer__title">Giải pháp</p>
             <ul className="s-footer__list">
               {services.map(s => <li key={s.id}><Link href={`/giai-phap/${s.slug}/`}>{s.title}</Link></li>)}
             </ul>
@@ -299,7 +299,7 @@ export function Footer() {
 
 const TABS = [
   { href: '/', label: 'Trang chủ', icon: Home, match: (p: string) => p === '/' },
-  { href: '/giai-phap/', label: 'Dịch vụ', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
+  { href: '/giai-phap/', label: 'Giải pháp', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
   { href: '/lien-he/#dang-ky-tu-van', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
   { href: '/du-an/', label: 'Dự án', icon: Briefcase, match: (p: string) => p.startsWith('/du-an') },
   { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
