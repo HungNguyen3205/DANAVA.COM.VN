@@ -181,17 +181,13 @@ export function Header() {
                 <div className="s-mega s-mega--cols s-mega--services" id="s-mega-services">
                   <div className="s-mega__cols">
                     <div className="s-mega__col">
-                      <p className="s-mega__head"><span className="s-mega__no">01</span><span>Dịch vụ<small>Ngoài phần mềm</small></span></p>
+                      <p className="s-mega__head"><span>Dịch vụ<small>Ngoài phần mềm</small></span></p>
                       <ul>
                         {DICH_VU.map((s, i) => (
                           <li key={s.id}><MenuItem it={{ label: s.title, desc: s.description, href: `/dich-vu/${s.slug}/`, badge: '', image: '', icon: DV_ICON[i % DV_ICON.length], tone: i % 2 ? 'orange' : 'blue' }} onPick={() => setSvc(false)} /></li>
                         ))}
                       </ul>
                     </div>
-                  </div>
-                  <div className="s-mega__foot">
-                    <span className="s-mega__slogan">Đồng hành cùng thương hiệu của bạn.</span>
-                    <Link className="s-mega__cta" href="/dich-vu/" onClick={() => setSvc(false)}>Xem tất cả dịch vụ <ArrowRight aria-hidden="true" /></Link>
                   </div>
                 </div>
               </li>
