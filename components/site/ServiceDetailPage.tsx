@@ -26,18 +26,15 @@ export function contactHrefFor(service: Service) {
 }
 
 /** Mỗi giải pháp chính có bố cục riêng; các giải pháp còn lại dùng bố cục chuẩn bên dưới. */
-/** Nhóm trang chứa dịch vụ: mặc định là Giải pháp; trang Dịch vụ truyền vào nhóm của mình */
-export type ServiceSection = { base: string; label: string; siblings: Service[]; siblingsTitle: string };
-
-export function ServiceDetailPage({ service, data, section }: { service: Service; data: SiteData; section?: ServiceSection }) {
+export function ServiceDetailPage({ service, data }: { service: Service; data: SiteData }) {
   if (service.id === 'website') return <WebsitePage service={service} data={data} />;
   if (service.id === 'marketing') return <MarketingPage service={service} data={data} />;
   if (service.id === 'events') return <EventsPage service={service} data={data} />;
   if (service.id === 'studio') return <StudioPage service={service} data={data} />;
-  return <StandardServicePage service={service} data={data} section={section} />;
+  return <StandardServicePage service={service} data={data} />;
 }
 
-function StandardServicePage({ service, data, section }: { service: Service; data: SiteData; section?: ServiceSection }) {
+function StandardServicePage({ service, data }: { service: Service; data: SiteData }) {
   const m = serviceMeta(service);
   const d = SERVICE_DETAILS[service.id];
   const phone = data.phone || CONTACT.phone;
@@ -47,14 +44,14 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
   const projects = projectsForService(data, service.id).slice(0, 3);
   const posts = postsForService(data, service.id, 3);
   const subs = publishedSubServices(data, service.id);
-  const others = (section ? section.siblings : sortServices(data.services)).filter(s => s.id !== service.id).slice(0, 3);
+  const others = sortServices(data.services).filter(s => s.id !== service.id).slice(0, 3);
 
   return (
     <main id="main">
         <section className="s-svc-hero">
           <div className="s-container s-split">
             <div className="s-svc-hero__copy">
-              <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: section?.base ?? '/giai-phap/', label: section?.label ?? 'Giải pháp' }, { label: service.title }]} />
+              <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/', label: 'Giải pháp' }, { label: service.title }]} />
               <p className="s-eyebrow">{m.kicker}</p>
               <h1 className="s-h1">{service.title}</h1>
               <p className="s-lead">{service.heroLead || service.description}</p>
@@ -159,7 +156,7 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
 
       <RelatedPosts posts={posts} data={data} title={`Bài viết về ${service.title}`} />
 
-      <ServiceLinks services={others} title={section?.siblingsTitle ?? 'Giải pháp khác của DANAVA'} hrefOf={section ? s => `${section.base}${s.slug}/` : undefined} />
+      <ServiceLinks services={others} title="Giải pháp khác của DANAVA" />
 
       <CtaBand
         title={service.id === 'studio' ? 'Xem DANAVA Studio chạy với dữ liệu của bạn' : `Trao đổi về ${service.title}`}

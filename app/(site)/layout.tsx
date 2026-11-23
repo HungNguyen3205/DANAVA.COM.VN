@@ -24,7 +24,6 @@ import './site-anna.css';
 import './site-solutions.css';
 import './site-megamenu.css';
 import './site-header.css';
-import './site-services.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {

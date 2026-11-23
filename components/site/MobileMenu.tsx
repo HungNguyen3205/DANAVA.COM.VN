@@ -18,7 +18,6 @@ import { useAnna } from './anna/AnnaProvider';
 
 const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/giai-phap/', label: 'Tất cả giải pháp', icon: LayoutGrid },
-  { href: '/dich-vu/', label: 'Dịch vụ', icon: BriefcaseBusiness },
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái', icon: Network },
   { href: '/doi-ngu/', label: 'Đội ngũ', icon: Users },
   { href: '/lien-he/', label: 'Liên hệ', icon: MessageCircle }
