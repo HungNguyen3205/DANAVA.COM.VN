@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, CalendarDays, Megaphone, MonitorSmartphone, Plane } from 'lucide-react';
 import { seo, breadcrumbLD } from '@/lib/seo';
 import { JsonLd } from '@/components/site/blocks';
+import { DichVuAsk } from '@/components/site/DichVuAsk';
 import { Crumbs, CtaBand } from '@/components/site/ui';
 import { DICH_VU } from '@/lib/dich-vu';
 
@@ -46,6 +47,8 @@ export default function Page() {
             })}
           </div>
         </section>
+
+        <DichVuAsk />
 
         <CtaBand title="Cần tư vấn dịch vụ?" lead="Chia sẻ mục tiêu của bạn, chuyên viên DANAVA sẽ đề xuất phương án và báo giá theo phạm vi." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
       </main>
