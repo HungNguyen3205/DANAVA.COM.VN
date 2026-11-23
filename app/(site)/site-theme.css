@@ -174,7 +174,7 @@ body:has(.s-app) { background: var(--s-bg); }
 /* ---------- Footer: nền xanh chuyển sắc, bo góc trên, chữ DANAVA cỡ lớn ---------- */
 .s-footer { position: relative; overflow: hidden; margin-top: 24px; border-top: 0; box-shadow: none; border-radius: 40px 40px 0 0; background: radial-gradient(60% 120% at 100% 0%, #53a5db33, transparent 60%), var(--s-grad-blue); color: #c9d4f5; }
 .s-footer .s-logo img { box-sizing: content-box; height: 32px; padding: 10px 16px; border-radius: 16px; background: #fff; box-shadow: var(--s-shadow-sm); }
-.s-footer__title { color: #fff; }
+.s-footer__title { color: #fff; text-transform: uppercase; letter-spacing: .08em; }
 .s-footer__list a:hover, .s-footer__legal a:hover { color: #f26b1d; }
 .s-footer__contact svg { color: var(--s-amber); }
 .s-footer__bottom { border-top-color: rgba(255, 255, 255, .14); color: #a9b6e6; }
