@@ -5,13 +5,14 @@
 import Link from 'next/link';
 import { ArrowLeft, CalendarDays, Clock, ChevronDown, RefreshCw, UserRound } from 'lucide-react';
 import type { Post, SiteData } from '@/lib/content';
-import { authorOf, relatedPosts, servicesForPost, topicHasPage, topicHref, topicOf } from '@/lib/site-queries';
+import { authorOf, postHref, relatedPosts, servicesForPost, topicHasPage, topicHref, topicOf } from '@/lib/site-queries';
 import { Crumbs, CtaBand } from './ui';
 import { formatDate } from './catalog';
 import { postCover, RelatedPosts, ServiceLinks } from './blocks';
 import { contactHrefFor } from './ServiceDetailPage';
 import { DraftBanner } from './SubServicePage';
 import { pageCopy } from '@/lib/blocks';
+import { sentenceCase } from '@/lib/sentence-case';
 import { rich } from './rich';
 
 type TocItem = { id: string; title: string; level: number };
@@ -114,6 +115,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
   const related = relatedPosts(data, post, 3);
   const services = servicesForPost(data, post);
   const hasToc = toc.length >= 2;
+  const side = relatedPosts(data, post, 4);
   const topicCrumb = topic && topicHasPage(data, topic) ? { href: topicHref(topic), label: topic.name } : { label: topic?.name || post.category };
 
   return (
@@ -124,7 +126,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
           <div className="s-container s-container--narrow">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/blogs/', label: 'Blogs' }, topicCrumb]} />
             <p className="s-eyebrow s-article-cat">{topic?.name || post.category}</p>
-            <h1 className="s-h1 s-article-title">{post.title}</h1>
+            <h1 className="s-h1 s-article-title">{sentenceCase(post.title)}</h1>
             {post.excerpt && <p className="s-lead">{post.excerpt}</p>}
             <div className="s-article-meta">
               <span>
@@ -149,16 +151,41 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
         )}
 
         <div className={`s-container s-article-layout${hasToc ? '' : ' s-article-layout--single'}`}>
-          {hasToc && (
-            <aside className="s-article-toc" aria-label="Mục lục nội dung">
-              <details className="s-article-toc__mobile">
-                <summary>Mục lục nội dung <ChevronDown aria-hidden="true" /></summary>
-                <TocList toc={toc} />
-              </details>
-              <nav className="s-article-toc__desktop" aria-label="Mục lục">
-                <p className="s-article-toc__title">Mục lục nội dung</p>
-                <TocList toc={toc} />
-              </nav>
+          {(hasToc || side.length > 0) && (
+            <aside className="s-article-toc" aria-label="Mục lục và bài nổi bật">
+              {hasToc && (
+                <details className="s-article-toc__mobile">
+                  <summary>Mục lục nội dung <ChevronDown aria-hidden="true" /></summary>
+                  <TocList toc={toc} />
+                </details>
+              )}
+              {hasToc && (
+                <nav className="s-article-toc__desktop" aria-label="Mục lục">
+                  <p className="s-article-toc__title">Mục lục nội dung</p>
+                  <TocList toc={toc} />
+                </nav>
+              )}
+              {side.length > 0 && (
+                <section className="s-article-side" aria-label="Bài nổi bật">
+                  <p className="s-article-side__title">Bài nổi bật</p>
+                  <ul>
+                    {side.map(p => {
+                      const img = postCover(p);
+                      return (
+                        <li key={p.id}>
+                          <Link href={postHref(p)}>
+                            {img && <img src={img} alt="" loading="lazy" decoding="async" width={72} height={54} />}
+                            <span>
+                              <strong>{p.title}</strong>
+                              {p.date && <small>{formatDate(p.date)}</small>}
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              )}
             </aside>
           )}
 

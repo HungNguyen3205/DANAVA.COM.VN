@@ -227,3 +227,35 @@
 
 /* Thẻ bài viết trên trang chủ: tiêu đề tối đa 2 dòng, phần thừa hiện "…" */
 .post-tile__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Bài viết (theo mẫu danava.vn): nội dung ở giữa, mục lục và bài nổi bật bên phải */
+
+.s-app .s-article-layout { grid-template-columns: minmax(0, 720px) 260px; justify-content: space-between; }
+
+.s-app .s-article-layout--single { grid-template-columns: minmax(0, 720px); }
+
+.s-app .s-article-body { grid-column: 1; grid-row: 1; }
+
+.s-app .s-article-toc { grid-column: 2; grid-row: 1; position: sticky; top: calc(var(--s-header-h, 72px) + 24px); align-self: start; }
+
+.s-app .s-article-side { margin-top: 28px; padding: 18px; border-radius: 16px; background: #fff; border: 1px solid rgba(19, 36, 79, .08); }
+
+.s-app .s-article-side__title { margin: 0 0 12px; font-size: 15px; font-weight: 800; color: #13244f; }
+
+.s-app .s-article-side ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+.s-app .s-article-side a { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
+
+.s-app .s-article-side img { width: 72px; height: 54px; flex: none; object-fit: cover; border-radius: 10px; }
+
+.s-app .s-article-side strong { display: block; font-size: 14px; font-weight: 700; line-height: 1.35; }
+
+.s-app .s-article-side small { font-size: 12px; color: #6b7590; }
+
+@media (max-width: 900px) { .s-app .s-article-layout, .s-app .s-article-layout--single { grid-template-columns: minmax(0, 1fr); } .s-app .s-article-body, .s-app .s-article-toc { grid-column: 1; grid-row: auto; } .s-app .s-article-toc { position: static; } .s-app .s-article-side { display: none; } }
+.s-app .s-article-title { font-size: clamp(28px, 3.4vw, 44px); font-weight: 800; line-height: 1.2; letter-spacing: -.01em; }
+.s-app .s-article-cover { max-width: 760px; margin-inline: auto; }
+/* Căn chung: tiêu đề, ảnh bìa và cột nội dung cùng một mép trái (720px), mục lục bên phải */
+.s-app .s-article-head .s-container, .s-app .s-article-cover-wrap > .s-container, .s-app .s-article-layout { max-width: 1036px; margin-inline: auto; }
+.s-app .s-article-head .s-container > * { max-width: 720px; }
+.s-app .s-article-cover { max-width: 720px; margin-inline: 0; }
