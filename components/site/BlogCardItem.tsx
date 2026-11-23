@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, Clock } from 'lucide-react';
+import { sentenceCase } from '@/lib/sentence-case';
 
 export type BlogCard = { id: string; href: string; title: string; excerpt: string; cover: string; date: string; dateLabel: string; minutes: number; topic: string };
 
@@ -12,7 +13,7 @@ export function BlogCardItem({ card: c, topicName, tone, wide = false }: { card:
       </div>
       <div className="bl-card__body">
         <p className="bl-card__meta"><span className="bl-pill">{topicName}</span>{c.date && <time dateTime={c.date}>{c.dateLabel}</time>}</p>
-        <h3 className="bl-card__title"><Link className="bl-card__link" href={c.href}>{c.title}</Link></h3>
+        <h3 className="bl-card__title"><Link className="bl-card__link" href={c.href}>{sentenceCase(c.title)}</Link></h3>
         <p className="bl-card__text">{c.excerpt}</p>
         <p className="bl-card__foot"><span><Clock aria-hidden="true" />{c.minutes} phút đọc</span><span className="bl-card__go">Đọc bài <ArrowRight aria-hidden="true" /></span></p>
       </div>

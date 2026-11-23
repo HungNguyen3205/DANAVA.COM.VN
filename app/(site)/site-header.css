@@ -81,3 +81,10 @@
 .s-app .s-footer .s-logo img { box-sizing: border-box; height: 52px; width: auto; padding: 0; border-radius: 0; background: none; box-shadow: none; }
 .s-app .s-footer__bct { padding: 3px; border-radius: 6px; }
 .s-app .s-footer__bct img { width: 84px; }
+
+/* Thanh menu: thụt vào khỏi mép để logo và nút không sát lề */
+.s-app .s-header__bar { padding: 0 clamp(20px, 3vw, 48px); }
+@media (max-width: 1080px) { .s-app .s-header__bar { padding: 0 clamp(16px, 4vw, 24px); } }
+
+/* Chân trang: gradient dọc, đậm ở trên, nhạt dần xuống dưới */
+.s-app .s-footer { background: linear-gradient(180deg, #13244f 0%, #1f3a8a 50%, #3d5bd0 100%) !important; }
