@@ -39,7 +39,8 @@ type Input = { data: SiteData; apiKey: string; message: string; history: SignedT
 
 
 /* ===== Nhánh Gemini (khi có GEMINI_API_KEY): gọi REST bằng fetch, không thêm thư viện ===== */
-const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash';
+const GEMINI_DEFAULT_MODEL = 'gemini-flash-latest';
+const GEMINI_FALLBACK_MODEL = 'gemini-flash-lite-latest';
 
 async function* answerGemini({ data, apiKey, message, history, signal }: Input): AsyncGenerator<AnnaEvent> {
   const key = signingKey(apiKey);
@@ -47,7 +48,7 @@ async function* answerGemini({ data, apiKey, message, history, signal }: Input):
   const pricing = block(data, 'pricing');
   const checked = new CheckedStream(allowedFacts(knowledge, pricing.enabled ? pricing : null));
   const timeout = AbortSignal.timeout(TOTAL_TIMEOUT_MS);
-  const model = process.env.DANAVA_GEMINI_MODEL?.trim() || GEMINI_DEFAULT_MODEL;
+  const models = [process.env.DANAVA_GEMINI_MODEL?.trim() || GEMINI_DEFAULT_MODEL, GEMINI_FALLBACK_MODEL];
 
   const contents: { role: 'user' | 'model'; parts: { text: string }[] }[] = [];
   for (const turn of trustedHistory(key, history)) {
@@ -55,18 +56,22 @@ async function* answerGemini({ data, apiKey, message, history, signal }: Input):
   }
   contents.push({ role: 'user', parts: [{ text: message }] });
 
-  let res: Response;
+  let res!: Response; // luôn được gán trong vòng lặp (models không rỗng)
   try {
-    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: buildSystem(data, knowledge) }] },
-        contents,
-        generationConfig: { maxOutputTokens: MAX_TOKENS, temperature: 0.4 }
-      }),
-      signal: AbortSignal.any([signal, timeout])
-    });
+    // Model chính đang quá tải (503/429) thì thử model nhẹ hơn một lần
+    for (const model of models) {
+      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: buildSystem(data, knowledge) }] },
+          contents,
+          generationConfig: { maxOutputTokens: MAX_TOKENS, temperature: 0.4 }
+        }),
+        signal: AbortSignal.any([signal, timeout])
+      });
+      if (res.status !== 503 && res.status !== 429) break;
+    }
   } catch (error) {
     if (signal.aborted) return;
     console.error('[anna] gemini request failed', timeout.aborted ? 'timeout' : (error as Error)?.name);
