@@ -219,3 +219,8 @@
 @container (max-width: 339px) {
   .bl-search__topic, .bl-search .bl-search__go { flex: 1 1 100%; }
 }
+
+/* Tiêu đề bài viết: tối đa 2 dòng (thẻ, danh sách Mới cập nhật); tiêu điểm tối đa 3 dòng; phần thừa hiện "…" */
+.bl-card__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.bl-fresh__link { -webkit-line-clamp: 2; }
+.bl-cover__title { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
