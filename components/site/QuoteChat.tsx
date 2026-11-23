@@ -1,33 +1,64 @@
 'use client';
 /*
- * Phiếu thiết kế landing page dạng hội thoại (chatbot): bot hỏi từng câu, khách chọn nút hoặc gõ.
- * Bảng bên phải cập nhật tiến độ và báo giá tham khảo. Gửi qua /api/lead kèm bản tóm tắt phiếu.
+ * Phiếu báo giá dạng hội thoại (chatbot). Bot hỏi từng câu, khách chọn nút hoặc gõ.
+ * Bảng bên cạnh cập nhật tiến độ và báo giá tham khảo. Khách xác nhận rồi mới gửi vào admin
+ * qua /api/lead (nguồn theo từng loại phiếu). Hai loại: landing page / website và tổ chức sự kiện.
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bot, Check, Send } from 'lucide-react';
 import { ADVICE, SCALE_TO_TIER, SECTIONS, STEPS, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
+import { EVENT_SECTIONS, EVENT_STEPS, eventEstimate } from '@/lib/event-brief';
 import { ADDONS, estimate, rangeText } from '@/lib/web-quote';
 import { isValidPhoneNumber } from '@/lib/contact-services';
+
+export type FlowId = 'landing' | 'events';
 
 type Msg = { from: 'bot' | 'user'; text: string };
 
 const TYPING_MS = 450;
 
-export function QuoteChat() {
-  const [messages, setMessages] = useState<Msg[]>([{ from: 'bot', text: STEPS[0].bot }]);
+const FLOWS = {
+  landing: {
+    steps: STEPS,
+    sections: SECTIONS,
+    title: '[Phiếu thiết kế landing page]',
+    service: 'Landing page',
+    source: 'phieu-landing',
+    panel: 'Phiếu thiết kế landing page',
+    estimate: (a: Answers) => {
+      const addonIds = (Array.isArray(a.addons) ? a.addons : []).map(label => ADDONS.find(x => x.label === label)?.id).filter((x): x is string => !!x);
+      const tierId = SCALE_TO_TIER[typeof a.scale === 'string' ? a.scale : ''] ?? 'l-standard';
+      return a.scale ? estimate('landing', tierId, addonIds, 'normal') : null;
+    }
+  },
+  events: {
+    steps: EVENT_STEPS,
+    sections: EVENT_SECTIONS,
+    title: '[Phiếu báo giá tổ chức sự kiện]',
+    service: 'Tổ chức sự kiện',
+    source: 'phieu-su-kien',
+    panel: 'Phiếu báo giá tổ chức sự kiện',
+    estimate: (a: Answers) => eventEstimate(typeof a.guests === 'string' ? a.guests : undefined, Array.isArray(a.agenda) ? a.agenda : undefined)
+  }
+} as const;
+
+export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
+  const cfg = FLOWS[flow];
+  const steps: Step[] = cfg.steps;
+  const [messages, setMessages] = useState<Msg[]>([{ from: 'bot', text: steps[0].bot }]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [typing, setTyping] = useState(false);
   const [draft, setDraft] = useState('');
   const [picked, setPicked] = useState<string[]>([]);
   const [error, setError] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
   const thread = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const finished = index >= STEPS.length;
-  const step: Step | undefined = STEPS[index];
+  const finished = index >= steps.length;
+  const step: Step | undefined = steps[index];
 
   useEffect(() => {
     thread.current?.scrollTo({ top: thread.current.scrollHeight, behavior: 'smooth' });
@@ -36,8 +67,7 @@ export function QuoteChat() {
   /** Trả lời câu hiện tại, rồi hỏi câu tiếp theo sau một nhịp ngắn */
   const answer = (value: string | string[], shown: string) => {
     if (!step || typing) return;
-    const next = { ...answers, [step.id]: value };
-    setAnswers(next);
+    setAnswers({ ...answers, [step.id]: value });
     setError('');
     setDraft('');
     setPicked([]);
@@ -46,12 +76,11 @@ export function QuoteChat() {
     setIndex(nextIndex);
     setTyping(true);
     setTimeout(() => {
-      if (nextIndex < STEPS.length) setMessages(m => [...m, { from: 'bot', text: STEPS[nextIndex].bot }]);
+      if (nextIndex < steps.length) setMessages(m => [...m, { from: 'bot', text: steps[nextIndex].bot }]);
       setTyping(false);
     }, TYPING_MS);
   };
 
-  /** Kiểm tra và gửi câu trả lời dạng chữ */
   const sendText = (event: FormEvent) => {
     event.preventDefault();
     if (!step) return;
@@ -81,11 +110,10 @@ export function QuoteChat() {
     answer(picked, picked.length ? picked.join(', ') : 'Không có');
   };
 
-  const addonIds = (Array.isArray(answers.addons) ? answers.addons : []).map(label => ADDONS.find(a => a.label === label)?.id).filter((x): x is string => !!x);
-  const tierId = SCALE_TO_TIER[typeof answers.scale === 'string' ? answers.scale : ''] ?? 'l-standard';
-  // Chỉ báo giá khi khách đã chọn quy mô nội dung
-  const price = answers.scale ? estimate('landing', tierId, addonIds, 'normal') : null;
+  const price = cfg.estimate(answers);
+  const brief = buildBrief(answers, steps, cfg.sections, cfg.title);
 
+  /** Khách xác nhận: gửi vào admin rồi sang trang cảm ơn */
   const submit = async () => {
     setStatus('sending');
     setError('');
@@ -97,10 +125,10 @@ export function QuoteChat() {
           name: String(answers.name ?? '').trim(),
           phone: String(answers.phone ?? '').trim(),
           email: String(answers.email ?? '').trim(),
-          businessType: String(answers.industry ?? '').trim(),
-          service: 'Landing page',
-          message: buildBrief(answers) + (price ? `\n\nBáo giá tham khảo: ${rangeText(price)}` : ''),
-          source: 'phieu-landing'
+          businessType: String(answers.industry ?? answers.brand ?? '').trim(),
+          service: cfg.service,
+          message: brief + (price ? `\n\nBáo giá tham khảo: ${rangeText(price)}` : ''),
+          source: cfg.source
         })
       });
       const body = await res.json().catch(() => ({}));
@@ -112,26 +140,16 @@ export function QuoteChat() {
     }
   };
 
-  const currentSection = step ? step.section : SECTIONS.length - 1;
-
-  if (status === 'done') {
-    return (
-      <div className="qc-done" role="status">
-        <span className="qc-done__ico" aria-hidden="true"><Check /></span>
-        <h2>Cảm ơn bạn! Phiếu đã được gửi.</h2>
-        <p>Chuyên viên DANAVA sẽ đọc phiếu và liên hệ để xác nhận phạm vi, bố cục và báo giá chính thức.</p>
-      </div>
-    );
-  }
+  const currentSection = step ? step.section : cfg.sections.length - 1;
 
   return (
     <div className="qc">
-      <section className="qc__chat" aria-label="Trò chuyện về landing page">
+      <section className="qc__chat" aria-label={cfg.panel}>
         <div className="qc__head">
           <span className="qc__avatar" aria-hidden="true"><Bot /></span>
           <div>
             <strong>Trợ lý DANAVA</strong>
-            <span>Phiếu thiết kế landing page · khoảng 5 phút</span>
+            <span>{cfg.panel} · khoảng 5 phút</span>
           </div>
         </div>
 
@@ -203,8 +221,8 @@ export function QuoteChat() {
 
         {finished && (
           <div className="qc__finish">
-            <p>Mình đã có đủ thông tin. Bạn kiểm tra lại rồi gửi phiếu cho DANAVA nhé.</p>
-            <pre className="qc__brief">{buildBrief(answers)}</pre>
+            <p>Mình đã có đủ thông tin. Bạn kiểm tra lại rồi xác nhận để DANAVA nhận phiếu nhé.</p>
+            <pre className="qc__brief">{brief}</pre>
             {error && <p className="qc__error" role="alert">{error}</p>}
             <button type="button" className="qc__btn" onClick={submit} disabled={status === 'sending'}>
               {status === 'sending' ? 'Đang gửi…' : <>Xác nhận và gửi báo giá <Send aria-hidden="true" /></>}
@@ -215,11 +233,11 @@ export function QuoteChat() {
 
       <aside className="qc__side" aria-label="Tiến độ và báo giá">
         <p className="qc__side-label">Báo giá tham khảo</p>
-        <p className="qc__range">{price ? rangeText(price) : 'Trả lời mục quy mô để xem giá'}</p>
+        <p className="qc__range">{price ? rangeText(price) : 'Trả lời để xem khoảng giá'}</p>
         <p className="qc__note">Khoảng giá tham khảo theo lựa chọn hiện tại. Báo giá chính thức sau khi chuyên viên xác nhận phạm vi.</p>
 
         <ol className="qc__progress" aria-label="Tiến độ">
-          {SECTIONS.map((name, i) => (
+          {cfg.sections.map((name, i) => (
             <li key={name} className={i < currentSection || finished ? 'is-done' : i === currentSection ? 'is-on' : undefined}>
               <span>{i < currentSection || finished ? <Check aria-hidden="true" /> : i + 1}</span>{name}
             </li>

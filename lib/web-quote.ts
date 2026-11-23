@@ -62,7 +62,7 @@ export function estimate(kind: Kind, tierId: string, addonIds: string[], timelin
   return { low: round(base * 0.9), high: round(base * 1.2), base, addons };
 }
 
-export const rangeText = (e: Estimate) => `${money(e.low)} – ${money(e.high)}`;
+export const rangeText = (e: { low: number; high: number }) => `${money(e.low)} – ${money(e.high)}`;
 
 export type Brief = {
   kind: Kind;

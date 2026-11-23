@@ -121,13 +121,13 @@ const val = (answers: Answers, id: string) => {
 };
 
 /** Bản tóm tắt phiếu theo từng mục để gửi cho đội ngũ DANAVA */
-export function buildBrief(answers: Answers): string {
-  const lines: string[] = ['[Phiếu thiết kế landing page]'];
+export function buildBrief(answers: Answers, steps: Step[] = STEPS, sections: readonly string[] = SECTIONS, title = '[Phiếu thiết kế landing page]'): string {
+  const lines: string[] = [title];
   let section = -1;
-  for (const step of STEPS) {
+  for (const step of steps) {
     if (step.section !== section) {
       section = step.section;
-      lines.push('', `— ${SECTIONS[section]} —`);
+      lines.push('', `— ${sections[section]} —`);
     }
     const v = val(answers, step.id);
     if (step.id === 'name' || step.id === 'phone' || step.id === 'email') {
