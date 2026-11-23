@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getContent } from '@/lib/database';
 import { siteURL, indexable } from '@/lib/seo';
+import { DICH_VU } from '@/lib/dich-vu';
 import { showcaseCaseStudies, publishedProjects, publishedSubServices, subServiceHref, topicHasPage, topicHref, postsForTopic } from '@/lib/site-queries';
 
 export const dynamic = 'force-dynamic';
@@ -27,6 +28,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/giai-phap/', latest(...data.services.map(s => s.updated))),
     ...data.services.map(s => entry(`/giai-phap/${s.slug}/`, s.updated)),
     ...publishedSubServices(data).map(s => entry(subServiceHref(data, s), s.updated)).filter(e => e.url !== siteURL),
+    entry('/dich-vu/'),
+    ...DICH_VU.map(s => entry(`/dich-vu/${s.slug}/`, s.updated)),
     entry('/he-sinh-thai/'),
     entry('/doi-tac/'),
     entry('/giai-phap/danava-go/'),

@@ -151,6 +151,9 @@ export function Header() {
                 </div>
               </li>
               <li className="s-nav__item">
+                <Link className="s-nav__link" href="/dich-vu/" aria-current={active('/dich-vu/') ? 'page' : undefined}>Dịch vụ</Link>
+              </li>
+              <li className="s-nav__item">
                 <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}>Hệ sinh thái</Link>
               </li>
               <li ref={aboutRef} className={`s-nav__item s-nav__item--mega${about ? ' is-open' : ''}`} onMouseEnter={() => setAbout(true)} onMouseLeave={() => setAbout(false)}>

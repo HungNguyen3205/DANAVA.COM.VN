@@ -222,7 +222,7 @@ export function RelatedPosts({ posts, data, title = 'Bài viết liên quan', id
   );
 }
 
-export function ServiceLinks({ services, title = 'Giải pháp liên quan', id = 'rel-services' }: { services: Service[]; title?: string; id?: string }) {
+export function ServiceLinks({ services, title = 'Giải pháp liên quan', id = 'rel-services', hrefOf = serviceHref }: { services: Service[]; title?: string; id?: string; hrefOf?: (s: Service) => string }) {
   if (!services.length) return null;
   return (
     <section className="s-section s-section--line" aria-labelledby={id}>
@@ -234,7 +234,7 @@ export function ServiceLinks({ services, title = 'Giải pháp liên quan', id =
             return (
               <article key={s.id} className="s-card s-card--pad s-card--link s-svc-mini">
                 {m && <IconTile icon={m.icon} tone={m.tone} />}
-                <h3 className="s-h4"><Link className="s-card__cover" href={serviceHref(s)}>{s.title}</Link></h3>
+                <h3 className="s-h4"><Link className="s-card__cover" href={hrefOf(s)}>{s.title}</Link></h3>
                 <p className="s-text s-small">{s.description}</p>
               </article>
             );
