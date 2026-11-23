@@ -276,7 +276,7 @@ export function Footer() {
               <ul className="s-footer__social" aria-label="DANAVA trên mạng xã hội">
                 {socials.map(s => (
                   <li key={s.key}>
-                    <a className={s.key === 'zalo' ? 'is-zalo' : undefined} href={s.href} target="_blank" rel="noopener noreferrer" title={s.name} aria-label={`${s.name} của DANAVA (mở tab mới)`}>{s.key === 'zalo' ? <img src="/assets/brand/zalo-logo.png" alt="" width={768} height={460} loading="lazy" /> : <BrandIcon name={s.key} />}</a>
+                    <a className={s.key === 'zalo' ? 'is-zalo' : undefined} href={s.href} target="_blank" rel="noopener noreferrer" title={s.name} aria-label={`${s.name} của DANAVA (mở tab mới)`}>{s.key === 'zalo' ? <span className="zalo-mark"><img src="/assets/brand/zalo-logo.png" alt="" width={768} height={460} loading="lazy" /></span> : <BrandIcon name={s.key} />}</a>
                   </li>
                 ))}
               </ul>

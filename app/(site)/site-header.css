@@ -123,3 +123,9 @@
 /* Logo Zalo gốc có nhiều khoảng trắng: phóng và cắt viền để chữ Zalo đủ rõ trong nút */
 .s-app .s-footer__social a.is-zalo { width: 84px; height: 46px; padding: 0; overflow: hidden; justify-content: center; }
 .s-app .s-footer__social a.is-zalo img { height: 46px; width: auto; transform: scale(1.9); transform-origin: center; }
+
+/* Logo Zalo: chỉ cắt phần bong bóng và chữ, bỏ viền trắng thừa; nút là viên thuốc trắng gọn */
+.s-app .s-footer__social a.is-zalo { width: auto; height: 46px; padding: 0 14px; overflow: visible; display: inline-flex; align-items: center; background: #fff; border-radius: 999px; }
+.s-app .s-footer__social a.is-zalo:hover { background: #fff; transform: translateY(-2px); }
+.s-app .s-footer__social .zalo-mark { position: relative; display: block; width: 40px; height: 44px; overflow: hidden; }
+.s-app .s-footer__social .zalo-mark img { position: absolute; left: -30px; top: -10px; height: 60px; width: auto; max-width: none; transform: none; }
