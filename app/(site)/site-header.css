@@ -1,0 +1,70 @@
+/* ==========================================================================
+   Thanh điều hướng dạng nổi (floating glass):
+   - Không còn nền trắng full-width; thanh là một viên pill kính mờ, cách mép trên 12px.
+   - Trang chủ: Hero kéo lên sát mép trên, thanh nổi phía trên nền kem.
+   - 3 phần: logo (trái) · 5 mục căn giữa · nút "Nhận tư vấn" (phải).
+   - Mục đang xem: nền pill cam nhạt, chữ cam, không còn gạch chân vàng.
+   ========================================================================== */
+
+/* Chiều cao vùng đầu trang: 12px cách mép + 64px thanh + 8px đệm */
+.s-app { --s-header-h: 84px; }
+
+/* Vùng sticky trong suốt; phần nền và viền nằm ở thanh bên trong */
+.s-app .s-header {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 0;
+  box-shadow: none;
+}
+.s-app .s-header.is-scrolled { border-bottom-color: transparent; }
+.s-app .s-header::before { display: none; }
+
+/* Trang chủ: kéo vùng header lên đè lên Hero để nền kem liền mạch tới mép trên */
+body:has(.h-home) .s-app .s-header { margin-bottom: -84px; }
+.h-home .hb-cover { padding-top: calc(84px + clamp(8px, 1.4vw, 24px)) !important; }
+
+/* Thanh pill */
+.s-app .s-header__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  height: 64px;
+  margin-top: 12px;
+  padding: 0 10px 0 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .75);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .8);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, .06);
+}
+.s-app .s-header .s-logo { justify-self: start; }
+.s-app .s-header .s-logo img { height: 36px; }
+.s-app .s-header__actions { justify-self: end; }
+
+/* Menu giữa: 5 mục căn giữa, khoảng cách đều (chỉ hiện trên máy tính; điện thoại dùng nút menu) */
+@media (min-width: 1081px) {
+  .s-app .s-header .s-nav { flex: none; display: flex; justify-content: center; }
+  .s-app .s-header .s-nav__list { justify-content: center; gap: 24px; }
+}
+.s-app .s-header .s-nav__link {
+  height: 36px; padding: 0 16px; border-radius: 999px;
+  font-size: 15px; font-weight: 500; color: #13244f;
+}
+.s-app .s-header .s-nav__link::after { display: none; }
+.s-app .s-header .s-nav__link:hover { background: #f4f6fb; }
+.s-app .s-header .s-nav__link[aria-current='page'],
+.s-app .s-header .s-nav__item.is-open > .s-nav__link {
+  background: #fff1e6 !important; color: #e85d1a !important; font-weight: 500;
+}
+
+/* Nút "Nhận tư vấn": pill cam gọn */
+.s-app .s-header .s-btn--primary.s-btn--sm { min-height: 40px; padding: 0 20px; font-size: 14.5px; font-weight: 600; }
+
+/* Điện thoại / máy tính bảng: giữ logo và nút menu trong viên pill */
+@media (max-width: 1080px) {
+  .s-app .s-header__bar { grid-template-columns: minmax(0, 1fr) auto; padding-left: 16px; }
+  .s-app .s-header .s-logo img { height: 30px; }
+}
