@@ -35,7 +35,7 @@ Chi tiết và nộp hồ sơ: /tuyen-dung/. Không tư vấn mức lương hay 
 
   if (anna.sources.services) {
     const services = sortServices(data.services).map(s => `### ${s.title}
-${line('Trang', serviceHref(s))}${line('Mô tả', s.description)}${line('Giới thiệu', s.heroLead)}${line('Phù hợp với', list(s.audience))}${line('Phạm vi', list(s.items))}${line('Quy trình', list(s.process?.map(p => `${p.title} (${p.text})`)))}${line('Cách báo giá', s.pricing)}${(s.faqs || []).map(f => `Hỏi: ${f.q}\nĐáp: ${f.a}\n`).join('')}`);
+${line('Trang', serviceHref(s))}${line('Mô tả', s.description)}${line('Giới thiệu', s.heroLead)}${line('Phù hợp với', list(s.audience))}${line('Phạm vi', list(s.items))}${line('Quy trình', list(s.process?.map(p => `${p.title} (${p.text})`)))}${line('Tính năng', list(s.features?.map(f => `${f.title} (${f.text})`)))}${line('Bảng giá', list(s.packages?.map(p => `${p.name}: ${p.price ? Number(p.price).toLocaleString('vi-VN') + 'đ' + (p.unit || '') : 'liên hệ báo giá'}${p.perks.length ? ' — ' + p.perks.join(', ') : ''}`)))}${line('Cách báo giá', s.pricing)}${(s.faqs || []).map(f => `Hỏi: ${f.q}\nĐáp: ${f.a}\n`).join('')}`);
     const subs = publishedSubServices(data).map(s => `### ${s.title}\n${line('Trang', subServiceHref(data, s))}${line('Mô tả', s.description)}${line('Tính năng', list(s.features.map(f => `${f.title} (${f.text})`)))}${line('Cách báo giá', s.pricing)}`);
     parts.push(`## Dịch vụ\n${[...services, ...subs].join('\n')}`);
   }

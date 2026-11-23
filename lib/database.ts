@@ -434,6 +434,37 @@ export async function getRevision(id: string): Promise<{ info: RevisionInfo; dat
   };
 }
 
+/** Các bộ sưu tập có lịch sử theo bản ghi (tab Lịch sử của hồ sơ). */
+export const HISTORY_KEYS = ['services', 'posts', 'projects', 'showcase', 'landings', 'productGroups'] as const;
+export type HistoryKey = typeof HISTORY_KEYS[number];
+export type RecordChange = { revisionId: string; createdAt: number; authorName: string; kind: string; note: string; change: 'them' | 'sua' | 'xoa' };
+
+/**
+ * Những lần xuất bản đã thay đổi một bản ghi (so sánh phiên bản liên tiếp, 20 phiên bản gần nhất).
+ */
+export async function recordHistory(key: HistoryKey, id: string, depth = 20): Promise<RecordChange[]> {
+  const rows = await (await db()).all<{ id: string; created_at: number; author_name: string | null; kind: string; note: string | null; json: string }>(
+    'SELECT id, created_at, author_name, kind, note, json FROM content_revisions ORDER BY created_at DESC LIMIT ?', [depth + 1]
+  );
+  const pick = (json: string) => {
+    try { const list = (JSON.parse(json) as Record<string, unknown>)[key]; return Array.isArray(list) ? JSON.stringify(list.find((x: { id?: string }) => x?.id === id) ?? null) : 'null'; }
+    catch { return 'null'; }
+  };
+  const values = rows.map(r => pick(r.json));
+  const out: RecordChange[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    const now = values[i], before = i + 1 < rows.length ? values[i + 1] : undefined;
+    // Phiên bản cũ nhất trong cửa sổ: chỉ tính khi đó là bản gốc và có bản ghi
+    if (before === undefined) { if (rows[i].kind === 'baseline' && now !== 'null') out.push(entry(rows[i], 'them')); continue; }
+    if (now === before) continue;
+    out.push(entry(rows[i], before === 'null' ? 'them' : now === 'null' ? 'xoa' : 'sua'));
+  }
+  return out;
+  function entry(r: typeof rows[number], change: RecordChange['change']): RecordChange {
+    return { revisionId: r.id, createdAt: Number(r.created_at), authorName: r.author_name || '', kind: r.kind, note: r.note || '', change };
+  }
+}
+
 /* ------------------------------------------------------------ Nhật ký thao tác */
 export type AuditEntry = { id: string; at: number; actorName: string; action: string; target: string; detail: string };
 

@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
   const s = findService((await getSiteContent()).data, slug);
   if (!s) return notFoundMeta;
-  return seo(s.seoTitle || s.title, s.seoDescription || s.heroLead || s.description, `/giai-phap/${s.slug}/`, s.image || servicePhotos[s.id]);
+  return seo(s.seoTitle || s.title, s.seoDescription || s.heroLead || s.description, `/giai-phap/${s.slug}/`, s.ogImage || s.image || servicePhotos[s.id]);
 }
 
 export default async function Page({ params }: Params) {

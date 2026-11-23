@@ -82,3 +82,19 @@
 .ask-chip:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
 .ask-panel { margin: 32px auto 0; max-width: 1100px; text-align: left; }
 @media (prefers-reduced-motion: reduce) { .ask-chip { transition: none; } }
+
+/* ---------- Bảng gói & giá (hồ sơ sản phẩm) ---------- */
+.s-app .pk-title { margin-bottom: 28px; color: #13244f; text-align: center; }
+.s-app .pk-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); align-items: stretch; }
+.s-app .pk-card { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 28px 24px; border: 1px solid rgba(19, 36, 79, .1); border-radius: 24px; background: #fff; box-shadow: 0 20px 40px -32px rgba(19, 36, 79, .45); }
+.s-app .pk-card.is-highlight { border-color: rgba(242, 107, 29, .55); box-shadow: 0 26px 48px -30px rgba(242, 107, 29, .55); }
+.s-app .pk-card__badge { position: absolute; top: -12px; left: 24px; padding: 4px 12px; border-radius: 999px; background: #f26b1d; color: #fff; font-size: 12px; font-weight: 700; }
+.s-app .pk-card__name { margin: 0; color: #13244f; font-size: 20px; font-weight: 700; }
+.s-app .pk-card__price { margin: 0; color: #13244f; }
+.s-app .pk-card__price b { font-size: 28px; font-weight: 800; }
+.s-app .pk-card__price span { margin-left: 4px; color: #56607a; font-size: 14px; }
+.s-app .pk-card__perks { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; color: #3d4a6b; font-size: 15px; }
+.s-app .pk-card__perks li { display: flex; gap: 8px; align-items: flex-start; }
+.s-app .pk-card__perks svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: #f26b1d; }
+.s-app .pk-card__note { margin: 0; color: #56607a; font-size: 13.5px; }
+.s-app .pk-card .s-btn { margin-top: auto; justify-content: center; }

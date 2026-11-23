@@ -17,7 +17,7 @@ import { LEGACY_SECTIONS, sectionInfo, useAdminLeads, visibleTabs } from './admi
 import { initial, validateContent, type SiteData, type Post } from '@/lib/content';
 import { normalizeContent } from '@/lib/content-defaults';
 import { useSite, type SaveMode } from './SiteStore';
-import { ServicesEditor, TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
+import { TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
 import { BlockEditor, BlockPanel } from './AdminBlockEditor';
 import { ChannelsEditor } from './AdminChannels';
 import { AnnaStatus } from './AdminAnnaStatus';
@@ -28,6 +28,7 @@ import { can } from '@/lib/permissions';
 import { ContactBook, FormsReport, SourcesReport } from './admin/CustomerReports';
 import { WebsitePagesScreen } from './admin/WebsitePagesScreen';
 import { AuditScreen, RevisionsScreen, UsersScreen } from './admin/SystemScreens';
+import { GroupsScreen, ProductsScreen } from './admin/ProductsScreen';
 import type { PageTab, SitePage } from './admin/websitePages';
 import { Empty, Loading, useAdminUser, useQueryParam, useTabs } from './admin/ui';
 
@@ -434,6 +435,17 @@ function AdminWorkspace({ section }: { section: string }) {
     </section>
   );
 
+  /** Nút lưu riêng ở cuối mỗi hồ sơ (cùng tác dụng với nút trên thanh trên cùng). */
+  const recordSave = can(user.role, 'content.draft') ? (
+    <div className="adm-record-save">
+      <span className="field-note">{dirty ? 'Có thay đổi chưa lưu.' : serverDraft.hasDraft ? 'Đã lưu nháp, chưa xuất bản.' : 'Đã xuất bản.'}</span>
+      <span className="adm-btn-row">
+        <button type="button" className="admin-secondary" disabled={!dirty || saving} onClick={() => persist('draft')}>Lưu nháp</button>
+        {can(user.role, 'content.publish') && <button type="button" className="admin-primary" disabled={(!dirty && !serverDraft.hasDraft) || saving} onClick={() => persist('publish')}>{saving ? 'Đang lưu…' : 'Xuất bản'}</button>}
+      </span>
+    </div>
+  ) : null;
+
   function body() {
     if (!allowed) return <Empty>Tài khoản của bạn chưa được cấp quyền dùng mục này. Liên hệ quản trị viên nếu cần.</Empty>;
     switch (section) {
@@ -441,7 +453,8 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'trang': return <WebsitePagesScreen renderTab={renderPageTab} edited={pageEdited} />;
       case 'menu': return blockPanel('menu');
       case 'giao-dien': return blockPanel('anna');
-      case 'san-pham': return tab === 'goi-gia' ? blockPanel('pricing') : <ServicesEditor draft={draft} setDraft={setDraft} />;
+      case 'san-pham': return <ProductsScreen draft={draft} setDraft={setDraft} studioPricing={blockPanel('pricing')} ctaText={pageTextPanel} saveBar={recordSave} />;
+      case 'nhom-loai': return <GroupsScreen draft={draft} setDraft={setDraft} />;
       case 'bai-viet': return tab === 'danh-muc' ? <TopicsEditor draft={draft} setDraft={setDraft} /> : postsEditor;
       case 'du-an': return tab === 'portfolio'
         ? <ShowcaseEditor draft={draft} setDraft={setDraft} />

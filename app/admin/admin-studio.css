@@ -977,3 +977,26 @@
   .ds-root .ds-save-state { display: none; }
   .ds-root .ds-create-btn span { display: none; }
 }
+
+/* Sản phẩm & Dịch vụ */
+.ds-root .adm-create-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 12px; align-items: end; margin: 0 0 16px; padding: 16px; border: 1px dashed #f6c58f; border-radius: 16px; background: #fffaf4; }
+.ds-root .adm-create-row .field-note { grid-column: 1 / -1; margin: 0; }
+.ds-root .adm-link-cell { display: grid; gap: 2px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ds-root .adm-link-cell b { display: inline-flex; align-items: center; gap: 4px; color: var(--ds-text-dark); }
+.ds-root .adm-link-cell:hover b { color: var(--lt-orange-dark); text-decoration: underline; }
+.ds-root .adm-link-cell svg { color: var(--lt-orange); }
+.ds-root .adm-two-tight { gap: 12px 16px; }
+.ds-root .adm-two-tight > * { min-width: 0; }
+.ds-root .adm-danger-zone { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px dashed #e3e7ef; }
+.ds-root .adm-ok { color: #147a53; font-weight: 700; }
+.ds-root .adm-package { display: grid; gap: 10px; }
+.ds-root .adm-group-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; gap: 12px; align-items: end; padding: 12px 0; border-bottom: 1px solid var(--ds-border); }
+.ds-root .adm-record-save { position: sticky; bottom: 12px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border: 1px solid var(--ds-border); border-radius: 16px; background: rgba(255, 255, 255, .96); box-shadow: var(--ds-shadow-elevated); }
+.ds-root .adm-listbar select { height: 40px; padding: 0 12px; border: 1px solid #e3e7ef; border-radius: 12px; background: #fff; font: inherit; }
+@media (max-width: 900px) {
+  .ds-root .adm-create-row, .ds-root .adm-group-row { grid-template-columns: minmax(0, 1fr); }
+}
+.ds-root .adm-listbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.ds-root .adm-listbar .adm-listbar__search { flex: 1 1 260px; width: auto; min-width: 0; }
+.ds-root .adm-listbar select { flex: 0 1 auto; width: auto; min-width: 150px; }
+.ds-root .adm-record-save { position: static; box-shadow: none; }

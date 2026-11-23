@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requirePermission, actorOf } from '@/lib/auth';
-import { getRevision, getWorkingContent, listRevisions, logAction, migrationStatus, writeContent } from '@/lib/database';
+import { HISTORY_KEYS, getRevision, getWorkingContent, listRevisions, logAction, migrationStatus, recordHistory, writeContent, type HistoryKey } from '@/lib/database';
 
 export const dynamic = 'force-dynamic';
 const noStore = { 'Cache-Control': 'no-store' };
@@ -9,7 +9,14 @@ const noStore = { 'Cache-Control': 'no-store' };
 export async function GET(req: Request) {
   const user = await requirePermission(req, 'content.read');
   if (user instanceof Response) return user;
-  const id = new URL(req.url).searchParams.get('id');
+  const params = new URL(req.url).searchParams;
+  const id = params.get('id');
+  // Lịch sử của một bản ghi: ?record=services&rid=studio
+  const record = params.get('record'), rid = params.get('rid');
+  if (record && rid) {
+    if (!(HISTORY_KEYS as readonly string[]).includes(record) || rid.length > 100) return NextResponse.json({ error: 'Loại bản ghi không hợp lệ.' }, { status: 400 });
+    return NextResponse.json({ changes: await recordHistory(record as HistoryKey, rid) }, { headers: noStore });
+  }
   if (id) {
     const r = await getRevision(id);
     return r ? NextResponse.json(r, { headers: noStore }) : NextResponse.json({ error: 'Không tìm thấy phiên bản.' }, { status: 404 });

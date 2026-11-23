@@ -28,8 +28,7 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
   {
     group: 'Sản phẩm & Dịch vụ',
     items: [
-      { slug: 'san-pham', label: 'Danh sách', perm: 'content.read', desc: 'Mỗi sản phẩm, dịch vụ có một hồ sơ. Trang chủ, hệ sinh thái, landing page và ANNA dùng lại dữ liệu đã xuất bản từ hồ sơ này.',
-        tabs: [{ id: 'ho-so', label: 'Hồ sơ sản phẩm' }, { id: 'goi-gia', label: 'Gói & giá DANAVA Studio' }] },
+      { slug: 'san-pham', label: 'Danh sách', perm: 'content.read', desc: 'Mỗi sản phẩm, dịch vụ có một hồ sơ. Trang chủ, hệ sinh thái, landing page và ANNA dùng lại dữ liệu đã xuất bản từ hồ sơ này.' },
       { slug: 'nhom-loai', label: 'Nhóm & loại', perm: 'content.read', desc: 'Loại quyết định các trường cần nhập; nhóm dùng để phân loại và lọc.' },
     ],
   },
@@ -115,7 +114,7 @@ export function sectionInfo(slug: string) {
  * Mục/tab đang xây dựng: ẩn khỏi menu cho tới khi chạy thật (không hiện nút giả).
  * Tab ghi dạng "mục:tab".
  */
-const PENDING = new Set<string>(['landing-page', 'mau-khoi', 'nhom-loai', 'seo', 'hieu-qua']);
+const PENDING = new Set<string>(['landing-page', 'mau-khoi', 'seo', 'hieu-qua']);
 
 export const isPending = (slug: string, tab?: string) => PENDING.has(tab ? `${slug}:${tab}` : slug);
 

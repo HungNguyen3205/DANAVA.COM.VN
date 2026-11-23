@@ -136,7 +136,7 @@ export function ServicesEditor({ draft, setDraft }: { draft: SiteData; setDraft:
   );
 }
 
-function SubServicesEditor({ draft, setDraft, parent }: { draft: SiteData; setDraft: (d: SiteData) => void; parent: Service }) {
+export function SubServicesEditor({ draft, setDraft, parent }: { draft: SiteData; setDraft: (d: SiteData) => void; parent: Service }) {
   const list = (draft.subServices || []).filter(x => x.parentId === parent.id);
   const [sel, setSel] = useState('');
   const sub = list.find(x => x.id === sel);

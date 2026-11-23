@@ -19,6 +19,7 @@ import { StudioShowcase } from './StudioShowcase';
 import { ProductGallery } from './ProductGallery';
 import { DanavaGoShowcase } from './DanavaGoShowcase';
 import { STUDIO_GALLERY } from './product-showcase';
+import { PackagesSection } from './ProductPackages';
 import { FaqSection, FeatureGrid, PricingSection, ProblemsSection, ProcessSection, RelatedPosts, RelatedProjects, ScopeSection, ServiceLinks } from './blocks';
 
 export function contactHrefFor(service: Service) {
@@ -43,7 +44,7 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
   const phone = data.phone || CONTACT.phone;
   const contactHref = contactHrefFor(service);
   const cta = service.id === 'studio' ? 'Đăng ký demo' : d?.primaryCta || 'Nhận tư vấn';
-  const image = service.image || m.image;
+  const image = service.cover || service.image || m.image;
   const projects = projectsForService(data, service.id).slice(0, 3);
   const posts = postsForService(data, service.id, 3);
   const subs = publishedSubServices(data, service.id);
@@ -65,7 +66,10 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
               )}
               <div className="s-row s-stack-m">
                 <Link className="s-btn s-btn--primary s-btn--lg" href={contactHref}>{cta}</Link>
-                <a className="s-btn s-btn--secondary s-btn--lg" href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
+                {service.demoUrl
+                  ? <a className="s-btn s-btn--secondary s-btn--lg" href={service.demoUrl} {...(service.demoUrl.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>Xem demo</a>
+                  : <a className="s-btn s-btn--secondary s-btn--lg" href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>}
+                {service.signupUrl && <a className="s-btn s-btn--secondary s-btn--lg" href={service.signupUrl} {...(service.signupUrl.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>Đăng ký</a>}
               </div>
             </div>
             {service.id === 'studio' ? (
@@ -86,6 +90,9 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
       />
 
       <ScopeSection title={service.description} items={service.items} />
+
+      {/* Tính năng nhập trong hồ sơ sản phẩm (admin → Sản phẩm & Dịch vụ → Nội dung) */}
+      <FeatureGrid id="tinh-nang" eyebrow="Tính năng" title={`Tính năng của ${service.title}`} features={service.features || []} soft />
 
       {/* DANAVA Studio: ảnh giao diện thật */}
       {service.id === 'studio' && (
@@ -133,6 +140,8 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
           </div>
         </section>
       )}
+
+      <PackagesSection title={`Bảng giá ${service.title}`} packages={service.packages || []} contactHref={contactHref} />
 
       <PricingSection pricing={service.pricing || ''} productUrl={service.productUrl} productLabel={service.productLabel} contactHref={contactHref} />
 
