@@ -87,3 +87,8 @@
 .s-app .lp-preview [data-field]:hover { box-shadow: 0 0 0 2px rgba(43, 66, 148, .35); border-radius: 4px; }
 /* Khung xem trước của trình chỉnh sửa: ẩn thành phần nổi của site (cookie, thanh điều hướng điện thoại, ANNA) */
 html[data-lp-preview] :is(.consent-banner, .mobile-bottom-nav, .an-launch, .cd) { display: none !important; }
+/* Chỉnh giao diện trang có sẵn (admin → Website → Trang → Chỉnh giao diện) */
+html[data-cms-edit] :is(.consent-banner, .mobile-bottom-nav, .an-launch, .cd) { display: none !important; }
+html[data-cms-edit] [data-cms-path] { cursor: text; outline: 2px dashed rgba(242, 107, 29, .55); outline-offset: 4px; border-radius: 4px; }
+html[data-cms-edit] [data-cms-path]:hover { outline-style: solid; }
+html[data-cms-edit] [data-cms-path].is-cms-selected { outline: 3px solid #f26b1d; background: rgba(242, 107, 29, .08); }

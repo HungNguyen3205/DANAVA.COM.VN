@@ -31,6 +31,9 @@ import { AuditScreen, RevisionsScreen, UsersScreen } from './admin/SystemScreens
 import { GroupsScreen, ProductsScreen } from './admin/ProductsScreen';
 import { PostsScreen } from './admin/PostsScreen';
 import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
+import { PageVisualEditor } from './admin/PageVisualEditor';
+import { ContentPerformance, SeoScreen } from './admin/SeoScreens';
+import { OverviewTasks } from './admin/OverviewTasks';
 import type { PageTab, SitePage } from './admin/websitePages';
 import { Empty, Loading, useAdminUser, useQueryParam, useTabs } from './admin/ui';
 
@@ -216,6 +219,7 @@ function AdminWorkspace({ section }: { section: string }) {
     if (t.kind === 'hero') return heroEditor;
     if (t.kind === 'presentation') return <PresentationEditor value={draft.presentation || defaultPresentation} onChange={(presentation) => setDraft({ ...draft, presentation })} />;
     if (t.kind === 'block') return blockPanel(t.block);
+    if (t.kind === 'visual') return <PageVisualEditor page={_page} draft={draft} setDraft={setDraft} />;
     return <div className="blk-stack">{t.keys.map(pageTextPanel)}</div>;
   };
   // So với nội dung gốc (normalizeContent luôn điền sẵn các trường này nên không dùng "có/không có")
@@ -223,6 +227,7 @@ function AdminWorkspace({ section }: { section: string }) {
     if (t.kind === 'hero') return draft.headline !== BASE.headline || draft.description !== BASE.description || (draft.heroTitle || '') !== (BASE.heroTitle || '');
     if (t.kind === 'presentation') return JSON.stringify(draft.presentation || defaultPresentation) !== JSON.stringify(defaultPresentation);
     if (t.kind === 'block') return savedBlock(draft, t.block) !== undefined;
+    if (t.kind === 'visual') return false;
     const saved = savedBlock(draft, 'pages') as Record<string, unknown> | undefined;
     return t.keys.some(k => saved?.[k] !== undefined);
   });
@@ -348,7 +353,7 @@ function AdminWorkspace({ section }: { section: string }) {
   function body() {
     if (!allowed) return <Empty>Tài khoản của bạn chưa được cấp quyền dùng mục này. Liên hệ quản trị viên nếu cần.</Empty>;
     switch (section) {
-      case 'tong-quan': return <AdminOverview data={data} leads={leads} />;
+      case 'tong-quan': return <div className="blk-stack"><OverviewTasks data={data} leads={leads} draft={serverDraft} />{can(user.role, 'content.read') && <AdminOverview data={data} leads={leads} />}</div>;
       case 'trang': return <WebsitePagesScreen renderTab={renderPageTab} edited={pageEdited} />;
       case 'landing-page': return <LandingsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
       case 'mau-khoi': return <BlockLibraryScreen />;
@@ -375,6 +380,8 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'thu-vien': return <MediaLibrary />;
       case 'thong-ke': return <AnalyticsDashboard />;
       case 'nguon-khach': return <SourcesReport />;
+      case 'hieu-qua': return <ContentPerformance draft={draft} />;
+      case 'seo': return <SeoScreen draft={draft} setDraft={setDraft} />;
       case 'cai-dat': return contactSettings;
       case 'tich-hop': return <AnnaStatus />;
       case 'tai-khoan': return <UsersScreen />;

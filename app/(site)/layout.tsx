@@ -30,7 +30,9 @@ import './site-quote.css';
 import './site-quote-chat.css';
 import './site-services.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
+import { CmsOverlay } from '@/components/site/CmsOverlay';
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  return <SiteFrame>{children}</SiteFrame>;
+  // CmsOverlay chỉ hoạt động khi trang mở trong trình chỉnh sửa của admin (iframe + ?cms=1)
+  return <SiteFrame>{children}<CmsOverlay /></SiteFrame>;
 }

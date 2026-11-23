@@ -114,7 +114,7 @@ export function sectionInfo(slug: string) {
  * Mục/tab đang xây dựng: ẩn khỏi menu cho tới khi chạy thật (không hiện nút giả).
  * Tab ghi dạng "mục:tab".
  */
-const PENDING = new Set<string>(['seo', 'hieu-qua']);
+const PENDING = new Set<string>([]);
 
 export const isPending = (slug: string, tab?: string) => PENDING.has(tab ? `${slug}:${tab}` : slug);
 

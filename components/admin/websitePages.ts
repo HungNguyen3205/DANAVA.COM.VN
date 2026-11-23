@@ -12,7 +12,9 @@ export type PageTab =
   | { id: string; label: string; kind: 'hero' }
   | { id: string; label: string; kind: 'presentation' }
   | { id: string; label: string; kind: 'block'; block: BlockKey }
-  | { id: string; label: string; kind: 'text'; keys: string[] };
+  | { id: string; label: string; kind: 'text'; keys: string[] }
+  /** Chỉnh trực quan trên trang thật (components/admin/PageVisualEditor.tsx) */
+  | { id: string; label: string; kind: 'visual' };
 
 export type SitePage = { id: string; label: string; path: string; group: string; tabs: PageTab[] };
 

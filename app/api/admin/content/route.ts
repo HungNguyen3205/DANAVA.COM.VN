@@ -14,6 +14,8 @@ const CONFLICT = 'Nội dung đã được người khác lưu sau khi bạn m�
 export async function GET(req: Request) {
   const user = await requirePermission(req, 'content.read');
   if (user instanceof Response) return user;
+  // ?published=1: bản đang công khai (trình chỉnh sửa trang đối chiếu chữ trên trang thật)
+  if (new URL(req.url).searchParams.get('published') === '1') return NextResponse.json(await getContent(), { headers: noStore });
   return NextResponse.json(await getWorkingContent(), { headers: noStore });
 }
 
