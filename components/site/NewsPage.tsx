@@ -15,6 +15,7 @@ import { formatDate, excerpt } from './catalog';
 import { postCover } from './blocks';
 import { pageCopy } from '@/lib/blocks';
 import { rich } from './rich';
+import { sentenceCase } from '@/lib/sentence-case';
 import { BlogExplorer, type BlogTopic } from './BlogExplorer';
 import type { BlogCard } from './BlogCardItem';
 import { BlogSearch } from './BlogSearch';
@@ -102,7 +103,7 @@ export default function NewsPage({ data, filter }: { data: SiteData; filter: Blo
               {postCover(featured) && <img src={postCover(featured)} alt="" decoding="async" />}
               <div className="bl-cover__body">
                 <p className="bl-card__meta"><span className="bl-pill bl-pill--light">Tiêu điểm · {topicOf(data, featured)?.name || 'Bài viết'}</span>{featured.date && <time dateTime={featured.date}>{formatDate(featured.date)}</time>}</p>
-                <h2 className="bl-cover__title" id="bl-feature-title"><Link className="bl-card__link" href={postHref(featured)}>{featured.title}</Link></h2>
+                <h2 className="bl-cover__title" id="bl-feature-title"><Link className="bl-card__link" href={postHref(featured)}>{sentenceCase(featured.title)}</Link></h2>
                 <p className="bl-cover__text">{excerpt(featured.excerpt || featured.body, 180)}</p>
                 <p className="bl-card__foot"><span><Clock aria-hidden="true" />{minutesOf(featured)} phút đọc</span><span className="bl-card__go">Đọc bài <ArrowRight aria-hidden="true" /></span></p>
               </div>
@@ -116,7 +117,7 @@ export default function NewsPage({ data, filter }: { data: SiteData; filter: Blo
                       <span className="bl-fresh__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                       <div>
                         <p className="bl-fresh__meta">{topicOf(data, p)?.name || 'Bài viết'}{p.date ? ` · ${formatDate(p.date)}` : ''}</p>
-                        <Link className="bl-fresh__link" href={postHref(p)}>{p.title}</Link>
+                        <Link className="bl-fresh__link" href={postHref(p)}>{sentenceCase(p.title)}</Link>
                       </div>
                       {postCover(p) && <img src={postCover(p)} alt="" loading="lazy" decoding="async" />}
                     </li>
@@ -174,7 +175,7 @@ export default function NewsPage({ data, filter }: { data: SiteData; filter: Blo
                   <ul>
                     {archive.filter(p => ((p.date || '').slice(0, 4) || 'Khác') === y).map(p => (
                       <li key={p.id}>
-                        <Link href={postHref(p)}>{p.title}</Link>
+                        <Link href={postHref(p)}>{sentenceCase(p.title)}</Link>
                         {p.date && <time dateTime={p.date}>{formatDate(p.date).slice(0, 5)}</time>}
                       </li>
                     ))}
