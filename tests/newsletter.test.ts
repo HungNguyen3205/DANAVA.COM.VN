@@ -104,7 +104,7 @@ test('newsletter category filter and blog search handle empty and valid results 
   const emptyPosts = posts.filter(p => p.category === 'ChuyenMucKhongTonTai');
   assert.equal(emptyPosts.length, 0);
 
-  // Đảm bảo tất cả các bài viết đều có slug hợp lệ để tạo link /kien-thuc/[slug]/
+  // Đảm bảo tất cả các bài viết đều có slug hợp lệ để tạo link /blogs/[slug]/
   for (const p of posts) {
     assert.ok(/^[a-z0-9-]+$/.test(p.slug), `Slug ${p.slug} phải hợp lệ URL`);
   }

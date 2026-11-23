@@ -139,7 +139,7 @@ test('Digital Marketing khôi phục: giải pháp và trang riêng; chủ đề
   assert.ok(!config.includes("source: '/giai-phap/digital-marketing/"), 'không còn chuyển hướng trang giải pháp');
 });
 
-test('bài viết digital marketing cũ vẫn gỡ, URL cũ chuyển về /kien-thuc/', () => {
+test('bài viết digital marketing cũ vẫn gỡ, URL cũ chuyển về /blogs/', () => {
   const n = norm();
   assert.equal(validateContent(n), true);
   for (const id of ['marketing', 'wp-13086', 'wp-12101', 'wp-11869', 'wp-11219']) assert.ok(!n.posts.some(p => p.id === id), id);
@@ -148,7 +148,7 @@ test('bài viết digital marketing cũ vẫn gỡ, URL cũ chuyển về /kien-
   const n2 = normalizeContent(saved);
   assert.ok(!n2.presentation!.ecosystem.some(x => x.id === 'digital'));
   const legacy = legacyRedirects.find(r => r.source === '/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/');
-  assert.equal(legacy?.destination, '/kien-thuc/');
+  assert.equal(legacy?.destination, '/blogs/');
   const config = fs.readFileSync('next.config.ts', 'utf8');
   for (const slug of ['digital-marketing', 'digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc', 'top-10-website-tai-anh-chat-luong-cao-mien-phi']) assert.ok(config.includes(`'${slug}'`), slug);
 });

@@ -8,7 +8,7 @@ export function BlogSearch({ data, filter }: { data: SiteData; filter: BlogFilte
   const topics = searchTopics(data);
   return (
     // key: điền lại ô nhập khi URL đổi (xóa bộ lọc, bấm chủ đề khác, nút Back)
-    <Form key={`${filter.q}|${filter.topic}`} action="/kien-thuc/" className="bl-search" role="search" aria-label="Tìm bài viết">
+    <Form key={`${filter.q}|${filter.topic}`} action="/blogs/" className="bl-search" role="search" aria-label="Tìm bài viết">
       <label className="bl-search__q">
         <span className="s-sr">Từ khóa</span>
         <Search aria-hidden="true" />

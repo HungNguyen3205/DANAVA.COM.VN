@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Params) {
   return seo(
     p.seoTitle || p.title,
     p.seoDescription || p.excerpt || plainExcerpt(p.body, 160),
-    `/kien-thuc/${p.slug}/`,
+    `/blogs/${p.slug}/`,
     postCover(p) || undefined,
     {
       type: 'article',
@@ -41,15 +41,15 @@ export default async function Page({ params }: Params) {
   const r = await load(slug);
   if (!r) notFound();
   const { post: p, data } = r;
-  const url = `${siteURL}/kien-thuc/${p.slug}/`;
+  const url = `${siteURL}/blogs/${p.slug}/`;
   const author = authorOf(data, p);
   const topic = topicOf(data, p);
   const cover = postCover(p);
   const crumbs = [
     { label: 'Trang chủ', href: '/' },
-    { label: 'Blogs', href: '/kien-thuc/' },
+    { label: 'Blogs', href: '/blogs/' },
     ...(topic && topicHasPage(data, topic) ? [{ label: topic.name, href: topicHref(topic) }] : []),
-    { label: p.title, href: `/kien-thuc/${p.slug}/` }
+    { label: p.title, href: `/blogs/${p.slug}/` }
   ];
   return (
     <>

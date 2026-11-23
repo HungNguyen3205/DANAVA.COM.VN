@@ -155,7 +155,7 @@ export default function AdminOverview({ data, leads }: { data: SiteData; leads: 
               Mở báo cáo truy cập <Icon name="arrow" size={16} />
             </Link>
             {latest && (
-              <Link href={`/kien-thuc/${latest.slug}/`} target="_blank" className="adm-btn adm-btn-ghost">
+              <Link href={`/blogs/${latest.slug}/`} target="_blank" className="adm-btn adm-btn-ghost">
                 Xem bài trên website <Icon name="external" size={14} />
               </Link>
             )}

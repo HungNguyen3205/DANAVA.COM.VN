@@ -570,7 +570,7 @@ function AdminWorkspace({ section }: { section: string }) {
                 <p className="field-note">
                   Bài xuất bản có đường dẫn riêng và được đưa vào sitemap (trừ bài noindex). Bản nháp trả 404 với khách;
                   quản trị viên đang đăng nhập xem trước được tại{' '}
-                  <a className="text-link" href={`/kien-thuc/${post.slug}/`} target="_blank" rel="noopener">/kien-thuc/{post.slug}/ ↗</a> (sau khi lưu).
+                  <a className="text-link" href={`/blogs/${post.slug}/`} target="_blank" rel="noopener">/blogs/{post.slug}/ ↗</a> (sau khi lưu).
                 </p>
                 <div className="panel-heading">
                   <button className="admin-primary" onClick={persist}>

@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default function robots(): MetadataRoute.Robots {
   if (!indexable) return { rules: { userAgent: '*', disallow: '/' } };
   return {
-    rules: { userAgent: '*', allow: '/', disallow: ['/admin/', '/api/', '/kien-thuc/doc/'] },
+    rules: { userAgent: '*', allow: '/', disallow: ['/admin/', '/api/', '/blogs/doc/'] },
     sitemap: siteURL + '/sitemap.xml',
     host: siteURL
   };

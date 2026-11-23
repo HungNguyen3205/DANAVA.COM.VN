@@ -228,7 +228,7 @@ export function NewsletterPage() {
 
           <article className="featured-story-card">
             <div className="featured-story-media">
-              <Link href={`/kien-thuc/${featuredPost.slug}/`} tabIndex={-1} aria-hidden="true">
+              <Link href={`/blogs/${featuredPost.slug}/`} tabIndex={-1} aria-hidden="true">
                 <img
                   src={featuredPost.image || postPhotos[featuredPost.id] || '/assets/legacy/event-session.webp'}
                   alt={featuredPost.title}
@@ -249,7 +249,7 @@ export function NewsletterPage() {
               </div>
 
               <h2 className="featured-title">
-                <Link href={`/kien-thuc/${featuredPost.slug}/`}>
+                <Link href={`/blogs/${featuredPost.slug}/`}>
                   {featuredPost.title}
                 </Link>
               </h2>
@@ -262,7 +262,7 @@ export function NewsletterPage() {
               </p>
 
               <div className="featured-actions">
-                <Link href={`/kien-thuc/${featuredPost.slug}/`} className="button amber">
+                <Link href={`/blogs/${featuredPost.slug}/`} className="button amber">
                   Đọc toàn bộ bài viết <span aria-hidden="true">↗</span>
                 </Link>
                 {featuredPost.source && (
@@ -338,7 +338,7 @@ export function NewsletterPage() {
               const coverImg = post.image || postPhotos[post.id];
               return (
                 <article key={post.id} className="newsletter-card">
-                  <Link href={`/kien-thuc/${post.slug}/`} className="card-media-link" tabIndex={-1} aria-hidden="true">
+                  <Link href={`/blogs/${post.slug}/`} className="card-media-link" tabIndex={-1} aria-hidden="true">
                     {coverImg ? (
                       <img
                         src={coverImg}
@@ -362,7 +362,7 @@ export function NewsletterPage() {
                     </div>
 
                     <h3 className="card-title">
-                      <Link href={`/kien-thuc/${post.slug}/`}>
+                      <Link href={`/blogs/${post.slug}/`}>
                         {post.title}
                       </Link>
                     </h3>
@@ -372,7 +372,7 @@ export function NewsletterPage() {
                     </p>
 
                     <div className="card-footer">
-                      <Link href={`/kien-thuc/${post.slug}/`} className="card-read-link">
+                      <Link href={`/blogs/${post.slug}/`} className="card-read-link">
                         Đọc bài viết <span aria-hidden="true">↗</span>
                       </Link>
                     </div>

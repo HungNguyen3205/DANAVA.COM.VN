@@ -30,7 +30,7 @@ export default async function Page({ params }: Params) {
   if (!r) notFound();
   const { data, topic, posts } = r;
   const services = sortServices(data.services.filter(s => topic.serviceIds.includes(s.id)));
-  const crumbs = [{ label: 'Trang chủ', href: '/' }, { label: 'Blogs', href: '/kien-thuc/' }, { label: topic.name, href: topicHref(topic) }];
+  const crumbs = [{ label: 'Trang chủ', href: '/' }, { label: 'Blogs', href: '/blogs/' }, { label: topic.name, href: topicHref(topic) }];
   return (
     <>
       <JsonLd value={{
@@ -42,12 +42,12 @@ export default async function Page({ params }: Params) {
         publisher: { '@id': ORG_ID },
         mainEntity: {
           '@type': 'ItemList',
-          itemListElement: posts.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${siteURL}/kien-thuc/${p.slug}/` }))
+          itemListElement: posts.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${siteURL}/blogs/${p.slug}/` }))
         }
       }} />
       <JsonLd value={breadcrumbLD(crumbs)} />
       <main id="main">
-        <PageHead eyebrow="Blogs" title={topic.name} lead={topic.description} crumbs={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Blogs' }, { label: topic.name }]} />
+        <PageHead eyebrow="Blogs" title={topic.name} lead={topic.description} crumbs={[{ href: '/', label: 'Trang chủ' }, { href: '/blogs/', label: 'Blogs' }, { label: topic.name }]} />
         <div className="s-container bl-topicbar"><BlogSearch data={data} filter={{ q: '', topic: topic.slug }} /><TopicNav data={data} current={topic.id} /></div>
         <section className="s-section s-section--flush-top" aria-label={`Bài viết ${topic.name}`}>
           <div className="s-container">

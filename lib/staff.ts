@@ -224,7 +224,7 @@ export function getStaffDetail(person: Person): StaffDetail {
         },
         {
           title: 'Bản tin Cổng Năng Lượng',
-          href: '/kien-thuc/cong-nang-luong/',
+          href: '/blogs/cong-nang-luong/',
           desc: 'Ấn phẩm truyền thông trực quan và nhận diện số',
           badge: 'Ấn phẩm số'
         }

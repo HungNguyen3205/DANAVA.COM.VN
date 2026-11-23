@@ -430,7 +430,7 @@ export const CLIENT_SEEDS: Client[] = [
  * Mục trưng bày đã được chủ sở hữu yêu cầu gỡ khỏi website (19/11/2026).
  * Lọc ra cả khi database đã lưu chúng từ trước, để không còn hiện ở bất kỳ đâu.
  */
-/** Bài thuộc mảng digital marketing — DANAVA không cung cấp mảng này (19/11/2026): gỡ khỏi website, URL cũ chuyển về /kien-thuc/. */
+/** Bài thuộc mảng digital marketing — DANAVA không cung cấp mảng này (19/11/2026): gỡ khỏi website, URL cũ chuyển về /blogs/. */
 export const REMOVED_POST_IDS = ['marketing', 'wp-13086', 'wp-12101', 'wp-11869', 'wp-11219'];
 export const REMOVED_SHOWCASE_IDS = ['web-buoc-chay', 'web-omachi', 'web-aurum', 'web-driverent'];
 

@@ -9,11 +9,11 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 const meta = seo(
   'Blogs DANAVA — vận hành phòng tập, website, yoga và sự kiện',
   'Bài viết về vận hành phòng tập, website, yoga, du lịch và hoạt động cộng đồng từ DANAVA Solutions.',
-  '/kien-thuc/',
+  '/blogs/',
   '/assets/legacy/event-session.webp'
 );
 
-/** Trang kết quả tìm kiếm không cho lập chỉ mục; canonical vẫn là /kien-thuc/. */
+/** Trang kết quả tìm kiếm không cho lập chỉ mục; canonical vẫn là /blogs/. */
 export async function generateMetadata({ searchParams }: Props) {
   return isFiltering(readBlogFilter(await searchParams)) ? { ...meta, robots: { index: false, follow: true } } : meta;
 }
@@ -28,10 +28,10 @@ export default async function Page({ searchParams }: Props) {
         '@type': 'CollectionPage',
         name: 'Blogs DANAVA',
         description: 'Bài viết về vận hành phòng tập, website, yoga, du lịch và hoạt động cộng đồng.',
-        url: `${siteURL}/kien-thuc/`,
+        url: `${siteURL}/blogs/`,
         publisher: { '@id': ORG_ID }
       }} />
-      <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Blogs', href: '/kien-thuc/' }])} />
+      <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Blogs', href: '/blogs/' }])} />
       <NewsPage data={data} filter={filter} />
     </>
   );

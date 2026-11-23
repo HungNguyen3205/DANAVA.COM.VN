@@ -16,8 +16,8 @@ export const sortServices = (list: Service[]) =>
 
 export const serviceHref = (s: Pick<Service, 'slug'>) => `/giai-phap/${s.slug}/`;
 export const projectHref = (p: Pick<Project, 'slug'>) => `/du-an/${p.slug}/`;
-export const postHref = (p: Pick<Post, 'slug'>) => `/kien-thuc/${p.slug}/`;
-export const topicHref = (t: Pick<Topic, 'slug'>) => `/kien-thuc/chu-de/${t.slug}/`;
+export const postHref = (p: Pick<Post, 'slug'>) => `/blogs/${p.slug}/`;
+export const topicHref = (t: Pick<Topic, 'slug'>) => `/blogs/chu-de/${t.slug}/`;
 
 export function subServiceHref(data: SiteData, s: SubService) {
   const parent = data.services.find(x => x.id === s.parentId);

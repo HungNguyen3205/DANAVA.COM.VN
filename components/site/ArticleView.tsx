@@ -1,5 +1,5 @@
 /**
- * /kien-thuc/[slug]/ — trang bài viết (server component: toàn văn, mục lục và JSON-LD có trong HTML phản hồi).
+ * /blogs/[slug]/ — trang bài viết (server component: toàn văn, mục lục và JSON-LD có trong HTML phản hồi).
  * Mục lục tự sinh từ tiêu đề; mỗi tiêu đề có id ổn định theo nội dung để liên kết neo hoạt động.
  */
 import Link from 'next/link';
@@ -122,7 +122,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
       <article>
         <header className="s-article-head">
           <div className="s-container s-container--narrow">
-            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/kien-thuc/', label: 'Blogs' }, topicCrumb]} />
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/blogs/', label: 'Blogs' }, topicCrumb]} />
             <p className="s-eyebrow s-article-cat">{topic?.name || post.category}</p>
             <h1 className="s-h1 s-article-title">{post.title}</h1>
             {post.excerpt && <p className="s-lead">{post.excerpt}</p>}
@@ -196,7 +196,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
             )}
 
             <footer className="s-article-foot">
-              <Link className="s-link" href={topic && topicHasPage(data, topic) ? topicHref(topic) : '/kien-thuc/'}>
+              <Link className="s-link" href={topic && topicHasPage(data, topic) ? topicHref(topic) : '/blogs/'}>
                 <ArrowLeft aria-hidden="true" />{topic && topicHasPage(data, topic) ? `Bài khác trong ${topic.name}` : 'Tất cả bài viết'}
               </Link>
             </footer>

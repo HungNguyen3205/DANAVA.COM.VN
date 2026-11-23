@@ -205,7 +205,7 @@ export function TopicsEditor({ draft, setDraft }: { draft: SiteData; setDraft: (
         <h2>Danh mục kiến thức</h2>
         <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, topics: [...topics, { id: uid(), slug: `danh-muc-${Date.now().toString(36)}`, name: 'Danh mục mới', description: '', serviceIds: [], published: false }] })}>+ Thêm danh mục</button>
       </div>
-      <p className="field-note">Danh mục đã xuất bản và có từ 3 bài trở lên sẽ có trang riêng /kien-thuc/chu-de/…/ và được đưa vào sitemap. Danh mục ít bài hơn chỉ hiện thành nhóm lọc trong trang Blogs.</p>
+      <p className="field-note">Danh mục đã xuất bản và có từ 3 bài trở lên sẽ có trang riêng /blogs/chu-de/…/ và được đưa vào sitemap. Danh mục ít bài hơn chỉ hiện thành nhóm lọc trong trang Blogs.</p>
       {topics.map(t => (
         <details key={t.id} className="adm-card">
           <summary><b>{t.name}</b> · {count(t.id)} bài đã xuất bản · {t.published ? (count(t.id) >= 3 ? 'có trang riêng' : 'đang hiển thị') : 'ẩn'}</summary>

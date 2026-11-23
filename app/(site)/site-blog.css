@@ -1,4 +1,4 @@
-/* ==== Trang Blogs (/kien-thuc/) — phong cách tạp chí: bìa, tiêu điểm, lưới bento có bộ lọc, lưu trữ theo năm ==== */
+/* ==== Trang Blogs (/blogs/) — phong cách tạp chí: bìa, tiêu điểm, lưới bento có bộ lọc, lưu trữ theo năm ==== */
 .bl { --bl-ink: #13244f; --bl-muted: #5b6684; --bl-paper: #fbf8f2; --bl-line: #e8e1d3; --bl-orange: #f2850e; background: var(--bl-paper); color: var(--bl-ink); }
 .bl-tone-0 { --tone: #f2850e; --tone-soft: #fff1e0; }
 .bl-tone-1 { --tone: #2b6be0; --tone-soft: #e6efff; }

@@ -13,7 +13,7 @@ export function BlogResults({ data, filter, toCard }: { data: SiteData; filter: 
     const query = new URLSearchParams();
     if (next.q) query.set('q', next.q);
     if (next.topic) query.set('chu-de', next.topic);
-    return `/kien-thuc/${query.size ? `?${query}` : ''}`;
+    return `/blogs/${query.size ? `?${query}` : ''}`;
   };
 
   return (
@@ -26,7 +26,7 @@ export function BlogResults({ data, filter, toCard }: { data: SiteData; filter: 
           <div className="bl-results__filters">
             {filter.q && <Link href={without('q')} aria-label={`Bỏ từ khóa ${filter.q}`}>“{filter.q}” <X aria-hidden="true" /></Link>}
             {filter.topic && <Link href={without('topic')} aria-label={`Bỏ chủ đề ${active?.name || filter.topic}`}>{active?.name || filter.topic} <X aria-hidden="true" /></Link>}
-            <Link className="bl-results__clear" href="/kien-thuc/">Xóa bộ lọc</Link>
+            <Link className="bl-results__clear" href="/blogs/">Xóa bộ lọc</Link>
           </div>
         </div>
         {found.length > 0 ? (
@@ -40,7 +40,7 @@ export function BlogResults({ data, filter, toCard }: { data: SiteData; filter: 
           <div className="bl-empty">
             <SearchX aria-hidden="true" />
             <p>Thử từ khóa ngắn hơn, gõ không dấu hoặc chọn “Mọi chủ đề”.</p>
-            <Link className="bl-search__go" href="/kien-thuc/">Xem tất cả bài viết</Link>
+            <Link className="bl-search__go" href="/blogs/">Xem tất cả bài viết</Link>
           </div>
         )}
       </div>

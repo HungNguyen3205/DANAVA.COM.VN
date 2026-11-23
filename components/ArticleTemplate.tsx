@@ -164,7 +164,7 @@ export function ArticleTemplate({ slug }: { slug: string }) {
             Nội dung này hiện đang trong trạng thái biên tập nội bộ, đã được ẩn hoặc chưa sẵn sàng công khai trên hệ thống.
           </p>
           <div className="missing-actions">
-            <Link href="/kien-thuc/" className="button amber">
+            <Link href="/blogs/" className="button amber">
               ← Quay lại Bản tin DANAVA
             </Link>
             <Link href="/" className="button secondary">
@@ -208,13 +208,13 @@ export function ArticleTemplate({ slug }: { slug: string }) {
       {/* 1. BREADCRUMB & HEADER QUAY LẠI */}
       <section className="article-nav-bar">
         <div className="article-nav-container">
-          <Link href="/kien-thuc/" className="article-back-link">
+          <Link href="/blogs/" className="article-back-link">
             <span aria-hidden="true">←</span> Quay lại Bản tin DANAVA
           </Link>
           <nav aria-label="Breadcrumb" className="article-breadcrumb">
             <Link href="/">Trang chủ</Link>
             <span className="sep" aria-hidden="true">/</span>
-            <Link href="/kien-thuc/">Bản tin</Link>
+            <Link href="/blogs/">Bản tin</Link>
             <span className="sep" aria-hidden="true">/</span>
             <span className="current" aria-current="page">{post.category}</span>
           </nav>
@@ -395,7 +395,7 @@ export function ArticleTemplate({ slug }: { slug: string }) {
 
           {/* CHIA SẺ & ĐIỀU HƯỚNG CUỐI BÀI */}
           <div className="article-bottom-nav">
-            <Link href="/kien-thuc/" className="back-bottom-btn">
+            <Link href="/blogs/" className="back-bottom-btn">
               ← Trở về danh sách Bản tin DANAVA
             </Link>
           </div>
@@ -415,7 +415,7 @@ export function ArticleTemplate({ slug }: { slug: string }) {
               <p className="eyebrow">KHÁM PHÁ THÊM</p>
               <h2>Có thể bạn quan tâm.</h2>
             </div>
-            <Link href="/kien-thuc/" className="view-all-link">
+            <Link href="/blogs/" className="view-all-link">
               Xem toàn bộ Bản tin ↗
             </Link>
           </div>
@@ -425,7 +425,7 @@ export function ArticleTemplate({ slug }: { slug: string }) {
               const relImg = rel.image || postPhotos[rel.id];
               return (
                 <article key={rel.id} className="related-post-card">
-                  <Link href={`/kien-thuc/${rel.slug}/`} className="related-media-link" tabIndex={-1} aria-hidden="true">
+                  <Link href={`/blogs/${rel.slug}/`} className="related-media-link" tabIndex={-1} aria-hidden="true">
                     {relImg ? (
                       <img src={relImg} alt={rel.title} loading="lazy" className="related-thumb-img" />
                     ) : (
@@ -442,11 +442,11 @@ export function ArticleTemplate({ slug }: { slug: string }) {
                       </time>
                     </div>
                     <h3 className="related-title">
-                      <Link href={`/kien-thuc/${rel.slug}/`}>
+                      <Link href={`/blogs/${rel.slug}/`}>
                         {rel.title}
                       </Link>
                     </h3>
-                    <Link href={`/kien-thuc/${rel.slug}/`} className="related-read-more">
+                    <Link href={`/blogs/${rel.slug}/`} className="related-read-more">
                       Đọc bài viết <span aria-hidden="true">↗</span>
                     </Link>
                   </div>

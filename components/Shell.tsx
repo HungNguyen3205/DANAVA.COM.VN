@@ -53,7 +53,7 @@ const ABOUT_COLS: { title: string; sub: string; items: MenuItemData[] }[] = [
     title: 'Hoạt động', sub: 'Dự án, kiến thức & cơ hội',
     items: [
       { label: 'Dự án', desc: 'Câu chuyện triển khai thực tế cùng khách hàng', href: '/du-an/', badge: '', image: '', icon: FolderKanban, tone: 'orange' },
-      { label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', href: '/kien-thuc/', badge: '', image: '', icon: Newspaper, tone: 'blue' },
+      { label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', href: '/blogs/', badge: '', image: '', icon: Newspaper, tone: 'blue' },
       { label: 'Tuyển dụng', desc: 'Cơ hội nghề nghiệp tại DANAVA', href: '/tuyen-dung/', badge: '', image: '', icon: BriefcaseBusiness, tone: 'orange' }
     ]
   }
@@ -258,7 +258,7 @@ export function Footer() {
               <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
               <li><Link href="/doi-tac/">Đối tác đồng hành</Link></li>
               <li><Link href="/du-an/">Dự án</Link></li>
-              <li><Link href="/kien-thuc/">Blogs</Link></li>
+              <li><Link href="/blogs/">Blogs</Link></li>
             </ul>
           </div>
 
@@ -302,7 +302,7 @@ const TABS = [
   { href: '/giai-phap/', label: 'Giải pháp', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
   { href: '/lien-he/#dang-ky-tu-van', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
   { href: '/du-an/', label: 'Dự án', icon: Briefcase, match: (p: string) => p.startsWith('/du-an') },
-  { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
+  { href: '/blogs/', label: 'Blogs', icon: Newspaper, match: (p: string) => p.startsWith('/blogs') }
 ];
 
 /**

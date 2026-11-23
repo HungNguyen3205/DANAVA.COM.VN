@@ -1,8 +1,8 @@
 /**
- * /kien-thuc/ — trang Blogs (server component; mọi liên kết có trong HTML).
+ * /blogs/ — trang Blogs (server component; mọi liên kết có trong HTML).
  * Bìa tạp chí có ô tìm kiếm (đang tìm thì chỉ hiện kết quả) → bài tiêu điểm + "Mới cập nhật" → lưới bài có bộ lọc chủ đề (BlogExplorer) →
  * cập nhật từ Fanpage & YouTube → lưu trữ từ website cũ chia theo năm.
- * Chủ đề đủ bài có trang riêng /kien-thuc/chu-de/[slug]/.
+ * Chủ đề đủ bài có trang riêng /blogs/chu-de/[slug]/.
  */
 import Link from 'next/link';
 import { ArrowRight, Clock } from 'lucide-react';
@@ -30,10 +30,10 @@ export function TopicNav({ data, current }: { data: SiteData; current?: string }
   if (!topics.length) return null;
   return (
     <nav className="u-topics" aria-label="Chủ đề blog">
-      <Link className={`s-tab${!current ? ' is-active' : ''}`} href="/kien-thuc/" aria-current={!current ? 'page' : undefined}>Tất cả</Link>
+      <Link className={`s-tab${!current ? ' is-active' : ''}`} href="/blogs/" aria-current={!current ? 'page' : undefined}>Tất cả</Link>
       {topics.map(t => {
         const n = postsForTopic(data, t.id).length;
-        const href = topicHasPage(data, t) ? topicHref(t) : `/kien-thuc/#chu-de-${t.slug}`;
+        const href = topicHasPage(data, t) ? topicHref(t) : `/blogs/#chu-de-${t.slug}`;
         return (
           <Link key={t.id} className={`s-tab${current === t.id ? ' is-active' : ''}`} href={href} aria-current={current === t.id ? 'page' : undefined}>
             {t.name}<span className="s-tab__count">{n}</span>

@@ -2163,7 +2163,7 @@ export function MarketingServicePage({ service }: { service: Service }) {
                   <strong>Cộng đồng Yoga Club Vietnam &amp; Các đối tác studio:</strong>
                   <p>Vận hành nội dung chia sẻ kiến thức sống khỏe, kết nối các câu lạc bộ và giữ nhịp tương tác tự nhiên đều đặn suốt nhiều năm.</p>
                 </div>
-                <Link href="/kien-thuc/" className="case-link-pill">
+                <Link href="/blogs/" className="case-link-pill">
                   Xem chuyên mục kiến thức ↗
                 </Link>
               </div>
@@ -4105,7 +4105,7 @@ export function Activities() {
       </div>
       <div className="activity-grid">
         {activityPhotos.map((photo, i) => (
-          <Link key={photo.src} href={i === 0 ? '/kien-thuc/cong-nang-luong/' : '/kien-thuc/'} className="activity-card">
+          <Link key={photo.src} href={i === 0 ? '/blogs/cong-nang-luong/' : '/blogs/'} className="activity-card">
             <img src={photo.src} alt={photo.alt} loading="lazy" />
             <div>
               <span>{photo.label}</span>

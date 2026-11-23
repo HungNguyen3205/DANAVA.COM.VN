@@ -213,7 +213,7 @@ export function RelatedPosts({ posts, data, title = 'Bài viết liên quan', id
   return (
     <section className={`s-section${soft ? ' s-section--soft' : ' s-section--line'}`} aria-labelledby={id}>
       <div className="s-container">
-        <SectionHeading eyebrow="Blogs" title={<span id={id}>{title}</span>} action={<Link className="s-link" href="/kien-thuc/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>} />
+        <SectionHeading eyebrow="Blogs" title={<span id={id}>{title}</span>} action={<Link className="s-link" href="/blogs/">Xem tất cả Blogs <ArrowRight aria-hidden="true" /></Link>} />
         <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>
           {posts.map(p => <PostTile key={p.id} post={p} data={data} />)}
         </div>

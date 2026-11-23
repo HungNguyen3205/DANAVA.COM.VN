@@ -82,7 +82,7 @@ export type SubService = {
   editorNote?: string;
 };
 
-/** Danh mục kiến thức: /kien-thuc/chu-de/{slug}/ */
+/** Danh mục kiến thức: /blogs/chu-de/{slug}/ */
 export type Topic = {
   id: string; slug: string; name: string; description: string; serviceIds: string[]; published: boolean;
   seoTitle?: string; seoDescription?: string;
@@ -196,7 +196,7 @@ const knownService = (id: unknown, slug?: unknown) =>
   initial.services.some(x => x.id === id && (slug === undefined || x.slug === slug))
   || RETIRED_SERVICES.some(x => x.id === id && (slug === undefined || x.slug === slug));
 
-/** Đường dẫn bài viết không được trùng các trang tĩnh trong /kien-thuc/. */
+/** Đường dẫn bài viết không được trùng các trang tĩnh trong /blogs/. */
 export const RESERVED_POST_SLUGS = ['chu-de', 'doc'];
 
 export const initial: SiteData = {

@@ -148,7 +148,7 @@ export function ServicePolicy({ data }: { data: SiteData }) {
                 <PolicyGroup
                   group={media}
                   labels={['Kế hoạch thực thi & phê duyệt', 'Quy chuẩn duyệt & 02 vòng chỉnh sửa', 'Bàn giao file gốc & bảo mật tư liệu', 'Chi phí phát sinh ngoài phạm vi']}
-                  link={{ href: '/kien-thuc/', label: 'Xem bản tin & hoạt động' }}
+                  link={{ href: '/blogs/', label: 'Xem bản tin & hoạt động' }}
                 />
               </section>
 

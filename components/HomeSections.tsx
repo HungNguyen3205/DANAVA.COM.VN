@@ -244,7 +244,7 @@ export function CommunityStory() {
         lead="Workshop, sự kiện và cộng đồng Yoga là nơi DANAVA cùng mọi người gặp gỡ, chia sẻ và tạo nên trải nghiệm."
       />
       <div className="community-collage">
-        <Link className="community-main" href="/kien-thuc/" data-reveal>
+        <Link className="community-main" href="/blogs/" data-reveal>
           <img src={activityPhotos[0].src} alt={activityPhotos[0].alt} loading="lazy" data-parallax />
           <div>
             <span>DẤU ẤN / KHO HOẠT ĐỘNG DANAVA</span>
@@ -286,7 +286,7 @@ export function KnowledgeFeed() {
         label="GÓC NHÌN"
         aside="KHO NỘI DUNG DANAVA"
         title={<>Chia sẻ kiến thức.<br /><em>Lan tỏa kết nối.</em></>}
-        link={{ href: '/kien-thuc/', label: 'Khám phá kho bài viết' }}
+        link={{ href: '/blogs/', label: 'Khám phá kho bài viết' }}
       />
 
       {posts.length > 0 && (
@@ -294,7 +294,7 @@ export function KnowledgeFeed() {
           {posts.map((p, i) => {
             const image = p.image || postPhotos[p.id];
             return (
-              <Link key={p.id} href={`/kien-thuc/${p.slug}/`} className="journal-card" data-reveal>
+              <Link key={p.id} href={`/blogs/${p.slug}/`} className="journal-card" data-reveal>
                 <div className="journal-image">
                   {image ? <img src={image} alt={p.title} loading="lazy" /> : <span>{p.category}</span>}
                   <b>0{i + 1}</b>

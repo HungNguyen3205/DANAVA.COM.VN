@@ -318,7 +318,7 @@ export default function HomePage({ data }: { data: SiteData }) {
           <div className="s-container">
             <div className="hb-row">
               <div><Eyebrow>Blogs</Eyebrow><h2 className="hb-h2" id="home-news">Tin mới <em>từ DANAVA.</em></h2></div>
-              <Link className="hb-more" href="/kien-thuc/">Xem tất cả <ArrowRight aria-hidden="true" /></Link>
+              <Link className="hb-more" href="/blogs/">Xem tất cả <ArrowRight aria-hidden="true" /></Link>
             </div>
             <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>{posts.map(p => <PostTile key={p.id} post={p} data={data} />)}</div>
             {social.length > 1 && (

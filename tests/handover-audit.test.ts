@@ -176,7 +176,7 @@ test('Link integrity, canonical, sitemap and 404 routing', () => {
     'du-an',
     've-danava',
     'doi-ngu',
-    'kien-thuc',
+    'blogs',
     'lien-he',
     'chinh-sach-rieng-tu',
     'chinh-sach-dich-vu'

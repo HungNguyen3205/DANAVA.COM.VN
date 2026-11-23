@@ -15,18 +15,21 @@ const config: NextConfig = {
     return [
       { source: '/admin/:path*', headers: noindex },
       { source: '/api/:path*', headers: noindex },
-      { source: '/kien-thuc/doc/:path*', headers: noindex }
+      { source: '/blogs/doc/:path*', headers: noindex }
     ];
   },
   async redirects() {
     // Trình duyệt luôn hỏi /favicon.ico; icon thật nằm ở app/icon.png.
     return [
       ...legacyRedirects,
+      // Đường dẫn cũ /kien-thuc/ chuyển sang /blogs/ (giữ thứ hạng tìm kiếm)
+      { source: '/kien-thuc', destination: '/blogs/', permanent: true },
+      { source: '/kien-thuc/:path*', destination: '/blogs/:path*', permanent: true },
       { source: '/favicon.ico', destination: '/icon.png', permanent: true },
-      { source: '/kien-thuc/chu-de/digital-marketing/', destination: '/kien-thuc/', permanent: true },
+      { source: '/kien-thuc/chu-de/digital-marketing/', destination: '/blogs/', permanent: true },
       // Bài digital marketing đã gỡ (lib/content-defaults.ts REMOVED_POST_IDS)
       ...['digital-marketing', 'tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi', 'doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch',
-        'top-10-website-tai-anh-chat-luong-cao-mien-phi', 'digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc'].map(slug => ({ source: `/kien-thuc/${slug}/`, destination: '/kien-thuc/', permanent: true }))
+        'top-10-website-tai-anh-chat-luong-cao-mien-phi', 'digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc'].map(slug => ({ source: `/kien-thuc/${slug}/`, destination: '/blogs/', permanent: true }))
     ];
   }
 };

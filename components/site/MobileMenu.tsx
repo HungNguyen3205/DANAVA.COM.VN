@@ -27,7 +27,7 @@ const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
 const ABOUT_PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/ve-danava/', label: 'Về DANAVA', icon: Info },
   { href: '/du-an/', label: 'Dự án', icon: FolderKanban },
-  { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper },
+  { href: '/blogs/', label: 'Blogs', icon: Newspaper },
   { href: '/tuyen-dung/', label: 'Tuyển dụng', icon: BriefcaseBusiness }
 ];
 

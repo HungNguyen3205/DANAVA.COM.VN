@@ -80,7 +80,7 @@ test('long titles and missing cover photos do not corrupt metadata or slug resol
   assert.ok(noImagePost.title.length > 0);
 });
 
-test('reading quick-access /kien-thuc/doc resolves existing article IDs', () => {
+test('reading quick-access /blogs/doc resolves existing article IDs', () => {
   const sample = legacyCatalog[0];
   const found = initial.posts.find(p => p.id === sample.id);
   assert.ok(found, `Bài viết ${sample.id} phải tồn tại trong danh mục bài viết`);
