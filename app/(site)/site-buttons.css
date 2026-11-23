@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Nút của toàn website chỉ dùng hai màu: navy (#13244f) và cam (#f26b1d).
+   File này nạp sau cùng nên ghi đè các màu cũ (vàng, nâu, đỏ, xanh, tím) ở mọi file khác.
+   Không áp dụng cho nút mạng xã hội, Zalo và Messenger (giữ màu thương hiệu).
+   ========================================================================== */
+
+/* 1. Nút chính: cam */
+.s-app .s-btn--primary,
+.s-app .s-btn--sun,
+.s-app [class*="btn--primary"],
+.s-app [class*="btn--sun"],
+.s-app [class*="-btn-primary"],
+.s-app [class*="cta-primary"],
+.s-app [class*="cta-main"],
+.s-app [class*="cta-warm"],
+.s-app .s-mega__cta,
+.s-app .s-cta .s-btn--primary,
+.s-app .lp-btn,
+.s-app .qc__btn,
+.s-app .qc__send,
+.s-app .qc__chip--go,
+.s-app .wq__btn--primary,
+.s-app .adm-btn-primary,
+.s-app .adm .admin-primary,
+.s-app .ds-save-btn,
+.s-app .ds-rail-btn.is-active,
+.s-app .hb-office__qrbtn,
+.s-app .ev-nav__cta,
+.s-app .phl-btn--primary,
+.s-app .hx-btn--sun,
+.s-app .hp-btn--sun,
+.s-app .pwk-btn--primary,
+.s-app .mk .s-btn--primary,
+.s-app .solution-submit-btn,
+.s-app .studio-cta-primary,
+.s-app .website-cta-primary,
+.s-app .about-cta-primary,
+.s-app .marketing-cta-primary,
+.s-app .cta-primary-btn,
+.s-app .solution-cta-main,
+.s-app .s-btn--primary:hover {
+  background: linear-gradient(90deg, #ff8a2a, #f26b1d) !important;
+  background-color: #f26b1d !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+/* 2. Nút tối và xanh: navy */
+.s-app .s-btn--dark,
+.s-app .s-btn--blue,
+.s-app [class*="btn--dark"],
+.s-app .s-cta,
+.s-app .studio-cta-secondary,
+.s-app .compact-cta-btn,
+.s-app .hotline-btn,
+.s-app .email-btn,
+.s-app .case-cta-box,
+.s-app .studio-closing-cta,
+.s-app .s-btn--dark:hover {
+  background: #13244f !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+/* 3. Nút phụ và nút viền: nền trắng, chữ navy */
+.s-app .s-btn--secondary,
+.s-app .s-btn--light,
+.s-app .s-btn--outline-light,
+.s-app .s-btn--secondary:hover,
+.s-app [class*="btn-ghost"],
+.s-app [class*="btn--ghost"],
+.s-app [class*="-ghost"],
+.s-app .studio-cta-outline,
+.s-app .website-cta-secondary,
+.s-app .about-cta-secondary,
+.s-app .cta-secondary-btn,
+.s-app .solution-cta-sub,
+.s-app .marketing-cta-secondary {
+  background: #fff !important;
+  border: 1.5px solid rgba(19, 36, 79, .18) !important;
+  color: #13244f !important;
+}
+
+/* 4. Chip và tab đang chọn: navy */
+.s-app button[aria-pressed="true"],
+.s-app button[aria-selected="true"],
+.s-app .qc__chip.is-on,
+.s-app .wq__chip.is-on,
+.s-app .ask-chip.is-on,
+.s-app .an-home__chips .is-quote,
+.s-app .pd-chips button.is-on,
+.s-app .c-chips button.is-on,
+.s-app .bl-chip.is-on,
+.s-app .pf__filters button[aria-pressed="true"],
+.s-app .adm-tabs button.is-on,
+.s-app .showcase-tabs-nav button[aria-selected="true"],
+.s-app .pgo-fleet .pgo-vehicles button.is-on,
+.s-app .pgo-tour .st-tour__steps button[aria-pressed="true"],
+.s-app .hb-tabs button.is-on {
+  background: #13244f !important;
+  border-color: #13244f !important;
+  color: #fff !important;
+}
+
+/* 5. Nút trợ giúp, lọc, xóa và đăng xuất: không dùng đỏ, dùng cam nhạt */
+.s-app .reset-filter-btn,
+.s-app .adm .row-actions button.danger,
+.s-app .am-pop > button.am-logout,
+.s-app .am-pop > button.am-logout svg {
+  background: rgba(242, 107, 29, .08) !important;
+  color: #f26b1d !important;
+}
+
+/* 6. Gợi ý chữ nâu (ANNA, phiếu báo giá): cam */
+.s-app .an-suggest button,
+.s-app .qc__chip--advice,
+.s-app .wq__chip--advice {
+  background: #fff !important;
+  color: #f26b1d !important;
+  border-color: rgba(242, 107, 29, .4) !important;
+}
+
+/* 7. Nút vàng/nâu còn lại trên chữ và viền: cam */
+.s-app .hx-btn--ghost,
+.s-app .hp-btn--ghost,
+.s-app .h-btn-glass {
+  color: #fff !important;
+}
