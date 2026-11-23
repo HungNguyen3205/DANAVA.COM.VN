@@ -105,3 +105,12 @@
 .s-app .s-mega--services .s-mega__cols { grid-template-columns: minmax(0, 1fr) !important; }
 .s-app .s-mega--services .s-mega__col { padding: 0 8px; }
 .s-app .s-mega--services .s-mega__foot { margin-top: 16px; }
+
+/* Nút mạng xã hội ở chân trang: bốn nút tròn đồng màu cam, icon trắng; Zalo là bong bóng trắng chữ cam */
+.s-app .s-footer__social a {
+  width: 46px; height: 46px; min-height: 46px; background: #f26b1d; color: #fff;
+  box-shadow: 0 10px 22px -12px rgba(242, 107, 29, .9);
+}
+.s-app .s-footer__social a:hover { background: #13244f; color: #fff; }
+.s-app .s-footer__social .br-icon--zalo text { fill: #f26b1d; }
+.s-app .s-footer__social a:hover .br-icon--zalo text { fill: #13244f; }
