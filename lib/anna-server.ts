@@ -16,7 +16,7 @@ const BLOCKED = 'Mình chưa xác minh được một thông tin trong câu tr�
 const REFUSED = 'Mình không hỗ trợ được yêu cầu này. Nếu bạn cần tư vấn về giải pháp của DANAVA, hãy mô tả nhu cầu hoặc [liên hệ đội ngũ DANAVA](/lien-he/).';
 const CUT = '\n\nCâu trả lời đã bị cắt do quá dài. Bạn hãy hỏi hẹp hơn hoặc [liên hệ DANAVA](/lien-he/).';
 
-export const annaApiKey = () => process.env.ANTHROPIC_API_KEY?.trim() || '';
+export const annaApiKey = () => process.env.GEMINI_API_KEY?.trim() || process.env.ANTHROPIC_API_KEY?.trim() || '';
 
 let cached: { key: string; client: Anthropic } | undefined;
 function clientFor(apiKey: string) {
@@ -37,7 +37,116 @@ function errorCode(error: unknown): AnnaErrorCode {
 
 type Input = { data: SiteData; apiKey: string; message: string; history: SignedTurn[]; signal: AbortSignal };
 
-export async function* answer({ data, apiKey, message, history, signal }: Input): AsyncGenerator<AnnaEvent> {
+
+/* ===== Nhánh Gemini (khi có GEMINI_API_KEY): gọi REST bằng fetch, không thêm thư viện ===== */
+const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash';
+
+async function* answerGemini({ data, apiKey, message, history, signal }: Input): AsyncGenerator<AnnaEvent> {
+  const key = signingKey(apiKey);
+  const knowledge = buildKnowledge(data);
+  const pricing = block(data, 'pricing');
+  const checked = new CheckedStream(allowedFacts(knowledge, pricing.enabled ? pricing : null));
+  const timeout = AbortSignal.timeout(TOTAL_TIMEOUT_MS);
+  const model = process.env.DANAVA_GEMINI_MODEL?.trim() || GEMINI_DEFAULT_MODEL;
+
+  const contents: { role: 'user' | 'model'; parts: { text: string }[] }[] = [];
+  for (const turn of trustedHistory(key, history)) {
+    contents.push({ role: 'user', parts: [{ text: turn.q }] }, { role: 'model', parts: [{ text: turn.a }] });
+  }
+  contents.push({ role: 'user', parts: [{ text: message }] });
+
+  let res: Response;
+  try {
+    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: buildSystem(data, knowledge) }] },
+        contents,
+        generationConfig: { maxOutputTokens: MAX_TOKENS, temperature: 0.4 }
+      }),
+      signal: AbortSignal.any([signal, timeout])
+    });
+  } catch (error) {
+    if (signal.aborted) return;
+    console.error('[anna] gemini request failed', timeout.aborted ? 'timeout' : (error as Error)?.name);
+    yield { type: 'error', code: 'failed' };
+    return;
+  }
+
+  if (!res.ok || !res.body) {
+    // Không ghi khóa hay nội dung hội thoại vào log
+    console.error('[anna] gemini http', res.status);
+    const code: AnnaErrorCode = res.status === 401 || res.status === 403 ? 'unavailable' : res.status === 429 || res.status >= 500 ? 'busy' : 'failed';
+    yield { type: 'error', code };
+    return;
+  }
+
+  let finish: string | undefined;
+  let buffer = '';
+  const decoder = new TextDecoder();
+  try {
+    const reader = res.body.getReader();
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let idx: number;
+      while ((idx = buffer.indexOf('\n')) >= 0) {
+        const line = buffer.slice(0, idx).trim();
+        buffer = buffer.slice(idx + 1);
+        if (!line.startsWith('data:')) continue;
+        const chunk = JSON.parse(line.slice(5)) as { candidates?: { content?: { parts?: { text?: string }[] }; finishReason?: string }[] };
+        const cand = chunk.candidates?.[0];
+        const text = (cand?.content?.parts ?? []).map(p => p.text ?? '').join('');
+        if (cand?.finishReason) finish = cand.finishReason;
+        if (!text) continue;
+        const safe = checked.push(text);
+        if (safe === null) {
+          await reader.cancel();
+          console.warn('[anna] blocked an answer with an unverified number');
+          yield { type: 'replace', text: BLOCKED };
+          yield { type: 'done' };
+          return;
+        }
+        if (safe) yield { type: 'delta', text: safe };
+      }
+    }
+  } catch (error) {
+    if (signal.aborted) return;
+    console.error('[anna] gemini stream failed', timeout.aborted ? 'timeout' : (error as Error)?.name);
+    yield { type: 'error', code: 'failed' };
+    return;
+  }
+
+  if (finish === 'SAFETY' || finish === 'BLOCKLIST' || finish === 'PROHIBITED_CONTENT' || finish === 'SPII') {
+    yield { type: 'replace', text: REFUSED };
+    yield { type: 'done' };
+    return;
+  }
+  const rest = checked.end();
+  if (rest === null) {
+    yield { type: 'replace', text: BLOCKED };
+    yield { type: 'done' };
+    return;
+  }
+  if (!checked.text.trim()) {
+    yield { type: 'error', code: 'failed' };
+    return;
+  }
+  if (rest) yield { type: 'delta', text: rest };
+  if (finish === 'MAX_TOKENS') {
+    yield { type: 'delta', text: CUT };
+    yield { type: 'done' };
+    return;
+  }
+  yield { type: 'done', sig: checked.text.length <= ANNA_LIMITS.answer ? signTurn(key, message, checked.text) : undefined };
+}
+
+export async function* answer(input: Input): AsyncGenerator<AnnaEvent> {
+  // Có GEMINI_API_KEY thì ANNA dùng Gemini; không thì dùng Anthropic như cũ
+  if (process.env.GEMINI_API_KEY?.trim()) { yield* answerGemini(input); return; }
+  const { data, apiKey, message, history, signal } = input;
   const key = signingKey(apiKey);
   const knowledge = buildKnowledge(data);
   const pricing = block(data, 'pricing');
