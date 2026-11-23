@@ -2,7 +2,7 @@ import { seo, jsonLD, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
 import { CONTACT } from '@/lib/company';
 import { ContactPage } from '@/components/site/ContactPage';
 import { resolveValidService } from '@/lib/contact-services';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { block } from '@/lib/blocks';
 
 export const metadata = seo(
@@ -16,7 +16,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const raw = (await searchParams).service;
   const initialService = resolveValidService(Array.isArray(raw) ? raw[0] : raw);
   // Hotline/email sửa trong CMS (Cài đặt) → dùng cho dữ liệu có cấu trúc, giống nội dung hiển thị
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const co = block(data, 'company');
   const schemaData = {
     '@context': 'https://schema.org',

@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation';
 import { ProjectDetailPage } from '@/components/site/ProjectDetailPage';
 import { ShowcaseCaseStudy } from '@/components/site/ShowcaseCaseStudy';
 import { JsonLd } from '@/components/site/blocks';
-import { getContent } from '@/lib/database';
-import { session } from '@/lib/auth';
+import { getSiteContent } from '@/lib/database';
+import { canPreview } from '@/lib/auth';
 import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta, absoluteURL } from '@/lib/seo';
 import { findShowcase, servicesForProject } from '@/lib/site-queries';
 
@@ -14,12 +14,12 @@ type Params = { params: Promise<{ slug: string }> };
  * Bản nháp: 404 với khách; quản trị viên đã đăng nhập xem trước (noindex).
  */
 async function load(slug: string) {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const p = (data.projects || []).find(x => x.slug === slug);
   const s = p ? undefined : findShowcase(data, slug);
   if (!p && !(s && s.caseStudy)) return null;
   const live = p ? p.published : s!.published;
-  if (!live && !(await session())) return null;
+  if (!live && !(await canPreview())) return null;
   return { p, s, data, preview: !live };
 }
 

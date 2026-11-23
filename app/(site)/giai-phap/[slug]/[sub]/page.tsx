@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { SubServicePage } from '@/components/site/SubServicePage';
 import { JsonLd } from '@/components/site/blocks';
-import { getContent } from '@/lib/database';
-import { session } from '@/lib/auth';
+import { getSiteContent } from '@/lib/database';
+import { canPreview } from '@/lib/auth';
 import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta } from '@/lib/seo';
 import { findSubService } from '@/lib/site-queries';
 
@@ -10,11 +10,11 @@ type Params = { params: Promise<{ slug: string; sub: string }> };
 
 /** Bản nháp: 404 với khách; quản trị viên đã đăng nhập xem trước (noindex). */
 async function load(slug: string, sub: string) {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const found = findSubService(data, slug, sub);
   if (!found) return null;
   if (found.sub.published) return { ...found, data, preview: false };
-  return (await session()) ? { ...found, data, preview: true } : null;
+  return (await canPreview()) ? { ...found, data, preview: true } : null;
 }
 
 export async function generateMetadata({ params }: Params) {

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { SiteStore } from '@/components/SiteStore';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { publicContent } from '@/lib/site-queries';
 import Analytics from '@/components/Analytics';
 import { siteURL, jsonLD, indexable, ORG_ID, BRAND } from '@/lib/seo';
@@ -39,7 +39,7 @@ export const viewport: Viewport = {
 };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const co = block(data, 'company');
   // Thông tin doanh nghiệp đã xác minh (lib/company.ts); email/điện thoại lấy từ CMS.
   const organization = {

@@ -1,6 +1,6 @@
 import { seo, jsonLD, siteURL, breadcrumbLD } from '@/lib/seo';
 import { PrivacyPolicy } from '@/components/PrivacyPolicy';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 
 export const metadata = seo(
   'Chính sách quyền riêng tư và đo lường',
@@ -9,7 +9,7 @@ export const metadata = seo(
 );
 
 export default async function Page() {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',

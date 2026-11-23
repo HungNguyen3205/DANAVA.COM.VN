@@ -16,7 +16,7 @@ import { Icon } from './AdminIcons';
 import { LEGACY_SECTIONS, sectionInfo, useAdminLeads, visibleTabs } from './adminData';
 import { initial, validateContent, type SiteData, type Post } from '@/lib/content';
 import { normalizeContent } from '@/lib/content-defaults';
-import { useSite } from './SiteStore';
+import { useSite, type SaveMode } from './SiteStore';
 import { ServicesEditor, TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
 import { BlockEditor, BlockPanel } from './AdminBlockEditor';
 import { ChannelsEditor } from './AdminChannels';
@@ -27,6 +27,7 @@ import { block, blockDefaults, savedBlock, withBlock, type BlockKey } from '@/li
 import { can } from '@/lib/permissions';
 import { ContactBook, FormsReport, SourcesReport } from './admin/CustomerReports';
 import { WebsitePagesScreen } from './admin/WebsitePagesScreen';
+import { AuditScreen, RevisionsScreen, UsersScreen } from './admin/SystemScreens';
 import type { PageTab, SitePage } from './admin/websitePages';
 import { Empty, Loading, useAdminUser, useQueryParam, useTabs } from './admin/ui';
 
@@ -54,7 +55,7 @@ function AdminRoute({ section }: { section: string }) {
 }
 
 function AdminWorkspace({ section }: { section: string }) {
-  const { data, save, ready, error } = useSite(),
+  const { data, save, ready, error, draft: serverDraft, discardDraft } = useSite(),
     user = useAdminUser(),
     [draft, setDraft] = useState<SiteData>(data),
     [notice, setNotice] = useState(''),
@@ -94,14 +95,23 @@ function AdminWorkspace({ section }: { section: string }) {
       showcase: (d.showcase || []).map(x => ({ ...x, scope: x.scope.map(i => i.trim()).filter(Boolean), tags: x.tags.map(i => i.trim()).filter(Boolean), highlights: cleanFeatures(x.highlights) }))
     };
   }
-  async function persist() {
+  async function persist(mode: SaveMode = 'draft') {
+    if (mode === 'publish' && !can(user.role, 'content.publish')) mode = 'draft';
     setSaving(true);
     try {
       const next = cleaned(draft);
-      if (await save(next)) { setDraft(next); setNotice('Đã lưu. Nội dung xuất bản đã cập nhật trên website.'); }
+      if (await save(next, mode)) {
+        setDraft(next);
+        setNotice(mode === 'draft' ? 'Đã lưu nháp trên máy chủ. Website chưa thay đổi cho tới khi bấm Xuất bản.' : 'Đã xuất bản. Website đã cập nhật nội dung mới.');
+      }
     } finally {
       setSaving(false);
     }
+  }
+  async function dropDraft() {
+    if (!confirm('Bỏ bản nháp đã lưu và quay về nội dung đang hiển thị trên website?')) return;
+    setSaving(true);
+    try { if (await discardDraft()) setNotice('Đã bỏ bản nháp. Đang hiển thị nội dung của website.'); } finally { setSaving(false); }
   }
   function exportData() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
@@ -367,7 +377,10 @@ function AdminWorkspace({ section }: { section: string }) {
             <a className="text-link" href={`/blogs/${post.slug}/`} target="_blank" rel="noopener">/blogs/{post.slug}/ ↗</a> (sau khi lưu).
           </p>
           <div className="panel-heading">
-            <button className="admin-primary" onClick={persist}>Lưu bài viết</button>
+            <span className="adm-btn-row">
+              <button className="admin-secondary" onClick={() => persist('draft')} disabled={saving}>Lưu nháp</button>
+              {can(user.role, 'content.publish') && <button className="admin-primary" onClick={() => persist('publish')} disabled={saving}>Xuất bản</button>}
+            </span>
             <button className="danger" onClick={() => removePost(post.id)}>Xóa bài</button>
           </div>
         </section>
@@ -450,7 +463,11 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'nguon-khach': return <SourcesReport />;
       case 'cai-dat': return contactSettings;
       case 'tich-hop': return <AnnaStatus />;
-      case 'nhat-ky': return backupPanel;
+      case 'tai-khoan': return <UsersScreen />;
+      case 'nhat-ky':
+        if (tab === 'nhat-ky') return <AuditScreen />;
+        if (tab === 'sao-luu') return backupPanel;
+        return <RevisionsScreen onRestored={setNotice} />;
       default: return <Empty action={<Link className="admin-secondary" href="/admin/tong-quan/">Về Tổng quan</Link>}>Không tìm thấy mục “{section}”.</Empty>;
     }
   }
@@ -482,6 +499,8 @@ function AdminWorkspace({ section }: { section: string }) {
       onDiscard={() => {
         if (confirm('Bỏ mọi thay đổi chưa lưu và quay về bản đang lưu trên máy chủ?')) setDraft(data);
       }}
+      onDiscardDraft={dropDraft}
+      draft={serverDraft}
       notice={notice}
       error={error && error !== dismissedError ? error : ''}
       onDismissNotice={dismissNotice}

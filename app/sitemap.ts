@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { siteURL, indexable } from '@/lib/seo';
 import { DICH_VU } from '@/lib/dich-vu';
 import { showcaseCaseStudies, publishedProjects, publishedSubServices, subServiceHref, topicHasPage, topicHref, postsForTopic } from '@/lib/site-queries';
@@ -14,7 +14,7 @@ const latest = (...dates: (string | undefined)[]) => dates.filter((d): d is stri
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!indexable) return [];
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const entry = (path: string, lastModified?: string): MetadataRoute.Sitemap[number] => ({
     url: siteURL + path,
     ...(lastModified ? { lastModified } : {})

@@ -945,3 +945,35 @@
   .ds-root .adm-bars__track { grid-column: 1 / -1; grid-row: 2; }
 }
 .ds-root .adm-page-list .project-admin-row .badge { flex: 0 0 auto; width: auto; min-width: 0; padding: 4px 10px; }
+
+/* Lưu nháp / Xuất bản, tài khoản, lịch sử phiên bản */
+.ds-root .ds-save-state { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #eef1f7; color: #56607a; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+.ds-root .ds-save-state::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.ds-root .ds-save-state.is-dirty { background: #fff1e4; color: #c85a0a; }
+.ds-root .ds-save-state.is-draft { background: #eaf1ff; color: #2b4294; }
+.ds-root .ds-save-state.is-live { background: #e6f6ee; color: #147a53; }
+.ds-root .ds-draft-btn { height: 40px; }
+.ds-root .adm-savebar.is-draft { background: #eef3ff; color: #13244f; border: 1px solid #c9d6f5; }
+.ds-root .adm-savebar.is-draft .adm-savebar-dot { background: #2b4294; animation: none; }
+.ds-root .adm-btn-row { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.ds-root .adm-inline-msg { margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; background: #fff4e9; color: #7a3d00; font-size: 14px; }
+.ds-root .adm-form { display: grid; gap: 12px; }
+.ds-root .adm-roles { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ds-root .adm-roles li { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--ds-border); border-radius: 12px; }
+.ds-root .adm-roles span { color: var(--ds-text-muted); font-size: 13px; }
+.ds-root .adm-timeline { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ds-root .adm-timeline > li { padding: 12px 14px; border: 1px solid var(--ds-border); border-radius: 14px; background: #fff; }
+.ds-root .adm-timeline > li.is-open { border-color: #f6c58f; }
+.ds-root .adm-timeline__row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.ds-root .adm-timeline__main { display: grid; flex: 1; min-width: 180px; }
+.ds-root .adm-timeline__main small { color: var(--ds-text-muted); }
+.ds-root .adm-changes { display: grid; gap: 6px; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px dashed #e3e7ef; list-style: none; font-size: 13.5px; }
+.ds-root .adm-change { display: inline-block; min-width: 40px; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 800; text-align: center; }
+.ds-root .adm-change--them { background: #e6f6ee; color: #147a53; }
+.ds-root .adm-change--xoa { background: #fdecec; color: #9a3412; }
+.ds-root .adm-change--sua { background: #eaf1ff; color: #2b4294; }
+@media (max-width: 900px) { .ds-root .ds-save-state { display: none; } .ds-root .ds-draft-btn span { display: none; } }
+@media (max-width: 1600px) {
+  .ds-root .ds-save-state { display: none; }
+  .ds-root .ds-create-btn span { display: none; }
+}

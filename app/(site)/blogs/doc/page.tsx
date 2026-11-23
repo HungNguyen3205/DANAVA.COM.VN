@@ -1,5 +1,5 @@
 import { notFound, permanentRedirect } from 'next/navigation';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 
 /**
  * Đường dẫn đọc nhanh cũ /blogs/doc/?id=<mã bài> → chuyển hướng 308 về URL chính thức của bài.
@@ -11,7 +11,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const raw = (await searchParams).id;
   const id = Array.isArray(raw) ? raw[0] : raw;
   if (!id) notFound();
-  const post = (await getContent()).data.posts.find(p => p.id === id && p.published);
+  const post = (await getSiteContent()).data.posts.find(p => p.id === id && p.published);
   if (!post) notFound();
   permanentRedirect(`/blogs/${post.slug}/`);
 }

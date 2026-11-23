@@ -157,10 +157,12 @@ test('Security: Admin routes protect lead assignments, media and draft revisions
   const adminLeadsRoutePath = path.join(process.cwd(), 'app', 'api', 'admin', 'leads', 'route.ts');
   const routeSource = fs.readFileSync(adminLeadsRoutePath, 'utf8');
 
-  // Route phải kiểm tra session() trước khi cho phép GET hoặc PATCH
-  assert.ok(routeSource.includes('await session()'), 'Route phải kiểm tra xác thực phiên');
+  // Route phải kiểm tra phiên + quyền trước khi cho phép GET hoặc PATCH (lib/auth.ts requirePermission)
+  assert.ok(routeSource.includes("requirePermission(req, 'leads.read')"), 'GET phải kiểm tra phiên và quyền xem khách hàng');
+  assert.ok(routeSource.includes("requirePermission(req, 'leads.write', true)"), 'PATCH phải kiểm tra phiên, CSRF và quyền sửa khách hàng');
   assert.ok(routeSource.includes('export async function PATCH'), 'Route phải có hàm PATCH xử lý phân công');
-  assert.ok(routeSource.includes('status: 401'), 'Phải trả về 401 nếu chưa đăng nhập');
+  const authSource = fs.readFileSync(path.join(process.cwd(), 'lib', 'auth.ts'), 'utf8');
+  assert.ok(authSource.includes('status: 401'), 'Phải trả về 401 nếu chưa đăng nhập');
 });
 
 // -----------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import NewsPage from '@/components/site/NewsPage';
 import { JsonLd } from '@/components/site/blocks';
 import { isFiltering, readBlogFilter } from '@/lib/blog-search';
@@ -20,7 +20,7 @@ export async function generateMetadata({ searchParams }: Props) {
 
 export default async function Page({ searchParams }: Props) {
   const filter = readBlogFilter(await searchParams);
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   return (
     <>
       <JsonLd value={{

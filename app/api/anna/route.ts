@@ -1,5 +1,5 @@
 import { sameOrigin } from '@/lib/origin';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { block } from '@/lib/blocks';
 import { parseChat, signingKey } from '@/lib/anna-chat';
 import { allowQuestion } from '@/lib/anna-limit';
@@ -14,7 +14,7 @@ const fail = (status: number, code: AnnaErrorCode) => Response.json({ code }, { 
 
 /** Trạng thái cho giao diện và trang quản trị — không lộ khóa. */
 export async function GET() {
-  const ready = !!annaApiKey() && block((await getContent()).data, 'anna').enabled;
+  const ready = !!annaApiKey() && block((await getSiteContent()).data, 'anna').enabled;
   return Response.json({ ready }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   if (!chat) return fail(400, 'failed');
 
   try {
-    const { data } = await getContent();
+    const { data } = await getSiteContent();
     if (!block(data, 'anna').enabled) return fail(503, 'unavailable');
     if (!(await allowQuestion(req, signingKey(apiKey)))) return fail(429, 'limit');
 

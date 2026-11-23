@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation';
 import { ArticleView } from '@/components/site/ArticleView';
 import { JsonLd, postCover } from '@/components/site/blocks';
-import { getContent } from '@/lib/database';
-import { session } from '@/lib/auth';
+import { getSiteContent } from '@/lib/database';
+import { canPreview } from '@/lib/auth';
 import { seo, siteURL, ORG_ID, BRAND, breadcrumbLD, notFoundMeta, absoluteURL, plainExcerpt } from '@/lib/seo';
 import { authorOf, topicHasPage, topicHref, topicOf } from '@/lib/site-queries';
 
@@ -10,11 +10,11 @@ type Params = { params: Promise<{ slug: string }> };
 
 /** Bài nháp: 404 với khách; quản trị viên đã đăng nhập xem trước (noindex). */
 async function load(slug: string) {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const post = data.posts.find(p => p.slug === slug);
   if (!post) return null;
   if (post.published) return { post, data, preview: false };
-  return (await session()) ? { post, data, preview: true } : null;
+  return (await canPreview()) ? { post, data, preview: true } : null;
 }
 
 export async function generateMetadata({ params }: Params) {

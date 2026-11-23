@@ -1,5 +1,5 @@
 import { sameOrigin } from '@/lib/origin';
-import { checkRecentDuplicateLead, getContent, saveLead } from '@/lib/database';
+import { checkRecentDuplicateLead, getSiteContent, saveLead } from '@/lib/database';
 import { block } from '@/lib/blocks';
 import { applicationLead, openJobs, parseApplication, positionsFor } from '@/lib/careers';
 
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     // Bẫy bot: người thật không thấy ô này
     if (typeof body?.website_trap === 'string' && body.website_trap.trim()) return Response.json({ ok: true }, { status: 201 });
 
-    const careers = block((await getContent()).data, 'careers');
+    const careers = block((await getSiteContent()).data, 'careers');
     const { application, error, field } = parseApplication(body, positionsFor(openJobs(careers)));
     if (!application) return Response.json({ error, field }, { status: 400 });
     if (await checkRecentDuplicateLead(application.phone, 45_000)) {

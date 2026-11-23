@@ -1,5 +1,5 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { publicPartners, publicPlaces } from '@/lib/site-queries';
 import { PartnersPage } from '@/components/site/PartnersPage';
 import { JsonLd } from '@/components/site/blocks';
@@ -12,7 +12,7 @@ export const metadata = seo(
 );
 
 export default async function Page() {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const partners = [...publicPartners(data), ...publicPlaces(data)];
   return (
     <>

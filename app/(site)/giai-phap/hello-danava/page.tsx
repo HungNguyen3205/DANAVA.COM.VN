@@ -1,5 +1,5 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { JsonLd } from '@/components/site/blocks';
 import { HelloPage } from '@/components/site/ProductPages';
 import { HELLO } from '@/lib/products';
@@ -14,7 +14,7 @@ export const metadata = seo(
 );
 
 export default async function Page() {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const pricing = block(data, 'pricing');
   return (
     <>

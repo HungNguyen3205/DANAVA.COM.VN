@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { ServiceDetailPage } from '@/components/site/ServiceDetailPage';
 import { LandingLeadPage } from '@/components/site/LandingLeadPage';
 import { JsonLd } from '@/components/site/blocks';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta } from '@/lib/seo';
 import { DICH_VU, dichVuBySlug } from '@/lib/dich-vu';
 
@@ -19,7 +19,7 @@ export default async function Page({ params }: Params) {
   const { slug } = await params;
   const s = dichVuBySlug(slug);
   if (!s) notFound();
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const url = `${siteURL}/dich-vu/${s.slug}/`;
   return (
     <>

@@ -217,3 +217,4 @@
 @media (prefers-reduced-motion: reduce) {
   .wl *, .wl *::before, .wl *::after, .wl-card { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+.wl-optional { margin-left: 6px; color: #8a99ad; font-size: 12px; font-weight: 500; }

@@ -13,6 +13,7 @@ import { AdminNavRail, type RailSection } from './AdminNavRail';
 import { allAdminItems, sectionInfo, timeAgo, csrfToken, visibleNav, type AdminLead } from './adminData';
 import { ROLES, can } from '@/lib/permissions';
 import { fold, useAdminUser } from './admin/ui';
+import type { DraftInfo, SaveMode } from './SiteStore';
 
 /** Bản ghi cho ô tìm kiếm toàn admin. */
 export type SearchRecord = { label: string; kind: string; href: string };
@@ -26,8 +27,13 @@ type Props = {
   dirty: boolean;
   ready: boolean;
   saving?: boolean;
-  onSave: () => void;
+  /** 'draft' = lưu nháp phía máy chủ; 'publish' = xuất bản lên website */
+  onSave: (mode: SaveMode) => void;
+  /** Hoàn tác thay đổi chưa lưu trong trình duyệt */
   onDiscard: () => void;
+  /** Bỏ bản nháp đã lưu trên máy chủ */
+  onDiscardDraft: () => void;
+  draft: DraftInfo;
   notice: string;
   error: string;
   onDismissNotice: () => void;
@@ -91,6 +97,8 @@ export default function AdminShell({
   saving,
   onSave,
   onDiscard,
+  onDiscardDraft,
+  draft,
   notice,
   error,
   onDismissNotice,
@@ -106,6 +114,8 @@ export default function AdminShell({
   const user = useAdminUser();
   const info = sectionInfo(section);
   const SECTIONS = visibleNav(user.role);
+  const canDraft = can(user.role, 'content.draft');
+  const canPublish = can(user.role, 'content.publish');
   const [createOpen, setCreateOpen] = useState(false);
   const createRef = useRef<HTMLDivElement>(null);
   // Chỉ các loại đã tạo được thật trong admin
@@ -130,9 +140,10 @@ export default function AdminShell({
         e.preventDefault();
         searchRef.current?.focus();
       }
+      // Ctrl/⌘ + S = lưu nháp (an toàn: website chưa đổi). Xuất bản luôn bấm nút.
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && dirty) {
         e.preventDefault();
-        onSave();
+        onSave('draft');
       }
       if (e.key === 'Escape') {
         setBellOpen(false);
@@ -447,11 +458,21 @@ export default function AdminShell({
               )}
             </div>}
 
-            {can(user.role, 'content.draft') && (
-              <button type="button" className="ds-save-btn" onClick={onSave} disabled={!ready || !dirty || saving}>
-                {dirty ? <Save size={16} /> : <Check size={16} />}
-                <span>{saving ? 'Đang lưu…' : dirty ? 'Lưu thay đổi' : 'Đã lưu'}</span>
-              </button>
+            {canDraft && (
+              <>
+                <span className={`ds-save-state is-${saving ? 'saving' : dirty ? 'dirty' : draft.hasDraft ? 'draft' : 'live'}`} role="status">
+                  {saving ? 'Đang lưu…' : dirty ? 'Chưa lưu' : draft.hasDraft ? 'Đã lưu nháp' : 'Đã xuất bản'}
+                </span>
+                <button type="button" className="adm-btn adm-btn-ghost ds-draft-btn" onClick={() => onSave('draft')} disabled={!ready || !dirty || saving} title="Lưu trên máy chủ, website chưa thay đổi (Ctrl + S)">
+                  <Save size={16} /> <span>Lưu nháp</span>
+                </button>
+                {canPublish && (
+                  <button type="button" className="ds-save-btn" onClick={() => onSave('publish')} disabled={!ready || (!dirty && !draft.hasDraft) || saving} title="Cập nhật lên website">
+                    {dirty || draft.hasDraft ? <Rocket size={16} /> : <Check size={16} />}
+                    <span>Xuất bản</span>
+                  </button>
+                )}
+              </>
             )}
 
             <AccountMenu onLogout={logout} onSettings={can(user.role, 'system.manage') ? () => navigate('cai-dat') : undefined} />
@@ -470,16 +491,35 @@ export default function AdminShell({
         </main>
       </div>
 
-      {/* ---------- Thanh thay đổi chưa lưu ---------- */}
-      <div className={`adm-savebar ${dirty ? 'is-visible' : ''}`} role="region" aria-label="Thay đổi chưa lưu" aria-hidden={!dirty}>
+      {/* ---------- Thanh thay đổi chưa lưu / bản nháp chưa xuất bản ---------- */}
+      <div className={`adm-savebar ${dirty || (canDraft && draft.hasDraft) ? 'is-visible' : ''}${!dirty && draft.hasDraft ? ' is-draft' : ''}`} role="region" aria-label="Trạng thái lưu" aria-hidden={!dirty && !draft.hasDraft}>
         <span className="adm-savebar-dot" aria-hidden="true" />
-        <span>Bạn có thay đổi chưa lưu</span>
-        <button className="adm-btn adm-btn-ghost" onClick={onDiscard} tabIndex={dirty ? 0 : -1}>
-          <Undo2 size={16} /> Hoàn tác
-        </button>
-        <button className="adm-btn adm-btn-primary" onClick={onSave} disabled={saving} tabIndex={dirty ? 0 : -1}>
-          <Save size={16} /> {saving ? 'Đang lưu…' : 'Lưu thay đổi'}
-        </button>
+        {dirty ? (
+          <span>Bạn có thay đổi chưa lưu</span>
+        ) : (
+          <span>
+            Bản nháp chưa xuất bản{draft.updatedAt ? ` · lưu ${timeAgo(draft.updatedAt)}` : ''}{draft.author ? ` bởi ${draft.author}` : ''}. Website vẫn hiển thị bản cũ.
+          </span>
+        )}
+        {dirty ? (
+          <button className="adm-btn adm-btn-ghost" onClick={onDiscard} tabIndex={0}>
+            <Undo2 size={16} /> Hoàn tác
+          </button>
+        ) : canPublish && (
+          <button className="adm-btn adm-btn-ghost" onClick={onDiscardDraft} disabled={saving}>
+            <Undo2 size={16} /> Bỏ nháp
+          </button>
+        )}
+        {dirty && (
+          <button className="adm-btn adm-btn-ghost" onClick={() => onSave('draft')} disabled={saving}>
+            <Save size={16} /> Lưu nháp
+          </button>
+        )}
+        {canPublish && (
+          <button className="adm-btn adm-btn-primary" onClick={() => onSave('publish')} disabled={saving}>
+            <Rocket size={16} /> {saving ? 'Đang lưu…' : 'Xuất bản'}
+          </button>
+        )}
       </div>
 
       {/* ---------- Thông báo ---------- */}

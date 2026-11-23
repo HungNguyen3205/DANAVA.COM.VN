@@ -2,6 +2,7 @@ import { legacyCatalog } from './legacy-catalog.ts';
 import { verifiedProjects } from './verified-projects.ts';
 import { defaultPresentation, type Presentation } from './presentation.ts';
 import { validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
+import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.ts';
 
 /*
  * Mô hình nội dung website. Toàn bộ nội dung được lưu thành MỘT bản JSON trong bảng `content`
@@ -52,7 +53,35 @@ export type Post = {
   serviceIds?: string[];
   /** Không cho công cụ tìm kiếm lập chỉ mục bài này (vẫn truy cập được bằng đường dẫn). */
   noindex?: boolean;
+  /** Thẻ (tự do, dùng để tìm và lọc trong admin) */
+  tags?: string[];
+  /** Lưu trữ: ẩn khỏi website và danh sách mặc định, không xóa */
+  archived?: boolean;
 };
+
+/** Loại sản phẩm: quyết định các trường cần nhập (lib/product-types.ts). */
+export type ProductType = 'phan-mem' | 'dich-vu' | 'trai-nghiem';
+/** Nhóm sản phẩm: dùng để phân loại và lọc (khác với loại). */
+export type ProductGroup = { id: string; name: string; description: string };
+/** Một gói trong bảng giá của sản phẩm. price = chỉ chữ số; trống = "Liên hệ báo giá". */
+export type ProductPackage = { id: string; name: string; price: string; unit: string; perks: string[]; highlight: boolean; note: string };
+
+export type LandingStatus = 'draft' | 'published' | 'archived';
+/**
+ * Landing page:
+ *  - internal: dựng trên website DANAVA tại /lp/{slug}/ bằng các khối (lib/page-blocks.ts);
+ *  - external: chỉ lưu liên kết tới trang bên ngoài (không tạo trang nội bộ giả).
+ * Landing đã làm cho khách hàng quản lý ở Dự án & Portfolio.
+ */
+export type Landing = {
+  id: string; kind: 'internal' | 'external'; title: string; slug: string; url: string;
+  image: string; purpose: string; serviceIds: string[]; status: LandingStatus;
+  blocks: PageBlock[];
+  seoTitle?: string; seoDescription?: string; noindex?: boolean;
+  updated: string;
+};
+/** Chuyển hướng 301 từ đường dẫn cũ sang đường dẫn mới (tự tạo khi đổi URL bản ghi đã công khai, hoặc thêm tay). */
+export type Redirect = { id: string; from: string; to: string; auto?: boolean; created: string };
 
 export type Service = {
   id: string; slug: string; title: string; description: string; items: string[];
@@ -70,6 +99,27 @@ export type Service = {
   image?: string;
   seoTitle?: string; seoDescription?: string;
   updated?: string;
+  /** Loại (quyết định trường cần nhập). Trống = theo sản phẩm gốc, xem lib/product-types.ts */
+  type?: ProductType;
+  /** Nhóm (data.productGroups[].id) */
+  groupId?: string;
+  /** false = chưa xuất bản (ẩn khỏi website). Trống = đang hiển thị (dữ liệu cũ). */
+  published?: boolean;
+  /** Nổi bật: ưu tiên ở trang chủ, menu */
+  featured?: boolean;
+  /** Tính năng (phần mềm) */
+  features?: Feature[];
+  /** Gói & giá */
+  packages?: ProductPackage[];
+  /** Mẫu trang hiển thị */
+  template?: 'chuan';
+  /** Ảnh bìa trang (khác ảnh đại diện trên thẻ) */
+  cover?: string;
+  /** Liên kết dùng thử / demo và đăng ký */
+  demoUrl?: string;
+  signupUrl?: string;
+  /** Ảnh khi chia sẻ lên mạng xã hội (trống = ảnh đại diện) */
+  ogImage?: string;
 };
 
 /** Trang dịch vụ con: /giai-phap/{dịch vụ cha}/{slug}/ */
@@ -184,7 +234,27 @@ export type SiteData = {
   extras?: Extras;
   /** Trang Tuyển dụng (lib/careers.ts) */
   careers?: BlockDefaults['careers'];
+  /** Nhóm sản phẩm (phân loại, lọc) */
+  productGroups?: ProductGroup[];
+  /** Landing page nội bộ và liên kết landing page bên ngoài */
+  landings?: Landing[];
+  /** Chuyển hướng đường dẫn cũ → mới */
+  redirects?: Redirect[];
 };
+
+/**
+ * Bản cho website công khai: bỏ hồ sơ đang ẩn. Bản ghi khác (bài viết, dự án…) vẫn tự kiểm tra `published` ở từng trang.
+ * Không dùng để lưu lại (sẽ mất bản ghi bị ẩn).
+ */
+export function siteView(data: SiteData): SiteData {
+  const hidden = new Set(data.services.filter(s => s.published === false).map(s => s.id));
+  if (!hidden.size) return data;
+  return {
+    ...data,
+    services: data.services.filter(s => !hidden.has(s.id)),
+    subServices: (data.subServices || []).filter(s => !hidden.has(s.parentId))
+  };
+}
 
 /**
  * Giải pháp đã ngừng (hiện không có; Digital Marketing được khôi phục theo yêu cầu chủ sở hữu 20/11/2026).
@@ -276,21 +346,61 @@ function validPost(p: unknown) {
     && (p.image === undefined || safeImage(p.image)) && sourceURL(p.source)
     && ['excerpt', 'seoTitle', 'seoDescription'].every(k => p[k] === undefined || str(p[k], k === 'excerpt' ? 1000 : 300))
     && optStr(p.topicId, 100) && optStr(p.authorId, 100) && optDate(p.updated) && optStrList(p.serviceIds, 10, 100)
-    && (p.noindex === undefined || typeof p.noindex === 'boolean');
+    && (p.noindex === undefined || typeof p.noindex === 'boolean')
+    && optStrList(p.tags, 20, 60) && optBool(p.archived);
+}
+
+const optBool = (v: unknown) => v === undefined || typeof v === 'boolean';
+const optLink = (v: unknown) => v === undefined || okLink(v);
+const optImage = (v: unknown) => v === undefined || okImage(v);
+const PRODUCT_TYPE_IDS = ['phan-mem', 'dich-vu', 'trai-nghiem'];
+const ID = /^[a-z0-9-]{2,60}$/;
+
+function validPackage(p: unknown) {
+  return object(p) && str(p.id, 60) && str(p.name, 120) && (p.name as string).trim() !== '' && str(p.price, 15) && /^\d*$/.test(p.price as string)
+    && str(p.unit, 40) && strList(p.perks, 20, 200) && typeof p.highlight === 'boolean' && str(p.note, 300);
 }
 
 function validService(s: unknown) {
   return object(s) && str(s.id, 100) && str(s.slug, 150)
-    && knownService(s.id, s.slug)
+    // 6 sản phẩm gốc giữ nguyên đường dẫn (SEO); sản phẩm thêm trong admin có mã và đường dẫn riêng
+    && (knownService(s.id, s.slug) || (ID.test(s.id as string) && slug(s.slug, 100) && !RETIRED_SERVICES.some(r => r.id === s.id) && !initial.services.some(x => x.id === s.id)))
     && str(s.title, 200) && str(s.description, 2000) && strList(s.items, 50)
     && optStr(s.heroLead, 1000) && optStrList(s.audience, 12, 120) && optStrList(s.problems, 12, 500)
     && (s.process === undefined || featureList(s.process)) && (s.faqs === undefined || faqList(s.faqs))
     && optStr(s.pricing, 2000) && optHttpsURL(s.productUrl) && optStr(s.productLabel, 120)
-    && (s.image === undefined || safeImage(s.image)) && optStr(s.seoTitle, 200) && optStr(s.seoDescription, 300) && optDate(s.updated);
+    && (s.image === undefined || safeImage(s.image)) && optStr(s.seoTitle, 200) && optStr(s.seoDescription, 300) && optDate(s.updated)
+    && (s.type === undefined || PRODUCT_TYPE_IDS.includes(s.type as string)) && optStr(s.groupId, 60)
+    && optBool(s.published) && optBool(s.featured) && (s.features === undefined || featureList(s.features))
+    && (s.packages === undefined || (Array.isArray(s.packages) && s.packages.length <= 8 && s.packages.every(validPackage)))
+    && (s.template === undefined || s.template === 'chuan') && optImage(s.cover) && optImage(s.ogImage) && optLink(s.demoUrl) && optLink(s.signupUrl);
 }
 
-function validSubService(s: unknown) {
-  return object(s) && str(s.id, 100) && slug(s.slug) && knownService(s.parentId)
+function validGroup(g: unknown) {
+  return object(g) && typeof g.id === 'string' && ID.test(g.id) && str(g.name, 80) && (g.name as string).trim() !== '' && str(g.description, 500);
+}
+
+function validLanding(l: unknown) {
+  if (!object(l) || !str(l.id, 60) || !ID.test(l.id as string) || (l.kind !== 'internal' && l.kind !== 'external')) return false;
+  if (!str(l.title, 200) || !(l.title as string).trim() || !str(l.purpose, 500) || !okImage(l.image) || !strList(l.serviceIds, 10, 100)) return false;
+  if (!['draft', 'published', 'archived'].includes(l.status as string) || !validDate(l.updated)) return false;
+  if (!optStr(l.seoTitle, 200) || !optStr(l.seoDescription, 300) || !optBool(l.noindex)) return false;
+  if (!Array.isArray(l.blocks) || l.blocks.length > 40 || !l.blocks.every(validPageBlock) || !uniqueBy(l.blocks as { id: string }[], b => b.id)) return false;
+  // Nội bộ: cần đường dẫn; liên kết ngoài: cần URL https và không có khối
+  return l.kind === 'internal'
+    ? slug(l.slug, 100) && (l.url === '' || l.url === undefined)
+    : str(l.slug, 0) && httpsURL(l.url) && l.url !== '' && (l.blocks as unknown[]).length === 0;
+}
+
+const PATH = /^\/[a-z0-9\-/._]*\/$/i;
+function validRedirect(r: unknown) {
+  return object(r) && str(r.id, 60) && typeof r.from === 'string' && PATH.test(r.from) && r.from.length <= 250 && !r.from.startsWith('/admin') && !r.from.startsWith('/api')
+    && typeof r.to === 'string' && r.to.length <= 300 && (PATH.test(r.to) || httpsURL(r.to)) && r.to !== r.from
+    && optBool(r.auto) && validDate(r.created);
+}
+
+function validSubService(s: unknown, services: Set<string>) {
+  return object(s) && str(s.id, 100) && slug(s.slug) && services.has(s.parentId as string)
     && str(s.title, 200) && str(s.description, 1000) && str(s.heroLead, 1000)
     && strList(s.audience, 12, 120) && strList(s.problems, 12, 500) && featureList(s.features) && featureList(s.process) && faqList(s.faqs)
     && str(s.pricing, 2000) && safeImage(s.image) && typeof s.published === 'boolean' && validDate(s.updated)
@@ -304,8 +414,8 @@ function validTopic(t: unknown) {
     && strList(t.serviceIds, 10, 100) && typeof t.published === 'boolean' && optStr(t.seoTitle, 200) && optStr(t.seoDescription, 300);
 }
 
-function validShowcase(x: unknown) {
-  return object(x) && str(x.id, 100) && slug(x.slug) && knownService(x.serviceId)
+function validShowcase(x: unknown, services: Set<string>) {
+  return object(x) && str(x.id, 100) && slug(x.slug) && services.has(x.serviceId as string)
     && str(x.name, 150) && (x.name as string).trim() !== '' && str(x.kind, 120) && str(x.category, 80) && str(x.description, 1000)
     && safeImage(x.image) && safeImage(x.mobileImage) && safeImage(x.motion) && safeImage(x.motionPoster)
     && Array.isArray(x.gallery) && x.gallery.length <= 24 && x.gallery.every(g => object(g) && safeImage(g.src) && g.src !== '' && str(g.caption, 300))
@@ -346,14 +456,20 @@ export function validateContent(v: unknown): v is SiteData {
   if (v.projects !== undefined && (!Array.isArray(v.projects) || v.projects.length > 500 || !v.projects.every(validProject) || !uniqueBy(v.projects as Project[], p => p.slug) || !uniqueBy(v.projects as Project[], p => p.id))) return false;
   if (!Array.isArray(v.posts) || v.posts.length > 500 || !v.posts.every(validPost)) return false;
   if (!Array.isArray(v.metrics) || v.metrics.length > 20 || !v.metrics.every(m => object(m) && str(m.id, 100) && str(m.label, 150) && str(m.value, 50) && typeof m.visible === 'boolean')) return false;
-  if (!Array.isArray(v.services) || v.services.length > 50 || !v.services.every(validService)) return false;
-  if (v.subServices !== undefined && (!Array.isArray(v.subServices) || v.subServices.length > 100 || !v.subServices.every(validSubService)
+  if (!Array.isArray(v.services) || v.services.length > 50 || !v.services.every(validService) || !uniqueBy(v.services as Service[], s => s.slug)) return false;
+  // Trang con và mục portfolio gắn với sản phẩm còn tồn tại (kể cả sản phẩm gốc đã ngừng khi đọc dữ liệu cũ)
+  const serviceIds = new Set([...(v.services as Service[]).map(s => s.id), ...initial.services.map(s => s.id), ...RETIRED_SERVICES.map(s => s.id)]);
+  if (v.productGroups !== undefined && (!Array.isArray(v.productGroups) || v.productGroups.length > 30 || !v.productGroups.every(validGroup) || !uniqueBy(v.productGroups as ProductGroup[], g => g.id))) return false;
+  if (v.landings !== undefined && (!Array.isArray(v.landings) || v.landings.length > 100 || !v.landings.every(validLanding)
+    || !uniqueBy(v.landings as Landing[], l => l.id) || !uniqueBy((v.landings as Landing[]).filter(l => l.kind === 'internal'), l => l.slug))) return false;
+  if (v.redirects !== undefined && (!Array.isArray(v.redirects) || v.redirects.length > 500 || !v.redirects.every(validRedirect) || !uniqueBy(v.redirects as Redirect[], r => r.from))) return false;
+  if (v.subServices !== undefined && (!Array.isArray(v.subServices) || v.subServices.length > 100 || !v.subServices.every(s => validSubService(s, serviceIds))
     || !uniqueBy(v.subServices as SubService[], s => s.id) || !uniqueBy(v.subServices as SubService[], s => s.parentId + '/' + s.slug))) return false;
   if (v.topics !== undefined && (!Array.isArray(v.topics) || v.topics.length > 50 || !v.topics.every(validTopic)
     || !uniqueBy(v.topics as Topic[], t => t.id) || !uniqueBy(v.topics as Topic[], t => t.slug))) return false;
   if (v.seeded !== undefined && (!Array.isArray(v.seeded) || v.seeded.length > 50 || !v.seeded.every(x => str(x, 60)))) return false;
   if (v.clients !== undefined && (!Array.isArray(v.clients) || v.clients.length > 100 || !v.clients.every(validClient) || !uniqueBy(v.clients as Client[], c => c.id))) return false;
-  if (v.showcase !== undefined && (!Array.isArray(v.showcase) || v.showcase.length > 200 || !v.showcase.every(validShowcase)
+  if (v.showcase !== undefined && (!Array.isArray(v.showcase) || v.showcase.length > 200 || !v.showcase.every(x => validShowcase(x, serviceIds))
     || !uniqueBy(v.showcase as ShowcaseItem[], x => x.id) || !uniqueBy(v.showcase as ShowcaseItem[], x => x.slug)
     // Slug case study không trùng slug dự án (cùng dùng /du-an/{slug}/)
     || (v.showcase as ShowcaseItem[]).some(x => (v.projects as Project[] | undefined)?.some(p => p.slug === x.slug)))) return false;

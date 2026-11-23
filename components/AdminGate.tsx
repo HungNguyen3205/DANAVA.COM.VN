@@ -64,9 +64,11 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
 
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const password = String(new FormData(e.currentTarget).get('password') || '');
+    const form = new FormData(e.currentTarget);
+    const password = String(form.get('password') || '');
+    const username = String(form.get('username') || '').trim().toLowerCase();
     if (!password) {
-      setError('Vui lòng nhập mật khẩu quản trị.');
+      setError('Vui lòng nhập mật khẩu.');
       return;
     }
     setBusy(true);
@@ -75,7 +77,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       const r = await fetch('/api/admin/session/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(username ? { username, password } : { password }),
       });
       const v = await r.json();
       if (!r.ok) throw Error(v.error);
@@ -145,7 +147,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
             <div className="wl-mobile-brand">{brand}</div>
             <div className="wl-head">
               <h1>{state === 'setup' ? 'Thiết lập quản trị' : 'Đăng nhập'}</h1>
-              <p>{state === 'setup' ? 'Máy chủ chưa có mật khẩu quản trị.' : 'Dùng mật khẩu quản trị của website DANAVA'}</p>
+              <p>{state === 'setup' ? 'Máy chủ chưa có mật khẩu quản trị.' : 'Dùng tài khoản được cấp, hoặc mật khẩu chủ website'}</p>
             </div>
 
             {error && (
@@ -167,7 +169,13 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
             ) : (
               <form onSubmit={login} className="wl-fields">
                 <label className="wl-field">
-                  <span>Mật khẩu quản trị</span>
+                  <span>Tên đăng nhập <small className="wl-optional">để trống nếu là chủ website</small></span>
+                  <span className="wl-input">
+                    <input name="username" type="text" autoComplete="username" maxLength={32} autoCapitalize="none" spellCheck={false} placeholder="vd. trang.cskh" />
+                  </span>
+                </label>
+                <label className="wl-field">
+                  <span>Mật khẩu</span>
                   <span className="wl-input">
                     <input
                       name="password"

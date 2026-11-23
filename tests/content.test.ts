@@ -40,8 +40,13 @@ test('lead storage and database published/draft revisions work correctly',async(
   const updatedContent = await getContent();
   assert.equal(updatedContent.hasDraft, true);
 
-  // Test publish write
-  const pubRev = await writeContent(draftData, initialContent.revision);
+  // Lưu nháp làm mã chỉnh sửa tăng: mã cũ bị từ chối (không ghi đè bản nháp người khác vừa lưu)
+  assert.equal(await writeContent(draftData, initialContent.revision), null);
+  // Website vẫn đọc bản cũ cho tới khi xuất bản
+  assert.notEqual((await getContent()).data.headline, 'Tiêu đề bản nháp mới');
+
+  // Test publish write (với mã mới nhất)
+  const pubRev = await writeContent(draftData, draftRev!);
   assert.ok(pubRev !== null);
   const finalContent = await getContent();
   assert.equal(finalContent.hasDraft, false);

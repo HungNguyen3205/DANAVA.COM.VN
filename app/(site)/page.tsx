@@ -1,5 +1,5 @@
 import { seo, siteURL, ORG_ID, jsonLD, BRAND } from '@/lib/seo';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import HomePage from '@/components/site/HomePage';
 
 export const metadata = seo(
@@ -11,7 +11,7 @@ export const metadata = seo(
 );
 
 export default async function Page() {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const website = { '@context': 'https://schema.org', '@type': 'WebSite', name: BRAND, url: siteURL + '/', inLanguage: 'vi', publisher: { '@id': ORG_ID } };
   return (
     <>

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getContent } from '@/lib/database';
+import { getSiteContent } from '@/lib/database';
 import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta } from '@/lib/seo';
 import { findTopic, postsForTopic, sortServices, topicHasPage, topicHref } from '@/lib/site-queries';
 import { JsonLd, PostTile, ServiceLinks } from '@/components/site/blocks';
@@ -13,7 +13,7 @@ type Params = { params: Promise<{ topic: string }> };
 
 /** Trang danh mục chỉ tồn tại khi danh mục đã xuất bản và đủ số bài (TOPIC_PAGE_MIN_POSTS). */
 async function load(slug: string) {
-  const { data } = await getContent();
+  const { data } = await getSiteContent();
   const topic = findTopic(data, slug);
   if (!topic || !topicHasPage(data, topic)) return null;
   return { data, topic, posts: postsForTopic(data, topic.id) };
