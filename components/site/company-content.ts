@@ -30,7 +30,7 @@ export const MILESTONES = [
   { year: '2021', title: 'Khởi đầu kết nối số & cộng đồng', text: 'Triển khai thiết kế website doanh nghiệp và đồng hành cùng các câu lạc bộ yoga tại Đà Nẵng và miền Trung.', image: '/assets/legacy/community.webp' },
   { year: '2023', title: 'Chuẩn hóa hệ sinh thái', text: 'Quy tụ đội ngũ cốt lõi cho các mảng công nghệ quản trị, website, sự kiện & truyền thông, du lịch và cộng đồng.', image: '/assets/legacy/event-group.webp' },
   { year: '2024', title: 'Chuỗi sự kiện Cổng Năng Lượng', text: 'Đồng hành tổ chức Soundbath Live Concert ngày 05/05/2024 tại Đà Nẵng cùng Team Tumy và các câu lạc bộ yoga.', image: '/assets/legacy/post-energy.webp' },
-  { year: '2026', title: 'Nền tảng DANAVA Studio', text: 'Triển khai phần mềm DANAVA Studio và app hội viên mang thương hiệu riêng cho HARIVER Gym và Huế Pilates & Yoga.', image: '/assets/presentation/studio-dashboard.webp' }
+  { year: '2026', title: 'Nền tảng DANAVA', text: 'Triển khai phần mềm DANAVA Studio và app hội viên mang thương hiệu riêng cho HARIVER Gym và Huế Pilates & Yoga.', image: '/assets/presentation/studio-dashboard.webp' }
 ];
 
 /** Ảnh hoạt động từ Company Profile 2026 (đã có trên website). */

@@ -23,7 +23,7 @@ export const ABOUT_DANAVA = {
   mission: 'Đồng hành cùng doanh nghiệp Wellness trên hành trình chuyển đổi số, nâng cao trải nghiệm khách hàng và kiến tạo giá trị bền vững cho cộng đồng sống khỏe.',
   vision: 'Trở thành nền tảng hệ sinh thái số hàng đầu Việt Nam dành cho ngành Wellness, kết nối doanh nghiệp, đối tác và khách hàng trong một cộng đồng phát triển bền vững.',
   story: [
-    { year: '2018', title: 'Khởi đầu từ trải nghiệm', text: 'DANAVA bắt đầu với dịch vụ & du lịch chữa lành, sau đó mở rộng sang Yoga & Wellness, kết nối cộng đồng và đồng hành cùng hàng trăm Câu lạc bộ và hơn 1.000 Huấn luyện viên trên toàn quốc.' },
+    { year: '2016', title: 'Khởi đầu từ trải nghiệm', text: 'DANAVA bắt đầu với dịch vụ & du lịch chữa lành, sau đó mở rộng sang Yoga & Wellness, kết nối cộng đồng và đồng hành cùng hàng trăm Câu lạc bộ và hơn 1.000 Huấn luyện viên trên toàn quốc.' },
     { year: '2023', title: 'Đưa Wellness lên nền tảng số', text: 'DANAVA đẩy mạnh nền tảng số, đưa Wellness lên môi trường công nghệ.' },
     { year: '2025–2026', title: 'DANAVA Solutions ra đời', text: 'Tập trung vào Công nghệ, AI, Marketing & Chuyển đổi số cho doanh nghiệp Wellness.' }
   ],
@@ -74,7 +74,7 @@ export const ABOUT_DANAVA = {
     { name: 'Wellness Network', text: 'Kết nối cộng đồng' },
     { name: 'Wellness Travel Network', text: 'Hệ sinh thái du lịch & dịch vụ' }
   ],
-  company: 'Công ty Cổ phần Giải pháp DANAVA · MST 0401883105 · Sở KH&ĐT TP. Đà Nẵng cấp lần đầu 08/03/2018 · Trụ sở: 08 Đặng Vũ Hỷ, P. An Hải, TP. Đà Nẵng'
+  company: 'Công ty Cổ phần Giải pháp DANAVA · MST 0401883105 · Sở KH&ĐT TP. Đà Nẵng cấp lần đầu 08/03/2016 · Trụ sở: 08 Đặng Vũ Hỷ, P. An Hải, TP. Đà Nẵng'
 };
 
 /**
@@ -83,8 +83,8 @@ export const ABOUT_DANAVA = {
  */
 export const PROFILE_2026 = {
   date: '08/06/2026',
-  years: '2018 - 2026',
-  slogan: 'DANAVA Solutions — Growing Your Business Together',
+  years: '2016 - 2026',
+  slogan: 'DANAVA Solutions — ',
   tagline: 'DANAVA – Nền tảng hệ sinh thái số dành riêng cho ngành Wellness tại Việt Nam',
   about: [
     'DANAVA cung cấp giải pháp Phần mềm quản lý phòng tập Gym, Yoga, Pilates, Spa & Beauty, Dance Studio,... Chuyển đổi số và Truyền thông số, giúp doanh nghiệp tối ưu vận hành và phát triển bền vững.',

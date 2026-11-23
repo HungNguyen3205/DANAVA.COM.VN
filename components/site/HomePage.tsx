@@ -65,11 +65,11 @@ export default function HomePage({ data }: { data: SiteData }) {
     return out;
   })();
   const products = block(data, 'menu').columns[0]?.items.filter(it => it.href) ?? [];
-  // Đường hành trình 2016 → 2026: 2016 theo chủ sở hữu (21/11/2026), 2018 theo đăng ký doanh nghiệp, 2021–2026 theo MILESTONES (trang Về chúng tôi)
+  // Đường hành trình 2016 → 2026: 2016 theo chủ sở hữu (21/11/2026), 2016 theo đăng ký doanh nghiệp, 2021–2026 theo MILESTONES (trang Về chúng tôi)
   const journey = (() => {
     const steps = [
       { year: 2016, title: 'Khởi đầu hành trình' },
-      { year: 2018, title: 'Thành lập Công ty Cổ phần Giải pháp DANAVA' },
+      { year: 2016, title: 'Thành lập Công ty Cổ phần Giải pháp DANAVA' },
       ...MILESTONES.map(m => ({ year: Number(m.year), title: m.title }))
     ].filter(x => x.year >= 2016).sort((x, y) => x.year - y.year);
     const W = 300, X0 = 16, X1 = 284, YB = 84, YT = 22, GAP = 37;
@@ -101,7 +101,7 @@ export default function HomePage({ data }: { data: SiteData }) {
         <div className="hb-pin">
         <div className="s-container hb-cover__grid">
           <div className="hb-cover__copy">
-            <p className="hb-pill"><Sparkles aria-hidden="true" />DANAVA Solutions · Growing Your Business Together</p>
+            <p className="hb-pill"><Sparkles aria-hidden="true" />DANAVA Solutions </p>
             <h1 className="hb-title" id="home-title">
               <span className="hb-line" style={{ ['--l' as string]: 0 }}>Cùng bạn phát triển.</span>
               <em className="hb-line" style={{ ['--l' as string]: 1 }}>Kiến tạo hệ sinh thái Wellness.</em>
