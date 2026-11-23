@@ -495,6 +495,15 @@
 /* Bỏ khung nền sau mô hình 3D: mô hình nổi trực tiếp trên nền kem của hero */
 .hb-cover__3d { overflow: visible; border: 0; border-radius: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
 
+/* Màn hình thấp (laptop 13", 15" có thanh trình duyệt): thu gọn tiêu đề, lời dẫn, biểu đồ để cả khối chữ vừa khung nhìn đầu tiên */
+@media (min-width: 901px) and (max-height: 900px) {
+  .hb-cover { padding-top: 12px; padding-bottom: 24px; }
+  .hb-title { font-size: clamp(34px, min(4.4vw, 7vh), 60px); }
+  .hb-lead { margin-top: 12px; font-size: 16px; line-height: 1.6; }
+  .hb-cover__copy figure.hb-journey { margin-top: 18px; padding: 10px 16px; }
+  .hb-cover__copy figure.hb-journey svg { max-height: 84px; }
+}
+
 /* ==== Hero: đường hành trình DANAVA 2016 → nay ==== */
 .hb-cover__3d .hb-journey { right: 20px; top: 8%; width: 300px; margin: 0; padding: 12px 14px 12px; }
 .hb-journey figcaption { margin: 0 0 4px; font-size: 12.5px; font-weight: 800; color: var(--hb-navy); }
@@ -524,7 +533,8 @@
 /* Ảnh văn phòng thật chỉ hiện khi máy không chạy được 3D; mở đầu luôn là sàn 3D */
 .hb-office__fallback { opacity: 0; }
 .hb-office.is-fallback .hb-office__fallback { opacity: 1; }
-@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+/* Chỉ ghim khi màn hình đủ cao: nếu khối chữ (có biểu đồ hành trình) cao hơn khung nhìn, ghim sẽ đẩy phần dưới ra khỏi màn hình */
+@media (min-width: 901px) and (min-height: 900px) and (prefers-reduced-motion: no-preference) {
   .hb-pin { position: relative; }
   /* phần đệm phải nằm trong vùng nội dung (padding không tính) thì phần tử dính mới có chỗ để dính */
   .hb-pin::after { content: ""; display: block; height: 140vh; }
