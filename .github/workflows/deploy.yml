@@ -1,6 +1,8 @@
 # Build bản chạy production trên Linux rồi đẩy vào nhánh `deploy`.
 # Server cPanel không build được Next.js (glibc quá cũ cho trình biên dịch SWC),
 # nên server chỉ cần: git fetch origin deploy && git reset --hard origin/deploy && restart.
+#
+# Ba job: `test` và `build` chạy song song; `publish` chỉ đẩy lên nhánh deploy khi cả hai đều xanh.
 name: Build deploy branch
 
 on:
@@ -16,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,8 +33,30 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Build (thử lại một lần nếu Next.js dừng để hiện thông báo)
-        run: npm run build || npm run build
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Cache build của Next.js: các lần sau chỉ biên dịch phần đã đổi
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+
+      # Không thử lại: lỗi build phải được sửa, không chạy lại cho mất thời gian
+      - name: Build
+        run: npm run build
 
       - name: Assemble deploy bundle
         run: |
@@ -55,10 +79,26 @@ jobs:
           echo "Built from ${GITHUB_SHA} at $(date -u +%FT%TZ)" > "$OUT/BUILD.txt"
           cp deploy.sh "$OUT/deploy.sh"
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deploy-bundle
+          path: ${{ runner.temp }}/deploy
+          include-hidden-files: true
+          retention-days: 3
+
+  publish:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: deploy-bundle
+          path: deploy
+
       - name: Push to deploy branch
         run: |
           set -euo pipefail
-          cd "$RUNNER_TEMP/deploy"
+          cd deploy
           git init -q
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
