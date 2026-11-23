@@ -30,7 +30,7 @@ export function MayFigure({ className = '' }: { className?: string }) {
           <stop stopColor="#7da4bd" stopOpacity="0" /><stop offset="1" stopColor="#7da4bd" stopOpacity=".2" />
         </linearGradient>
         <radialGradient id={`${id}-blush`}>
-          <stop stopColor="#eaa8ae" stopOpacity=".5" /><stop offset="1" stopColor="#eaa8ae" stopOpacity="0" />
+          <stop stopColor="#f26b1d" stopOpacity=".5" /><stop offset="1" stopColor="#f26b1d" stopOpacity="0" />
         </radialGradient>
         <filter id={`${id}-rim`} x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3" /></filter>
       </defs>

@@ -22,7 +22,7 @@ const MARK = { x: .165, y: .13, size: .75 };
 export const INKS: Record<Ink, { base: string; hi: string }> = {
   navy: { base: '#13244f', hi: '#2c4278' },
   blue: { base: '#082a86', hi: '#1645aa' },
-  orange: { base: '#9c3000', hi: '#bd420a' }
+  orange: { base: '#13244f', hi: '#f26b1d' }
 };
 const TINT = { blue: [140, 197, 255], orange: [255, 186, 78] };
 /** Khối nổi của chữ D, tính theo cạnh một ô: dày hơn .32 thì cạnh lấn vào tâm ô, khó quét. */
@@ -107,7 +107,7 @@ export function drawBoard(c: CanvasRenderingContext2D, size: number, layout: QrL
 
   // khung gỗ
   const wood = c.createLinearGradient(0, 0, BOARD, BOARD);
-  ([[0, '#e6bd8b'], [.3, '#c99460'], [.55, '#d9ab76'], [.8, '#b98350'], [1, '#d3a26c']] as const).forEach(([at, color]) => wood.addColorStop(at, color));
+  ([[0, '#f26b1d'], [.3, '#f26b1d'], [.55, '#f26b1d'], [.8, '#f26b1d'], [1, '#f26b1d']] as const).forEach(([at, color]) => wood.addColorStop(at, color));
   round(c, 0, 0, BOARD, BOARD, 70); c.fillStyle = wood; c.fill();
   c.save(); c.clip();
   c.strokeStyle = 'rgba(92, 52, 22, .16)'; c.lineWidth = 1.2;
@@ -150,7 +150,7 @@ export function drawBoard(c: CanvasRenderingContext2D, size: number, layout: QrL
   c.drawImage(body, dx, dy, ds, ds);
 
   // ba ô định vị: nền trắng để thân chữ D không lẫn vào. Góc chỉ bo nhẹ: bo tròn hơn .3 ô thì OpenCV không tìm ra mã
-  for (const [col, row, color] of [[0, 0, '#13244f'], [n - 7, 0, '#13244f'], [0, n - 7, '#b03a04']] as const) {
+  for (const [col, row, color] of [[0, 0, '#13244f'], [n - 7, 0, '#13244f'], [0, n - 7, '#f26b1d']] as const) {
     const x = origin.x + col * cell, y = origin.y + row * cell;
     round(c, x - cell, y - cell, cell * 9, cell * 9, cell * 1.6); c.fillStyle = '#fff'; c.fill();
     c.beginPath(); c.roundRect(x, y, cell * 7, cell * 7, cell * .3); c.roundRect(x + cell, y + cell, cell * 5, cell * 5, cell * .15);

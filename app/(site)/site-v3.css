@@ -4,11 +4,11 @@
    Chữ trên nền vàng luôn là navy đậm (#0b132b, tương phản > 10:1).
    ========================================================================== */
 :root {
-  --s-yellow: #ffc233;
-  --s-yellow-hover: #ffb405;
-  --s-yellow-deep: #f5a20a;
-  --s-yellow-soft: #fff6d9;
-  --s-yellow-line: #ffe08a;
+  --s-yellow: #f26b1d;
+  --s-yellow-hover: #f26b1d;
+  --s-yellow-deep: #f26b1d;
+  --s-yellow-soft: #fff1e6;
+  --s-yellow-line: #f26b1d;
 }
 
 /* ---------- Nút hành động chính: vàng ---------- */
@@ -28,7 +28,7 @@
 .s-tab[aria-selected='true'], .s-tab.is-active { background: var(--s-yellow); color: var(--s-ink); box-shadow: 0 4px 14px rgba(245, 162, 10, .3); }
 .s-tab[aria-selected='true'] .s-tab__count { color: rgba(11, 19, 43, .6); }
 .s-badge--yellow { background: var(--s-yellow); color: var(--s-ink); }
-.s-card__tag { color: #b86e00; }
+.s-card__tag { color: #f26b1d; }
 
 /* ---------- Header & footer ---------- */
 .s-header::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--s-blue) 0%, var(--s-blue) 55%, var(--s-yellow) 55%, var(--s-yellow) 100%); }
@@ -36,9 +36,9 @@
 .s-footer { border-top: 0; box-shadow: inset 0 4px 0 var(--s-yellow); }
 
 /* ---------- Card pastel: thay ô cam bằng ô vàng ---------- */
-.s-tiles > *:nth-child(4n+2) { background: var(--s-yellow-soft); --tile: #b86e00; }
-.s-icon--orange { background: var(--s-yellow-soft); color: #b86e00; }
-.s-visual--orange { --v1: #fff6d9; --v2: #ffe08a; --vi: #c27c00; }
+.s-tiles > *:nth-child(4n+2) { background: var(--s-yellow-soft); --tile: #f26b1d; }
+.s-icon--orange { background: var(--s-yellow-soft); color: #f26b1d; }
+.s-visual--orange { --v1: #fff1e6; --v2: #f26b1d; --vi: #f26b1d; }
 
 /* ---------- Số thứ tự quy trình: tròn vàng ---------- */
 .s-home-steps__num, .s-tiles .s-home-steps__num, .s-section--brand .s-home-steps__num { background: var(--s-yellow); color: var(--s-ink); box-shadow: 0 6px 16px rgba(245, 162, 10, .3); }
@@ -48,7 +48,7 @@
 .s-section--brand .s-eyebrow::before { background: var(--s-yellow); }
 
 /* ---------- Khối CTA cuối trang: nền vàng táo bạo ---------- */
-.s-cta { background: linear-gradient(120deg, #ffd04d 0%, var(--s-yellow) 45%, #ffad0a 100%); color: var(--s-ink); box-shadow: 0 24px 60px rgba(245, 162, 10, .28); }
+.s-cta { background: linear-gradient(120deg, #f26b1d 0%, var(--s-yellow) 45%, #f26b1d 100%); color: var(--s-ink); box-shadow: 0 24px 60px rgba(245, 162, 10, .28); }
 .s-cta::before { background: radial-gradient(circle, rgba(255, 255, 255, .55), transparent 65%); }
 .s-cta::after { background: radial-gradient(circle, rgba(43, 66, 148, .22), transparent 65%); }
 .s-cta .s-lead { color: rgba(11, 19, 43, .78); }
@@ -64,7 +64,7 @@
 
 /* ---------- Section nền xanh: quầng vàng thay cam ---------- */
 .s-section--brand::after { background: radial-gradient(circle, rgba(255, 194, 51, .34), transparent 65%); }
-.s-section--brand .s-hl { background-image: linear-gradient(92deg, #ffe08a 0%, var(--s-yellow) 100%); }
+.s-section--brand .s-hl { background-image: linear-gradient(92deg, #f26b1d 0%, var(--s-yellow) 100%); }
 .s-section--brand .s-link { color: var(--s-yellow); }
 
 /* ---------- Dải lĩnh vực chạy ngang ---------- */

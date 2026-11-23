@@ -7,8 +7,8 @@
   --s-blue: #2b4294;
   --s-blue-hover: #22367a;
   --s-blue-soft: #eef1fa;
-  --s-orange: #f08a1c;
-  --s-orange-soft: #fff4e8;
+  --s-orange: #f26b1d;
+  --s-orange-soft: #fff1e6;
   --s-sky: #53a5db;
 
   /* Neutrals */
@@ -142,9 +142,9 @@ body:has(.s-app) { margin: 0; background: var(--s-bg); color: var(--s-ink); font
 /* ---------- Badges / chips ---------- */
 .s-badge { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--s-blue-soft); color: var(--s-blue); font-size: 13px; font-weight: 700; white-space: nowrap; }
 .s-badge--neutral { background: var(--s-soft); color: var(--s-ink-2); border: 1px solid var(--s-line); }
-.s-badge--orange { background: var(--s-orange-soft); color: #b45309; }
+.s-badge--orange { background: var(--s-orange-soft); color: #f26b1d; }
 .s-badge--dark { background: rgba(11, 19, 43, .78); color: #fff; backdrop-filter: blur(8px); }
-.s-badge--green { background: #e8f6ee; color: #17663a; }
+.s-badge--green { background: #eef2fb; color: #1f3a8a; }
 
 .s-tabs { display: inline-flex; flex-wrap: wrap; gap: 8px; padding: 6px; background: var(--s-soft); border: 1px solid var(--s-line); border-radius: 999px; }
 .s-tab { min-height: 42px; padding: 0 18px; border-radius: 999px; font-weight: 700; font-size: 15px; color: var(--s-ink-2); transition: background-color .18s, color .18s, box-shadow .18s; }
@@ -183,7 +183,7 @@ body:has(.s-app) { margin: 0; background: var(--s-bg); color: var(--s-ink); font
 /* Icon tiles & feature rows */
 .s-icon { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--s-blue-soft); color: var(--s-blue); flex: none; }
 .s-icon svg { width: 24px; height: 24px; }
-.s-icon--orange { background: var(--s-orange-soft); color: #c2620a; }
+.s-icon--orange { background: var(--s-orange-soft); color: #f26b1d; }
 .s-icon--dark { background: rgba(255, 255, 255, .08); color: #fff; }
 .s-feature { display: flex; flex-direction: column; gap: 14px; }
 .s-feature__title { font-size: 19px; font-weight: 700; letter-spacing: -0.015em; }
@@ -248,19 +248,19 @@ body:has(.s-app) { margin: 0; background: var(--s-bg); color: var(--s-ink); font
 @media (max-width: 640px) { .s-form-grid { grid-template-columns: 1fr; } }
 .s-field { display: grid; gap: 8px; }
 .s-field label, .s-label { font-size: 14px; font-weight: 700; color: var(--s-ink); }
-.s-field .s-req { color: #c2410c; }
+.s-field .s-req { color: #f26b1d; }
 .s-input, .s-select, .s-textarea { width: 100%; min-height: 52px; padding: 14px 16px; border: 1.5px solid var(--s-line-strong); border-radius: 12px; background: #fff; color: var(--s-ink); font-size: 16px; line-height: 1.4; transition: border-color .15s, box-shadow .15s; appearance: none; }
 .s-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 44px; }
 .s-textarea { min-height: 140px; resize: vertical; }
 .s-input:hover, .s-select:hover, .s-textarea:hover { border-color: #aab4c6; }
 .s-input:focus, .s-select:focus, .s-textarea:focus { outline: none; border-color: var(--s-blue); box-shadow: 0 0 0 4px rgba(43, 66, 148, .14); }
-.s-input[aria-invalid='true'], .s-select[aria-invalid='true'], .s-textarea[aria-invalid='true'] { border-color: #dc2626; }
+.s-input[aria-invalid='true'], .s-select[aria-invalid='true'], .s-textarea[aria-invalid='true'] { border-color: #f26b1d; }
 .s-hint { font-size: 13px; color: var(--s-muted); }
-.s-error { font-size: 13px; color: #b91c1c; font-weight: 600; }
+.s-error { font-size: 13px; color: #f26b1d; font-weight: 600; }
 .s-alert { padding: 16px 18px; border-radius: 14px; font-weight: 600; display: flex; gap: 12px; align-items: flex-start; }
 .s-alert svg { width: 20px; height: 20px; flex: none; margin-top: 2px; }
-.s-alert--ok { background: #e8f6ee; color: #14532d; }
-.s-alert--err { background: #fdecec; color: #8a1c1c; }
+.s-alert--ok { background: #eef2fb; color: #1f3a8a; }
+.s-alert--err { background: #fff1e6; color: #f26b1d; }
 .s-alert--info { background: var(--s-blue-soft); color: var(--s-blue-hover); }
 .s-honeypot { position: absolute !important; left: -10000px !important; width: 1px; height: 1px; overflow: hidden; }
 
@@ -370,10 +370,10 @@ body:has(.s-app) { margin: 0; background: var(--s-bg); color: var(--s-ink); font
    Visual — minh họa sản phẩm bằng CSS
    ========================================================================== */
 .s-visual { --v1: #e9eefb; --v2: #d6e0fa; --vi: var(--s-blue); position: relative; width: 100%; height: 100%; min-height: 100%; display: grid; place-items: center; overflow: hidden; background: radial-gradient(120% 90% at 85% 0%, var(--v2), transparent 60%), linear-gradient(160deg, var(--v1), #fff 120%); }
-.s-visual--orange { --v1: #fff1e3; --v2: #ffdcb8; --vi: #d9690b; }
+.s-visual--orange { --v1: #fff1e6; --v2: #f26b1d; --vi: #f26b1d; }
 .s-visual--sky { --v1: #e8f4fc; --v2: #c9e5f7; --vi: #1f7fbf; }
 .s-visual--navy { --v1: #e7eaf3; --v2: #c9d0e4; --vi: var(--s-navy); }
-.s-visual--green { --v1: #e8f6ee; --v2: #c8ebd6; --vi: #1c7a47; }
+.s-visual--green { --v1: #eef2fb; --v2: #1f3a8a; --vi: #1f3a8a; }
 .s-visual__panel { position: relative; width: 58%; max-width: 280px; aspect-ratio: 5 / 3.4; padding: 18px; display: flex; flex-direction: column; gap: 10px; background: #fff; border-radius: 18px; box-shadow: 0 1px 2px rgba(11,19,43,.05), 0 18px 40px rgba(11,19,43,.10); }
 .s-visual__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--v1); color: var(--vi); }
 .s-visual__icon svg { width: 24px; height: 24px; }
@@ -392,7 +392,7 @@ body:has(.s-app) { margin: 0; background: var(--s-bg); color: var(--s-ink); font
 
 /* Icon tones bổ sung */
 .s-icon--sky { background: #e8f4fc; color: #1f7fbf; }
-.s-icon--green { background: #e8f6ee; color: #1c7a47; }
+.s-icon--green { background: #eef2fb; color: #1f3a8a; }
 .s-icon--navy { background: #e7eaf3; color: var(--s-navy); }
 
 /* Tiêu đề cân dòng, tránh rớt 1 chữ */

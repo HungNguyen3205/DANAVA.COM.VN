@@ -141,46 +141,46 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
   };
   // Sàn: gạch giả gỗ chữ nhật so le, tông mật ong ấm (giảm cam)
   const floorTex = canvasTex(1024, 1024, c => {
-    const tones = ['#c98a4b', '#d69a58', '#bb7b40', '#cf9252', '#dba462', '#c38447'];
+    const tones = ['#f26b1d', '#f26b1d', '#f26b1d', '#f26b1d', '#f26b1d', '#f26b1d'];
     const tw = 128, th = 512;
     c.fillStyle = tones[0]; c.fillRect(0, 0, 1024, 1024);
     for (let col = 0; col < 1024 / tw; col++) {
       const off = Math.floor(rnd() * th);
       for (let y = -off; y < 1024; y += th) {
-        grain(c, col * tw, y, tw, th, tones[Math.floor(rnd() * tones.length)], '#5a3a22', true, 22);
+        grain(c, col * tw, y, tw, th, tones[Math.floor(rnd() * tones.length)], '#13244f', true, 22);
         c.fillStyle = 'rgba(70,45,25,.28)'; c.fillRect(col * tw, y, tw, 2);
       }
       c.fillStyle = 'rgba(70,45,25,.22)'; c.fillRect(col * tw, 0, 2, 1024);
     }
   }, [1.3, 2.1]);
-  const slatTex = canvasTex(64, 512, c => grain(c, 0, 0, 64, 512, '#5a321d', '#24120a', true, 30));
-  const panelTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#e6d3b6', '#a88a63', true, 70), [1, 1]);
+  const slatTex = canvasTex(64, 512, c => grain(c, 0, 0, 64, 512, '#13244f', '#13244f', true, 30));
+  const panelTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#f26b1d', '#f26b1d', true, 70), [1, 1]);
   const tableTex = canvasTex(512, 512, c => { grain(c, 0, 0, 512, 512, '#5b5751', '#2c2a27', false, 60); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(0, 254, 512, 4); });
-  const deskTex = canvasTex(512, 256, c => grain(c, 0, 0, 512, 256, '#4a2f22', '#1d110a', false, 50));
-  const doorTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#94512a', '#4a230f', true, 40));
-  const lightWood = canvasTex(256, 256, c => grain(c, 0, 0, 256, 256, '#a8683a', '#5a2f14', true, 30));
+  const deskTex = canvasTex(512, 256, c => grain(c, 0, 0, 512, 256, '#13244f', '#13244f', false, 50));
+  const doorTex = canvasTex(256, 512, c => grain(c, 0, 0, 256, 512, '#f26b1d', '#13244f', true, 40));
+  const lightWood = canvasTex(256, 256, c => grain(c, 0, 0, 256, 256, '#f26b1d', '#13244f', true, 30));
   const sofaTex = canvasTex(256, 256, c => {
-    c.fillStyle = '#f4eee6'; c.fillRect(0, 0, 256, 256);
+    c.fillStyle = '#fff1e6'; c.fillRect(0, 0, 256, 256);
     for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
-      if ((x + y * 3) % 3 === 0) { c.fillStyle = '#b11f2a'; c.fillRect(x * 32 + 3, y * 32 + 3, 26, 14); }
-      if ((x * 2 + y) % 4 === 1) { c.fillStyle = '#c8303b'; c.fillRect(x * 32 + 6, y * 32 + 18, 12, 12); }
+      if ((x + y * 3) % 3 === 0) { c.fillStyle = '#f26b1d'; c.fillRect(x * 32 + 3, y * 32 + 3, 26, 14); }
+      if ((x * 2 + y) % 4 === 1) { c.fillStyle = '#f26b1d'; c.fillRect(x * 32 + 6, y * 32 + 18, 12, 12); }
     }
   });
   const certTex = canvasTex(96, 128, c => {
-    c.fillStyle = '#7a5a2a'; c.fillRect(0, 0, 96, 128);
-    c.fillStyle = '#fbf6e8'; c.fillRect(8, 8, 80, 112);
-    c.fillStyle = '#b8323b'; c.fillRect(18, 20, 60, 6);
-    c.fillStyle = '#c9a85a'; for (let i = 0; i < 6; i++) c.fillRect(18, 36 + i * 10, 60 - (i % 3) * 12, 3);
-    c.beginPath(); c.fillStyle = '#d9b34a'; c.arc(70, 102, 9, 0, 7); c.fill();
+    c.fillStyle = '#13244f'; c.fillRect(0, 0, 96, 128);
+    c.fillStyle = '#fff1e6'; c.fillRect(8, 8, 80, 112);
+    c.fillStyle = '#f26b1d'; c.fillRect(18, 20, 60, 6);
+    c.fillStyle = '#f26b1d'; for (let i = 0; i < 6; i++) c.fillRect(18, 36 + i * 10, 60 - (i % 3) * 12, 3);
+    c.beginPath(); c.fillStyle = '#f26b1d'; c.arc(70, 102, 9, 0, 7); c.fill();
   });
   const flagTex = canvasTex(180, 120, c => {
-    c.fillStyle = '#da251d'; c.fillRect(0, 0, 180, 120);
-    c.fillStyle = '#ffde00'; c.beginPath();
+    c.fillStyle = '#f26b1d'; c.fillRect(0, 0, 180, 120);
+    c.fillStyle = '#f26b1d'; c.beginPath();
     for (let i = 0; i < 10; i++) { const r = i % 2 ? 14 : 36, a = -Math.PI / 2 + i * Math.PI / 5; c.lineTo(90 + r * Math.cos(a), 60 + r * Math.sin(a)); }
     c.fill();
   });
   const leafTex = canvasTex(256, 256, c => {
-    const g = c.createLinearGradient(0, 256, 0, 0); g.addColorStop(0, '#2f7d3f'); g.addColorStop(1, '#5fb565');
+    const g = c.createLinearGradient(0, 256, 0, 0); g.addColorStop(0, '#1f3a8a'); g.addColorStop(1, '#1f3a8a');
     c.fillStyle = g; c.fillRect(0, 0, 256, 256);
     c.strokeStyle = 'rgba(220,255,210,.55)'; c.lineWidth = 3; c.beginPath(); c.moveTo(128, 230); c.lineTo(128, 10); c.stroke();
     c.lineWidth = 1.6; c.strokeStyle = 'rgba(210,250,200,.38)';
@@ -208,7 +208,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     c.fillStyle = '#13244f'; c.font = '700 30px sans-serif'; c.fillText('DANAVA Studio', 240, 56);
     c.fillStyle = '#7a849c'; c.font = '500 17px sans-serif'; c.fillText('Tổng quan vận hành', 240, 84);
     rr(870, 30, 124, 40, 20, '#f26b1d'); c.fillStyle = '#fff'; c.font = '700 17px sans-serif'; c.fillText('+ Đặt lớp', 892, 56);
-    ['#f26b1d', '#2b4294', '#19b27b', '#ffb347'].forEach((col, i) => {
+    ['#f26b1d', '#2b4294', '#1f3a8a', '#f26b1d'].forEach((col, i) => {
       const x = 240 + i * 192; rr(x, 108, 176, 96, 14, '#fff'); rr(x + 16, 124, 30, 30, 9, col);
       rr(x + 16, 166, 90, 12, 6, '#dfe3ee'); rr(x + 16, 184, 56, 10, 5, '#eceff5');
     });
@@ -220,7 +220,7 @@ function build(THREE: typeof import('three'), RoundedBox: RBCtor, RoomEnv: EnvCt
     c.strokeStyle = '#f26b1d'; c.lineWidth = 4; c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
     rr(738, 222, 256, 324, 16, '#fff');
     c.fillStyle = '#13244f'; c.font = '700 19px sans-serif'; c.fillText('Lịch lớp hôm nay', 758, 256);
-    [['Yoga', '#fff1e6'], ['Pilates', '#eef2fb'], ['Thiền', '#e8f7f0'], ['Spa', '#fff1e6']].forEach(([t, bg], i) => {
+    [['Yoga', '#fff1e6'], ['Pilates', '#eef2fb'], ['Thiền', '#eef2fb'], ['Spa', '#fff1e6']].forEach(([t, bg], i) => {
       rr(758, 278 + i * 64, 216, 50, 12, bg); c.fillStyle = '#13244f'; c.font = '600 17px sans-serif'; c.fillText(t, 774, 309 + i * 64);
       rr(900, 294 + i * 64, 58, 16, 8, 'rgba(19,36,79,.12)');
     });

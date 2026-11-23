@@ -69,12 +69,12 @@
   .s-tabbar__item--primary { color: var(--s-ink); }
   .s-tabbar__item--primary .s-tabbar__icon {
     width: 50px; height: 50px; margin-top: -22px; border-radius: 18px;
-    background: var(--s-yellow, #ffc233); color: var(--s-ink);
+    background: var(--s-yellow, #f26b1d); color: var(--s-ink);
     box-shadow: 0 8px 20px rgba(245, 162, 10, .38), 0 0 0 5px #fff;
   }
   .s-tabbar__item--primary .s-tabbar__icon svg { width: 24px; height: 24px; }
   .s-tabbar__item--primary[aria-current='page'] { color: var(--s-ink); }
-  .s-tabbar__item--primary[aria-current='page'] .s-tabbar__icon { background: var(--s-ink); color: var(--s-yellow, #ffc233); }
+  .s-tabbar__item--primary[aria-current='page'] .s-tabbar__icon { background: var(--s-ink); color: var(--s-yellow, #f26b1d); }
 
   /* Chừa chỗ cho thanh tab: footer, drawer, banner cookie, các sân khấu cao bằng màn hình */
   .s-app { padding-bottom: calc(var(--s-tabbar-h) + env(safe-area-inset-bottom)); }

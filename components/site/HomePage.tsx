@@ -116,7 +116,7 @@ export default function HomePage({ data }: { data: SiteData }) {
               <figcaption>Hành trình DANAVA <small>2016 – nay</small></figcaption>
               <svg viewBox={`0 0 ${journey.W} 108`} role="img" aria-label={`Hành trình DANAVA: ${journey.pts.map(p => `${p.year} ${p.title}`).join('; ')}`}>
                 <defs>
-                  <linearGradient id="hb-journey-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#e0611a" stopOpacity=".28" /><stop offset="1" stopColor="#e0611a" stopOpacity="0" /></linearGradient>
+                  <linearGradient id="hb-journey-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#f26b1d" stopOpacity=".28" /><stop offset="1" stopColor="#f26b1d" stopOpacity="0" /></linearGradient>
                 </defs>
                 <line x1="16" x2="284" y1="94" y2="94" className="hb-journey__base" />
                 <path d={journey.area} fill="url(#hb-journey-fill)" className="hb-journey__area" />

@@ -64,8 +64,8 @@ export function NotFoundContent() {
             <ellipse cx="120" cy="70" rx="104" ry="40" stroke="#d6e0fa" strokeWidth="1.5" />
             <ellipse cx="120" cy="70" rx="70" ry="26" stroke="#e5e8ef" strokeWidth="1.5" strokeDasharray="4 6" />
             <polygon points="98,38 146,38 166,70 146,102 98,102 112,70" fill="#2b4294" opacity="0.92" />
-            <polygon points="112,70 98,102 128,102" fill="#f08a1c" />
-            <circle cx="216" cy="62" r="6" fill="#f08a1c" />
+            <polygon points="112,70 98,102 128,102" fill="#f26b1d" />
+            <circle cx="216" cy="62" r="6" fill="#f26b1d" />
             <circle cx="24" cy="80" r="4" fill="#53a5db" />
           </svg>
 

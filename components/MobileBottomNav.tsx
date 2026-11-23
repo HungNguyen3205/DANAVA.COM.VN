@@ -8,7 +8,7 @@ import { Home, Layers, Briefcase, MessageSquare } from 'lucide-react';
  * Mobile Bottom Navigation Bar (Bottom Nav)
  * Cố định ở đáy màn hình trên thiết bị di động (<= 768px)
  * Giúp người dùng dễ dàng thao tác bằng ngón tay cái (Thumb reach)
- * Chuẩn nhận diện công nghệ sang trọng DANAVA (#0B132B / #1C2541 / #5BC0DE / #F4D6B0)
+ * Chuẩn nhận diện công nghệ sang trọng DANAVA (#0B132B / #1C2541 / #5BC0DE / #f26b1d)
  */
 export default function MobileBottomNav() {
   const pathname = usePathname();

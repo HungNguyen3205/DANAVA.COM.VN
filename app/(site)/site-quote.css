@@ -1,5 +1,5 @@
 /* Trang báo giá landing page / website (/bao-gia-web/) */
-.wq-page { background: #fbf6ee; color: #13244f; padding-bottom: clamp(56px, 8vw, 96px); }
+.wq-page { background: #fff1e6; color: #13244f; padding-bottom: clamp(56px, 8vw, 96px); }
 .wq-hero { padding: clamp(18px, 3vw, 28px) 0 clamp(28px, 4vw, 44px); background: radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%); }
 .wq-kicker { margin: 22px 0 0; font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #f26b1d; }
 .wq-title { margin: 12px 0 0; font-size: clamp(32px, 4.4vw, 56px); font-weight: 800; line-height: 1.15; letter-spacing: -.02em; }
@@ -22,7 +22,7 @@
 .wq__card input, .wq__chip input { position: absolute; opacity: 0; pointer-events: none; }
 .wq__card strong { font-size: 16px; font-weight: 700; }
 .wq__card span { font-size: 14px; line-height: 1.5; color: #5c6785; }
-.wq__card.is-on { border-color: #f26b1d; background: #fff8f2; }
+.wq__card.is-on { border-color: #f26b1d; background: #fff1e6; }
 .wq__chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .wq__chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid #e4e8f2; font-size: 15px; font-weight: 600; color: #13244f; cursor: pointer; }
 .wq__chip.is-on { border-color: #13244f; background: #13244f; color: #fff; }
@@ -36,13 +36,13 @@
 .wq__nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; }
 .wq__btn { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 22px; border-radius: 12px; font-size: 15px; font-weight: 700; border: 0; cursor: pointer; }
 .wq__btn svg { width: 18px; height: 18px; }
-.wq__btn--primary { background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); margin-left: auto; }
+.wq__btn--primary { background: linear-gradient(90deg, #f26b1d, #f26b1d); color: #fff; box-shadow: 0 12px 26px -14px rgba(242, 107, 29, .85); margin-left: auto; }
 .wq__btn--primary:disabled { opacity: .6; cursor: default; }
 .wq__btn--ghost { background: #f4f6fb; color: #13244f; }
-.wq__error { margin: 0 0 12px; color: #b42318; font-weight: 600; }
+.wq__error { margin: 0 0 12px; color: #f26b1d; font-weight: 600; }
 
 .wq__aside { position: sticky; top: calc(var(--s-header-h, 72px) + 24px); padding: 24px; border-radius: 24px; background: #13244f; color: #fff; }
-.wq__aside-label { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #ffb347; }
+.wq__aside-label { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #f26b1d; }
 .wq__range { margin: 8px 0 0; font-size: clamp(22px, 2.4vw, 28px); font-weight: 800; line-height: 1.2; }
 .wq__note { margin: 10px 0 0; font-size: 13.5px; line-height: 1.6; color: #c9d3ea; }
 .wq__summary { margin: 18px 0 0; display: grid; gap: 10px; }

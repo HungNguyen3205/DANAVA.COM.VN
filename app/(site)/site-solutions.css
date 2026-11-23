@@ -6,7 +6,7 @@
 .svn {
   --svn-navy: #13244f;
   --svn-orange: #f26b1d;
-  --svn-cream: #fbf6ee;
+  --svn-cream: #fff1e6;
   --svn-body: #3d4a6b;
   --svn-muted: #6b7590;
   background: var(--svn-cream);
@@ -164,7 +164,7 @@
 .svn-need-wrap { padding-top: clamp(56px, 8vw, 96px); }
 .svn-need {
   padding: clamp(28px, 4vw, 48px); border-radius: 28px;
-  background: linear-gradient(90deg, #fff4ea 0%, #fdf8f2 100%);
+  background: linear-gradient(90deg, #fff1e6 0%, #fff1e6 100%);
   border: 1px solid rgba(242, 107, 29, .12);
 }
 .svn-need__head { margin-bottom: 24px; }
