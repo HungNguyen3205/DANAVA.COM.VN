@@ -88,9 +88,3 @@
 
 /* Chân trang: gradient dọc, đậm ở trên, nhạt dần xuống dưới */
 .s-app .s-footer { background: linear-gradient(180deg, #13244f 0%, #1f3a8a 50%, #3d5bd0 100%) !important; }
-
-/* Panel "Dịch vụ": một cột, chiều rộng gọn hơn mega menu Giải pháp */
-.s-app .s-mega--services { width: min(440px, calc(100vw - 48px)); }
-.s-app .s-mega--services .s-mega__cols { grid-template-columns: minmax(0, 1fr) !important; }
-.s-app .s-mega--services .s-mega__col { padding: 0 8px; }
-.s-app .s-mega--services .s-mega__foot { margin-top: 16px; }

@@ -7,11 +7,6 @@ import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
 import { HrefIcon, IconBox, type Tone } from './site/icons';
-import { DICH_VU } from '@/lib/dich-vu';
-import { Megaphone, MonitorSmartphone, CalendarDays, Plane } from 'lucide-react';
-
-/** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
-const DV_ICON: LucideIcon[] = [Megaphone, MonitorSmartphone, CalendarDays, Plane];
 import { contactChannels } from '@/lib/contact-channels';
 import { BrandIcon } from './site/BrandIcons';
 import { MobileMenu } from './site/MobileMenu';
@@ -72,8 +67,6 @@ export function Header() {
   const [mega, setMega] = useState(false);
   const [about, setAbout] = useState(false);
   const aboutRef = useRef<HTMLLIElement | null>(null);
-  const [svc, setSvc] = useState(false);
-  const svcRef = useRef<HTMLLIElement | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const megaRef = useRef<HTMLLIElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -83,7 +76,6 @@ export function Header() {
     setOpen(false);
     setMega(false);
     setAbout(false);
-    setSvc(false);
   }, [path]);
 
   useEffect(() => {
@@ -94,15 +86,6 @@ export function Header() {
     document.addEventListener('mousedown', onClick);
     return () => { window.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
   }, [about]);
-
-  useEffect(() => {
-    if (!svc) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSvc(false); };
-    const onClick = (e: MouseEvent) => { if (svcRef.current && !svcRef.current.contains(e.target as Node)) setSvc(false); };
-    window.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onClick);
-    return () => { window.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
-  }, [svc]);
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 8);
@@ -167,33 +150,8 @@ export function Header() {
                   )}
                 </div>
               </li>
-              <li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onMouseEnter={() => setSvc(true)} onMouseLeave={() => setSvc(false)}>
-                <button
-                  type="button"
-                  className="s-nav__link"
-                  aria-expanded={svc}
-                  aria-controls="s-mega-services"
-                  aria-current={path.startsWith('/dich-vu') ? 'page' : undefined}
-                  onClick={() => setSvc(v => !v)}
-                >
-                  Dịch vụ <ChevronDown aria-hidden="true" />
-                </button>
-                <div className="s-mega s-mega--cols s-mega--services" id="s-mega-services">
-                  <div className="s-mega__cols">
-                    <div className="s-mega__col">
-                      <p className="s-mega__head"><span className="s-mega__no">01</span><span>Dịch vụ<small>Ngoài phần mềm</small></span></p>
-                      <ul>
-                        {DICH_VU.map((s, i) => (
-                          <li key={s.id}><MenuItem it={{ label: s.title, desc: s.description, href: `/dich-vu/${s.slug}/`, badge: '', image: '', icon: DV_ICON[i % DV_ICON.length], tone: i % 2 ? 'orange' : 'blue' }} onPick={() => setSvc(false)} /></li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="s-mega__foot">
-                    <span className="s-mega__slogan">Đồng hành cùng thương hiệu của bạn.</span>
-                    <Link className="s-mega__cta" href="/dich-vu/" onClick={() => setSvc(false)}>Xem tất cả dịch vụ <ArrowRight aria-hidden="true" /></Link>
-                  </div>
-                </div>
+              <li className="s-nav__item">
+                <Link className="s-nav__link" href="/dich-vu/" aria-current={active('/dich-vu/') ? 'page' : undefined}>Dịch vụ</Link>
               </li>
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}>Hệ sinh thái</Link>

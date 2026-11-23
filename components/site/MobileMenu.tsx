@@ -12,17 +12,13 @@ import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
 import { CONTACT, formatPhone } from './catalog';
-import { DICH_VU } from '@/lib/dich-vu';
-import { CalendarDays, Megaphone, MonitorSmartphone, Plane } from 'lucide-react';
-
-/** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
-const DV_ICON: LucideIcon[] = [Megaphone, MonitorSmartphone, CalendarDays, Plane];
 import { iconFor } from './icons';
 import { useDialog } from './useDialog';
 import { useAnna } from './anna/AnnaProvider';
 
 const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/giai-phap/', label: 'Tất cả giải pháp', icon: LayoutGrid },
+  { href: '/dich-vu/', label: 'Dịch vụ', icon: BriefcaseBusiness },
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái', icon: Network },
   { href: '/doi-ngu/', label: 'Đội ngũ', icon: Users },
   { href: '/lien-he/', label: 'Liên hệ', icon: MessageCircle }
@@ -106,22 +102,6 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
               </ul>
             </section>
           ))}
-
-          <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-services">
-            <h2 className="sm__subtitle" id="sm-group-services">Dịch vụ</h2>
-            <ul>
-              {DICH_VU.map((s, i) => {
-                const Icon = DV_ICON[i % DV_ICON.length];
-                return (
-                  <li key={s.id}>
-                    <Link className="sm__row sm__row--page" href={`/dich-vu/${s.slug}/`} onClick={onClose} aria-current={current(`/dich-vu/${s.slug}/`)}>
-                      <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{s.title}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-about">
             <h2 className="sm__subtitle" id="sm-group-about">Về chúng tôi</h2>
