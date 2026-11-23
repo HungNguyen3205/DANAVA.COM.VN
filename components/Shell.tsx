@@ -39,12 +39,23 @@ function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
   return <Link className={cls} href={it.href} onClick={onPick}>{body}</Link>;
 }
 
-/** Menu "Về chúng tôi" (gom Dự án, Blogs, Tuyển dụng như mục Giải pháp) */
-const ABOUT: { href: string; label: string; desc: string; icon: LucideIcon }[] = [
-  { href: '/ve-danava/', label: 'Về DANAVA', desc: 'Câu chuyện, tầm nhìn và đội ngũ', icon: Info },
-  { href: '/du-an/', label: 'Dự án', desc: 'Case study và sản phẩm đã triển khai', icon: FolderKanban },
-  { href: '/kien-thuc/', label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', icon: Newspaper },
-  { href: '/tuyen-dung/', label: 'Tuyển dụng', desc: 'Cơ hội nghề nghiệp tại DANAVA', icon: BriefcaseBusiness }
+/** Mega menu "Về chúng tôi": cùng cấu trúc như menu Giải pháp (cột đánh số, mục có icon, thanh chân) */
+const ABOUT_COLS: { title: string; sub: string; items: MenuItemData[] }[] = [
+  {
+    title: 'Về DANAVA', sub: 'Câu chuyện & con người',
+    items: [
+      { label: 'Về DANAVA', desc: 'Câu chuyện, tầm nhìn và cột mốc phát triển', href: '/ve-danava/', badge: '', image: '' },
+      { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '' }
+    ]
+  },
+  {
+    title: 'Hoạt động', sub: 'Dự án, kiến thức & cơ hội',
+    items: [
+      { label: 'Dự án', desc: 'Câu chuyện triển khai thực tế cùng khách hàng', href: '/du-an/', badge: '', image: '' },
+      { label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', href: '/kien-thuc/', badge: '', image: '' },
+      { label: 'Tuyển dụng', desc: 'Cơ hội nghề nghiệp tại DANAVA', href: '/tuyen-dung/', badge: '', image: '' }
+    ]
+  }
 ];
 
 export function Header() {
@@ -141,28 +152,32 @@ export function Header() {
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}>Hệ sinh thái</Link>
               </li>
-              <li ref={aboutRef} className={`s-nav__item s-nav__item--drop${about ? ' is-open' : ''}`} onMouseEnter={() => setAbout(true)} onMouseLeave={() => setAbout(false)}>
+              <li ref={aboutRef} className={`s-nav__item s-nav__item--mega${about ? ' is-open' : ''}`} onMouseEnter={() => setAbout(true)} onMouseLeave={() => setAbout(false)}>
                 <button
                   type="button"
                   className="s-nav__link"
                   aria-expanded={about}
-                  aria-controls="s-drop-about"
-                  aria-current={ABOUT.some(x => active(x.href)) ? 'page' : undefined}
+                  aria-controls="s-mega-about"
+                  aria-current={ABOUT_COLS.some(c => c.items.some(x => active(x.href))) ? 'page' : undefined}
                   onClick={() => setAbout(v => !v)}
                 >
                   Về chúng tôi <ChevronDown aria-hidden="true" />
                 </button>
-                <div className="s-drop" id="s-drop-about">
-                  <ul>
-                    {ABOUT.map(it => (
-                      <li key={it.href}>
-                        <Link className="s-drop__link" href={it.href} onClick={() => setAbout(false)} aria-current={active(it.href) ? 'page' : undefined}>
-                          <span className="s-drop__ico" aria-hidden="true"><it.icon /></span>
-                          <span className="s-drop__txt"><b>{it.label}</b><small>{it.desc}</small></span>
-                        </Link>
-                      </li>
+                <div className="s-mega s-mega--cols s-mega--about" id="s-mega-about">
+                  <div className="s-mega__cols">
+                    {ABOUT_COLS.map((col, ci) => (
+                      <div key={col.title} className="s-mega__col">
+                        <p className="s-mega__head"><span className="s-mega__no">{String(ci + 1).padStart(2, '0')}</span><span>{col.title}<small>{col.sub}</small></span></p>
+                        <ul>
+                          {col.items.map(it => <li key={it.href}><MenuItem it={it} onPick={() => setAbout(false)} /></li>)}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
+                  <div className="s-mega__foot">
+                    <span className="s-mega__slogan">Cùng bạn phát triển.</span>
+                    <Link className="s-mega__cta" href="/ve-danava/" onClick={() => setAbout(false)}>Tìm hiểu về DANAVA <ArrowRight aria-hidden="true" /></Link>
+                  </div>
                 </div>
               </li>
               <li className="s-nav__item">

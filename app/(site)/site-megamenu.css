@@ -44,29 +44,3 @@
   .s-app .s-mega__col { padding: 0 14px; }
   .s-app .s-mega__col li { height: 78px; }
 }
-
-/* ==========================================================================
-   Menu "Về chúng tôi": dropdown danh sách, cùng kiểu với mega menu Giải pháp
-   ========================================================================== */
-.s-app .s-nav__item--drop > .s-nav__link { background: none; border: 0; cursor: pointer; font-family: inherit; }
-.s-app .s-nav__item--drop > .s-nav__link svg { width: 16px; height: 16px; transition: transform .2s ease; }
-.s-app .s-nav__item--drop.is-open > .s-nav__link svg { transform: rotate(180deg); }
-.s-app .s-drop {
-  position: absolute; left: -12px; top: calc(100% + 10px); z-index: 90;
-  width: 320px; padding: 10px; background: #fff; border: 1px solid rgba(19, 36, 79, .08); border-radius: 20px;
-  box-shadow: 0 2px 4px rgba(19, 36, 79, .04), 0 28px 60px -24px rgba(19, 36, 79, .22);
-  opacity: 0; visibility: hidden; transform: translateY(-6px);
-  transition: opacity .18s, transform .18s, visibility .18s;
-}
-.s-app .s-drop::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
-.s-app .s-nav__item--drop.is-open .s-drop { opacity: 1; visibility: visible; transform: none; }
-.s-app .s-drop ul { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
-.s-app .s-drop__link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; color: var(--s-navy); text-decoration: none; transition: background-color .15s; }
-.s-app .s-drop__link:hover, .s-app .s-drop__link:focus-visible { background: #fff7ef; }
-.s-app .s-drop__link:focus-visible { outline: 3px solid var(--s-orange); outline-offset: 1px; }
-.s-app .s-drop__link[aria-current='page'] b { color: var(--s-orange); }
-.s-app .s-drop__ico { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 12px; background: #fff1e6; color: var(--s-orange); }
-.s-app .s-drop__ico svg { width: 20px; height: 20px; }
-.s-app .s-drop__txt { display: block; min-width: 0; }
-.s-app .s-drop__txt b { display: block; font-size: 15px; font-weight: 700; line-height: 1.3; }
-.s-app .s-drop__txt small { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: #5c6785; }
