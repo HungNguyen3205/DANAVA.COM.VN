@@ -1,44 +1,39 @@
 /* ==========================================================================
-   Thanh điều hướng dạng nổi (floating glass):
-   - Không còn nền trắng full-width; thanh là một viên pill kính mờ, cách mép trên 12px.
-   - Trang chủ: Hero kéo lên sát mép trên, thanh nổi phía trên nền kem.
+   Thanh điều hướng: dính trên cùng, toàn chiều rộng, không bo góc.
+   - Nền kính mờ nhẹ, một đường viền mỏng bên dưới.
    - 3 phần: logo (trái) · 5 mục căn giữa · nút "Nhận tư vấn" (phải).
-   - Mục đang xem: nền pill cam nhạt, chữ cam, không còn gạch chân vàng.
+   - Trang đang xem: chữ cam và gạch chân cam bên dưới.
    ========================================================================== */
 
-/* Chiều cao vùng đầu trang: 12px cách mép + 64px thanh + 8px đệm */
-.s-app { --s-header-h: 84px; }
+/* Chiều cao thanh: 72px */
+.s-app { --s-header-h: 72px; }
 
-/* Vùng sticky trong suốt; phần nền và viền nằm ở thanh bên trong */
+/* Thanh dính trên cùng, nền kính mờ */
 .s-app .s-header {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-bottom: 0;
-  box-shadow: none;
+  position: sticky; top: 0; z-index: 80;
+  background: rgba(255, 255, 255, .92);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1px solid rgba(19, 36, 79, .08);
+  box-shadow: 0 8px 24px -20px rgba(19, 36, 79, .35);
 }
-.s-app .s-header.is-scrolled { border-bottom-color: transparent; }
 .s-app .s-header::before { display: none; }
 
-/* Trang chủ: kéo vùng header lên đè lên Hero để nền kem liền mạch tới mép trên */
-body:has(.h-home) .s-app .s-header { margin-bottom: -84px; }
-.h-home .hb-cover { padding-top: calc(84px + clamp(8px, 1.4vw, 24px)) !important; }
-
-/* Thanh: bo góc vuông hơn (không còn dạng viên thuốc) */
+/* Thanh bên trong: không bo góc, không viền riêng */
 .s-app .s-header__bar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 16px;
-  height: 64px;
-  margin-top: 12px;
-  padding: 0 12px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, .75);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid rgba(19, 36, 79, .06);
-  box-shadow: 0 8px 30px rgba(15, 23, 42, .06);
+  height: var(--s-header-h);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 .s-app .s-header .s-logo { justify-self: start; }
 .s-app .s-header .s-logo img { height: 32px; }
@@ -74,8 +69,15 @@ body:has(.h-home) .s-app .s-header { margin-bottom: -84px; }
 /* Nút "Nhận tư vấn": pill cam gọn */
 .s-app .s-header .s-btn--primary.s-btn--sm { min-height: 40px; padding: 0 18px; font-size: 14.5px; font-weight: 600; border-radius: 12px; }
 
-/* Điện thoại / máy tính bảng: giữ logo và nút menu trong viên pill */
+/* Điện thoại / máy tính bảng: logo và nút menu, không có menu giữa */
 @media (max-width: 1080px) {
-  .s-app .s-header__bar { grid-template-columns: minmax(0, 1fr) auto; padding-left: 16px; }
+  .s-app .s-header__bar { grid-template-columns: minmax(0, 1fr) auto; }
   .s-app .s-header .s-logo img { height: 30px; }
 }
+
+/* ==========================================================================
+   Chân trang: logo tách nền (bản light cho nền tối), badge Bộ Công Thương gọn
+   ========================================================================== */
+.s-app .s-footer .s-logo img { box-sizing: border-box; height: 52px; width: auto; padding: 0; border-radius: 0; background: none; box-shadow: none; }
+.s-app .s-footer__bct { padding: 3px; border-radius: 6px; }
+.s-app .s-footer__bct img { width: 84px; }

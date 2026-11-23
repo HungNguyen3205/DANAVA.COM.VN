@@ -223,7 +223,7 @@ export function Footer() {
         <div className="s-footer__top">
           <div className="s-footer__brand">
             <Link className="s-logo" href="/" aria-label="DANAVA Solutions — Trang chủ">
-              <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
+              <img src="/assets/danava-logo-light.png" alt="DANAVA Solutions" width={554} height={135} />
             </Link>
             <p>Công nghệ tạo khả năng, con người tạo giá trị. DANAVA đồng hành cùng doanh nghiệp bằng phần mềm quản lý, truyền thông và trải nghiệm.</p>
             <div className="s-footer__contact">
