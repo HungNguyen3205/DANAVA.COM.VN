@@ -88,3 +88,6 @@
 
 /* Chân trang: gradient dọc, đậm ở trên, nhạt dần xuống dưới */
 .s-app .s-footer { background: linear-gradient(180deg, #13244f 0%, #1f3a8a 50%, #3d5bd0 100%) !important; }
+
+/* Khách hàng & đối tác (trang chủ): nền gradient xanh biển nhạt, cùng tông với footer */
+.s-app .hb-clients { background: linear-gradient(180deg, #f2f6ff 0%, #dbe7fb 55%, #c6d8f5 100%) !important; }
