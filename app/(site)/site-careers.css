@@ -269,3 +269,24 @@
 .td-apply__aside { display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0; }
 .td-apply .td-live { justify-content: flex-start; }
 .s-app .td-apply__mail { color: #f26b1d; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Ứng tuyển gọn trong một màn hình (máy tính): tiêu đề, thẻ và form cùng hiện đủ */
+@media (min-width: 861px) {
+  .td-sec.td-apply { padding: 40px 0; }
+  .td-apply__grid { align-items: center !important; }
+  .td-apply .td-head { margin-bottom: 0; }
+  .s-app .td-apply .td-h2 { font-size: clamp(28px, 3vw, 40px); }
+  .s-app .td-apply .td-text { margin-top: 8px; font-size: 15px; line-height: 1.6; }
+  .td-apply .td-live--compact { --strap: 56px; margin-top: 12px; } /* cuộn dây nhô lên 20px, chừa chỗ cho dòng email */
+  .td-apply .td-live__card { padding-top: 24px; }
+  .td-apply .td-live__logo { width: 118px; }
+  .td-apply .td-live__photo { width: 64px; height: 64px; margin-top: 12px; font-size: 28px; }
+  .td-apply .td-live__name { min-height: 40px; margin-top: 4px; font-size: 22px; }
+  .td-apply .td-live__wave { height: 30px; }
+  .td-apply .td-form { gap: 12px 16px; padding: 26px 28px; }
+  .td-apply .td-field { gap: 4px; }
+  .s-app .td-apply .td-field :is(input, select) { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+  .s-app .td-apply .td-field textarea { min-height: 0; height: 84px; }
+  .td-apply .td-consent { min-height: 0; font-size: 13px; }
+  .s-app .td-apply .td-btn--send { min-height: 48px; }
+}
