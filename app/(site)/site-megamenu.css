@@ -1,0 +1,46 @@
+/* ==========================================================================
+   Mega menu "Giải pháp" — panel trắng sáng, 3 cột đều nhau, các hàng thẳng hàng.
+   Nạp sau site-mobile.css / site-headings.css để thắng các rule cũ.
+   ========================================================================== */
+
+/* Panel: nền trắng thuần, không bị xám/tối từ lớp nền phía dưới */
+.s-app .s-mega--cols {
+  background: #fff;
+  width: min(1080px, calc(100vw - 48px));
+  padding: 26px 26px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(19, 36, 79, .08);
+  box-shadow: 0 2px 4px rgba(19, 36, 79, .04), 0 28px 60px -24px rgba(19, 36, 79, .22);
+}
+
+/* 3 cột bằng nhau, cùng xuất phát từ một mép trên */
+.s-app .s-mega__cols { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; align-items: start; }
+.s-app .s-mega__col { display: flex; flex-direction: column; padding: 0 22px; }
+.s-app .s-mega__col:first-child { padding-left: 4px; }
+.s-app .s-mega__col:last-child { padding-right: 4px; }
+
+/* Tiêu đề cột: cùng chiều cao cho cả 3 cột (đủ 2 dòng: tên + dòng phụ) */
+.s-app .s-mega__head { min-height: 64px; align-items: flex-start; gap: 12px; margin: 0 0 12px !important; padding: 0 12px; }
+.s-app .s-mega__head > span:last-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.s-app .s-mega__no { margin-top: 1px; font-size: 26px; }
+.s-app .s-mega__head small { margin-top: 0; font-size: 13px; color: #5c6785; }
+
+/* Mỗi mục có chiều cao cố định => các hàng của 3 cột thẳng hàng với nhau */
+.s-app .s-mega__col li { height: 74px; }
+.s-app .s-mega__link { height: 100%; padding: 10px 12px; border-radius: 14px; }
+.s-app .s-mega__link .s-mega__ico { flex: none; }
+.s-app .s-mega__txt { min-width: 0; }
+.s-app .s-mega__sub {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  color: #5c6785;
+}
+.s-app .s-mega__label { font-size: 15.5px; }
+
+/* Chân menu giữ đúng chiều rộng hai bên, không lệch so với các cột */
+.s-app .s-mega--cols .s-mega__foot { margin-top: 16px; padding: 14px 18px; }
+
+@media (max-width: 1100px) {
+  .s-app .s-mega--cols { width: min(960px, calc(100vw - 32px)); }
+  .s-app .s-mega__col { padding: 0 14px; }
+  .s-app .s-mega__col li { height: 78px; }
+}
