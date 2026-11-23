@@ -1,0 +1,206 @@
+/* ==========================================================================
+   Trang Giải pháp (/giai-phap/) — tinh thần DANAVA GO:
+   nền kem ấm, tiêu đề Playfair 600 CHỮ ĐỨNG (navy + nhấn cam), thẻ trắng nhẹ.
+   Tiêu đề viết dưới tiền tố .svn để thắng các rule toàn site.
+   ========================================================================== */
+.svn {
+  --svn-navy: #13244f;
+  --svn-orange: #f26b1d;
+  --svn-cream: #fbf6ee;
+  --svn-body: #3d4a6b;
+  --svn-muted: #6b7590;
+  background: var(--svn-cream);
+  color: var(--svn-navy);
+  padding-bottom: clamp(56px, 8vw, 96px);
+  overflow-x: clip;
+}
+
+/* ---------- Hero ---------- */
+.svn-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(18px, 3vw, 28px) 0 clamp(40px, 6vw, 72px);
+  background:
+    radial-gradient(48% 70% at 88% 0%, rgba(255, 196, 120, .38), transparent 62%),
+    radial-gradient(40% 60% at 0% 100%, rgba(242, 107, 29, .08), transparent 60%);
+}
+.svn-hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: 40px 56px;
+  align-items: center;
+  margin-top: 22px;
+}
+.svn-kicker {
+  display: inline-flex; align-items: center; gap: 8px; margin: 0;
+  padding: 6px 14px; border-radius: 999px; background: #fff;
+  box-shadow: 0 6px 18px -12px rgba(19, 36, 79, .5);
+  font-size: 13px; font-weight: 800; color: var(--svn-navy);
+}
+.svn-kicker svg { width: 16px; height: 16px; color: var(--svn-orange); }
+.svn .svn-title {
+  margin: 18px 0 0;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 600;
+  font-size: clamp(38px, 5.2vw, 70px);
+  line-height: 1.04;
+  letter-spacing: -.02em;
+  color: var(--svn-navy);
+}
+.svn .svn-em { font-style: normal; color: var(--svn-orange); }
+.svn-lead {
+  margin: 20px 0 0; max-width: 34em;
+  font-size: 17px; line-height: 1.7; color: var(--svn-body);
+}
+.svn-jump { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.svn-jump a {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px;
+  border-radius: 999px; background: #fff; border: 1px solid rgba(19, 36, 79, .08);
+  box-shadow: 0 8px 20px -16px rgba(19, 36, 79, .5);
+  color: var(--svn-navy); font-size: 14px; font-weight: 700; text-decoration: none;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.svn-jump a:hover { transform: translateY(-1px); border-color: rgba(242, 107, 29, .45); }
+.svn-jump a:focus-visible { outline: 3px solid var(--svn-navy); outline-offset: 2px; }
+.svn-jump span {
+  display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 7px;
+  border-radius: 999px; background: #fff1e6; color: var(--svn-orange); font-size: 12px; font-weight: 800;
+}
+
+.svn-hero__media {
+  position: relative; margin: 0; aspect-ratio: 4 / 3;
+  border-radius: 28px; overflow: hidden; background: #fff;
+  box-shadow: 0 34px 70px -34px rgba(19, 36, 79, .55), 0 0 0 1px rgba(19, 36, 79, .06);
+}
+.svn-hero__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+.svn-hero__chip {
+  position: absolute; left: 16px; bottom: 16px;
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  border-radius: 999px; background: #fff; box-shadow: 0 14px 32px -16px rgba(19, 36, 79, .45);
+  font-size: 13px; font-weight: 800; color: var(--svn-navy);
+}
+.svn-hero__chip svg { width: 16px; height: 16px; color: var(--svn-orange); }
+
+/* ---------- Nhóm giải pháp ---------- */
+.svn-sec { padding-top: clamp(52px, 7vw, 88px); scroll-margin-top: calc(var(--s-header-h, 72px) + 24px); }
+.svn-sec__head {
+  display: flex; align-items: flex-end; gap: 18px;
+  margin-bottom: clamp(22px, 3vw, 34px); padding-bottom: 18px;
+  border-bottom: 1px solid rgba(19, 36, 79, .1);
+}
+.svn-no {
+  font-family: var(--font-display); font-weight: 600; font-size: 44px; line-height: 1;
+  color: var(--svn-orange);
+}
+.svn-eyebrow {
+  margin: 0 0 6px; font-size: 12.5px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--svn-orange);
+}
+.svn .svn-h2 {
+  margin: 0; font-family: var(--font-display); font-style: normal; font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 42px); line-height: 1.1; letter-spacing: -.01em;
+  color: var(--svn-navy);
+}
+
+.svn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 22px;
+}
+
+/* ---------- Thẻ giải pháp ---------- */
+.svn-card {
+  position: relative; display: flex; flex-direction: column; gap: 14px;
+  padding: clamp(22px, 2.6vw, 30px); border-radius: 24px;
+  background: #fff; border: 1px solid rgba(19, 36, 79, .06);
+  box-shadow: 0 18px 40px -30px rgba(19, 36, 79, .45);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.svn-card:hover { transform: translateY(-4px); box-shadow: 0 28px 56px -30px rgba(19, 36, 79, .5); }
+.svn-card:focus-within { box-shadow: 0 0 0 3px var(--svn-navy), 0 28px 56px -30px rgba(19, 36, 79, .5); }
+.svn-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.svn-card__tag { font-size: 12.5px; font-weight: 700; color: var(--svn-muted); text-align: right; }
+.svn .svn-card__title {
+  margin: 6px 0 0; font-family: var(--font-display); font-style: normal; font-weight: 600;
+  font-size: 24px; line-height: 1.2; color: var(--svn-navy);
+}
+.svn-card__text { margin: 0; font-size: 15px; line-height: 1.65; color: var(--svn-body); }
+.svn-card__items { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+.svn-card__items li { position: relative; padding-left: 18px; font-size: 14px; line-height: 1.5; color: var(--svn-body); }
+.svn-card__items li::before {
+  content: ''; position: absolute; left: 2px; top: .62em; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--svn-orange);
+}
+.svn-card__go {
+  margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(19, 36, 79, .08);
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14.5px; font-weight: 800; color: var(--svn-navy);
+}
+.svn-card__go svg { width: 18px; height: 18px; color: var(--svn-orange); transition: transform .2s ease; }
+.svn-card:hover .svn-card__go svg { transform: translateX(3px); }
+
+/* Nhóm chỉ có một giải pháp: thẻ ngang (trái: nội dung, phải: hạng mục + nút) trên desktop */
+.svn-card--solo {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  grid-template-rows: auto auto 1fr auto;
+  column-gap: clamp(32px, 5vw, 64px); row-gap: 14px; align-items: start;
+  padding: clamp(28px, 3.4vw, 44px);
+}
+.svn-card--solo .svn-card__top { grid-column: 1; grid-row: 1; }
+.svn-card--solo .svn-card__title { grid-column: 1; grid-row: 2; font-size: clamp(26px, 2.6vw, 32px); }
+.svn-card--solo .svn-card__text { grid-column: 1; grid-row: 3; }
+.svn-card--solo .svn-card__items { grid-column: 2; grid-row: 1 / span 3; align-self: center; margin: 0; padding: 0 0 0 clamp(24px, 3vw, 40px); border-left: 1px solid rgba(19, 36, 79, .08); }
+.svn-card--solo .svn-card__go { grid-column: 2; grid-row: 4; margin-top: 4px; justify-self: start; padding-top: 0; border-top: 0; }
+@media (max-width: 900px) {
+  .svn-card--solo { display: flex; flex-direction: column; gap: 14px; }
+  .svn-card--solo .svn-card__items { margin: 4px 0 0; padding: 0; border-left: 0; }
+  .svn-card--solo .svn-card__go { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(19, 36, 79, .08); }
+}
+
+/* ---------- Chưa biết bắt đầu từ đâu ---------- */
+.svn-need-wrap { padding-top: clamp(56px, 8vw, 96px); }
+.svn-need {
+  padding: clamp(28px, 4vw, 48px); border-radius: 28px;
+  background: linear-gradient(90deg, #fff4ea 0%, #fdf8f2 100%);
+  border: 1px solid rgba(242, 107, 29, .12);
+}
+.svn-need__head { margin-bottom: 24px; }
+.svn-need__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.svn-need__item {
+  position: relative; display: flex; flex-direction: column; gap: 12px;
+  padding: 24px; border-radius: 20px; background: #fff;
+  border: 1px solid rgba(19, 36, 79, .06); box-shadow: 0 12px 28px -24px rgba(19, 36, 79, .5);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.svn-need__item:hover { transform: translateY(-3px); box-shadow: 0 22px 44px -26px rgba(19, 36, 79, .5); }
+.svn-need__item:focus-within { box-shadow: 0 0 0 3px var(--svn-navy); }
+.svn .svn-need__title { margin: 0; font-family: var(--font-display); font-style: normal; font-weight: 600; font-size: 19px; line-height: 1.3; color: var(--svn-navy); }
+.svn-need__text { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--svn-body); }
+.svn-need__go {
+  margin-top: auto; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 800; color: var(--svn-orange);
+}
+.svn-need__go svg { width: 18px; height: 18px; transition: transform .2s ease; }
+.svn-need__item:hover .svn-need__go svg { transform: translateX(3px); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .svn-hero__grid { grid-template-columns: minmax(0, 1fr); }
+  .svn-need__grid { grid-template-columns: minmax(0, 1fr); }
+  .svn-hero__copy, .svn-hero__media, .svn-need__item, .svn-card { min-width: 0; max-width: 100%; }
+}
+@media (max-width: 560px) {
+  .svn-hero__media { aspect-ratio: 16 / 11; border-radius: 22px; }
+  .svn-jump a { flex: 1 1 auto; justify-content: center; }
+  .svn-sec__head { gap: 14px; }
+  .svn-no { font-size: 34px; }
+  .svn-card__title { font-size: 22px; }
+  .svn-need { border-radius: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .svn-card, .svn-need__item, .svn-jump a { transition: none; }
+  .svn-card:hover, .svn-need__item:hover, .svn-jump a:hover { transform: none; }
+}
