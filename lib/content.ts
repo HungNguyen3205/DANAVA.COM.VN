@@ -248,11 +248,14 @@ export type SiteData = {
  */
 export function siteView(data: SiteData): SiteData {
   const hidden = new Set(data.services.filter(s => s.published === false).map(s => s.id));
-  if (!hidden.size) return data;
+  const archived = data.posts.some(p => p.archived);
+  if (!hidden.size && !archived) return data;
   return {
     ...data,
     services: data.services.filter(s => !hidden.has(s.id)),
-    subServices: (data.subServices || []).filter(s => !hidden.has(s.parentId))
+    subServices: (data.subServices || []).filter(s => !hidden.has(s.parentId)),
+    // Bài lưu trữ: ẩn như bài chưa xuất bản (trang bài trả 404, không vào sitemap, danh sách, tìm kiếm)
+    posts: archived ? data.posts.map(p => (p.archived ? { ...p, published: false } : p)) : data.posts
   };
 }
 

@@ -131,6 +131,53 @@ try {
   assert.ok(productHTML.includes('DANAVA Booking IT'));
   console.log('New product create/publish passed.');
 
+  // ---------- Landing page: nháp không công khai, xuất bản, đổi đường dẫn → 301, liên kết ngoài không có trang
+  cur = (await editor.json('/api/admin/content/')).body;
+  const withLanding = structuredClone(cur.data);
+  const hero = { id: 'bherotest01', type: 'hero', data: { kicker: 'DANAVA', title: 'LANDING_IT_TITLE', lead: 'Lợi ích', image: '', primaryLabel: 'Đăng ký', primaryHref: '#dang-ky', secondaryLabel: '', secondaryHref: '' }, style: { align: 'center', padTop: 96 } };
+  const form = { id: 'bformtest01', type: 'form', data: { title: 'Đăng ký', lead: '', service: 'DANAVA Studio', buttonLabel: 'Gửi' } };
+  const pricing = { id: 'bpricetest1', type: 'pricing', data: { title: 'Bảng giá', productId: 'danava-booking' } };
+  withLanding.landings = [
+    { id: 'lp-it', kind: 'internal', title: 'Landing IT', slug: 'landing-it', url: '', image: '', purpose: 'Kiểm thử', serviceIds: ['danava-booking'], status: 'draft', blocks: [hero, pricing, form], updated: '2026-11-23' },
+    { id: 'lp-ngoai', kind: 'external', title: 'Landing ngoài', slug: '', url: 'https://danava.vn/uu-dai', image: '', purpose: '', serviceIds: [], status: 'published', blocks: [], updated: '2026-11-23' }
+  ];
+  r = await editor.json('/api/admin/content/', { method: 'PUT', body: JSON.stringify({ data: withLanding, revision: cur.revision, mode: 'publish' }) });
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  assert.equal((await page('/lp/landing-it/')).status, 404, 'landing nháp không công khai');
+  withLanding.landings[0].status = 'published';
+  r = await editor.json('/api/admin/content/', { method: 'PUT', body: JSON.stringify({ data: withLanding, revision: r.body.revision, mode: 'publish' }) });
+  const lpHTML = await (await page('/lp/landing-it/')).text();
+  assert.ok(lpHTML.includes('LANDING_IT_TITLE') && lpHTML.includes('990.000'), 'landing hiển thị khối và bảng giá lấy từ hồ sơ sản phẩm');
+  assert.ok((await (await page('/sitemap.xml')).text()).includes('/lp/landing-it/'));
+  // Sửa giá ở hồ sơ sản phẩm → landing cập nhật theo (một nguồn dữ liệu)
+  withLanding.services = withLanding.services.map(s => s.id === 'danava-booking' ? { ...s, packages: [{ ...s.packages[0], price: '1290000' }] } : s);
+  withLanding.landings[0].slug = 'landing-it-moi';
+  r = await editor.json('/api/admin/content/', { method: 'PUT', body: JSON.stringify({ data: withLanding, revision: r.body.revision, mode: 'publish' }) });
+  assert.equal(r.status, 200, JSON.stringify(r.body));
+  assert.ok((await (await page('/lp/landing-it-moi/')).text()).includes('1.290.000'), 'giá mới hiển thị trên landing');
+  const moved = await page('/lp/landing-it/');
+  assert.equal(moved.status, 301, 'đường dẫn cũ chuyển hướng');
+  assert.ok(moved.headers.get('location').endsWith('/lp/landing-it-moi/'));
+  assert.equal((await editor.json('/api/admin/content/')).body.data.redirects.some(x => x.auto && x.from === '/lp/landing-it/'), true);
+  // Liên kết ngoài: không có trang nội bộ giả
+  assert.equal((await page('/lp/lp-ngoai/')).status, 404);
+  // Form trên landing gửi yêu cầu với nguồn lp:{slug}
+  const leadRes = await fetch(base + '/api/lead/', { method: 'POST', headers: { 'Content-Type': 'application/json', origin: base }, body: JSON.stringify({ name: 'Khách landing', phone: '0905123123', service: 'DANAVA Studio', message: 'Đăng ký từ landing', source: 'lp:landing-it-moi' }) });
+  assert.equal(leadRes.status, 201);
+  assert.ok((await sales.json('/api/admin/leads/')).body.leads.some(l => l.source === 'lp:landing-it-moi'));
+  console.log('Landing pages, product references, auto redirects and landing forms passed.');
+
+  // ---------- Bài lưu trữ biến khỏi website
+  cur = (await editor.json('/api/admin/content/')).body;
+  const archived = structuredClone(cur.data);
+  const target = archived.posts.find(p => p.id === post.id);
+  target.archived = true;
+  r = await editor.json('/api/admin/content/', { method: 'PUT', body: JSON.stringify({ data: archived, revision: cur.revision, mode: 'publish' }) });
+  assert.equal(r.status, 200);
+  assert.equal((await page(`/blogs/${post.slug}/`)).status, 404, 'bài lưu trữ không công khai');
+  assert.ok(!(await (await page('/sitemap.xml')).text()).includes(`/blogs/${post.slug}/`));
+  console.log('Archived posts hidden.');
+
   // ---------- Đăng xuất & khóa tài khoản có hiệu lực ngay
   const users = (await owner.json('/api/admin/users/')).body.users;
   const writerId = users.find(u => u.username === 'congtac').id;

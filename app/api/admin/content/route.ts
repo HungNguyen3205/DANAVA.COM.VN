@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { requirePermission, actorOf } from '@/lib/auth';
-import { discardDraft, getWorkingContent, logAction, writeContent } from '@/lib/database';
+import { discardDraft, getContent, getWorkingContent, logAction, writeContent } from '@/lib/database';
+import { autoRedirects } from '@/lib/redirects';
 import { validateContent } from '@/lib/content';
 import { contentProblem } from '@/lib/content-check';
 
@@ -46,11 +47,17 @@ export async function PUT(req: Request) {
   if (problem) return NextResponse.json({ error: problem }, { status: 400 });
   try {
     const note = typeof body.note === 'string' ? body.note.slice(0, 300) : '';
-    const next = await writeContent(data, revision as number, { draftOnly: mode === 'draft', actor: actorOf(user), note });
+    // Xuất bản: bản ghi đang công khai đổi đường dẫn → tự thêm chuyển hướng 301 từ đường dẫn cũ
+    const toSave = mode === 'publish' ? { ...data, redirects: autoRedirects((await getContent()).data, data) } : data;
+    if (!validateContent(toSave)) return NextResponse.json({ error: 'Không tạo được chuyển hướng cho đường dẫn đã đổi. Kiểm tra mục SEO & chuyển hướng.' }, { status: 400 });
+    const next = await writeContent(toSave, revision as number, { draftOnly: mode === 'draft', actor: actorOf(user), note });
     if (next === null) return NextResponse.json({ error: CONFLICT }, { status: 409 });
     await logAction(actorOf(user), mode === 'draft' ? 'luu-nhap' : 'xuat-ban', 'Nội dung website', note);
     // Website đọc dữ liệu mới ở mỗi request; xóa thêm cache trang (nếu có) để chắc chắn hiển thị bản vừa xuất bản
-    if (mode === 'publish') try { revalidatePath('/', 'layout'); } catch {}
+    if (mode === 'publish') {
+      try { revalidatePath('/', 'layout'); } catch {}
+      (globalThis as { __danavaRedirects?: unknown }).__danavaRedirects = undefined; // proxy.ts đọc lại bảng chuyển hướng
+    }
     return NextResponse.json({ revision: next, mode }, { headers: noStore });
   } catch {
     return NextResponse.json({ error: 'Không thể lưu nội dung.' }, { status: 400 });

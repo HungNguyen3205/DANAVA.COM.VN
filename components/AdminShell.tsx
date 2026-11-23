@@ -122,6 +122,7 @@ export default function AdminShell({
   const creatable = [
     { label: 'Bài viết', href: '/admin/bai-viet/?new=1', show: can(user.role, 'content.draft') },
     { label: 'Sản phẩm / dịch vụ', href: '/admin/san-pham/?new=1', show: can(user.role, 'content.draft') },
+    { label: 'Landing page', href: '/admin/landing-page/?new=1', show: can(user.role, 'content.draft') },
   ].filter(x => x.show);
   const [collapsed, setCollapsed] = useState(false);
   const [sideOpen, setSideOpen] = useState(false);

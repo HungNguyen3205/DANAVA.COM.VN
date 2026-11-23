@@ -14,10 +14,10 @@ import AdminShell, { type SearchRecord } from './AdminShell';
 import AdminOverview, { greeting } from './AdminOverview';
 import { Icon } from './AdminIcons';
 import { LEGACY_SECTIONS, sectionInfo, useAdminLeads, visibleTabs } from './adminData';
-import { initial, validateContent, type SiteData, type Post } from '@/lib/content';
+import { initial, validateContent, type SiteData } from '@/lib/content';
 import { normalizeContent } from '@/lib/content-defaults';
 import { useSite, type SaveMode } from './SiteStore';
-import { TopicsEditor, ProofEditor, ShowcaseEditor, ServiceChecks, Text, Toggle, cleanFeatures } from './AdminContentEditors';
+import { TopicsEditor, ProofEditor, ShowcaseEditor, cleanFeatures } from './AdminContentEditors';
 import { BlockEditor, BlockPanel } from './AdminBlockEditor';
 import { ChannelsEditor } from './AdminChannels';
 import { AnnaStatus } from './AdminAnnaStatus';
@@ -29,6 +29,8 @@ import { ContactBook, FormsReport, SourcesReport } from './admin/CustomerReports
 import { WebsitePagesScreen } from './admin/WebsitePagesScreen';
 import { AuditScreen, RevisionsScreen, UsersScreen } from './admin/SystemScreens';
 import { GroupsScreen, ProductsScreen } from './admin/ProductsScreen';
+import { PostsScreen } from './admin/PostsScreen';
+import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
 import type { PageTab, SitePage } from './admin/websitePages';
 import { Empty, Loading, useAdminUser, useQueryParam, useTabs } from './admin/ui';
 
@@ -61,10 +63,7 @@ function AdminWorkspace({ section }: { section: string }) {
     [draft, setDraft] = useState<SiteData>(data),
     [notice, setNotice] = useState(''),
     [dismissedError, setDismissedError] = useState(''),
-    [saving, setSaving] = useState(false),
-    [query, setQuery] = useState('');
-  const [selected, setSelected] = useQueryParam('id');
-  const [creating, setCreating] = useQueryParam('new');
+    [saving, setSaving] = useState(false);
   const importInput = useRef<HTMLInputElement>(null);
   const info = sectionInfo(section);
   const allowed = !info.perm || can(user.role, info.perm);
@@ -142,32 +141,6 @@ function AdminWorkspace({ section }: { section: string }) {
   function removePerson(id: string) {
     if (confirm('Xóa hồ sơ nhân sự này khỏi bản chỉnh sửa?'))
       setDraft({ ...draft, staff: draft.staff.filter((p) => p.id !== id) });
-  }
-  function removePost(id: string) {
-    if (confirm('Xóa bài viết này khỏi bản chỉnh sửa?')) {
-      setDraft({ ...draft, posts: draft.posts.filter((p) => p.id !== id) });
-      setSelected('');
-    }
-  }
-  function newPost() {
-    const id = uid();
-    setDraft(d => ({
-      ...d,
-      posts: [{ id, slug: `bai-viet-${id.slice(0, 8)}`, title: 'Bài viết mới', category: 'Kiến thức', date: new Date().toISOString().slice(0, 10), body: '', published: false }, ...d.posts],
-    }));
-    setSelected(id, true);
-  }
-  // Nút "Tạo mới" trên thanh trên cùng mở /admin/bai-viet/?new=1
-  useEffect(() => {
-    if (!creating || !ready || section !== 'bai-viet') return;
-    setCreating('');
-    newPost();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [creating, ready, section]);
-
-  const post = section === 'bai-viet' ? draft.posts.find((p) => p.id === selected) : undefined;
-  function editPost(patch: Partial<Post>) {
-    setDraft({ ...draft, posts: draft.posts.map((p) => (p.id === selected ? { ...p, ...patch } : p)) });
   }
   const newLeadCount = leads.filter((l) => (l.status || 'new') === 'new').length;
 
@@ -315,80 +288,6 @@ function AdminWorkspace({ section }: { section: string }) {
     </section>
   );
 
-  const postsEditor = (
-    <div className={post ? 'admin-post-layout' : ''}>
-      <section className="admin-panel">
-        <div className="panel-heading">
-          <h2>Danh sách bài viết</h2>
-          <button className="admin-secondary" onClick={newPost}>+ Viết bài mới</button>
-        </div>
-        <input className="search-input" placeholder="Tìm tiêu đề…" aria-label="Tìm tiêu đề bài viết" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>Tiêu đề</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-            <tbody>
-              {draft.posts.filter((p) => p.title.toLowerCase().includes(query.toLowerCase())).map((p) => (
-                <tr key={p.id}>
-                  <td><b>{p.title}</b><small>{p.category} · {p.date || 'Chờ ngày đăng'}</small></td>
-                  <td><span className={`badge ${p.published ? 'green' : ''}`}>{p.published ? 'Đã xuất bản' : 'Nháp'}</span></td>
-                  <td><button className="text-link" onClick={() => setSelected(p.id, true)}>Sửa</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-      {post && (
-        <section className="admin-panel post-editor">
-          <div className="panel-heading">
-            <h2>Chỉnh sửa bài viết</h2>
-            <button onClick={() => setSelected('', true)} aria-label="Đóng trình sửa">×</button>
-          </div>
-          <label>Tiêu đề<input maxLength={250} value={post.title} onChange={(e) => editPost({ title: e.target.value })} /></label>
-          <label>Đường dẫn SEO<input maxLength={150} value={post.slug} onChange={(e) => editPost({ slug: e.target.value })} /></label>
-          <MediaPicker label="Ảnh bìa bài viết" value={post.image || ''} onChange={(image) => editPost({ image })} />
-          <Text label="Tiêu đề SEO (bỏ trống = tiêu đề bài)" value={post.seoTitle || ''} max={300} onChange={(seoTitle) => editPost({ seoTitle })} />
-          <label>Mô tả SEO<textarea maxLength={300} value={post.seoDescription || ''} onChange={(e) => editPost({ seoDescription: e.target.value })} /></label>
-          <Text label="Tóm tắt (hiện trên thẻ bài và đầu bài)" value={post.excerpt || ''} area max={1000} onChange={(excerpt) => editPost({ excerpt })} />
-          <label>
-            Danh mục
-            <select value={post.topicId || ''} onChange={(e) => editPost({ topicId: e.target.value })}>
-              <option value="">Chưa phân loại</option>
-              {(draft.topics || []).map((t) => <option key={t.id} value={t.id}>{t.name}{t.published ? '' : ' (ẩn)'}</option>)}
-            </select>
-          </label>
-          <label>
-            Tác giả
-            <select value={post.authorId || ''} onChange={(e) => editPost({ authorId: e.target.value || undefined })}>
-              <option value="">DANAVA Solutions (tổ chức)</option>
-              {draft.staff.filter((p) => p.visible).map((p) => <option key={p.id} value={p.id}>{p.name} — {p.role}</option>)}
-            </select>
-            <small className="field-note">Chỉ chọn người thật sự viết bài. Bỏ trống thì tác giả là DANAVA Solutions.</small>
-          </label>
-          <ServiceChecks services={draft.services} value={post.serviceIds || []} onChange={(serviceIds) => editPost({ serviceIds })} label="Sản phẩm, dịch vụ liên quan" />
-          <label>Chuyên mục<input maxLength={100} value={post.category} onChange={(e) => editPost({ category: e.target.value })} /></label>
-          <label>Ngày đăng<input type="date" value={post.date} onChange={(e) => editPost({ date: e.target.value })} /></label>
-          <label>Ngày cập nhật (khi sửa nội dung đáng kể)<input type="date" value={post.updated || ''} onChange={(e) => editPost({ updated: e.target.value || undefined })} /></label>
-          <label>Nội dung văn bản<textarea rows={12} maxLength={60000} value={post.body} onChange={(e) => editPost({ body: e.target.value })} /></label>
-          <label className="toggle-label"><input type="checkbox" checked={post.published} onChange={(e) => editPost({ published: e.target.checked })} />Xuất bản công khai</label>
-          <Toggle label="Không cho Google lập chỉ mục bài này (noindex)" checked={!!post.noindex} onChange={(noindex) => editPost({ noindex: noindex || undefined })} />
-          <p className="field-note">
-            Bài xuất bản có đường dẫn riêng và được đưa vào sitemap (trừ bài noindex). Bài chưa xuất bản trả 404 với khách;
-            quản trị viên đang đăng nhập xem trước được tại{' '}
-            <a className="text-link" href={`/blogs/${post.slug}/`} target="_blank" rel="noopener">/blogs/{post.slug}/ ↗</a> (sau khi lưu).
-          </p>
-          <div className="panel-heading">
-            <span className="adm-btn-row">
-              <button className="admin-secondary" onClick={() => persist('draft')} disabled={saving}>Lưu nháp</button>
-              {can(user.role, 'content.publish') && <button className="admin-primary" onClick={() => persist('publish')} disabled={saving}>Xuất bản</button>}
-            </span>
-            <button className="danger" onClick={() => removePost(post.id)}>Xóa bài</button>
-          </div>
-        </section>
-      )}
-    </div>
-  );
-
   const contactSettings = (
     <section className="admin-panel">
       <h2>Thông tin liên hệ</h2>
@@ -451,11 +350,13 @@ function AdminWorkspace({ section }: { section: string }) {
     switch (section) {
       case 'tong-quan': return <AdminOverview data={data} leads={leads} />;
       case 'trang': return <WebsitePagesScreen renderTab={renderPageTab} edited={pageEdited} />;
+      case 'landing-page': return <LandingsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
+      case 'mau-khoi': return <BlockLibraryScreen />;
       case 'menu': return blockPanel('menu');
       case 'giao-dien': return blockPanel('anna');
       case 'san-pham': return <ProductsScreen draft={draft} setDraft={setDraft} studioPricing={blockPanel('pricing')} ctaText={pageTextPanel} saveBar={recordSave} />;
       case 'nhom-loai': return <GroupsScreen draft={draft} setDraft={setDraft} />;
-      case 'bai-viet': return tab === 'danh-muc' ? <TopicsEditor draft={draft} setDraft={setDraft} /> : postsEditor;
+      case 'bai-viet': return tab === 'danh-muc' ? <TopicsEditor draft={draft} setDraft={setDraft} /> : <PostsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
       case 'du-an': return tab === 'portfolio'
         ? <ShowcaseEditor draft={draft} setDraft={setDraft} />
         : <ProjectManager projects={draft.projects || []} services={draft.services} onChange={(projects) => setDraft({ ...draft, projects })} />;
@@ -494,6 +395,7 @@ function AdminWorkspace({ section }: { section: string }) {
       for (const p of draft.projects || []) out.push({ label: p.title, kind: 'Dự án', href: `/admin/du-an/?tab=du-an&id=${p.id}` });
       for (const x of draft.showcase || []) out.push({ label: x.name, kind: 'Portfolio', href: `/admin/du-an/?tab=portfolio&id=${x.id}` });
       for (const p of draft.staff) out.push({ label: p.name, kind: 'Đội ngũ', href: '/admin/thuong-hieu/?tab=doi-ngu' });
+      for (const l of draft.landings || []) out.push({ label: l.title, kind: 'Landing page', href: `/admin/landing-page/?id=${l.id}` });
     }
     if (can(user.role, 'leads.read')) for (const l of leads) out.push({ label: `${l.name} ${l.phone || ''}`.trim(), kind: 'Khách hàng', href: '/admin/khach-hang/' });
     return out;

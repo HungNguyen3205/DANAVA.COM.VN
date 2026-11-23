@@ -19,6 +19,7 @@ export function recordUrls(data: SiteData): { url: string; label: string }[] {
     if (parent) out.push({ url: `/giai-phap/${parent.slug}/${s.slug}/`, label: `Trang con “${s.title}”` });
   }
   for (const t of data.topics || []) out.push({ url: `/blogs/chu-de/${t.slug}/`, label: `Danh mục “${t.name}”` });
+  for (const l of data.landings || []) if (l.kind === 'internal') out.push({ url: `/lp/${l.slug}/`, label: `Landing page “${l.title}”` });
   return out;
 }
 

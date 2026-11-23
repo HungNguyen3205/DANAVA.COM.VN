@@ -15,6 +15,7 @@ export const FORMS: { id: string; label: string; where: string; test: (source: s
   { id: 'phieu-su-kien', label: 'Chatbot báo giá tổ chức sự kiện', where: '/dich-vu/', test: s => s === 'phieu-su-kien' },
   { id: 'dich-vu-landing-page', label: 'Form trang Landing page', where: '/dich-vu/landing-page/', test: s => s === 'dich-vu-landing-page' },
   { id: 'tuyen-dung', label: 'Form ứng tuyển', where: '/tuyen-dung/', test: s => s === '/tuyen-dung/' },
+  { id: 'landing', label: 'Form trên landing page', where: '', test: s => s.startsWith('lp:') },
 ];
 const OTHER = { id: 'khac', label: 'Form trên các trang khác', where: '' };
 
@@ -28,6 +29,7 @@ export function pageOf(source = '') {
   const s = source.trim();
   if (!s) return '(không rõ)';
   if (s.startsWith('/')) return s.split('?')[0];
+  if (s.startsWith('lp:')) return `/lp/${s.slice(3)}/`;
   try { return new URL(s).pathname; } catch { return formOf(s).where || s; }
 }
 

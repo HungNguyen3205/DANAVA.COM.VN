@@ -15,7 +15,8 @@ const config: NextConfig = {
     return [
       { source: '/admin/:path*', headers: noindex },
       { source: '/api/:path*', headers: noindex },
-      { source: '/blogs/doc/:path*', headers: noindex }
+      { source: '/blogs/doc/:path*', headers: noindex },
+      { source: '/xem-truoc-landing/:path*', headers: noindex }
     ];
   },
   async redirects() {

@@ -38,6 +38,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/du-an/', latest(...projects.map(p => p.updated))),
     ...projects.map(p => entry(`/du-an/${p.slug}/`, p.updated)),
     ...showcaseCaseStudies(data).map(x => entry(`/du-an/${x.slug}/`, x.updated)),
+    // Landing page nội bộ đã xuất bản (liên kết ngoài không có trang trên website)
+    ...(data.landings || []).filter(l => l.kind === 'internal' && l.status === 'published' && !l.noindex).map(l => entry(`/lp/${l.slug}/`, l.updated)),
     entry('/ve-danava/'),
     entry('/doi-ngu/'),
     ...data.staff.filter(p => p.visible).map(p => entry(`/doi-ngu/${p.id}/`)),

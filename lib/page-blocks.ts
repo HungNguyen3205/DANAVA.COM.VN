@@ -168,5 +168,15 @@ export function newBlock(type: BlockType): PageBlock {
   return { id: 'b' + globalThis.crypto.randomUUID().replace(/-/g, '').slice(0, 11), type, data: structuredClone(def.defaults) };
 }
 
+/** Mẫu landing page: bộ khối dựng sẵn để bắt đầu nhanh (sửa tự do sau khi tạo). */
+export const LANDING_TEMPLATES: { id: string; label: string; desc: string; types: BlockType[] }[] = [
+  { id: 'trong', label: 'Trang trống', desc: 'Chỉ có khối mở đầu.', types: ['hero'] },
+  { id: 'san-pham', label: 'Giới thiệu sản phẩm', desc: 'Mở đầu, lợi ích, thẻ sản phẩm, bảng giá, câu hỏi, đăng ký.', types: ['hero', 'features', 'product', 'pricing', 'faq', 'form'] },
+  { id: 'su-kien', label: 'Sự kiện / chương trình', desc: 'Mở đầu, giới thiệu, ảnh + chữ, bộ ảnh, kêu gọi, đăng ký.', types: ['hero', 'text', 'imageText', 'gallery', 'cta', 'form'] },
+  { id: 'thu-khach', label: 'Thu thập khách hàng', desc: 'Mở đầu, lợi ích, đăng ký.', types: ['hero', 'features', 'form'] }
+];
+
+export const blocksFromTemplate = (id: string): PageBlock[] => (LANDING_TEMPLATES.find(t => t.id === id) || LANDING_TEMPLATES[0]).types.map(newBlock);
+
 /** Nhân bản khối: dữ liệu giống hệt, ID mới. */
 export const cloneBlock = (b: PageBlock): PageBlock => ({ ...structuredClone(b), id: newBlock(b.type).id });
