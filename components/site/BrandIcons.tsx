@@ -10,12 +10,12 @@ const PATHS: Record<Exclude<BrandKey, 'zalo'>, string> = {
   x: 'M18.9 2h3.4l-7.4 8.5L23.6 22h-6.8l-5.3-7-6.1 7H2l7.9-9L1.5 2h7l4.8 6.4zm-1.2 18h1.9L7.5 3.9h-2z'
 };
 
-export function BrandIcon({ name }: { name: BrandKey }) {
+export function BrandIcon({ name, word = false }: { name: BrandKey; word?: boolean }) {
   if (name === 'zalo') {
     return (
       <svg className="br-icon br-icon--zalo" viewBox="0 0 32 32" aria-hidden="true">
         <path fill="currentColor" d="M16 3C7.7 3 1 8.3 1 15c0 3.3 1.7 6.3 4.4 8.5.2 1.9-.5 3.7-1.8 5.2 2.8 0 5.1-.9 6.9-2.4 1.7.5 3.6.7 5.5.7 8.3 0 15-5.3 15-12S24.3 3 16 3z" />
-        <text x="16" y="20" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="15" fontWeight="800">Z</text>
+        <text x="16" y={word ? 19.5 : 20} textAnchor="middle" fontFamily="Arial, sans-serif" fontSize={word ? 9 : 15} fontWeight="800">{word ? "Zalo" : "Z"}</text>
       </svg>
     );
   }

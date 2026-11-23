@@ -281,7 +281,7 @@ export function Footer() {
                 ))}
                 {zalo && (
                   <li>
-                    <a className="soc soc--zalo" href={zalo} target="_blank" rel="noopener noreferrer" title="Zalo" aria-label="Nhắn Zalo cho DANAVA (mở tab mới)"><BrandIcon name="zalo" /></a>
+                    <a className="soc soc--zalo" href={zalo} target="_blank" rel="noopener noreferrer" title="Zalo" aria-label="Nhắn Zalo cho DANAVA (mở tab mới)"><BrandIcon name="zalo" word /></a>
                   </li>
                 )}
                 {messenger && (

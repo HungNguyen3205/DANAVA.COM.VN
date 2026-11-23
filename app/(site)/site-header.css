@@ -177,3 +177,7 @@
 
 /* Ghi đè chắc chắn: Zalo là ô vuông bo góc (icon ứng dụng), không phải hình tròn */
 .s-app .s-footer .s-footer__social a.soc.soc--zalo { border-radius: 13px !important; background: #0068ff !important; width: 46px !important; height: 46px !important; }
+
+/* Zalo: nút tròn xanh, bong bóng trắng có chữ Zalo gọn */
+.s-app .s-footer .s-footer__social a.soc.soc--zalo { border-radius: 50% !important; background: #0068ff !important; width: 46px !important; height: 46px !important; }
+.s-app .s-footer__social a.soc--zalo .br-icon--zalo { width: 30px !important; height: 30px !important; }
