@@ -15,7 +15,7 @@ export function BrandIcon({ name }: { name: BrandKey }) {
     return (
       <svg className="br-icon br-icon--zalo" viewBox="0 0 32 32" aria-hidden="true">
         <path fill="currentColor" d="M16 3C7.7 3 1 8.3 1 15c0 3.3 1.7 6.3 4.4 8.5.2 1.9-.5 3.7-1.8 5.2 2.8 0 5.1-.9 6.9-2.4 1.7.5 3.6.7 5.5.7 8.3 0 15-5.3 15-12S24.3 3 16 3z" />
-        <text x="16" y="18.6" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="10.5" fontWeight="700">Zalo</text>
+        <text x="16" y="20" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="15" fontWeight="800">Z</text>
       </svg>
     );
   }
