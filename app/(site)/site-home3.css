@@ -658,9 +658,10 @@
 .hb-cover__3d.is-qr .hb-float, .hb-cover__3d.is-qr .hb-glass { opacity: 0; pointer-events: none; }
 .hb-office.is-qr .hb-office__stage { cursor: pointer; }
 
-/* Nút "Mã QR Zalo": góc trên phải khung mô hình (luôn trong màn hình khi hero đang ghim),
-   rơi xuống và nảy nhẹ ngay khi văn phòng dựng xong */
-.hb-office__qrbtn { top: 16px; right: 16px; bottom: auto; height: 40px; padding: 0 16px; border: 0; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff;
+/* Nút "Mã QR Zalo": đáy khung mô hình, nằm bên trái nút đặt lại góc nhìn; rơi xuống và nảy nhẹ ngay khi văn phòng dựng xong.
+   Khi bấm, trang cuộn tới khung 3D (xem OfficeScene) để mã QR nằm trong khung nhìn. */
+.hb-cover__3d { scroll-margin-top: calc(var(--s-header-h, 72px) + 12px); }
+.hb-office__qrbtn { top: auto; right: 62px; bottom: 16px; height: 40px; padding: 0 16px; border: 0; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff;
   font-size: 13px; box-shadow: 0 12px 26px -12px rgba(242, 107, 29, .85); }
 .hb-office__qrbtn svg { color: #fff; }
 .hb-office__qrbtn:hover { color: #fff; background: linear-gradient(90deg, #ff7a14, #e85f12); }

@@ -19,6 +19,7 @@ type Ctl = { reset: () => void; toggleQr: () => void; dispose: () => void };
 /** qrUrl: bấm vào mô hình → văn phòng biến thành bảng mã QR chữ D (./qr-board.ts) dẫn tới đường dẫn này (vd. Zalo hotline). */
 export function OfficeScene({ fallback, qrUrl }: { fallback: string; qrUrl?: string }) {
   const host = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLDivElement>(null);
   const ctl = useRef<Ctl | null>(null);
   const [ready, setReady] = useState(false);
   const [moved, setMoved] = useState(false);
@@ -54,13 +55,22 @@ export function OfficeScene({ fallback, qrUrl }: { fallback: string; qrUrl?: str
   }, [qrUrl]);
 
   return (
-    <div className={`hb-office${ready ? ' is-ready' : ''}${noGL ? ' is-fallback' : ''}${qr ? ' is-qr' : ''}`}>
+    <div ref={root} className={`hb-office${ready ? ' is-ready' : ''}${noGL ? ' is-fallback' : ''}${qr ? ' is-qr' : ''}`}>
       <div className="hb-office__stage" ref={host} role="img" aria-label="Mô hình 3D văn phòng DANAVA tại Đà Nẵng: phòng họp dài với bàn họp, ghế chân quỳ, TV trên vách lam gỗ, ghế tiếp khách, bàn làm việc có cờ Việt Nam và cửa kính nhìn ra cây xanh">
         <img className="hb-office__fallback" src={fallback} alt="" width={1100} height={825} />
       </div>
       {qrUrl && ready && (
         <>
-          <button type="button" className="hb-office__qrbtn" onClick={() => ctl.current?.toggleQr()} aria-pressed={qr}>
+          <button type="button" className="hb-office__qrbtn" aria-pressed={qr} onClick={() => {
+            const opening = !qr;
+            ctl.current?.toggleQr();
+            // Mở mã QR: cuộn trang tới khung 3D (dưới thanh tiêu đề) để mã nằm trong màn hình
+            if (opening) {
+              const block = root.current?.closest('.hb-cover__3d') as HTMLElement | null;
+              const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              block?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+            }
+          }}>
             {qr ? <><ArrowLeft aria-hidden="true" />Về văn phòng</> : <><QrCode aria-hidden="true" />Mã QR Zalo</>}
           </button>
           <p className="hb-office__qrcap" aria-live="polite">
