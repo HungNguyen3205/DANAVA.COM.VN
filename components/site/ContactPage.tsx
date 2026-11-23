@@ -14,6 +14,8 @@ import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
 import { rich } from './rich';
+import { useAnna } from './anna/AnnaProvider';
+import { MayPerch } from './anna/MayPerch';
 import { CuteChat, CuteFacebook, CuteMail, CuteMoon, CutePhone, CuteSun, CuteSupport, CuteYoutube } from './CuteIcons';
 
 type Fields = { name: string; phone: string; email: string; businessType: string; service: string; message: string };
@@ -61,6 +63,7 @@ function validate(f: Fields): Errors {
 
 export function ContactPage({ initialService }: { initialService: string }) {
   const { data } = useSite();
+  const anna = useAnna();
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
@@ -276,6 +279,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
           </div>
 
           <div className="c-form">
+            {anna.enabled && <MayPerch onPick={() => anna.ask()} />}
             <h3>Đăng ký tư vấn</h3>
             <form className="c-form__grid" onSubmit={submit} noValidate>
               <div className="s-honeypot" aria-hidden="true">
