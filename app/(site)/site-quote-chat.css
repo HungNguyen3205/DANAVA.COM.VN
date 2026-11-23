@@ -71,3 +71,6 @@
   .qc__msg { max-width: 94%; }
   .qc__input { padding: 12px 14px 16px; }
 }
+.qc-done__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 22px; }
+.qc-done__actions .qc__btn--ghost { background: #f4f6fb; color: #13244f; box-shadow: none; }
+.qc-done a:not(.qc__btn) { color: #f26b1d; font-weight: 700; }

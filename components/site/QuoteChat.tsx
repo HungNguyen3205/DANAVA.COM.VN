@@ -4,6 +4,7 @@
  * Bảng bên phải cập nhật tiến độ và báo giá tham khảo. Gửi qua /api/lead kèm bản tóm tắt phiếu.
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Bot, Check, Send } from 'lucide-react';
 import { ADVICE, SCALE_TO_TIER, SECTIONS, STEPS, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
 import { ADDONS, estimate, rangeText } from '@/lib/web-quote';
@@ -23,6 +24,7 @@ export function QuoteChat() {
   const [error, setError] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
   const thread = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const finished = index >= STEPS.length;
   const step: Step | undefined = STEPS[index];
@@ -103,7 +105,7 @@ export function QuoteChat() {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error || 'Chưa gửi được phiếu, bạn thử lại giúp mình.');
-      setStatus('done');
+      router.push('/bao-gia-web/cam-on/');
     } catch (e) {
       setStatus('error');
       setError(e instanceof Error ? e.message : 'Chưa gửi được phiếu, bạn thử lại giúp mình.');
@@ -205,7 +207,7 @@ export function QuoteChat() {
             <pre className="qc__brief">{buildBrief(answers)}</pre>
             {error && <p className="qc__error" role="alert">{error}</p>}
             <button type="button" className="qc__btn" onClick={submit} disabled={status === 'sending'}>
-              {status === 'sending' ? 'Đang gửi…' : <>Gửi phiếu cho DANAVA <Send aria-hidden="true" /></>}
+              {status === 'sending' ? 'Đang gửi…' : <>Xác nhận và gửi báo giá <Send aria-hidden="true" /></>}
             </button>
           </div>
         )}

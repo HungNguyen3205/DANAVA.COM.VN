@@ -30,6 +30,7 @@ export default function LeadsManager() {
   const { leads, setLeads, loading, error, reload } = useAdminLeads(100);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('all');
+  const [source, setSource] = useState<'all' | 'landing'>('all');
   const [selected, setSelected] = useState<AdminLead | null>(null);
 
   const [assignee, setAssignee] = useState('');
@@ -82,10 +83,11 @@ export default function LeadsManager() {
     const q = query.toLowerCase().trim();
     return leads.filter(l => {
       if (tab !== 'all' && (l.status || 'new') !== tab) return false;
+      if (source === 'landing' && l.source !== 'phieu-landing') return false;
       if (!q) return true;
       return [l.name, l.phone, l.email, l.service, l.business_type, l.assigned_to].some(v => (v || '').toLowerCase().includes(q));
     });
-  }, [leads, query, tab]);
+  }, [leads, query, tab, source]);
 
   const week = Date.now() - 7 * 86400_000;
 
@@ -137,6 +139,10 @@ export default function LeadsManager() {
             ))}
           </div>
           <div className="adm-toolbar-right">
+            <select aria-label="Lọc theo nguồn" value={source} onChange={e => setSource(e.target.value as 'all' | 'landing')}>
+              <option value="all">Tất cả nguồn</option>
+              <option value="landing">Phiếu báo giá landing</option>
+            </select>
             <label className="adm-input-icon">
               <Icon name="search" size={16} />
               <input
