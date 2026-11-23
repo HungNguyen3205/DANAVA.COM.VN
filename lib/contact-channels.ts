@@ -25,7 +25,8 @@ export function contactChannels(data: Pick<SiteData, 'blocks' | 'staff' | 'phone
   const custom = block(data, 'contact');
   const phone = data.phone || CONTACT.phone;
   const digits = phone.replace(/\D/g, '');
-  const zalo = https(custom.zalo) || (digits ? `https://zalo.me/${digits}` : '');
+  // Link Zalo mặc định của DANAVA; ô Zalo trong quản trị (nếu có) vẫn được ưu tiên
+  const zalo = https(custom.zalo) || 'https://zalo.me/2414102904298043993';
   const links: Record<SocialKey, string> = {
     facebook: https(company.facebook),
     tiktok: https(company.tiktok),
