@@ -117,7 +117,7 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
               <MayFigure className="sm__icon sm__may" /><span className="sm__label">Hỏi trợ lý AI ANNA</span>
             </button>
           )}
-          <Link className="sm__cta" href="/lien-he/" onClick={onClose}>Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
+          <Link className="sm__cta" href="/lien-he/#dang-ky-tu-van" onClick={onClose}>Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
           {channels.tel && <a className="sm__call" href={channels.tel} onClick={onClose}><Phone aria-hidden="true" />Gọi {formatPhone(channels.phone)}</a>}
           <p>{data.email || CONTACT.email}<br />{company.address}</p>
         </div>

@@ -44,7 +44,8 @@ const NAV = [
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
   { href: '/kien-thuc/', label: 'Blogs' },
   { href: '/ve-danava/', label: 'Về chúng tôi' },
-  { href: '/tuyen-dung/', label: 'Tuyển dụng' }
+  { href: '/tuyen-dung/', label: 'Tuyển dụng' },
+  { href: '/lien-he/', label: 'Liên hệ' }
 ];
 
 export function Header() {
@@ -135,7 +136,7 @@ export function Header() {
           </nav>
 
           <div className="s-header__actions">
-            <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/">Nhận tư vấn</Link>
+            <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/#dang-ky-tu-van">Nhận tư vấn</Link>
             <button
               type="button"
               className="s-burger"
@@ -247,7 +248,7 @@ export function Footer() {
 const TABS = [
   { href: '/', label: 'Trang chủ', icon: Home, match: (p: string) => p === '/' },
   { href: '/giai-phap/', label: 'Giải pháp', icon: LayoutGrid, match: (p: string) => p.startsWith('/giai-phap') || p.startsWith('/he-sinh-thai') },
-  { href: '/lien-he/', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
+  { href: '/lien-he/#dang-ky-tu-van', label: 'Tư vấn', icon: MessageCircle, match: (p: string) => p.startsWith('/lien-he'), primary: true },
   { href: '/du-an/', label: 'Dự án', icon: Briefcase, match: (p: string) => p.startsWith('/du-an') },
   { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper, match: (p: string) => p.startsWith('/kien-thuc') }
 ];

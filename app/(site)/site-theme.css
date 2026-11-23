@@ -255,7 +255,7 @@ body:has(.s-app) { background: var(--s-bg); }
 .c-tile__row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 22px; }
 
 /* ---------- 01 / Liên hệ (nền tối) ---------- */
-.c-contact { position: relative; overflow: hidden; padding: clamp(72px, 9vw, 110px) 0; background: var(--c-deep); color: #fff; }
+.c-contact { position: relative; overflow: hidden; padding: clamp(72px, 9vw, 110px) 0; background: var(--c-deep); color: #fff; scroll-margin-top: calc(var(--s-header-h, 72px) + 16px); }
 .c-contact::before { content: ""; position: absolute; width: 1000px; height: 700px; left: -300px; bottom: -300px; background: radial-gradient(closest-side, #f5ae1b1f, transparent); pointer-events: none; }
 .c-contact::after { content: ""; position: absolute; width: 800px; height: 800px; right: -300px; top: -360px; background: radial-gradient(closest-side, #53a5db26, transparent); pointer-events: none; }
 .c-contact .c-tag { color: #ffffffd9; }
