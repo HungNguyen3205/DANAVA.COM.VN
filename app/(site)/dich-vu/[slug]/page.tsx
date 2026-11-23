@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ServiceDetailPage } from '@/components/site/ServiceDetailPage';
+import { LandingLeadPage } from '@/components/site/LandingLeadPage';
 import { JsonLd } from '@/components/site/blocks';
 import { getContent } from '@/lib/database';
 import { seo, siteURL, ORG_ID, breadcrumbLD, notFoundMeta } from '@/lib/seo';
@@ -33,11 +34,15 @@ export default async function Page({ params }: Params) {
         areaServed: { '@type': 'Country', name: 'Việt Nam' }
       }} />
       <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Dịch vụ', href: '/dich-vu/' }, { label: s.title, href: `/dich-vu/${s.slug}/` }])} />
-      <ServiceDetailPage
-        service={s}
-        data={data}
-        section={{ base: '/dich-vu/', label: 'Dịch vụ', siblings: DICH_VU, siblingsTitle: 'Dịch vụ khác của DANAVA' }}
-      />
+      {s.slug === 'landing-page' ? (
+        <LandingLeadPage service={s} />
+      ) : (
+        <ServiceDetailPage
+          service={s}
+          data={data}
+          section={{ base: '/dich-vu/', label: 'Dịch vụ', siblings: DICH_VU, siblingsTitle: 'Dịch vụ khác của DANAVA' }}
+        />
+      )}
     </>
   );
 }
