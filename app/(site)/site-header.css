@@ -156,3 +156,10 @@
 .s-app .cd__btn--call { background: #f26b1d !important; color: #fff !important; }
 .s-app .cd__btn .br-icon { color: #fff; }
 .s-app .cd__btn--zalo .br-icon--zalo text { fill: #0068ff; }
+
+/* Cụm liên hệ nhanh: xếp ngang, nhỏ gọn */
+.s-app .cd { flex-direction: row !important; gap: 6px; padding: 5px; }
+.s-app .cd__btn { width: 38px !important; height: 38px !important; }
+.s-app .cd__btn svg { width: 18px !important; height: 18px !important; }
+.s-app .cd__btn .br-icon { width: 18px !important; height: 18px !important; }
+.s-app .cd__btn .br-icon--zalo { width: 22px !important; height: 22px !important; }
