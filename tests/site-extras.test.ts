@@ -48,7 +48,7 @@ test('ảnh doanh nghiệp: chặn ảnh ngoài, vị trí cắt lạ, quá số
 test('kênh liên hệ: mặc định chỉ dùng tài khoản DANAVA đã có, kênh chưa có thì không hiện', () => {
   const c = contactChannels(structuredClone(initial));
   assert.equal(c.tel, 'tel:0935917677');
-  assert.equal(c.zalo, 'https://zalo.me/0935917677');
+  assert.equal(c.zalo, 'https://zalo.me/2414102904298043993');
   assert.equal(c.messenger, 'https://m.me/danava.com.vn');
   assert.deepEqual(c.socials.map(s => s.key), ['facebook', 'tiktok', 'youtube', 'zalo']);
 });
