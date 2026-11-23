@@ -137,3 +137,22 @@
   box-shadow: 0 10px 22px -12px rgba(242, 107, 29, .9) !important; display: inline-flex; align-items: center; justify-content: center;
 }
 .s-app .s-footer .s-footer__social a:hover { background: #13244f !important; }
+
+/* Mạng xã hội: mỗi nút mang màu thương hiệu riêng, icon trắng, tròn */
+.s-app .s-footer .s-footer__social a.soc { width: 46px !important; height: 46px !important; border-radius: 50% !important; color: #fff !important; box-shadow: 0 12px 24px -14px rgba(0, 0, 0, .55) !important; transition: transform .2s ease, filter .2s ease !important; }
+.s-app .s-footer .s-footer__social a.soc:hover { transform: translateY(-3px) !important; filter: brightness(1.08); }
+.s-app .s-footer .s-footer__social a.soc--facebook { background: #1877f2 !important; }
+.s-app .s-footer .s-footer__social a.soc--tiktok { background: #010101 !important; box-shadow: -2px 0 0 #25f4ee, 2px 0 0 #fe2c55, 0 12px 24px -14px rgba(0, 0, 0, .55) !important; }
+.s-app .s-footer .s-footer__social a.soc--youtube { background: #ff0000 !important; }
+.s-app .s-footer .s-footer__social a.soc--linkedin { background: #0a66c2 !important; }
+.s-app .s-footer .s-footer__social a.soc--x { background: #000 !important; }
+.s-app .s-footer .s-footer__social a.soc--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%) !important; }
+
+/* Cụm nút liên hệ nhanh bên trái: một khối gọn (thẻ trắng bo tròn), mỗi nút màu thương hiệu */
+.s-app .cd { display: flex !important; flex-direction: column; gap: 8px; padding: 8px; border-radius: 999px; background: rgba(255, 255, 255, .92); box-shadow: 0 18px 40px -20px rgba(19, 36, 79, .55); border: 1px solid rgba(19, 36, 79, .06); }
+.s-app .cd__btn { width: 46px !important; height: 46px !important; border-radius: 50% !important; box-shadow: 0 10px 20px -12px rgba(0, 0, 0, .5) !important; }
+.s-app .cd__btn--zalo { background: #0068ff !important; color: #fff !important; }
+.s-app .cd__btn--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%) !important; color: #fff !important; }
+.s-app .cd__btn--call { background: #f26b1d !important; color: #fff !important; }
+.s-app .cd__btn .br-icon { color: #fff; }
+.s-app .cd__btn--zalo .br-icon--zalo text { fill: #0068ff; }
