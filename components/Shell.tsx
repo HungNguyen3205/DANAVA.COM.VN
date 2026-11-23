@@ -2,11 +2,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronDown, Menu, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper, Info, FolderKanban, BriefcaseBusiness, type LucideIcon } from 'lucide-react';
+import { ChevronDown, Menu, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper, Info, FolderKanban, BriefcaseBusiness, Users, type LucideIcon } from 'lucide-react';
 import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
-import { HrefIcon } from './site/icons';
+import { HrefIcon, IconBox, type Tone } from './site/icons';
 import { contactChannels } from '@/lib/contact-channels';
 import { BrandIcon } from './site/BrandIcons';
 import { MobileMenu } from './site/MobileMenu';
@@ -15,14 +15,15 @@ import { ContactSheet } from './site/ContactDock';
 /** Dòng phụ dưới tên cột mega menu (theo thứ tự cột) */
 const COL_SUB = ['Công nghệ & phần mềm', 'Truyền thông & tăng trưởng', 'Kết nối & phát triển'];
 
-type MenuItemData = { label: string; desc: string; href: string; badge: string; image: string };
+/** icon/tone tùy chọn: không có thì lấy theo đường dẫn (HrefIcon) */
+type MenuItemData = { label: string; desc: string; href: string; badge: string; image: string; icon?: LucideIcon; tone?: Tone };
 /** Một mục menu Giải pháp: trang trong website → Link; https → tab mới; không có đường dẫn → chỉ hiển thị. */
 function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
   const external = it.href.startsWith('https://');
   // Không dùng ảnh (yêu cầu 20/11/2026); mỗi mục có icon nét mảnh theo đường dẫn (yêu cầu 21/11/2026)
   const body = (
     <>
-      <HrefIcon href={it.href} className="s-mega__ico" />
+      {it.icon ? <IconBox icon={it.icon} tone={it.tone} className="s-mega__ico" /> : <HrefIcon href={it.href} className="s-mega__ico" />}
       <span className="s-mega__txt">
         <span className="s-mega__label">
           {it.label}
@@ -44,16 +45,16 @@ const ABOUT_COLS: { title: string; sub: string; items: MenuItemData[] }[] = [
   {
     title: 'Về DANAVA', sub: 'Câu chuyện & con người',
     items: [
-      { label: 'Về DANAVA', desc: 'Câu chuyện, tầm nhìn và cột mốc phát triển', href: '/ve-danava/', badge: '', image: '' },
-      { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '' }
+      { label: 'Về DANAVA', desc: 'Câu chuyện, tầm nhìn và cột mốc phát triển', href: '/ve-danava/', badge: '', image: '', icon: Info, tone: 'blue' },
+      { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '', icon: Users, tone: 'orange' }
     ]
   },
   {
     title: 'Hoạt động', sub: 'Dự án, kiến thức & cơ hội',
     items: [
-      { label: 'Dự án', desc: 'Câu chuyện triển khai thực tế cùng khách hàng', href: '/du-an/', badge: '', image: '' },
-      { label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', href: '/kien-thuc/', badge: '', image: '' },
-      { label: 'Tuyển dụng', desc: 'Cơ hội nghề nghiệp tại DANAVA', href: '/tuyen-dung/', badge: '', image: '' }
+      { label: 'Dự án', desc: 'Câu chuyện triển khai thực tế cùng khách hàng', href: '/du-an/', badge: '', image: '', icon: FolderKanban, tone: 'orange' },
+      { label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', href: '/kien-thuc/', badge: '', image: '', icon: Newspaper, tone: 'blue' },
+      { label: 'Tuyển dụng', desc: 'Cơ hội nghề nghiệp tại DANAVA', href: '/tuyen-dung/', badge: '', image: '', icon: BriefcaseBusiness, tone: 'orange' }
     ]
   }
 ];
