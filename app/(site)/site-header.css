@@ -163,3 +163,9 @@
 .s-app .cd__btn svg { width: 18px !important; height: 18px !important; }
 .s-app .cd__btn .br-icon { width: 18px !important; height: 18px !important; }
 .s-app .cd__btn .br-icon--zalo { width: 22px !important; height: 22px !important; }
+.s-app .cd { display: none !important; }
+/* Hàng liên hệ và mạng xã hội ở chân trang: các nút cùng một hàng */
+.s-app .s-footer__social { flex-wrap: nowrap; }
+.s-app .s-footer__social a.soc--call { background: #f26b1d !important; }
+.s-app .s-footer__social a.soc--zalo { background: #0068ff !important; }
+.s-app .s-footer__social a.soc--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%) !important; }

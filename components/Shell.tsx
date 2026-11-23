@@ -256,7 +256,7 @@ export function Footer() {
   const services = sortServices(data.services);
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
-  const { socials } = contactChannels(data);
+  const { socials, zalo, messenger, tel } = contactChannels(data);
 
   return (
     <footer className="s-footer">
@@ -272,13 +272,28 @@ export function Footer() {
               <a href={`mailto:${email}`}><Mail aria-hidden="true" />{email}</a>
               <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{co.address}</a>
             </div>
-            {socials.length > 0 && (
-              <ul className="s-footer__social" aria-label="DANAVA trên mạng xã hội">
+            {(socials.length > 0 || zalo || messenger || tel) && (
+              <ul className="s-footer__social" aria-label="Kênh liên hệ và mạng xã hội của DANAVA">
                 {socials.filter(s => s.key !== 'zalo').map(s => (
                   <li key={s.key}>
-                    <a className={`soc soc--${s.key}`} href={s.href} target="_blank" rel="noopener noreferrer" title={s.name} aria-label={`${s.name} của DANAVA (mở tab mới)`}>{s.key === 'zalo' ? <span className="zalo-mark"><img src="/assets/brand/zalo-logo.png" alt="" width={768} height={460} loading="lazy" /></span> : <BrandIcon name={s.key} />}</a>
+                    <a className={`soc soc--${s.key}`} href={s.href} target="_blank" rel="noopener noreferrer" title={s.name} aria-label={`${s.name} của DANAVA (mở tab mới)`}><BrandIcon name={s.key} /></a>
                   </li>
                 ))}
+                {zalo && (
+                  <li>
+                    <a className="soc soc--zalo" href={zalo} target="_blank" rel="noopener noreferrer" title="Zalo" aria-label="Nhắn Zalo cho DANAVA (mở tab mới)"><BrandIcon name="zalo" /></a>
+                  </li>
+                )}
+                {messenger && (
+                  <li>
+                    <a className="soc soc--messenger" href={messenger} target="_blank" rel="noopener noreferrer" title="Messenger" aria-label="Nhắn Messenger cho DANAVA (mở tab mới)"><BrandIcon name="messenger" /></a>
+                  </li>
+                )}
+                {tel && (
+                  <li>
+                    <a className="soc soc--call" href={tel} title="Hotline" aria-label="Gọi hotline DANAVA"><Phone aria-hidden="true" /></a>
+                  </li>
+                )}
               </ul>
             )}
           </div>
