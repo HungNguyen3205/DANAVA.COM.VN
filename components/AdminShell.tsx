@@ -5,11 +5,17 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   ArrowUpRight, Bell, Briefcase, Check, ChevronDown, ChevronRight, ExternalLink, FileText, Globe, Image as ImageIcon,
-  Inbox, Layers, LayoutGrid, LogOut, Menu, PanelLeftClose, PanelLeftOpen, PanelsTopLeft, Presentation, Save,
-  Search, Settings, TrendingUp, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, GalleryHorizontalEnd, FolderTree, Handshake, Building2, Type, Info, Network, IdCard, ScrollText, type LucideIcon,
+  Inbox, Layers, LayoutGrid, LogOut, Menu, PanelLeftClose, PanelLeftOpen, PanelsTopLeft, Plus, Save,
+  Search, Settings, Undo2, Users, X, ChartColumn, FolderOpen, Wrench, Building2, type LucideIcon,
+  Rocket, Navigation, Palette, Blocks, Tags, ContactRound, ClipboardList, PieChart, Gauge, KeyRound, Link2, Plug, History, Package,
 } from 'lucide-react';
 import { AdminNavRail, type RailSection } from './AdminNavRail';
-import { adminNav, adminSettings, allAdminItems, sectionInfo, timeAgo, csrfToken, type AdminLead } from './adminData';
+import { allAdminItems, sectionInfo, timeAgo, csrfToken, visibleNav, type AdminLead } from './adminData';
+import { ROLES, can } from '@/lib/permissions';
+import { fold, useAdminUser } from './admin/ui';
+
+/** Bản ghi cho ô tìm kiếm toàn admin. */
+export type SearchRecord = { label: string; kind: string; href: string };
 
 /* Khung quản trị theo hệ thống DriveAdmin (DatVeXeONL): thanh bên navy bo góc với nhóm menu gập được,
    thu gọn thành dải icon có danh sách nổi; topbar gồm tiêu đề trang + breadcrumb, ô "Đi tới trang…",
@@ -26,7 +32,10 @@ type Props = {
   error: string;
   onDismissNotice: () => void;
   leads: AdminLead[];
+  records?: SearchRecord[];
   counts: Record<string, number | undefined>;
+  /** Thanh tab của màn hình (nếu có) */
+  tabs?: ReactNode;
   heading?: ReactNode;
   actions?: ReactNode;
   children: ReactNode;
@@ -34,32 +43,33 @@ type Props = {
 
 const ICONS: Record<string, LucideIcon> = {
   'tong-quan': LayoutGrid,
-  'khach-hang': Inbox,
-  'thong-ke': ChartColumn,
-  'trang-chu': PanelsTopLeft,
-  'trinh-chieu': Presentation,
+  trang: PanelsTopLeft,
+  'landing-page': Rocket,
+  menu: Navigation,
+  'giao-dien': Palette,
+  'mau-khoi': Blocks,
+  'san-pham': Package,
+  'nhom-loai': Tags,
   'bai-viet': FileText,
   'du-an': Briefcase,
-  'trung-bay': GalleryHorizontalEnd,
-  'chu-de': FolderTree,
-  'bang-chung': Handshake,
-  'cong-ty': Building2,
-  'menu-giai-phap': PanelsTopLeft,
-  'chu-tren-trang': Type,
-  've-danava': Info,
-  'he-sinh-thai': Network,
-  'ho-so-nhan-su': IdCard,
-  'chinh-sach': ScrollText,
-  'giai-phap': Layers,
-  'so-lieu': TrendingUp,
+  'thuong-hieu': Building2,
+  'khach-hang': Inbox,
+  'danh-ba': ContactRound,
+  'bieu-mau': ClipboardList,
   'thu-vien': ImageIcon,
-  'nhan-su': Users,
+  'thong-ke': ChartColumn,
+  'nguon-khach': PieChart,
+  'hieu-qua': Gauge,
   'cai-dat': Settings,
+  'tai-khoan': KeyRound,
+  seo: Link2,
+  'tich-hop': Plug,
+  'nhat-ky': History,
 };
-const GROUP_ICONS: Record<string, LucideIcon> = { 'Tổng quan': LayoutGrid, 'Nội dung': FileText, 'Trang & thông tin': Building2, 'Tư liệu': FolderOpen, 'Hệ thống': Wrench };
-
-/** Menu: các nhóm của adminNav + nhóm "Hệ thống" chứa Cài đặt (để dải icon thu gọn cũng có). */
-const SECTIONS = [...adminNav, { group: 'Hệ thống', items: [adminSettings] }];
+const GROUP_ICONS: Record<string, LucideIcon> = {
+  'Tổng quan': LayoutGrid, Website: Globe, 'Sản phẩm & Dịch vụ': Layers, 'Nội dung': FileText,
+  'Khách hàng': Users, 'Tài nguyên': FolderOpen, 'Báo cáo': ChartColumn, 'Hệ thống': Wrench,
+};
 
 const read = (key: string) => {
   try {
@@ -74,15 +84,6 @@ const write = (key: string, value: string) => {
   } catch {}
 };
 
-/* Gõ không dấu cũng tìm được */
-const fold = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/Đ/g, 'D')
-    .toLowerCase();
-
 export default function AdminShell({
   section,
   dirty,
@@ -94,13 +95,23 @@ export default function AdminShell({
   error,
   onDismissNotice,
   leads,
+  records = [],
   counts,
+  tabs,
   heading,
   actions,
   children,
 }: Props) {
   const router = useRouter();
+  const user = useAdminUser();
   const info = sectionInfo(section);
+  const SECTIONS = visibleNav(user.role);
+  const [createOpen, setCreateOpen] = useState(false);
+  const createRef = useRef<HTMLDivElement>(null);
+  // Chỉ các loại đã tạo được thật trong admin
+  const creatable = [
+    { label: 'Bài viết', href: '/admin/bai-viet/?new=1', show: can(user.role, 'content.draft') },
+  ].filter(x => x.show);
   const [collapsed, setCollapsed] = useState(false);
   const [sideOpen, setSideOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
@@ -126,21 +137,23 @@ export default function AdminShell({
       if (e.key === 'Escape') {
         setBellOpen(false);
         setSideOpen(false);
+        setCreateOpen(false);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [dirty, onSave]);
 
-  // Bấm ra ngoài thì đóng thông báo
+  // Bấm ra ngoài thì đóng thông báo / menu Tạo mới
   useEffect(() => {
-    if (!bellOpen) return;
+    if (!bellOpen && !createOpen) return;
     const down = (e: MouseEvent) => {
       if (!bellRef.current?.contains(e.target as Node)) setBellOpen(false);
+      if (!createRef.current?.contains(e.target as Node)) setCreateOpen(false);
     };
     document.addEventListener('mousedown', down);
     return () => document.removeEventListener('mousedown', down);
-  }, [bellOpen]);
+  }, [bellOpen, createOpen]);
 
   // Ngăn kéo điện thoại mở thì khóa cuộn trang phía sau
   useEffect(() => {
@@ -171,6 +184,9 @@ export default function AdminShell({
   function navigate(slug: string) {
     if (leave()) router.push(`/admin/${slug}/`);
   }
+  function go(href: string) {
+    if (leave()) router.push(href);
+  }
 
   async function logout() {
     if (dirty && !confirm('Bạn có thay đổi chưa lưu. Vẫn đăng xuất?')) return;
@@ -200,11 +216,14 @@ export default function AdminShell({
   }));
 
   const words = fold(query).split(/\s+/).filter(Boolean);
-  const hits = words.length
-    ? allAdminItems.filter(i => {
-        const hay = fold(`${i.label} ${i.group} ${i.desc}`);
-        return words.every(w => hay.includes(w));
-      }).slice(0, 8)
+  const visible = new Set(SECTIONS.flatMap(g => g.items.map(i => i.slug)));
+  const has = (text: string) => { const hay = fold(text); return words.every(w => hay.includes(w)); };
+  const hits: { key: string; label: string; sub: string; href: string }[] = words.length
+    ? [
+        ...allAdminItems.filter(i => visible.has(i.slug) && has(`${i.label} ${i.group} ${i.desc}`))
+          .map(i => ({ key: 'm-' + i.slug, label: i.label, sub: i.group, href: `/admin/${i.slug}/` })),
+        ...records.filter(r => has(`${r.label} ${r.kind}`)).map((r, n) => ({ key: `r-${n}-${r.href}`, label: r.label, sub: r.kind, href: r.href })),
+      ].slice(0, 10)
     : [];
 
   return (
@@ -253,11 +272,12 @@ export default function AdminShell({
           </div>
         </div>
 
-        <AdminNavRail sections={railSections} active={section} onNavigate={navigate} />
+        <AdminNavRail sections={railSections} active={info.slug} onNavigate={navigate} />
 
         <nav className="ds-nav-full" aria-label="Quản trị DANAVA">
           {SECTIONS.map(g => (
-            <details key={g.group} className="ds-nav-group" open>
+            // Chỉ mở sẵn nhóm đang dùng; nhóm khác bấm để mở
+            <details key={g.group} className="ds-nav-group" open={g.items.some(i => i.slug === info.slug) || undefined}>
               <summary>
                 <span>{g.group}</span>
                 <ChevronRight size={13} />
@@ -265,7 +285,7 @@ export default function AdminShell({
               <div className="ds-nav-group-items">
                 {g.items.map(item => {
                   const Icon = ICONS[item.slug] || FileText;
-                  const on = section === item.slug;
+                  const on = info.slug === item.slug;
                   const count = counts[item.slug];
                   return (
                     <Link
@@ -334,37 +354,52 @@ export default function AdminShell({
               <Search size={15} />
               <input
                 ref={searchRef}
-                aria-label="Đi tới trang (Ctrl + K)"
-                placeholder="Đi tới trang…"
+                aria-label="Tìm trong admin (Ctrl + K)"
+                placeholder="Tìm mục, bài viết, sản phẩm…"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Escape') setQuery('');
-                  if (e.key === 'Enter' && hits[0]) navigate(hits[0].slug);
+                  if (e.key === 'Enter' && hits[0]) go(hits[0].href);
                 }}
               />
               {query.trim() && (
                 <div className="ds-search-popover-results">
                   {hits.length ? (
                     hits.map(n => (
-                      <button key={n.slug} type="button" onClick={() => navigate(n.slug)}>
+                      <button key={n.key} type="button" onClick={() => go(n.href)}>
                         <span className="ds-search-hit">
                           <b>{n.label}</b>
-                          <small>{n.group}</small>
+                          <small>{n.sub}</small>
                         </span>
                         <ArrowUpRight size={13} />
                       </button>
                     ))
                   ) : (
                     <p className="ds-search-empty">
-                      Không tìm thấy trang nào cho “{query.trim()}”. Thử gõ: bài viết, khách hàng, dự án, ảnh…
+                      Không tìm thấy kết quả cho “{query.trim()}”. Thử gõ tên bài viết, sản phẩm, dự án hoặc tên mục.
                     </p>
                   )}
                 </div>
               )}
             </div>
 
-            <div className="ds-bell" ref={bellRef}>
+            {creatable.length > 0 && (
+              <div className="ds-create" ref={createRef}>
+                <button type="button" className="adm-btn adm-btn-ghost ds-create-btn" aria-haspopup="menu" aria-expanded={createOpen} onClick={() => setCreateOpen(v => !v)}>
+                  <Plus size={16} /> <span>Tạo mới</span>
+                </button>
+                {createOpen && (
+                  <div className="ds-create-pop" role="menu" aria-label="Tạo mới">
+                    {creatable.map(c => (
+                      <button key={c.href} type="button" role="menuitem" onClick={() => { setCreateOpen(false); go(c.href); }}>{c.label}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {can(user.role, 'leads.read') && <div className="ds-bell" ref={bellRef}>
               <button
                 type="button"
                 className="ds-topbar-bell-btn"
@@ -410,14 +445,16 @@ export default function AdminShell({
                   </Link>
                 </div>
               )}
-            </div>
+            </div>}
 
-            <button type="button" className="ds-save-btn" onClick={onSave} disabled={!ready || !dirty || saving}>
-              {dirty ? <Save size={16} /> : <Check size={16} />}
-              <span>{saving ? 'Đang lưu…' : dirty ? 'Lưu thay đổi' : 'Đã lưu'}</span>
-            </button>
+            {can(user.role, 'content.draft') && (
+              <button type="button" className="ds-save-btn" onClick={onSave} disabled={!ready || !dirty || saving}>
+                {dirty ? <Save size={16} /> : <Check size={16} />}
+                <span>{saving ? 'Đang lưu…' : dirty ? 'Lưu thay đổi' : 'Đã lưu'}</span>
+              </button>
+            )}
 
-            <AccountMenu onLogout={logout} onSettings={() => navigate('cai-dat')} />
+            <AccountMenu onLogout={logout} onSettings={can(user.role, 'system.manage') ? () => navigate('cai-dat') : undefined} />
           </div>
         </header>
 
@@ -428,6 +465,7 @@ export default function AdminShell({
               {actions && <div className="ds-page-head-actions">{actions}</div>}
             </div>
           )}
+          {tabs}
           {children}
         </main>
       </div>
@@ -459,7 +497,10 @@ export default function AdminShell({
 }
 
 /** Nút tài khoản góc phải: ai đang đăng nhập, lối tắt và Đăng xuất. */
-function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSettings: () => void }) {
+function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSettings?: () => void }) {
+  const user = useAdminUser();
+  const role = ROLES[user.role]?.label || user.role;
+  const short = initials(user.name);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -479,20 +520,20 @@ function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSetting
   return (
     <div className="am" ref={ref}>
       <button type="button" className="ds-topbar-user-profile am-trigger" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)}>
-        <span className="ds-topbar-user-avatar">QT</span>
+        <span className="ds-topbar-user-avatar">{short}</span>
         <span className="ds-topbar-user-meta">
-          <span className="ds-topbar-user-name">Quản trị viên</span>
-          <span className="ds-topbar-user-role">Quản trị website</span>
+          <span className="ds-topbar-user-name">{user.name}</span>
+          <span className="ds-topbar-user-role">{role}</span>
         </span>
         <ChevronDown size={14} className="ds-topbar-user-chevron" />
       </button>
       {open && (
         <div className="am-pop" role="menu" aria-label="Tài khoản">
           <div className="am-card">
-            <div className="am-avatar">QT</div>
+            <div className="am-avatar">{short}</div>
             <div>
-              <strong>Quản trị viên</strong>
-              <span>Quản trị website</span>
+              <strong>{user.name}</strong>
+              <span>{role}</span>
               <small>Phiên bảo mật · 8 giờ</small>
             </div>
           </div>
@@ -502,16 +543,18 @@ function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSetting
           <a role="menuitem" href="/" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
             <ExternalLink size={17} /> Xem website
           </a>
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false);
-              onSettings();
-            }}
-          >
-            <Settings size={17} /> Cài đặt
-          </button>
+          {onSettings && (
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                onSettings();
+              }}
+            >
+              <Settings size={17} /> Cài đặt
+            </button>
+          )}
           <div className="am-sep" />
           <button
             type="button"

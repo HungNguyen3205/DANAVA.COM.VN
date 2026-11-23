@@ -2,6 +2,15 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react';
 import { ArrowRight, Eye, EyeOff, Loader2, Moon, Sun } from 'lucide-react';
 import { useSite } from './SiteStore';
+import { AdminSessionProvider, type AdminUser } from './admin/ui';
+import { isRole } from '@/lib/permissions';
+
+const OWNER: AdminUser = { id: 'owner', name: 'Chủ website', role: 'owner' };
+/** Người đang đăng nhập theo phản hồi /api/admin/session/ */
+function userOf(s: { user?: { id?: unknown; name?: unknown; role?: unknown } }): AdminUser {
+  const u = s.user;
+  return u && isRole(u.role) ? { id: String(u.id || ''), name: String(u.name || 'Quản trị viên'), role: u.role } : OWNER;
+}
 
 /* Màn đăng nhập quản trị theo DANAVA WORK (dự án Trello): thẻ lớn chia đôi — trái là bầu trời,
    mặt trời/mặt trăng và đồi núi; phải là form trắng có vệt sáng theo chuột, nút ngày/đêm,
@@ -21,7 +30,8 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     [busy, setBusy] = useState(false),
     [show, setShow] = useState(false),
     [dark, setDark] = useState(false),
-    [glow, setGlow] = useState({ x: -999, y: -999 });
+    [glow, setGlow] = useState({ x: -999, y: -999 }),
+    [user, setUser] = useState<AdminUser>(OWNER);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,6 +42,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       .then((r) => r.json())
       .then(async (s) => {
         if (s.authenticated) {
+          setUser(userOf(s));
           await refresh();
           setState('ready');
         } else setState(s.configured ? 'login' : 'setup');
@@ -68,6 +79,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       });
       const v = await r.json();
       if (!r.ok) throw Error(v.error);
+      setUser(userOf(v));
       await refresh();
       setState('ready');
     } catch (e) {
@@ -76,7 +88,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
     setBusy(false);
   }
 
-  if (state === 'ready') return children;
+  if (state === 'ready') return <AdminSessionProvider user={user}>{children}</AdminSessionProvider>;
 
   const brand = (
     <>

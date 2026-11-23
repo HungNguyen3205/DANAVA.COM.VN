@@ -10,7 +10,8 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url);
-  const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 50));
+  // Danh bạ và báo cáo nguồn khách cần đọc nhiều hơn danh sách thường
+  const limit = Math.min(1000, Math.max(1, Number(url.searchParams.get('limit')) || 50));
   const leads = await getLeads(limit);
 
   return NextResponse.json({ leads }, { headers: { 'Cache-Control': 'no-store' } });

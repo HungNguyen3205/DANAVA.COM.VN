@@ -1,28 +1,14 @@
 import Admin from '@/components/Admin';
+import { LEGACY_SECTIONS, allAdminItems } from '@/components/adminNav';
 
 export const metadata = {
   title: 'Quản trị DANAVA',
   robots: { index: false, follow: false }
 };
 
+/** Mục hiện tại + đường dẫn cũ (được chuyển sang vị trí mới khi mở). */
 export function generateStaticParams() {
-  return [
-    'tong-quan',
-    'khach-hang',
-    'trinh-chieu',
-    'thu-vien',
-    'thong-ke',
-    'du-an',
-    'trang-chu',
-    'so-lieu',
-    'bai-viet',
-    'nhan-su',
-    'giai-phap',
-    'chu-de',
-    'bang-chung',
-    'trung-bay',
-    'cai-dat'
-  ].map(section => ({ section }));
+  return [...allAdminItems.map(i => i.slug), ...Object.keys(LEGACY_SECTIONS)].map(section => ({ section }));
 }
 
 export default async function Page({
