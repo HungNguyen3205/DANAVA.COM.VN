@@ -264,9 +264,9 @@
   .td-form { grid-template-columns: minmax(0, 1fr); } /* cột hẹp: hai ô một hàng sẽ cắt chữ */
 }
 
-/* Ứng tuyển: thẻ nằm gọn trong chiều cao của form, không rơi xuống dưới khu vực */
-.td-apply__grid { align-items: start !important; }
-.td-apply__aside { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
-.td-apply .td-live--compact { --card: 196px; --strap: 82px; justify-content: flex-start; margin-top: 8px; }
-.td-apply .td-live--compact .td-live__photo { width: 72px; height: 72px; font-size: 30px; }
-.td-apply .td-live__rig { overflow: visible; }
+/* Ứng tuyển: cột trái căn giữa theo chiều dọc, kích thước thẻ giữ nguyên; email nằm dưới thẻ */
+.td-apply__grid { align-items: stretch !important; }
+.td-apply__aside { display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0; }
+.td-apply .td-live { justify-content: flex-start; }
+.td-apply__mail { margin: 0; font-size: 15px; color: #3d4a6b; }
+.td-apply__mail a { color: #f26b1d; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
