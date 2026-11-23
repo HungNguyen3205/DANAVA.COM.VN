@@ -27,7 +27,7 @@ export default function AboutPage() {
       <section className="s-about-hero">
         <div className="s-container s-split">
           <div className="s-about-hero__copy">
-            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Về DANAVA' }]} />
+            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giới thiệu' }]} />
             <p className="s-eyebrow">{copy.kicker}</p>
             <h1 className="s-h1">{rich(copy.title, 's-hl')}</h1>
             <p className="s-lead">{copy.lead}</p>

@@ -48,9 +48,9 @@ function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
 /** Mega menu "Về chúng tôi": cùng cấu trúc như menu Giải pháp (cột đánh số, mục có icon, thanh chân) */
 const ABOUT_COLS: { title: string; sub: string; items: MenuItemData[] }[] = [
   {
-    title: 'Về DANAVA', sub: 'Câu chuyện & con người',
+    title: 'Giới thiệu', sub: 'Câu chuyện & con người',
     items: [
-      { label: 'Về DANAVA', desc: 'Câu chuyện, tầm nhìn và cột mốc phát triển', href: '/ve-danava/', badge: '', image: '', icon: Info, tone: 'blue' },
+      { label: 'Giới thiệu', desc: 'Câu chuyện, tầm nhìn và cột mốc phát triển', href: '/ve-danava/', badge: '', image: '', icon: Info, tone: 'blue' },
       { label: 'Đội ngũ', desc: 'Những người trực tiếp tư vấn và triển khai', href: '/doi-ngu/', badge: '', image: '', icon: Users, tone: 'orange' }
     ]
   },
