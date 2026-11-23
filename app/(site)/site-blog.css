@@ -224,3 +224,6 @@
 .bl-card__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .bl-fresh__link { -webkit-line-clamp: 2; }
 .bl-cover__title { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Thẻ bài viết trên trang chủ: tiêu đề tối đa 2 dòng, phần thừa hiện "…" */
+.post-tile__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

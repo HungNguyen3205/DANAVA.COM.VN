@@ -11,6 +11,7 @@ import { postPhotos } from '@/lib/media';
 import { SectionHeading, CheckList } from './ui';
 import { excerpt, formatDate, SERVICE_META } from './catalog';
 import { IconTile } from './ui';
+import { sentenceCase } from '@/lib/sentence-case';
 
 export function JsonLd({ value }: { value: unknown }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLD(value) }} />;
@@ -200,7 +201,7 @@ export function PostTile({ post, data }: { post: Post; data: SiteData }) {
           <span className="s-news-cat">{topic?.name || post.category}</span>
           {post.date && <time dateTime={post.date}>{formatDate(post.date)}</time>}
         </div>
-        <h3 className="s-card__title"><Link className="s-card__cover" href={postHref(post)}>{post.title}</Link></h3>
+        <h3 className="s-card__title post-tile__title"><Link className="s-card__cover" href={postHref(post)}>{sentenceCase(post.title)}</Link></h3>
         <p className="s-card__text">{excerpt(post.excerpt || post.body, 150)}</p>
       </div>
     </article>
