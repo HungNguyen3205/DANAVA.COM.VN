@@ -219,8 +219,8 @@ export function CareersPage({ data }: { data: SiteData }) {
               <Heading id="td-apply" no="06" label="Ứng tuyển" lead={<>Điền vài dòng là xong. Bạn cũng có thể gửi CV qua email bên dưới.</>}>
                 Viết tên bạn <em>lên tấm thẻ.</em>
               </Heading>
-              <LiveBadge motto={motto} compact />
               <p className="td-apply__mail">Gửi CV qua email: <a href={`mailto:${email}?subject=${encodeURIComponent('Ứng tuyển DANAVA')}`}>{email}</a></p>
+              <LiveBadge motto={motto} compact />
             </div>
             <ApplyForm />
           </div>
