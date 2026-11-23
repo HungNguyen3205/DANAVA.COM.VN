@@ -9,7 +9,7 @@
    - .cs-*  Case study sản phẩm (Vinhomes Hải Vân Bay)
    ========================================================================== */
 .s-app {
-  --h-serif: var(--font-display);
+  --h-serif: var(--font-sans);
   --h-gold: #ffc233;
   --h-orange: #f6a21f;
   --h-cream: #f8f4ec;

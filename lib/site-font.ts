@@ -1,11 +1,9 @@
-import { Be_Vietnam_Pro, Playfair_Display } from 'next/font/google';
+import { Be_Vietnam_Pro } from 'next/font/google';
 
 /*
- * Hệ chữ duy nhất của toàn dự án (website, trang 404 và CMS):
- *  - Be Vietnam Pro: chữ nội dung và giao diện (--font-sans)
- *  - Playfair Display: tiêu đề trang và tiêu đề mục (--font-display)
- * next/font tải về lúc build và tự phục vụ; trình duyệt không gọi Google.
- * Token dùng trong CSS nằm ở app/fonts.css.
+ * Hệ chữ duy nhất của toàn dự án (website, trang 404 và CMS): Be Vietnam Pro.
+ * Các độ đậm 400–800, subset Latin và Vietnamese; next/font tải lúc build và tự phục vụ,
+ * trình duyệt không gọi Google. Token dùng trong CSS nằm ở app/fonts.css.
  */
 export const siteFont = Be_Vietnam_Pro({
   subsets: ['vietnamese', 'latin', 'latin-ext'],
@@ -14,11 +12,4 @@ export const siteFont = Be_Vietnam_Pro({
   variable: '--font-bvp'
 });
 
-export const displayFont = Playfair_Display({
-  subsets: ['vietnamese', 'latin', 'latin-ext'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-playfair'
-});
-
-export const fontVariables = `${siteFont.variable} ${displayFont.variable}`;
+export const fontVariables = siteFont.variable;

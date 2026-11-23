@@ -5,7 +5,7 @@
    Kem #f8f4ec · Navy #0b132b · Xanh #2b4294 · Vàng #ffc233 · Cam #f6a21f
    ========================================================================== */
 .h-home {
-  --h-serif: var(--font-display);
+  --h-serif: var(--font-sans);
   --h-cream: #f8f4ec;
   --h-cream-2: #efe8db;
   --h-gold: #ffc233;
@@ -220,7 +220,7 @@
   .h-journey__years { font-size: 15px; gap: 14px; }
 }
 /* ---------- 07 Sản phẩm số (dùng cả ở trang Website & Landing Page) ---------- */
-.h-works { --h-serif: var(--font-display); --h-orange: #f6a21f; --h-cream: #f8f4ec; }
+.h-works { --h-serif: var(--font-sans); --h-orange: #f6a21f; --h-cream: #f8f4ec; }
 .h-works:not(.h-sec--cream) { background: var(--h-cream); }
 .h-works__more { display: flex; justify-content: center; margin-top: clamp(28px, 4vw, 44px); }
 .h-works__more .h-link { margin-top: 0; }

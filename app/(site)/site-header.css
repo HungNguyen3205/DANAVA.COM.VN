@@ -88,3 +88,15 @@
 
 /* Chân trang: gradient dọc, đậm ở trên, nhạt dần xuống dưới */
 .s-app .s-footer { background: linear-gradient(180deg, #13244f 0%, #1f3a8a 50%, #3d5bd0 100%) !important; }
+
+/* Font thống nhất (Be Vietnam Pro): các nhãn, số và chú thích trước đây nghiêng nay đứng */
+.s-app :is(h1, h2, h3, h4) em,
+.s-app :is(h1, h2, h3, h4) i,
+.s-app .bl-fresh__title,
+.s-app .bl-polaroid figcaption,
+.s-app .c-moments__track figcaption,
+.s-app .h-goals__n,
+.s-app .h-eco__n,
+.s-app .h-mosaic__i--0 figcaption,
+.s-app .cs-highlights__n,
+.s-app .u-goals__n { font-style: normal; }

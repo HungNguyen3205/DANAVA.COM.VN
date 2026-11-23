@@ -1,13 +1,24 @@
 /*
- * Hệ chữ của toàn dự án — chỉ khai báo phông ở đây (lib/site-font.ts).
- * CSS khác chỉ dùng hai token:
+ * Hệ chữ của toàn dự án: chỉ dùng Be Vietnam Pro (lib/site-font.ts).
+ * Hai token dùng trong CSS:
  *   var(--font-sans)     chữ nội dung, nút, biểu mẫu, nhãn
- *   var(--font-display)  tiêu đề trang (h1) và tiêu đề mục (h2)
+ *   var(--font-display)  tiêu đề (h1, h2, h3): cùng họ, khác độ đậm
+ * Font hệ thống là phương án dự phòng khi tải lỗi.
  */
 :root {
   --font-sans: var(--font-bvp), 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  --font-display: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-display: var(--font-sans);
 }
 body, button, input, select, textarea { font-family: var(--font-sans); }
-/* Số luôn cao bằng nhau (Playfair mặc định dùng số kiểu cổ, cao thấp lệch nhau, khó đọc) */
+
+/* Quy chuẩn cấp chữ: tiêu đề chắc, nội dung nhẹ hơn. Class riêng của từng khối vẫn có thể ghi đè. */
+:where(h1) { font-weight: 800; line-height: 1.2; letter-spacing: -.02em; }
+:where(h2) { font-weight: 700; line-height: 1.25; letter-spacing: -.015em; }
+:where(h3) { font-weight: 700; line-height: 1.3; letter-spacing: -.01em; }
+:where(p, li, dd) { line-height: 1.65; }
+
+/* Không dùng chữ nghiêng cho tiêu đề và nhãn: nhấn mạnh trong tiêu đề vẫn đứng */
+:where(h1, h2, h3, h4) em, :where(h1, h2, h3, h4) i { font-style: normal; }
+
+/* Số luôn cao bằng nhau */
 html { font-variant-numeric: lining-nums; }
