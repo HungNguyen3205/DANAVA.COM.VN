@@ -6,7 +6,7 @@
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, FolderKanban, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
 import { MayFigure } from './anna/MayFigure';
 import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
@@ -19,11 +19,16 @@ import { useAnna } from './anna/AnnaProvider';
 const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/giai-phap/', label: 'Tất cả giải pháp', icon: LayoutGrid },
   { href: '/he-sinh-thai/', label: 'Hệ sinh thái', icon: Network },
-  { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper },
-  { href: '/ve-danava/', label: 'Về chúng tôi', icon: Info },
   { href: '/doi-ngu/', label: 'Đội ngũ', icon: Users },
-  { href: '/tuyen-dung/', label: 'Tuyển dụng', icon: BriefcaseBusiness },
   { href: '/lien-he/', label: 'Liên hệ', icon: MessageCircle }
+];
+
+/** Nhóm "Về chúng tôi" (gom Dự án, Blogs, Tuyển dụng như menu máy tính) */
+const ABOUT_PAGES: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: '/ve-danava/', label: 'Về DANAVA', icon: Info },
+  { href: '/du-an/', label: 'Dự án', icon: FolderKanban },
+  { href: '/kien-thuc/', label: 'Blogs', icon: Newspaper },
+  { href: '/tuyen-dung/', label: 'Tuyển dụng', icon: BriefcaseBusiness }
 ];
 
 /** Khách yêu cầu "01. VẬN HÀNH"; menu máy tính vẫn giữ "Vận hành DANAVA". */
@@ -96,6 +101,19 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
               </ul>
             </section>
           ))}
+
+          <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-about">
+            <h2 className="sm__subtitle" id="sm-group-about">Về chúng tôi</h2>
+            <ul>
+              {ABOUT_PAGES.map(({ href, label, icon: Icon }) => (
+                <li key={href}>
+                  <Link className="sm__row sm__row--page" href={href} onClick={onClose} aria-current={current(href)}>
+                    <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-more">
             <h2 className="sm__subtitle" id="sm-group-more">Khám phá</h2>

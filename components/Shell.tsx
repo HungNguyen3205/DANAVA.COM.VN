@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronDown, Menu, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper } from 'lucide-react';
+import { ChevronDown, Menu, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper, Info, FolderKanban, BriefcaseBusiness, type LucideIcon } from 'lucide-react';
 import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
@@ -39,13 +39,12 @@ function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
   return <Link className={cls} href={it.href} onClick={onPick}>{body}</Link>;
 }
 
-const NAV = [
-  { href: '/du-an/', label: 'Dự án' },
-  { href: '/he-sinh-thai/', label: 'Hệ sinh thái' },
-  { href: '/kien-thuc/', label: 'Blogs' },
-  { href: '/ve-danava/', label: 'Về chúng tôi' },
-  { href: '/tuyen-dung/', label: 'Tuyển dụng' },
-  { href: '/lien-he/', label: 'Liên hệ' }
+/** Menu "Về chúng tôi" (gom Dự án, Blogs, Tuyển dụng như mục Giải pháp) */
+const ABOUT: { href: string; label: string; desc: string; icon: LucideIcon }[] = [
+  { href: '/ve-danava/', label: 'Về DANAVA', desc: 'Câu chuyện, tầm nhìn và đội ngũ', icon: Info },
+  { href: '/du-an/', label: 'Dự án', desc: 'Case study và sản phẩm đã triển khai', icon: FolderKanban },
+  { href: '/kien-thuc/', label: 'Blogs', desc: 'Kiến thức, hướng dẫn và tin tức', icon: Newspaper },
+  { href: '/tuyen-dung/', label: 'Tuyển dụng', desc: 'Cơ hội nghề nghiệp tại DANAVA', icon: BriefcaseBusiness }
 ];
 
 export function Header() {
@@ -54,6 +53,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const closeMenu = useCallback(() => setOpen(false), []);
   const [mega, setMega] = useState(false);
+  const [about, setAbout] = useState(false);
+  const aboutRef = useRef<HTMLLIElement | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const megaRef = useRef<HTMLLIElement | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -62,7 +63,17 @@ export function Header() {
   useEffect(() => {
     setOpen(false);
     setMega(false);
+    setAbout(false);
   }, [path]);
+
+  useEffect(() => {
+    if (!about) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setAbout(false); };
+    const onClick = (e: MouseEvent) => { if (aboutRef.current && !aboutRef.current.contains(e.target as Node)) setAbout(false); };
+    window.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onClick);
+    return () => { window.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
+  }, [about]);
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 8);
@@ -127,11 +138,36 @@ export function Header() {
                   )}
                 </div>
               </li>
-              {NAV.map(item => (
-                <li key={item.href} className="s-nav__item">
-                  <Link className="s-nav__link" href={item.href} aria-current={active(item.href) ? 'page' : undefined}>{item.label}</Link>
-                </li>
-              ))}
+              <li className="s-nav__item">
+                <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}>Hệ sinh thái</Link>
+              </li>
+              <li ref={aboutRef} className={`s-nav__item s-nav__item--drop${about ? ' is-open' : ''}`} onMouseEnter={() => setAbout(true)} onMouseLeave={() => setAbout(false)}>
+                <button
+                  type="button"
+                  className="s-nav__link"
+                  aria-expanded={about}
+                  aria-controls="s-drop-about"
+                  aria-current={ABOUT.some(x => active(x.href)) ? 'page' : undefined}
+                  onClick={() => setAbout(v => !v)}
+                >
+                  Về chúng tôi <ChevronDown aria-hidden="true" />
+                </button>
+                <div className="s-drop" id="s-drop-about">
+                  <ul>
+                    {ABOUT.map(it => (
+                      <li key={it.href}>
+                        <Link className="s-drop__link" href={it.href} onClick={() => setAbout(false)} aria-current={active(it.href) ? 'page' : undefined}>
+                          <span className="s-drop__ico" aria-hidden="true"><it.icon /></span>
+                          <span className="s-drop__txt"><b>{it.label}</b><small>{it.desc}</small></span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+              <li className="s-nav__item">
+                <Link className="s-nav__link" href="/lien-he/" aria-current={active('/lien-he/') ? 'page' : undefined}>Liên hệ</Link>
+              </li>
             </ul>
           </nav>
 
