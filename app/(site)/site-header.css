@@ -53,12 +53,18 @@ body:has(.h-home) .s-app .s-header { margin-bottom: -84px; }
   height: 38px; padding: 0 16px; border-radius: 12px;
   font-size: 15.5px; font-weight: 700; color: #13244f;
 }
-.s-app .s-header .s-nav__link::after { display: none; }
+.s-app .s-header .s-nav__link::after {
+  content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 3px; border-radius: 3px;
+  background: #f26b1d; transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+}
 .s-app .s-header .s-nav__link:hover { background: #f4f6fb; }
+/* Trang đang xem: chữ cam, gạch chân cam bên dưới (không dùng ô nền) */
 .s-app .s-header .s-nav__link[aria-current='page'],
 .s-app .s-header .s-nav__item.is-open > .s-nav__link {
-  background: #fff1e6 !important; color: #e85d1a !important; font-weight: 700;
+  background: transparent !important; color: #e85d1a !important; font-weight: 700;
 }
+.s-app .s-header .s-nav__link[aria-current='page']::after,
+.s-app .s-header .s-nav__item.is-open > .s-nav__link::after { transform: scaleX(1); }
 
 /* Panel "Về chúng tôi": 2 cột, cùng kiểu với menu Giải pháp */
 .s-app .s-mega--about { width: min(720px, calc(100vw - 48px)); }
