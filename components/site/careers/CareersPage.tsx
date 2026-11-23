@@ -216,10 +216,9 @@ export function CareersPage({ data }: { data: SiteData }) {
         <section className="td-sec td-apply" id="ung-tuyen" aria-labelledby="td-apply">
           <div className="s-container td-apply__grid">
             <div className="td-apply__aside">
-              <Heading id="td-apply" no="06" label="Ứng tuyển" lead={<>Điền vài dòng là xong. Bạn cũng có thể gửi CV qua email bên dưới.</>}>
+              <Heading id="td-apply" no="06" label="Ứng tuyển" lead={<>Điền vài dòng là xong. Hoặc gửi CV qua email <a className="td-apply__mail" href={`mailto:${email}?subject=${encodeURIComponent('Ứng tuyển DANAVA')}`}>{email}</a>.</>}>
                 Viết tên bạn <em>lên tấm thẻ.</em>
               </Heading>
-              <p className="td-apply__mail">Gửi CV qua email: <a href={`mailto:${email}?subject=${encodeURIComponent('Ứng tuyển DANAVA')}`}>{email}</a></p>
               <LiveBadge motto={motto} compact />
             </div>
             <ApplyForm />

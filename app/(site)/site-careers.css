@@ -268,5 +268,4 @@
 .td-apply__grid { align-items: stretch !important; }
 .td-apply__aside { display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0; }
 .td-apply .td-live { justify-content: flex-start; }
-.td-apply__mail { margin: 0; font-size: 15px; color: #3d4a6b; }
-.td-apply__mail a { color: #f26b1d; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.s-app .td-apply__mail { color: #f26b1d; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
