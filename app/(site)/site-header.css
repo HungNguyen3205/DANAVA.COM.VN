@@ -114,3 +114,12 @@
 .s-app .s-footer__social a:hover { background: #13244f; color: #fff; }
 .s-app .s-footer__social .br-icon--zalo text { fill: #f26b1d; }
 .s-app .s-footer__social a:hover .br-icon--zalo text { fill: #13244f; }
+
+/* Nút Zalo ở chân trang: dùng logo Zalo gốc trên nền trắng, dạng viên thuốc */
+.s-app .s-footer__social a.is-zalo { width: auto; min-width: 0; height: 46px; padding: 0 16px; border-radius: 999px; background: #fff; box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .35); }
+.s-app .s-footer__social a.is-zalo:hover { background: #fff; transform: translateY(-2px); }
+.s-app .s-footer__social a.is-zalo img { display: block; height: 22px; width: auto; max-width: none; }
+
+/* Logo Zalo gốc có nhiều khoảng trắng: phóng và cắt viền để chữ Zalo đủ rõ trong nút */
+.s-app .s-footer__social a.is-zalo { width: 84px; height: 46px; padding: 0; overflow: hidden; justify-content: center; }
+.s-app .s-footer__social a.is-zalo img { height: 46px; width: auto; transform: scale(1.9); transform-origin: center; }
