@@ -255,6 +255,10 @@
 
 /* 4 ô giải pháp */
 .hb-solutions { padding: 0 0 clamp(36px, 5vw, 64px); background: var(--hb-cream); }
+/* Số liệu nằm dưới phần giải pháp (không còn trong bìa): khoảng cách gọn trên mọi kích thước màn hình */
+.hb-numbers { padding: 0 0 clamp(44px, 6vw, 72px); background: var(--hb-cream); }
+.hb-numbers .hb-stats { margin-top: 0; }
+.hb-numbers .hb-src { margin: 12px 0 0; }
 .hb-sol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
 .hb-sol a { position: relative; display: flex; align-items: flex-start; gap: 14px; height: 100%; padding: 20px 34px 20px 18px; border-radius: 20px; background: #fff; color: var(--hb-navy); text-decoration: none; box-shadow: 0 16px 34px -28px rgba(19, 36, 79, .5); border: 1px solid #f1e9dc; transition: transform .2s, box-shadow .2s, border-color .2s; }
 .hb-sol a:hover { transform: translateY(-4px); border-color: rgba(242, 107, 29, .35); box-shadow: 0 24px 40px -26px rgba(19, 36, 79, .5); }

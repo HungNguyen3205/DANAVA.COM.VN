@@ -145,12 +145,6 @@ export default function HomePage({ data }: { data: SiteData }) {
           </div>
         </div>
         </div>
-        <div className="s-container">
-          <dl className="hb-stats">
-            {A.stats.map(st => <div key={st.label}><dd><CountUp value={st.value} /></dd><dt>{st.label}</dt></div>)}
-          </dl>
-          <p className="hb-src">Số liệu trên nền tảng danava.vn · {A.checked}</p>
-        </div>
       </section>
 
       {/* Giải pháp — 4 ô nhanh ngay dưới bìa */}
@@ -171,6 +165,17 @@ export default function HomePage({ data }: { data: SiteData }) {
               );
             })}
           </ul>
+        </div>
+      </section>
+
+      {/* Số liệu DANAVA — nằm dưới phần giải pháp; các con số đếm lên khi cuộn tới (CountUp) */}
+      <section className="hb-numbers" aria-labelledby="t-num">
+        <div className="s-container">
+          <h2 className="s-sr" id="t-num">Số liệu của DANAVA</h2>
+          <dl className="hb-stats">
+            {A.stats.map(st => <div key={st.label}><dd><CountUp value={st.value} /></dd><dt>{st.label}</dt></div>)}
+          </dl>
+          <p className="hb-src">Số liệu trên nền tảng danava.vn · {A.checked}</p>
         </div>
       </section>
 
