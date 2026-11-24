@@ -1,0 +1,25 @@
+
+> danava-company-website@2.0.0 test:integration
+> node scripts/integration-test.mjs
+
+▲ Next.js 16.4.6
+- Local:         http://127.0.0.1:4185
+- Network:       http://127.0.0.1:4185
+✓ Ready in 0ms
+✓ Running next.config took 11ms
+Server ready; checking protected CMS endpoints.
+(node:5156) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Authenticated image upload, format validation and serving passed.
+Lead submission, anti-spam, duplicate protection, admin retrieval and assignment passed.
+CMS save and conflict protection passed; checking SSR and sitemap.
+SEO and draft isolation passed; checking analytics.
+Analytics passed; checking restart persistence and logout.
+▲ Next.js 16.4.6
+- Local:         http://127.0.0.1:4185
+- Network:       http://127.0.0.1:4185
+✓ Ready in 0ms
+✓ Running next.config took 10ms
+(node:14348) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS: authentication, CSRF, revision conflicts, durable CMS, dynamic SSR/SEO, draft isolation, sitemap, local fonts, analytics timing and admin exclusion, logout.

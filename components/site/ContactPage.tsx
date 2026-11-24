@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useSubmitLock } from './useSubmitLock';
 import {
   Phone, Mail, MapPin, CheckCircle2, AlertCircle, ArrowRight, MessageCircle,
   ThumbsUp, PlayCircle, Clock, LifeBuoy, Globe, Copy, Check, UserPlus
@@ -124,6 +125,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
     if (errors[key]) setErrors(prev => ({ ...prev, [key]: undefined }));
   };
 
+  const lock = useSubmitLock();
   async function submit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     const found = validate(fields);
@@ -282,7 +284,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
           <div className="c-form">
             {anna.enabled && <MayPerch onPick={() => anna.ask()} />}
             <h3>Đăng ký tư vấn</h3>
-            <form className="c-form__grid" onSubmit={submit} noValidate>
+            <form className="c-form__grid" onSubmit={lock(submit)} noValidate>
               <div className="s-honeypot" aria-hidden="true">
                 <label htmlFor="contact-website-trap">Website</label>
                 <input id="contact-website-trap" name="website_trap" tabIndex={-1} autoComplete="off" value={trap} onChange={e => setTrap(e.target.value)} />

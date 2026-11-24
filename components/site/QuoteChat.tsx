@@ -5,6 +5,7 @@
  * qua /api/lead (nguồn theo từng loại phiếu). Hai loại: landing page / website và tổ chức sự kiện.
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useSubmitLock } from './useSubmitLock';
 import { useRouter } from 'next/navigation';
 import { Bot, Check, Send } from 'lucide-react';
 import { ADVICE, SCALE_TO_TIER, SECTIONS, STEPS, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
@@ -114,6 +115,7 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   const brief = buildBrief(answers, steps, cfg.sections, cfg.title);
 
   /** Khách xác nhận: gửi vào admin rồi sang trang cảm ơn */
+  const lock = useSubmitLock();
   const submit = async () => {
     setStatus('sending');
     setError('');
@@ -224,7 +226,7 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
             <p>Mình đã có đủ thông tin. Bạn kiểm tra lại rồi xác nhận để DANAVA nhận phiếu nhé.</p>
             <pre className="qc__brief">{brief}</pre>
             {error && <p className="qc__error" role="alert">{error}</p>}
-            <button type="button" className="qc__btn" onClick={submit} disabled={status === 'sending'}>
+            <button type="button" className="qc__btn" onClick={lock(submit)} disabled={status === 'sending'}>
               {status === 'sending' ? 'Đang gửi…' : <>Xác nhận và gửi báo giá <Send aria-hidden="true" /></>}
             </button>
           </div>

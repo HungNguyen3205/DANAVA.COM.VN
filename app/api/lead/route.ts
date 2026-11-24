@@ -1,15 +1,28 @@
 import { NextResponse } from 'next/server';
 import { saveLead, checkRecentDuplicateLead } from '@/lib/database';
 import { isValidPhoneNumber } from '@/lib/contact-services';
+import { sameOrigin } from '@/lib/origin';
 
 export const dynamic = 'force-dynamic';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Biểu mẫu lớn nhất (nội dung ≤ 5.000 ký tự + các trường khác) còn xa giới hạn này. */
+const MAX_BODY = 32_000;
 
 export async function POST(req: Request) {
+  // Chỉ nhận từ chính website (biểu mẫu, landing page, báo giá nhanh) — chặn trang ngoài gửi hộ
+  if (!sameOrigin(req)) return NextResponse.json({ error: 'Yêu cầu không hợp lệ.' }, { status: 403 });
+  if (Number(req.headers.get('content-length') || 0) > MAX_BODY) return NextResponse.json({ error: 'Nội dung quá dài.' }, { status: 413 });
+  let body: Record<string, unknown>;
   try {
-    const body = await req.json();
-    if (!body || typeof body !== 'object') {
+    const raw = await req.text();
+    if (raw.length > MAX_BODY) return NextResponse.json({ error: 'Nội dung quá dài.' }, { status: 413 });
+    body = JSON.parse(raw);
+  } catch {
+    return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
+  }
+  try {
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
     }
 

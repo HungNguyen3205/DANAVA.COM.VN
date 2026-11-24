@@ -689,3 +689,7 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
   .ax-scope .lv-bar__right .lv-status { display: none; }
   .ax-scope .lv-status--sm { display: inline-flex; max-width: 50%; }
 }
+/* Danh sách có ảnh nhỏ: tên dài không có khoảng trắng (vd. tên miền) được ngắt dòng, không đẩy nút ra ngoài khung */
+.ax-scope .project-admin-row { min-width: 0; }
+.ax-scope .project-admin-row > span:not(.adm-thumb) { min-width: 0; overflow-wrap: anywhere; }
+.ax-scope .adm-row > .row-actions { flex: none; }

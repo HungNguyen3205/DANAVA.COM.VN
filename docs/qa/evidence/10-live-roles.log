@@ -1,0 +1,16 @@
+EVAL 1
+EVAL "đăng nhập"
+EVAL "ĐĂNG NHẬP (giao diện): true owner"
+EVAL [201,201]
+EVAL 1
+EVAL "đăng nhập"
+EVAL "ĐĂNG NHẬP (giao diện): true writer"
+EVAL "CỘNG TÁC VIÊN: nút trên thanh: Xem | Chỉnh sửa | Lưu nháp"
+EVAL "CỘNG TÁC VIÊN lưu nháp: {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã lưu nháp\",\"editing\":null}"
+EVAL "CỘNG TÁC VIÊN gọi thẳng API xuất bản: 403"
+EVAL "CÔNG KHAI không đổi: có CTV=false"
+EVAL 1
+EVAL "đăng nhập"
+EVAL "ĐĂNG NHẬP (giao diện): true sales"
+EVAL "KINH DOANH mở Chỉnh trực tiếp: {\"iframe\":false,\"text\":\"Chọn một trang để sửa chữ, ảnh và các khối nội dung của trang đó.\\n\\nKhông có dữ liệu\\n\\nTài khoản của bạn chưa được cấp quy\"}"
+EVAL "KINH DOANH mở ?cms=1: thấy nháp CTV=false"

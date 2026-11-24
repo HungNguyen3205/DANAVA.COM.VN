@@ -1,0 +1,968 @@
+[
+ {
+  "module": "Hệ thống/Đăng nhập",
+  "scenario": "Đăng nhập chủ website bằng mật khẩu máy chủ",
+  "expected": "200 + vai trò owner",
+  "actual": "200 owner",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Đăng nhập",
+  "scenario": "Sai mật khẩu",
+  "expected": "401, không cấp cookie",
+  "actual": "401 cookie=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Đăng nhập",
+  "scenario": "Đăng nhập từ nguồn khác (Origin lạ)",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/content/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/leads/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/media/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/users/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/audit/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/analytics/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Chưa đăng nhập",
+  "scenario": "GET /api/admin/revisions/ không có phiên",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/CSRF",
+  "scenario": "PUT nội dung thiếu mã CSRF",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/CSRF",
+  "scenario": "PUT nội dung từ Origin lạ (có CSRF)",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Phản hồi",
+  "scenario": "Phiên đăng nhập không trả mật khẩu / hash / token",
+  "expected": "Không có trường nhạy cảm",
+  "actual": "configured,authenticated,csrf,user",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Tài khoản",
+  "scenario": "Tạo tài khoản vai trò admin (tên có dấu)",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Tài khoản",
+  "scenario": "Tạo tài khoản vai trò editor (tên có dấu)",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Tài khoản",
+  "scenario": "Tạo tài khoản vai trò writer (tên có dấu)",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Tài khoản",
+  "scenario": "Tạo tài khoản vai trò sales (tên có dấu)",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Tài khoản",
+  "scenario": "Tạo trùng tên đăng nhập",
+  "expected": "409",
+  "actual": "409",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Tài khoản",
+  "scenario": "Mật khẩu quá ngắn",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Phản hồi",
+  "scenario": "Danh sách tài khoản không lộ mật khẩu/hash",
+  "expected": "Không có trường password/hash",
+  "actual": "200 {\"users\":[{\"id\":\"usr_207937b2-02f\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/content/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/media/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/leads/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/users/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/audit/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/analytics/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin GET /api/admin/revisions/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/content/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/media/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/leads/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/users/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/audit/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/analytics/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor GET /api/admin/revisions/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/content/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/media/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/leads/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/users/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/audit/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/analytics/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer GET /api/admin/revisions/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/content/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/media/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/leads/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/users/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/audit/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/analytics/",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales GET /api/admin/revisions/",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin lưu nháp nội dung",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin xuất bản nội dung",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor lưu nháp nội dung",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor xuất bản nội dung",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer lưu nháp nội dung",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer xuất bản nội dung",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales lưu nháp nội dung",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales xuất bản nội dung",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "writer tải ảnh (media.write)",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "sales tải ảnh (không có media.write)",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "editor tạo tài khoản (không có users.manage)",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Phân quyền/Ma trận",
+  "scenario": "admin tự nâng vai trò owner cho tài khoản khác",
+  "expected": "400/403 (không có vai trò owner gán được)",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Nháp",
+  "scenario": "Lưu nháp chữ màn mở đầu (có dấu)",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Nháp",
+  "scenario": "Đọc lại bản nháp qua API admin",
+  "expected": "Có chữ nháp",
+  "actual": "QA_NHAP_Đồng_hành_cc4ed1",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /?cms=1",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /sitemap.xml",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /robots.txt",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /blogs/",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /ve-danava/",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /api/anna/",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách mở /lien-he/",
+  "expected": "Không chứa chữ nháp",
+  "actual": "200 chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "Khách giả header x-danava-cms: 1",
+  "expected": "Không chứa chữ nháp",
+  "actual": "chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/Lộ bản nháp",
+  "scenario": "sales (không có content.read) mở /?cms=1",
+  "expected": "Không chứa chữ nháp",
+  "actual": "chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Nháp",
+  "scenario": "Admin (content.read) mở /?cms=1 thấy bản nháp",
+  "expected": "Chứa chữ nháp",
+  "actual": "chứa nháp=true",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Nháp",
+  "scenario": "Admin mở / (không ?cms=1) vẫn thấy bản công khai",
+  "expected": "Không chứa chữ nháp",
+  "actual": "chứa nháp=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Xuất bản",
+  "scenario": "Xuất bản bản nháp",
+  "expected": "200",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Xuất bản",
+  "scenario": "Website công khai cập nhật ngay sau xuất bản (không cache cũ)",
+  "expected": "Trang chủ chứa chữ mới",
+  "actual": "chứa=true",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Xung đột",
+  "scenario": "Phiên khác lưu với mã chỉnh sửa cũ",
+  "expected": "409, không ghi đè",
+  "actual": "409",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Xung đột",
+  "scenario": "Bấm Xuất bản hai lần cùng mã (double submit)",
+  "expected": "Lần 2 → 409, không tạo phiên bản trùng",
+  "actual": "200/409",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Toàn vẹn",
+  "scenario": "Sửa một trường không làm mất dữ liệu mục khác",
+  "expected": "posts/services/staff giữ nguyên",
+  "actual": "200",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Đường dẫn nút javascript:",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Chữ màn mở đầu quá dài (> 80)",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Khóa lạ trong màn mở đầu",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Email liên hệ sai kiểu (số)",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Ảnh doanh nghiệp trỏ ra ngoài",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Thân yêu cầu không phải JSON",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Kiểm tra BE",
+  "scenario": "Dữ liệu quá lớn (> 2 MB)",
+  "expected": "413",
+  "actual": "413",
+  "status": "PASS"
+ },
+ {
+  "module": "Bảo mật/XSS",
+  "scenario": "Chữ có <script> lưu được nhưng hiển thị dạng chữ",
+  "expected": "HTML công khai không có thẻ script chèn vào",
+  "actual": "200 escaped=true",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Đường dẫn",
+  "scenario": "Hai bài viết trùng slug",
+  "expected": "Bị từ chối (400/409) hoặc cảnh báo",
+  "actual": "400 {\"error\":\"Đường dẫn /blogs/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-",
+  "status": "PASS"
+ },
+ {
+  "module": "Nội dung/Tham chiếu",
+  "scenario": "Bài viết + landing page tham chiếu sản phẩm không tồn tại (gửi thẳng API)",
+  "expected": "Trang bài viết, Blogs và landing vẫn 200, không lỗi máy chủ",
+  "actual": "lưu 200; bài 200, Blogs 200, Giải pháp 200",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Lịch sử",
+  "scenario": "Danh sách phiên bản có các lần xuất bản",
+  "expected": "≥ 2 phiên bản",
+  "actual": "200 n=7",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Lịch sử",
+  "scenario": "Khôi phục phiên bản không tồn tại",
+  "expected": "404",
+  "actual": "404",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Lịch sử",
+  "scenario": "writer khôi phục phiên bản (không có quyền xuất bản)",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Nhật ký",
+  "scenario": "Nhật ký thao tác ghi đăng nhập/xuất bản/tạo tài khoản",
+  "expected": "Có các loại thao tác",
+  "actual": "200 21 mục",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Gửi yêu cầu tư vấn hợp lệ (tiếng Việt)",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Gửi lặp ngay (double submit) cùng SĐT",
+  "expected": "429, không tạo trùng",
+  "actual": "429",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Thiếu họ tên",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "SĐT sai",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Email sai",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Nội dung > 5.000 ký tự",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "JSON hỏng",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Bot điền trường bẫy (honeypot)",
+  "expected": "201 giả, không lưu",
+  "actual": "201 lưu=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Gửi từ website khác (Origin lạ)",
+  "expected": "403 (chặn gửi hộ từ trang ngoài)",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Thân yêu cầu rất lớn (3 MB)",
+  "expected": "413 hoặc máy chủ đóng kết nối sớm; không lưu",
+  "actual": "413, lưu=false",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Yêu cầu",
+  "scenario": "Yêu cầu hiển thị trong admin đúng dữ liệu, chỉ 1 bản",
+  "expected": "1 bản, tên có dấu đúng",
+  "actual": "1 bản, Trần Thị Bích Ngọc",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Yêu cầu",
+  "scenario": "sales phân công + đổi trạng thái",
+  "expected": "200, lưu lại được",
+  "actual": "200 status=contacted assigned_to=QA Nguyễn Kinh Doanh",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Yêu cầu",
+  "scenario": "Cập nhật yêu cầu không tồn tại",
+  "expected": "404",
+  "actual": "404",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Yêu cầu",
+  "scenario": "Trạng thái không hợp lệ",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Khách hàng/Yêu cầu",
+  "scenario": "editor xem khách hàng (không có leads.read)",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Website/Tuyển dụng",
+  "scenario": "Ứng tuyển từ Origin lạ",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "Website/Tuyển dụng",
+  "scenario": "Ứng tuyển thiếu dữ liệu",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Tải ảnh",
+  "scenario": "Tải PNG hợp lệ",
+  "expected": "201 + đường dẫn /assets/uploads/*.webp",
+  "actual": "201 /assets/uploads/0bf07409-e8cd-4472-abcd-b8a3e15dc2bf.webp",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Tải ảnh",
+  "scenario": "Tải JPEG hợp lệ",
+  "expected": "201",
+  "actual": "201",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Tải ảnh",
+  "scenario": "File chữ đổi đuôi thành ảnh",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Tải ảnh",
+  "scenario": "PNG hỏng (đúng chữ ký, dữ liệu rác)",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Tải ảnh",
+  "scenario": "SVG chứa script",
+  "expected": "400",
+  "actual": "400",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Tải ảnh",
+  "scenario": "Ảnh > 6 MB",
+  "expected": "413 hoặc máy chủ đóng kết nối sớm; không thêm ảnh",
+  "actual": "413, ảnh 3→3",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Phục vụ ảnh",
+  "scenario": "Ảnh tải lên được phục vụ đúng loại, chặn đoán MIME",
+  "expected": "200 image/webp + nosniff",
+  "actual": "200 image/webp nosniff=nosniff",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Phục vụ ảnh",
+  "scenario": "Đường dẫn vượt thư mục ../",
+  "expected": "404/400",
+  "actual": "404",
+  "status": "PASS"
+ },
+ {
+  "module": "Tài nguyên/Thư viện",
+  "scenario": "Ảnh mới có trong danh sách thư viện",
+  "expected": "Có",
+  "actual": "3 ảnh",
+  "status": "PASS"
+ },
+ {
+  "module": "Báo cáo/Truy cập",
+  "scenario": "Ghi một lượt xem từ khách",
+  "expected": "2xx",
+  "actual": "204",
+  "status": "PASS"
+ },
+ {
+  "module": "Báo cáo/Truy cập",
+  "scenario": "Lượt xem của admin đang đăng nhập không được tính",
+  "expected": "204, không tăng số liệu",
+  "actual": "204",
+  "status": "PASS"
+ },
+ {
+  "module": "Báo cáo/Truy cập",
+  "scenario": "Ghi lượt xem từ Origin lạ",
+  "expected": "204 (bỏ qua)",
+  "actual": "204",
+  "status": "PASS"
+ },
+ {
+  "module": "Báo cáo/Truy cập",
+  "scenario": "Số lượt xem trong báo cáo tăng đúng 1",
+  "expected": "+1 pageview",
+  "actual": "0 → 1",
+  "status": "PASS"
+ },
+ {
+  "module": "Tương tác/ANNA",
+  "scenario": "Trạng thái khi chưa có khóa AI",
+  "expected": "ready=false",
+  "actual": "200 {\"ready\":false}",
+  "status": "PASS"
+ },
+ {
+  "module": "Tương tác/ANNA",
+  "scenario": "Hỏi ANNA khi dịch vụ AI chưa sẵn sàng",
+  "expected": "503 unavailable (giao diện chuyển sang báo giá nhanh)",
+  "actual": "503 {\"code\":\"unavailable\"}",
+  "status": "PASS"
+ },
+ {
+  "module": "Tương tác/ANNA",
+  "scenario": "Hỏi ANNA từ Origin lạ",
+  "expected": "403",
+  "actual": "403",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Sitemap",
+  "scenario": "sitemap.xml có trang, không có admin/xem trước/bài lưu trữ",
+  "expected": "> 20 URL, không /admin, /xem-truoc",
+  "actual": "60 URL",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Robots",
+  "scenario": "robots.txt chặn /admin và /api, khai báo sitemap",
+  "expected": "Disallow /admin, /api; Sitemap",
+  "actual": "User-Agent: * Allow: / Disallow: /admin/ Disallow: /api/ Disallow: /blogs/doc/ Disallow: /xem-truoc-landing/ Host: http://localhost:4187 Sitemap: http://localho",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Tiêu đề",
+  "scenario": "Tiêu đề ≤ 70 ký tự trên 60 URL",
+  "expected": "0 tiêu đề quá dài",
+  "actual": "/: 83 ký tự — \"DANAVA Solutions — Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ\" | /blogs/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-nang/: 101 ký tự — \"CẢM ƠN [TEAM TUMY] CÁC CÂU LẠC BỘ YOGA ĐÃ ĐỒNG HÀNH – CHUỖI SỰ KIỆN CỔNG NĂNG LƯỢNG 05/05 TẠI ĐÀ NẴNG\" | /blogs/2-yoga-workshop-yoga-tri-lieu-co-vai-gay-voi-chu-de-cot-song-la-cu",
+  "status": "FAIL"
+ },
+ {
+  "module": "SEO/Trang công khai",
+  "scenario": "Mọi URL trong sitemap (60) trả 200, có title, description, canonical đúng, og:image, đúng 1 H1, không CSS admin",
+  "expected": "Không có vấn đề",
+  "actual": "OK",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Trang lỗi",
+  "scenario": "Đường dẫn không tồn tại",
+  "expected": "404 + trang lỗi thân thiện, noindex",
+  "actual": "404 noindex=true",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Trang lỗi",
+  "scenario": "Bài viết không tồn tại",
+  "expected": "404",
+  "actual": "404",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Trang lỗi",
+  "scenario": "Sản phẩm không tồn tại",
+  "expected": "404",
+  "actual": "404",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Chuyển hướng",
+  "scenario": "Đường dẫn cũ /kien-thuc → /blogs/",
+  "expected": "Chuyển hướng vĩnh viễn tới /blogs/, tối đa 2 bước",
+  "actual": "308→/kien-thuc/ 308→/blogs/",
+  "status": "PASS"
+ },
+ {
+  "module": "SEO/Noindex",
+  "scenario": "Trang admin có X-Robots-Tag noindex",
+  "expected": "noindex",
+  "actual": "noindex, nofollow",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Phiên",
+  "scenario": "Đăng xuất làm phiên mất hiệu lực",
+  "expected": "Sau đăng xuất GET nội dung → 401",
+  "actual": "200 → 401",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Phiên",
+  "scenario": "Phiên hết hạn (sửa expires trong database thử nghiệm)",
+  "expected": "401",
+  "actual": "401",
+  "status": "PASS"
+ },
+ {
+  "module": "Hệ thống/Đăng nhập",
+  "scenario": "Đăng nhập sai liên tục bị giới hạn",
+  "expected": "Sau 10 lần sai → 429",
+  "actual": "429",
+  "status": "PASS"
+ }
+]

@@ -6,6 +6,7 @@
  */
 import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
+import { useSubmitLock } from './useSubmitLock';
 import { ArrowRight, Check, MessageCircle, Send } from 'lucide-react';
 import { isValidPhoneNumber } from '@/lib/contact-services';
 import { CONTACT } from '@/components/site/catalog';
@@ -36,6 +37,7 @@ export function LandingLeadPage({ service }: { service: Service }) {
 
   const mood: Mood = status === 'done' ? 'sent' : typing ? 'listening' : 'hello';
 
+  const lock = useSubmitLock();
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setError('');
@@ -107,7 +109,7 @@ export function LandingLeadPage({ service }: { service: Service }) {
             ) : (
               <form
                 className="lp-form"
-                onSubmit={submit}
+                onSubmit={lock(submit)}
                 onFocus={() => setTyping(true)}
                 onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setTyping(false); }}
                 noValidate

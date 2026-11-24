@@ -1,0 +1,32 @@
+EVAL 1
+EVAL "đăng nhập"
+EVAL "ĐĂNG NHẬP (giao diện): true owner"
+EVAL "BỐ CỤC khớp website (cùng tiêu đề H1 với trang công khai): Cùng bạn phát triển. Kiến tạo hệ sinh thái Wellness. | trang công khai chứa: true"
+EVAL true
+EVAL "BÀN PHÍM (nút Chỉnh sửa → Tab tới phần → Enter): {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã xuất bản\",\"editing\":\"hero.kicker = DANAVA Solutions\"}"
+EVAL "ĐANG GÕ (trước Esc): {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã xuất bản\",\"editing\":\"hero.kicker = DANAVA So XYZlutions\"}"
+EVAL "SAU ESC (chữ khôi phục, trạng thái): DANAVA Solutions | Đã xuất bản"
+EVAL "GÕ TIẾNG VIỆT + CON TRỎ (chờ đồng bộ giữa chừng): {\"mode\":\"Chỉnh sửa\",\"status\":\"Chưa lưu\",\"editing\":\"hero.line1 = Đồng hành bền vững.\"}"
+EVAL "DANAVA Solutio Dán nhiều dòngns"
+EVAL "DÁN (chỉ chữ thuần, gộp dòng): {\"html\":\"DANAVA Solutio Dán nhiều dòngns\",\"hasTag\":false}"
+EVAL "NHIỀU DÒNG (Enter xuống dòng): {\"mode\":\"Chỉnh sửa\",\"status\":\"Chưa lưu\",\"editing\":\"hero.lead = DANAVA – Nền tảng hệ sinh thái số dành riêng cho ngành Wellness tại Việt Nam: phần mềm quản lý DANAVA Studio, website, truyền thông và sự kiện — một đầu mối cho doan
+EVAL "THANH CÔNG CỤ trong khung nhìn: bar on=false"
+EVAL "POPOVER NÚT trong khung nhìn: {\"pop\":[100,585,420,803],\"bar\":[100,475,354],\"vw\":1440,\"vh\":844,\"inside\":true}"
+EVAL 1
+EVAL 1
+EVAL "/assets/about/office.webp"
+EVAL 1
+EVAL 1
+EVAL "ẢNH trên trang: /assets/about/office.webp | alt=Phòng họp DANAVA — ảnh QA | pos=center top"
+EVAL "HOÀN TÁC (bỏ mô tả/cắt ảnh): alt=Người tham gia chụp ảnh chung tại Soundbath Live Concert 2024 pos="
+EVAL "LÀM LẠI: alt=Phòng họp DANAVA — ảnh QA pos=center top"
+EVAL "LƯU NHÁP: {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã lưu nháp\",\"editing\":null}"
+EVAL "TẢI LẠI: bản nháp còn: {\"line1\":\"Đồng hành bền vững.\",\"lead\":\"bạn.\\nDòng thứ hai QA\",\"nut\":\"Đặt lịch tư vấn QA -> /lien-he/?service=danava-studio\",\"anh\":\"/assets/about/office.webp alt=Phòng họp DANAVA — ảnh QA\"}"
+EVAL "KHÁCH (không cookie) thấy bản công khai cũ: {\"chu\":false,\"nut\":false,\"anh2\":\"/assets/verified/post-13591.webp\"}"
+EVAL "XUẤT BẢN: {\"mode\":\"Xem\",\"status\":\"Đã xuất bản\",\"editing\":null}"
+EVAL "CÔNG KHAI sau xuất bản (khách): {\"chu\":true,\"nut\":true,\"anh2\":\"/assets/about/office.webp\",\"alt\":true,\"dongMoi\":true}"
+EVAL "CÔNG KHAI sau tải lại trình duyệt: {\"h1\":\"Đồng hành bền vững. Kiến tạo hệ sinh thái Wellness.\",\"nut\":\"Đặt lịch tư vấn QA -> /lien-he/?service=danava-studio\",\"anh\":\"/assets/about/office.webp\"}"
+EVAL "CHỌN câu dẫn dùng chung: pages.mac-dinh.ctaLead / Dải cuối trang: câu dẫn (dùng chung)"
+EVAL "TRANG DÙNG CHUNG cập nhật: {\"gioiThieu\":true,\"baiViet\":\"/blogs/chu-de/ true\"}"
+EVAL ERROR {"exceptionId":1,"text":"Uncaught","lineNumber":0,"columnNumber":478,"scriptId":"4","exception":{"type":"object","subtype":"error","className":"SyntaxError","description":"SyntaxError: Unexpected end of input","objectId":"-5057501595328966808.2.2"}}
+EVAL "DỮ LIỆU DÙNG CHUNG trên bài viết + Giới thiệu: {\"cam-on-team-tumy-cac-cau-lac-bo-yoga-da-\":true,\"cong-nang-luong\":true,\"thien-tra\":true,\"ve-danava\":true}"

@@ -1,11 +1,13 @@
 'use client';
 /** Biểu mẫu đăng ký trên landing page: gửi về mục Khách hàng với nguồn "lp:{slug}". */
 import { useState, type FormEvent } from 'react';
+import { useSubmitLock } from './useSubmitLock';
 
 export function LandingForm({ slug, service, buttonLabel }: { slug: string; service: string; buttonLabel: string }) {
   const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle');
   const [error, setError] = useState('');
 
+  const lock = useSubmitLock();
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -31,7 +33,7 @@ export function LandingForm({ slug, service, buttonLabel }: { slug: string; serv
 
   if (state === 'done') return <div className="lpb-form lpb-form--done" role="status"><b>Cảm ơn bạn!</b><p>DANAVA đã nhận thông tin và sẽ liên hệ lại trong ngày làm việc.</p></div>;
   return (
-    <form className="lpb-form" onSubmit={submit} noValidate>
+    <form className="lpb-form" onSubmit={lock(submit)} noValidate>
       <label>Họ và tên<input name="name" autoComplete="name" maxLength={150} required /></label>
       <label>Số điện thoại<input name="phone" type="tel" autoComplete="tel" maxLength={25} required /></label>
       <label>Email (tùy chọn)<input name="email" type="email" autoComplete="email" maxLength={200} /></label>

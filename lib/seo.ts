@@ -16,6 +16,8 @@ export const indexable = process.env.DANAVA_NOINDEX !== '1'
   && !(process.env.VERCEL && process.env.VERCEL_ENV !== 'production');
 
 export const BRAND = 'DANAVA Solutions';
+/** Tiêu đề tìm kiếm tối đa (kèm hậu tố thương hiệu) trước khi bỏ hậu tố. */
+export const TITLE_MAX = 65;
 export const ORG_ID = `${siteURL}/#organization`;
 
 /** Ghép đường dẫn tương đối với tên miền chính; giữ nguyên URL tuyệt đối. */
@@ -38,12 +40,14 @@ type SeoOptions = {
  * `title` KHÔNG chứa tên thương hiệu: layout gốc tự thêm " | DANAVA Solutions".
  */
 export function seo(title: string, description: string, path: string, image = '/assets/danava-logo.png', options: SeoOptions = {}): Metadata {
-  const fullTitle = options.absoluteTitle ? title : `${title} | ${BRAND}`;
+  // Tiêu đề dài: bỏ hậu tố thương hiệu để Google không cắt mất phần chính (giữ ≤ ~65 ký tự khi có thể)
+  const absolute = options.absoluteTitle || `${title} | ${BRAND}`.length > TITLE_MAX;
+  const fullTitle = absolute ? title : `${title} | ${BRAND}`;
   const url = absoluteURL(path);
   const img = absoluteURL(image || '/assets/danava-logo.png');
   const desc = description.replace(/\s+/g, ' ').trim().slice(0, 300);
   return {
-    title: options.absoluteTitle ? { absolute: title } : title,
+    title: absolute ? { absolute: title } : title,
     description: desc,
     alternates: { canonical: url },
     ...(options.noindex ? { robots: { index: false, follow: true } } : {}),

@@ -1,0 +1,137 @@
+{
+ "report": [
+  {
+   "w": 360,
+   "page": "san-pham/?id=studio#Gói & giá",
+   "issues": [
+    {
+     "kind": "cuon-ngang",
+     "el": "ax-content",
+     "extra": "402>360"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-san-pham_id_studio_G_i_gi_.png"
+  },
+  {
+   "w": 360,
+   "page": "du-an#Portfolio",
+   "issues": [
+    {
+     "kind": "loi-khung",
+     "el": "button \"↓\"",
+     "extra": "lệch 5px khỏi admin-panel"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-du-an_Portfolio.png"
+  },
+  {
+   "w": 360,
+   "page": "du-an/?tab=portfolio",
+   "issues": [
+    {
+     "kind": "loi-khung",
+     "el": "button \"↓\"",
+     "extra": "lệch 5px khỏi admin-panel"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-du-an_tab_portfolio.png"
+  },
+  {
+   "w": 360,
+   "page": "du-an/?tab=portfolio#Portfolio",
+   "issues": [
+    {
+     "kind": "loi-khung",
+     "el": "button \"↓\"",
+     "extra": "lệch 5px khỏi admin-panel"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-du-an_tab_portfolio_Portfolio.png"
+  },
+  {
+   "w": 360,
+   "page": "nhat-ky#Sao lưu & nhập",
+   "issues": [
+    {
+     "kind": "xuong-dong",
+     "el": "button.admin-secondary \"Bổ sung kho nội dung DANAVA đã đối chiếu\"",
+     "extra": "2 dòng"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-nhat-ky_Sao_l_u_nh_p.png"
+  },
+  {
+   "w": 360,
+   "page": "nhat-ky/?tab=nhat-ky#Sao lưu & nhập",
+   "issues": [
+    {
+     "kind": "xuong-dong",
+     "el": "button.admin-secondary \"Bổ sung kho nội dung DANAVA đã đối chiếu\"",
+     "extra": "2 dòng"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-nhat-ky_tab_nhat-ky_Sao_l_u_nh_p.png"
+  },
+  {
+   "w": 360,
+   "page": "nhat-ky/?tab=sao-luu",
+   "issues": [
+    {
+     "kind": "xuong-dong",
+     "el": "button.admin-secondary \"Bổ sung kho nội dung DANAVA đã đối chiếu\"",
+     "extra": "2 dòng"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-nhat-ky_tab_sao-luu.png"
+  },
+  {
+   "w": 360,
+   "page": "nhat-ky/?tab=sao-luu#Nhật ký thao tác",
+   "issues": [
+    {
+     "kind": "tran-chu",
+     "el": "button.ax-tab.is-on \"Nhật ký thao tác\"",
+     "extra": "270>141"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-nhat-ky_tab_sao-luu_Nh_t_k_thao_t_c.png"
+  },
+  {
+   "w": 360,
+   "page": "nhat-ky/?tab=sao-luu#Sao lưu & nhập",
+   "issues": [
+    {
+     "kind": "xuong-dong",
+     "el": "button.admin-secondary \"Bổ sung kho nội dung DANAVA đã đối chiếu\"",
+     "extra": "2 dòng"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\360-nhat-ky_tab_sao-luu_Sao_l_u_nh_p.png"
+  },
+  {
+   "w": 1024,
+   "page": "nhat-ky/?tab=sao-luu#Nhật ký thao tác",
+   "issues": [
+    {
+     "kind": "tran-chu",
+     "el": "button.ax-tab.is-on \"Nhật ký thao tác\"",
+     "extra": "270>141"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\1024-nhat-ky_tab_sao-luu_Nh_t_k_thao_t_c.png"
+  },
+  {
+   "w": 1440,
+   "page": "nhat-ky/?tab=sao-luu#Nhật ký thao tác",
+   "issues": [
+    {
+     "kind": "tran-chu",
+     "el": "button.ax-tab.is-on \"Nhật ký thao tác\"",
+     "extra": "270>141"
+    }
+   ],
+   "shot": "C:\\Users\\Surface\\AppData\\Local\\Temp\\claude\\9e421e7cd75324dd\\a01e2c2a-0afa-48e7-b618-99094ddd88aa\\scratchpad\\audit-shots\\1440-nhat-ky_tab_sao-luu_Nh_t_k_thao_t_c.png"
+  }
+ ],
+ "errors": []
+}

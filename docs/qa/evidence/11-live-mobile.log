@@ -1,0 +1,8 @@
+EVAL 1
+EVAL "đăng nhập"
+EVAL "ĐĂNG NHẬP (giao diện): true owner"
+EVAL "chạm 700ms"
+EVAL "CHẠM GIỮ nhãn nhỏ (sát mép trên): {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã lưu nháp\",\"editing\":\"hero.kicker = DANAVA Solutions CTV\"}"
+EVAL "THANH CÔNG CỤ trong màn hình: {\"bar\":[54,67,254,105],\"vw\":390,\"vh\":741,\"inside\":true}"
+EVAL "chạm 80ms"
+EVAL "POPOVER NÚT trong màn hình: {\"pop\":[16,407,336,625],\"vw\":390,\"vh\":741,\"inside\":true,\"trang\":\"/\"}"

@@ -1,0 +1,8 @@
+Accounts and API permissions passed.
+Draft isolation, conflict and publish passed.
+History, restore into draft and discard passed.
+Duplicate URL check passed.
+New product create/publish passed.
+Landing pages, product references, auto redirects and landing forms passed.
+Archived posts hidden.
+PASS: accounts, permissions, server drafts, conflicts, history/restore, duplicate URLs, new products, audit log.

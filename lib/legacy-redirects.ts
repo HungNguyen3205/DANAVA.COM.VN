@@ -251,11 +251,6 @@ export const legacyRedirects=[
     "permanent": true
   },
   {
-    "source": "/dich-vu/truyen-thong/",
-    "destination": "/giai-phap/su-kien-truyen-thong/",
-    "permanent": true
-  },
-  {
     "source": "/team/",
     "destination": "/doi-ngu/",
     "permanent": true

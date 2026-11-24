@@ -1,0 +1,106 @@
+[
+ {
+  "module": "Tương tác/3D",
+  "scenario": "Mô hình 3D dựng xong và bấm \"Mã QR Zalo\" đổi sang bảng mã",
+  "expected": "Lớp is-ready + is-qr",
+  "actual": "hb-office is-ready is-qr",
+  "status": "PASS",
+  "evidence": "screens/home-3d-qr.jpg"
+ },
+ {
+  "module": "Tương tác/3D",
+  "scenario": "Có chuyển động: cuộn qua vùng ghim dựng văn phòng 3D",
+  "expected": "Mô hình sẵn sàng (is-ready), không lỗi JS",
+  "actual": "hb-cover__3d is-intro is-building | hb-office is-ready",
+  "status": "PASS",
+  "evidence": "screens/home-3d-scroll-built.jpg"
+ },
+ {
+  "module": "Website công khai",
+  "scenario": "61 URL ở 1440px: không lỗi JS/console, không request lỗi, không ảnh hỏng, không tràn ngang, không tải trình chỉnh/CSS admin",
+  "expected": "Không có vấn đề",
+  "actual": "OK",
+  "status": "PASS",
+  "evidence": "browser-public-1440.txt"
+ },
+ {
+  "module": "Website công khai",
+  "scenario": "61 URL ở 390px: không lỗi JS/console, không request lỗi, không ảnh hỏng, không tràn ngang, không tải trình chỉnh/CSS admin",
+  "expected": "Không có vấn đề",
+  "actual": "OK",
+  "status": "PASS",
+  "evidence": "browser-public-390.txt"
+ },
+ {
+  "module": "Website công khai/Responsive",
+  "scenario": "Chụp 10 trang đại diện ở 360/390/768/1024/1440px",
+  "expected": "Có ảnh để rà soát",
+  "actual": "50 ảnh trong screens/public-*",
+  "status": "PASS",
+  "evidence": "screens/"
+ },
+ {
+  "module": "Website/Bàn phím",
+  "scenario": "Phím Tab đầu tiên tới liên kết \"Đến nội dung chính\", hiện rõ",
+  "expected": "Liên kết #main, hiển thị trên màn hình",
+  "actual": "{\"text\":\"Đến nội dung chính\",\"href\":\"#main\",\"visible\":true,\"outline\":true}",
+  "status": "PASS",
+  "evidence": "screens/keyboard-skip-link.jpg"
+ },
+ {
+  "module": "Website/Truy cập",
+  "scenario": "Mọi ô nhập của biểu mẫu Liên hệ có nhãn",
+  "expected": "0 ô thiếu nhãn",
+  "actual": "OK (undefined)",
+  "status": "PASS",
+  "evidence": ""
+ },
+ {
+  "module": "Tương tác/3D",
+  "scenario": "Giảm chuyển động: mô hình 3D vẫn hiển thị (khung tĩnh), không lỗi",
+  "expected": "Có canvas hoặc ảnh dự phòng, không lỗi JS",
+  "actual": "{\"office\":\"hb-office is-ready\",\"canvas\":true,\"fallback\":true}",
+  "status": "PASS",
+  "evidence": "screens/home-reduced-motion.jpg"
+ },
+ {
+  "module": "Tương tác/ANNA",
+  "scenario": "Không có khóa AI: API báo chưa sẵn sàng (giao diện dùng báo giá nhanh)",
+  "expected": "ready=false",
+  "actual": "{\"ready\":false}",
+  "status": "PASS",
+  "evidence": ""
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Mạng chậm (1,5 s trễ): nút gửi bị khóa khi đang gửi; bấm 2 lần chỉ tạo 1 yêu cầu",
+  "expected": "Nút disabled, 1 bản ghi, có thông báo thành công",
+  "actual": "disabled=true, bản ghi=1, phản hồi=\"Cảm ơn bạn! Yêu cầu tư vấn đã được gửi thành công đến DANAVA Solutions. Chuyên v\"",
+  "status": "PASS",
+  "evidence": "screens/contact-sending-slow-network.jpg, screens/contact-sent.jpg"
+ },
+ {
+  "module": "Khách hàng/Biểu mẫu",
+  "scenario": "Mất mạng khi gửi: báo lỗi rõ, giữ nội dung đang nhập",
+  "expected": "Thông báo mất kết nối + nội dung còn nguyên",
+  "actual": "{\"text\":\"Không có kết nối mạng. Vui lòng thử lại hoặc gọi hotline.\",\"kept\":\"Mất mạng khi gửi — thử nghiệm QA\"}",
+  "status": "PASS",
+  "evidence": "screens/contact-offline.jpg"
+ },
+ {
+  "module": "Hệ thống/Cảnh báo chưa lưu",
+  "scenario": "Sửa Cài đặt rồi chuyển mục trong admin",
+  "expected": "Hộp xác nhận \"Rời màn hình này?\"",
+  "actual": "Rời màn hình này?\n\nBạn có thay đổi chưa lưu. Rời đi thì thay đổi chưa lưu sẽ mất.\n\nHủy\nRời đi",
+  "status": "PASS",
+  "evidence": "screens/admin-unsaved-bar.jpg, screens/admin-leave-confirm.jpg"
+ },
+ {
+  "module": "Hệ thống/Cảnh báo chưa lưu",
+  "scenario": "Rời trang (đổi địa chỉ) khi còn thay đổi chưa lưu",
+  "expected": "Trình duyệt hỏi beforeunload",
+  "actual": "beforeunload",
+  "status": "PASS",
+  "evidence": ""
+ }
+]

@@ -1,0 +1,142 @@
+PASS  [Hệ thống/Đăng nhập] Đăng nhập chủ website bằng mật khẩu máy chủ — 200 owner
+PASS  [Hệ thống/Đăng nhập] Sai mật khẩu — 401 cookie=false
+PASS  [Hệ thống/Đăng nhập] Đăng nhập từ nguồn khác (Origin lạ) — 403
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/content/ không có phiên — 401
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/leads/ không có phiên — 401
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/media/ không có phiên — 401
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/users/ không có phiên — 401
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/audit/ không có phiên — 401
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/analytics/ không có phiên — 401
+PASS  [Phân quyền/Chưa đăng nhập] GET /api/admin/revisions/ không có phiên — 401
+PASS  [Phân quyền/CSRF] PUT nội dung thiếu mã CSRF — 403
+PASS  [Phân quyền/CSRF] PUT nội dung từ Origin lạ (có CSRF) — 403
+PASS  [Bảo mật/Phản hồi] Phiên đăng nhập không trả mật khẩu / hash / token — configured,authenticated,csrf,user
+PASS  [Hệ thống/Tài khoản] Tạo tài khoản vai trò admin (tên có dấu) — 201
+PASS  [Hệ thống/Tài khoản] Tạo tài khoản vai trò editor (tên có dấu) — 201
+PASS  [Hệ thống/Tài khoản] Tạo tài khoản vai trò writer (tên có dấu) — 201
+PASS  [Hệ thống/Tài khoản] Tạo tài khoản vai trò sales (tên có dấu) — 201
+PASS  [Hệ thống/Tài khoản] Tạo trùng tên đăng nhập — 409
+PASS  [Hệ thống/Tài khoản] Mật khẩu quá ngắn — 400
+PASS  [Bảo mật/Phản hồi] Danh sách tài khoản không lộ mật khẩu/hash — 200 {"users":[{"id":"usr_207937b2-02f","username":"qa.admin","name":"QA admin Nguyễn Thị Ánh","role":"admin","active":true,"
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/content/ — 200
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/media/ — 200
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/leads/ — 200
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/users/ — 200
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/audit/ — 200
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/analytics/ — 200
+PASS  [Phân quyền/Ma trận] admin GET /api/admin/revisions/ — 200
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/content/ — 200
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/media/ — 200
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/leads/ — 403
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/users/ — 403
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/audit/ — 403
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/analytics/ — 200
+PASS  [Phân quyền/Ma trận] editor GET /api/admin/revisions/ — 200
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/content/ — 200
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/media/ — 200
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/leads/ — 403
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/users/ — 403
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/audit/ — 403
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/analytics/ — 403
+PASS  [Phân quyền/Ma trận] writer GET /api/admin/revisions/ — 200
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/content/ — 403
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/media/ — 403
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/leads/ — 200
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/users/ — 403
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/audit/ — 403
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/analytics/ — 200
+PASS  [Phân quyền/Ma trận] sales GET /api/admin/revisions/ — 403
+PASS  [Phân quyền/Ma trận] admin lưu nháp nội dung — 200
+PASS  [Phân quyền/Ma trận] admin xuất bản nội dung — 200
+PASS  [Phân quyền/Ma trận] editor lưu nháp nội dung — 200
+PASS  [Phân quyền/Ma trận] editor xuất bản nội dung — 200
+PASS  [Phân quyền/Ma trận] writer lưu nháp nội dung — 200
+PASS  [Phân quyền/Ma trận] writer xuất bản nội dung — 403
+PASS  [Phân quyền/Ma trận] sales lưu nháp nội dung — 403
+PASS  [Phân quyền/Ma trận] sales xuất bản nội dung — 403
+PASS  [Phân quyền/Ma trận] writer tải ảnh (media.write) — 201
+PASS  [Phân quyền/Ma trận] sales tải ảnh (không có media.write) — 403
+PASS  [Phân quyền/Ma trận] editor tạo tài khoản (không có users.manage) — 403
+PASS  [Phân quyền/Ma trận] admin tự nâng vai trò owner cho tài khoản khác — 400
+PASS  [Nội dung/Nháp] Lưu nháp chữ màn mở đầu (có dấu) — 200
+PASS  [Nội dung/Nháp] Đọc lại bản nháp qua API admin — QA_NHAP_Đồng_hành_cc4ed1
+PASS  [Bảo mật/Lộ bản nháp] Khách mở / — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /?cms=1 — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /sitemap.xml — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /robots.txt — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /blogs/ — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /ve-danava/ — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /api/anna/ — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách mở /lien-he/ — 200 chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] Khách giả header x-danava-cms: 1 — chứa nháp=false
+PASS  [Bảo mật/Lộ bản nháp] sales (không có content.read) mở /?cms=1 — chứa nháp=false
+PASS  [Nội dung/Nháp] Admin (content.read) mở /?cms=1 thấy bản nháp — chứa nháp=true
+PASS  [Nội dung/Nháp] Admin mở / (không ?cms=1) vẫn thấy bản công khai — chứa nháp=false
+PASS  [Nội dung/Xuất bản] Xuất bản bản nháp — 200
+PASS  [Nội dung/Xuất bản] Website công khai cập nhật ngay sau xuất bản (không cache cũ) — chứa=true
+PASS  [Nội dung/Xung đột] Phiên khác lưu với mã chỉnh sửa cũ — 409
+PASS  [Nội dung/Xung đột] Bấm Xuất bản hai lần cùng mã (double submit) — 200/409
+PASS  [Nội dung/Toàn vẹn] Sửa một trường không làm mất dữ liệu mục khác — 200
+PASS  [Nội dung/Kiểm tra BE] Đường dẫn nút javascript: — 400
+PASS  [Nội dung/Kiểm tra BE] Chữ màn mở đầu quá dài (> 80) — 400
+PASS  [Nội dung/Kiểm tra BE] Khóa lạ trong màn mở đầu — 400
+PASS  [Nội dung/Kiểm tra BE] Email liên hệ sai kiểu (số) — 400
+PASS  [Nội dung/Kiểm tra BE] Ảnh doanh nghiệp trỏ ra ngoài — 400
+PASS  [Nội dung/Kiểm tra BE] Thân yêu cầu không phải JSON — 400
+PASS  [Nội dung/Kiểm tra BE] Dữ liệu quá lớn (> 2 MB) — 413
+PASS  [Bảo mật/XSS] Chữ có <script> lưu được nhưng hiển thị dạng chữ — 200 escaped=true
+PASS  [Nội dung/Đường dẫn] Hai bài viết trùng slug — 400 {"error":"Đường dẫn /blogs/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-
+PASS  [Nội dung/Tham chiếu] Bài viết + landing page tham chiếu sản phẩm không tồn tại (gửi thẳng API) — lưu 200; bài 200, Blogs 200, Giải pháp 200
+PASS  [Hệ thống/Lịch sử] Danh sách phiên bản có các lần xuất bản — 200 n=7
+PASS  [Hệ thống/Lịch sử] Khôi phục phiên bản không tồn tại — 404
+PASS  [Hệ thống/Lịch sử] writer khôi phục phiên bản (không có quyền xuất bản) — 403
+PASS  [Hệ thống/Nhật ký] Nhật ký thao tác ghi đăng nhập/xuất bản/tạo tài khoản — 200 21 mục
+PASS  [Khách hàng/Biểu mẫu] Gửi yêu cầu tư vấn hợp lệ (tiếng Việt) — 201
+PASS  [Khách hàng/Biểu mẫu] Gửi lặp ngay (double submit) cùng SĐT — 429
+PASS  [Khách hàng/Biểu mẫu] Thiếu họ tên — 400
+PASS  [Khách hàng/Biểu mẫu] SĐT sai — 400
+PASS  [Khách hàng/Biểu mẫu] Email sai — 400
+PASS  [Khách hàng/Biểu mẫu] Nội dung > 5.000 ký tự — 400
+PASS  [Khách hàng/Biểu mẫu] JSON hỏng — 400
+PASS  [Khách hàng/Biểu mẫu] Bot điền trường bẫy (honeypot) — 201 lưu=false
+PASS  [Khách hàng/Biểu mẫu] Gửi từ website khác (Origin lạ) — 403
+PASS  [Khách hàng/Biểu mẫu] Thân yêu cầu rất lớn (3 MB) — 413, lưu=false
+PASS  [Khách hàng/Yêu cầu] Yêu cầu hiển thị trong admin đúng dữ liệu, chỉ 1 bản — 1 bản, Trần Thị Bích Ngọc
+PASS  [Khách hàng/Yêu cầu] sales phân công + đổi trạng thái — 200 status=contacted assigned_to=QA Nguyễn Kinh Doanh
+PASS  [Khách hàng/Yêu cầu] Cập nhật yêu cầu không tồn tại — 404
+PASS  [Khách hàng/Yêu cầu] Trạng thái không hợp lệ — 400
+PASS  [Khách hàng/Yêu cầu] editor xem khách hàng (không có leads.read) — 403
+PASS  [Website/Tuyển dụng] Ứng tuyển từ Origin lạ — 403
+PASS  [Website/Tuyển dụng] Ứng tuyển thiếu dữ liệu — 400
+PASS  [Tài nguyên/Tải ảnh] Tải PNG hợp lệ — 201 /assets/uploads/0bf07409-e8cd-4472-abcd-b8a3e15dc2bf.webp
+PASS  [Tài nguyên/Tải ảnh] Tải JPEG hợp lệ — 201
+PASS  [Tài nguyên/Tải ảnh] File chữ đổi đuôi thành ảnh — 400
+PASS  [Tài nguyên/Tải ảnh] PNG hỏng (đúng chữ ký, dữ liệu rác) — 400
+PASS  [Tài nguyên/Tải ảnh] SVG chứa script — 400
+PASS  [Tài nguyên/Tải ảnh] Ảnh > 6 MB — 413, ảnh 3→3
+PASS  [Tài nguyên/Phục vụ ảnh] Ảnh tải lên được phục vụ đúng loại, chặn đoán MIME — 200 image/webp nosniff=nosniff
+PASS  [Tài nguyên/Phục vụ ảnh] Đường dẫn vượt thư mục ../ — 404
+PASS  [Tài nguyên/Thư viện] Ảnh mới có trong danh sách thư viện — 3 ảnh
+PASS  [Báo cáo/Truy cập] Ghi một lượt xem từ khách — 204
+PASS  [Báo cáo/Truy cập] Lượt xem của admin đang đăng nhập không được tính — 204
+PASS  [Báo cáo/Truy cập] Ghi lượt xem từ Origin lạ — 204
+PASS  [Báo cáo/Truy cập] Số lượt xem trong báo cáo tăng đúng 1 — 0 → 1
+PASS  [Tương tác/ANNA] Trạng thái khi chưa có khóa AI — 200 {"ready":false}
+PASS  [Tương tác/ANNA] Hỏi ANNA khi dịch vụ AI chưa sẵn sàng — 503 {"code":"unavailable"}
+PASS  [Tương tác/ANNA] Hỏi ANNA từ Origin lạ — 403
+PASS  [SEO/Sitemap] sitemap.xml có trang, không có admin/xem trước/bài lưu trữ — 60 URL
+PASS  [SEO/Robots] robots.txt chặn /admin và /api, khai báo sitemap — User-Agent: * Allow: / Disallow: /admin/ Disallow: /api/ Disallow: /blogs/doc/ Disallow: /xem-truoc-landing/ Host: http://localhost:4187 Sitemap: http://localho
+FAIL  [SEO/Tiêu đề] Tiêu đề ≤ 70 ký tự trên 60 URL — /: 83 ký tự — "DANAVA Solutions — Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ" | /blogs/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-c
+PASS  [SEO/Trang công khai] Mọi URL trong sitemap (60) trả 200, có title, description, canonical đúng, og:image, đúng 1 H1, không CSS admin — OK
+PASS  [SEO/Trang lỗi] Đường dẫn không tồn tại — 404 noindex=true
+PASS  [SEO/Trang lỗi] Bài viết không tồn tại — 404
+PASS  [SEO/Trang lỗi] Sản phẩm không tồn tại — 404
+PASS  [SEO/Chuyển hướng] Đường dẫn cũ /kien-thuc → /blogs/ — 308→/kien-thuc/ 308→/blogs/
+PASS  [SEO/Noindex] Trang admin có X-Robots-Tag noindex — noindex, nofollow
+PASS  [Hệ thống/Phiên] Đăng xuất làm phiên mất hiệu lực — 200 → 401
+(node:19224) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS  [Hệ thống/Phiên] Phiên hết hạn (sửa expires trong database thử nghiệm) — 401
+PASS  [Hệ thống/Đăng nhập] Đăng nhập sai liên tục bị giới hạn — 429
+
+TỔNG: 138 trường hợp, PASS 137, FAIL 1

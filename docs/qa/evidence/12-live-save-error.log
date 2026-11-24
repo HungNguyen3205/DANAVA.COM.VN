@@ -1,0 +1,11 @@
+EVAL "SAU KHI KÉO: {\"mode\":\"Xem\",\"status\":\"Đã xuất bản\",\"editing\":null,\"selected\":\"Nhấn giữ phần cần sửa\",\"undo\":false}"
+EVAL "SAU KHI GIỮ TRÊN 3D: {\"mode\":\"Xem\",\"status\":\"Đã xuất bản\",\"editing\":null,\"selected\":\"Nhấn giữ phần cần sửa\",\"undo\":false}"
+EVAL "SAU KHI NHẤN GIỮ: {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã xuất bản\",\"editing\":\"hero.line1 = Cùng bạn phát triển.\",\"selected\":\"Đang chọn: Tiêu đề dòng 1\",\"undo\":false}"
+EVAL "LỖI URL: Đường dẫn dạng /trang/, #muc hoặc https://ten-mien…"
+EVAL "SAU HOÀN TÁC ẢNH 2: /assets/verified/post-13591.webp"
+EVAL "SAU LÀM LẠI ẢNH 2: /assets/about/office.webp"
+EVAL "SAU LƯU LỖI: {\"mode\":\"Chỉnh sửa\",\"status\":\"Chưa lưu được: mất kết nối, thử lại\",\"editing\":null,\"selected\":\"Chạm vào chữ, ảnh hoặc nút để sửa\",\"undo\":true} | chữ trên trang: Đồng hành bền vữ
+EVAL "SAU LƯU NHÁP: {\"mode\":\"Chỉnh sửa\",\"status\":\"Đã lưu nháp\",\"editing\":null,\"selected\":\"Chạm vào chữ, ảnh hoặc nút để sửa\",\"undo\":true}"
+EVAL "CÔNG KHAI có chữ mới: false | khách mở ?cms=1: false | admin mở ?cms=1: true"
+EVAL "SAU TẢI LẠI: Đồng hành bền vững. | nút: Đặt lịch tư vấn  | {\"mode\":\"Xem\",\"status\":\"Đã lưu nháp\",\"editing\":null,\"selected\":\"Nhấn giữ phần cần sửa\",\"undo\":false}"
+EVAL "SAU XUẤT BẢN công khai có chữ mới: true | nút mới: true | Đã xuất bản"

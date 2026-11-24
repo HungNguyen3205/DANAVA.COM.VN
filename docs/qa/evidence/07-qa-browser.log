@@ -1,0 +1,20 @@
+PASS  [Tương tác/3D] Mô hình 3D dựng xong và bấm "Mã QR Zalo" đổi sang bảng mã — hb-office is-ready is-qr
+PASS  [Tương tác/3D] Có chuyển động: cuộn qua vùng ghim dựng văn phòng 3D — hb-cover__3d is-intro is-building | hb-office is-ready
+PASS  [Website công khai] 61 URL ở 1440px: không lỗi JS/console, không request lỗi, không ảnh hỏng, không tràn ngang, không tải trình chỉnh/CSS admin — OK
+PASS  [Website công khai] 61 URL ở 390px: không lỗi JS/console, không request lỗi, không ảnh hỏng, không tràn ngang, không tải trình chỉnh/CSS admin — OK
+PASS  [Website công khai/Responsive] Chụp 10 trang đại diện ở 360/390/768/1024/1440px — 50 ảnh trong screens/public-*
+PASS  [Website/Bàn phím] Phím Tab đầu tiên tới liên kết "Đến nội dung chính", hiện rõ — {"text":"Đến nội dung chính","href":"#main","visible":true,"outline":true}
+PASS  [Website/Truy cập] Mọi ô nhập của biểu mẫu Liên hệ có nhãn — OK (undefined)
+PASS  [Tương tác/3D] Giảm chuyển động: mô hình 3D vẫn hiển thị (khung tĩnh), không lỗi — {"office":"hb-office is-ready","canvas":true,"fallback":true}
+PASS  [Tương tác/ANNA] Không có khóa AI: API báo chưa sẵn sàng (giao diện dùng báo giá nhanh) — {"ready":false}
+PASS  [Khách hàng/Biểu mẫu] Mạng chậm (1,5 s trễ): nút gửi bị khóa khi đang gửi; bấm 2 lần chỉ tạo 1 yêu cầu — disabled=true, bản ghi=1, phản hồi="Cảm ơn bạn! Yêu cầu tư vấn đã được gửi thành công đến DANAVA Solutions. Chuyên v"
+PASS  [Khách hàng/Biểu mẫu] Mất mạng khi gửi: báo lỗi rõ, giữ nội dung đang nhập — {"text":"Không có kết nối mạng. Vui lòng thử lại hoặc gọi hotline.","kept":"Mất mạng khi gửi — thử nghiệm QA"}
+PASS  [Hệ thống/Cảnh báo chưa lưu] Sửa Cài đặt rồi chuyển mục trong admin — Rời màn hình này?
+
+Bạn có thay đổi chưa lưu. Rời đi thì thay đổi chưa lưu sẽ mất.
+
+Hủy
+Rời đi
+PASS  [Hệ thống/Cảnh báo chưa lưu] Rời trang (đổi địa chỉ) khi còn thay đổi chưa lưu — beforeunload
+
+TỔNG: 13 trường hợp, PASS 13, FAIL 0

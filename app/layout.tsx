@@ -67,9 +67,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
       </head>
       <body>
         <SiteStore initialData={publicContent(data)}>
-          <Analytics />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLD(organization) }} />
           {children}
+          {/* Sau nội dung: phím Tab đầu tiên tới liên kết "Đến nội dung chính" thay vì thanh đồng ý đo lường */}
+          <Analytics />
         </SiteStore>
       </body>
     </html>

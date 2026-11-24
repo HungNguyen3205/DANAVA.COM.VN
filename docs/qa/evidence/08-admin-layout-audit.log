@@ -1,0 +1,14 @@
+seed [ 201, 201, 201 ]
+login 200
+360 san-pham/?id=studio#Gói & giá 1 cuon-ngang ax-content 402>360
+360 du-an#Portfolio 1 loi-khung button "↓" lệch 5px khỏi admin-panel
+360 du-an/?tab=portfolio 1 loi-khung button "↓" lệch 5px khỏi admin-panel
+360 du-an/?tab=portfolio#Portfolio 1 loi-khung button "↓" lệch 5px khỏi admin-panel
+360 nhat-ky#Sao lưu & nhập 1 xuong-dong button.admin-secondary "Bổ sung kho nội dung DANAVA đã đối chiếu" 2 dòng
+360 nhat-ky/?tab=nhat-ky#Sao lưu & nhập 1 xuong-dong button.admin-secondary "Bổ sung kho nội dung DANAVA đã đối chiếu" 2 dòng
+360 nhat-ky/?tab=sao-luu 1 xuong-dong button.admin-secondary "Bổ sung kho nội dung DANAVA đã đối chiếu" 2 dòng
+360 nhat-ky/?tab=sao-luu#Nhật ký thao tác 1 tran-chu button.ax-tab.is-on "Nhật ký thao tác" 270>141
+360 nhat-ky/?tab=sao-luu#Sao lưu & nhập 1 xuong-dong button.admin-secondary "Bổ sung kho nội dung DANAVA đã đối chiếu" 2 dòng
+1024 nhat-ky/?tab=sao-luu#Nhật ký thao tác 1 tran-chu button.ax-tab.is-on "Nhật ký thao tác" 270>141
+1440 nhat-ky/?tab=sao-luu#Nhật ký thao tác 1 tran-chu button.ax-tab.is-on "Nhật ký thao tác" 270>141
+DONE pages with issues: 11 js errors: 0
