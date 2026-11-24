@@ -82,12 +82,12 @@ function Shell({
   const groups = useMemo(() => visibleNav(user.role), [user.role]);
   const canDraft = can(user.role, 'content.draft');
   const canPublish = can(user.role, 'content.publish');
-  const [collapsed, setCollapsed] = useState(false);
+  // Khung chỉ hiện sau khi đăng nhập (không render phía máy chủ) → đọc ngay, không chớp khi chuyển trang
+  const [collapsed, setCollapsed] = useState(() => typeof window !== 'undefined' && store.get('danava-admin-collapsed') === '1');
   const [drawer, setDrawer] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const newLeads = leads.filter(l => (l.status || 'new') === 'new');
 
-  useEffect(() => { if (store.get('danava-admin-collapsed') === '1') setCollapsed(true); }, []);
   const toggleCollapsed = () => setCollapsed(v => { store.set('danava-admin-collapsed', v ? '0' : '1'); return !v; });
 
   /** Rời màn hình: hỏi khi có thay đổi chưa lưu (theo cơ chế hiện có), rồi điều hướng. */

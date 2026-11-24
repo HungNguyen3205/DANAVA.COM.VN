@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import MediaPicker, { MediaLibrary } from './MediaPicker';
 import PresentationEditor from './PresentationEditor';
 import { defaultPresentation } from '@/lib/presentation';
-import AdminGate from './AdminGate';
 import ProjectManager from './ProjectManager';
 import AnalyticsDashboard from './AnalyticsDashboard';
 import LeadsManager from './LeadsManager';
@@ -45,9 +44,8 @@ const BASE = normalizeContent(initial);
 
 export default function Admin({ section = 'tong-quan' }: { section?: string }) {
   return (
-    <AdminGate>
-      <AdminRoute section={section} />
-    </AdminGate>
+    // Cổng đăng nhập nằm ở app/admin/layout.tsx: giữ nguyên khi chuyển trang, không kiểm tra phiên/tải nội dung lại
+    <AdminRoute section={section} />
   );
 }
 
