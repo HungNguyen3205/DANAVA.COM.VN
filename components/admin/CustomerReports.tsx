@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { leadStatus, timeAgo, useAdminLeads, type AdminLead } from '../adminData';
 import { Empty, ErrorBox, Loading, SearchBar, matches, usePaged } from './ui';
+import { Card, EmptyState } from './kit';
 
 /** Biểu mẫu đã biết trên website: mã nguồn gửi kèm yêu cầu → tên và nơi đặt. */
 export const FORMS: { id: string; label: string; where: string; test: (source: string) => boolean }[] = [
@@ -19,14 +20,15 @@ export const FORMS: { id: string; label: string; where: string; test: (source: s
 ];
 const OTHER = { id: 'khac', label: 'Form trên các trang khác', where: '' };
 
-export function formOf(source = '') {
-  const s = source.trim();
+// source có thể là null với yêu cầu cũ trong database (giá trị mặc định chỉ áp cho undefined)
+export function formOf(source?: string | null) {
+  const s = (source || '').trim();
   return FORMS.find(f => f.test(s)) || OTHER;
 }
 
 /** Đường dẫn trang gửi yêu cầu (bỏ tên miền, tham số). */
-export function pageOf(source = '') {
-  const s = source.trim();
+export function pageOf(source?: string | null) {
+  const s = (source || '').trim();
   if (!s) return '(không rõ)';
   if (s.startsWith('/')) return s.split('?')[0];
   if (s.startsWith('lp:')) return `/lp/${s.slice(3)}/`;
@@ -127,22 +129,28 @@ export function FormsReport() {
 }
 
 /* ---------------------------------------------------------------- Nguồn khách */
+/** Một thẻ thống kê: tên nhóm, số lượng, tỷ lệ % trên tổng và thanh so với nhóm lớn nhất. */
 function Breakdown({ title, rows, total }: { title: string; rows: [string, number][]; total: number }) {
+  const top = rows[0]?.[1] || 1;
   return (
-    <section className="admin-panel">
-      <h2>{title}</h2>
-      {!rows.length ? <Empty>Chưa có dữ liệu trong khoảng thời gian này.</Empty> : (
-        <ul className="adm-bars">
-          {rows.map(([label, n]) => (
-            <li key={label}>
-              <span className="adm-bars__label">{label}</span>
-              <span className="adm-bars__track" aria-hidden="true"><i style={{ width: `${Math.max(3, (n / total) * 100)}%` }} /></span>
-              <b>{n}</b>
-            </li>
-          ))}
-        </ul>
+    <Card title={title} description={rows.length ? `${rows.length} nhóm` : undefined} className="ax-breakdown">
+      {!rows.length ? <EmptyState>Chưa có dữ liệu trong khoảng thời gian này.</EmptyState> : (
+        <ol className="ax-breakdown__list">
+          {rows.map(([label, n], i) => {
+            const pct = total ? (n / total) * 100 : 0;
+            return (
+              <li key={label} className={i === 0 ? 'is-top' : undefined}>
+                <div className="ax-breakdown__row">
+                  <span className="ax-breakdown__label" title={label}>{label}</span>
+                  <span className="ax-breakdown__value"><b>{n.toLocaleString('vi-VN')}</b><small>{pct > 0 && pct < 1 ? '<1' : Math.round(pct)}%</small></span>
+                </div>
+                <span className="ax-breakdown__track" aria-hidden="true"><i style={{ width: `${Math.max(2, (n / top) * 100)}%` }} /></span>
+              </li>
+            );
+          })}
+        </ol>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -165,9 +173,13 @@ export function SourcesReport() {
         <div className="adm-tabs" role="tablist" aria-label="Khoảng thời gian">
           {PERIODS.map(p => <button key={p.id} type="button" role="tab" aria-selected={days === p.id} className={days === p.id ? 'is-on' : ''} onClick={() => setDays(p.id)}>{p.label}</button>)}
         </div>
-        <p className="field-note"><b>{list.length}</b> yêu cầu · <b>{converted}</b> hoàn tất{list.length ? ` (${Math.round((converted / list.length) * 100)}%)` : ''}</p>
       </div>
-      <div className="admin-two">
+      <div className="ax-kpis ax-kpis--3">
+        <div className="ax-kpi"><small>Yêu cầu</small><b>{list.length.toLocaleString('vi-VN')}</b><span>{days ? `trong ${days} ngày` : 'toàn bộ thời gian'}</span></div>
+        <div className="ax-kpi"><small>Hoàn tất</small><b>{converted.toLocaleString('vi-VN')}</b><span>đã xử lý xong</span></div>
+        <div className="ax-kpi"><small>Tỷ lệ hoàn tất</small><b>{list.length ? Math.round((converted / list.length) * 100) : 0}%</b><span>hoàn tất / yêu cầu</span></div>
+      </div>
+      <div className="ax-breakdown-grid">
         <Breakdown title="Theo biểu mẫu" rows={count(l => formOf(l.source).label)} total={list.length} />
         <Breakdown title="Theo dịch vụ quan tâm" rows={count(l => (l.service || 'Tư vấn chung').split('—')[0].trim())} total={list.length} />
         <Breakdown title="Theo trang gửi yêu cầu" rows={count(l => pageOf(l.source))} total={list.length} />

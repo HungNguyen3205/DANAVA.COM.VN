@@ -693,3 +693,23 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .project-admin-row { min-width: 0; }
 .ax-scope .project-admin-row > span:not(.adm-thumb) { min-width: 0; overflow-wrap: anywhere; }
 .ax-scope .adm-row > .row-actions { flex: none; }
+
+/* ==== Báo cáo → Nguồn khách: thẻ thống kê theo nhóm (components/admin/CustomerReports.tsx) ==== */
+.ax-scope .ax-kpis--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+.ax-scope .ax-kpi > span { color: var(--ax-muted); font-size: 12.5px; }
+.ax-scope .ax-kpi > small:first-child { color: var(--ax-text-2); font-size: 13px; font-weight: 600; }
+.ax-scope .ax-breakdown-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); align-items: start; }
+.ax-scope .ax-breakdown { margin: 0; }
+.ax-scope .ax-breakdown__list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.ax-scope .ax-breakdown__list li { display: grid; gap: 6px; }
+.ax-scope .ax-breakdown__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); }
+.ax-scope .ax-breakdown__label { min-width: 0; overflow: hidden; color: var(--ax-text); font-size: 13.5px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-breakdown__value { display: inline-flex; align-items: baseline; gap: 8px; flex: none; font-variant-numeric: tabular-nums; }
+.ax-scope .ax-breakdown__value b { color: var(--ax-text); font-size: 14px; font-weight: 700; }
+.ax-scope .ax-breakdown__value small { min-width: 36px; color: var(--ax-muted); font-size: 12px; text-align: right; }
+.ax-scope .ax-breakdown__track { display: block; height: 6px; overflow: hidden; border-radius: 999px; background: #eef1f6; }
+.ax-scope .ax-breakdown__track i { display: block; height: 100%; border-radius: inherit; background: #c9d2e3; transition: width var(--ax-base, .2s) ease; }
+.ax-scope .ax-breakdown__list li.is-top .ax-breakdown__track i { background: linear-gradient(90deg, #ff9a4d, #f26b1d); }
+.ax-scope .ax-breakdown__list li:not(.is-top) .ax-breakdown__track i { background: linear-gradient(90deg, #b8c4dc, #8fa0c4); }
+@media (max-width: 1100px) { .ax-scope .ax-breakdown-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 700px) { .ax-scope .ax-kpis--3 { grid-template-columns: minmax(0, 1fr); } }
