@@ -18,7 +18,7 @@ export function AnnaStatus() {
         Tùy chọn: <code>DANAVA_AI_MODEL</code> và <code>DANAVA_AI_DAILY_LIMIT</code> (mặc định 500 câu hỏi/ngày cho cả website).
         Có khóa chưa chắc khóa còn hạn mức: hãy hỏi thử một câu trên website sau khi cấu hình.
       </p>
-      <p className="field-note">Lời chào, câu hỏi gợi ý và nguồn dữ liệu ANNA được chỉnh ở <Link className="text-link" href="/admin/giao-dien/?tab=anna">Website → Giao diện chung → Widget ANNA</Link>.</p>
+      <p className="field-note">Lời chào, câu hỏi gợi ý và nguồn dữ liệu ANNA được chỉnh ở <Link className="text-link" href="/admin/chinh-sua/?panel=site">Chỉnh sửa website → Thiết lập website → Widget ANNA</Link>.</p>
     </section>
   );
 }

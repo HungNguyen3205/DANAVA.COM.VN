@@ -12,6 +12,7 @@ import { postCover, RelatedPosts, ServiceLinks } from './blocks';
 import { contactHrefFor } from './ServiceDetailPage';
 import { DraftBanner } from './SubServicePage';
 import { pageCopy } from '@/lib/blocks';
+import { cmsImage, cmsText } from './cms';
 import { sentenceCase } from '@/lib/sentence-case';
 import { rich } from './rich';
 
@@ -127,7 +128,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/blogs/', label: 'Blogs' }, topicCrumb]} />
             <p className="s-eyebrow s-article-cat">{topic?.name || post.category}</p>
             <h1 className="s-h1 s-article-title">{sentenceCase(post.title)}</h1>
-            {post.excerpt && <p className="s-lead">{post.excerpt}</p>}
+            {post.excerpt && <p className="s-lead" {...cmsText(`rec.posts.${post.id}.excerpt`, 'Tóm tắt bài viết', { multiline: true, scope: 'record', scopeLabel: 'Bài viết này' })}>{post.excerpt}</p>}
             <div className="s-article-meta">
               <span>
                 <UserRound aria-hidden="true" />
@@ -145,7 +146,7 @@ export function ArticleView({ post, data, preview }: { post: Post; data: SiteDat
         {cover && (
           <div className="s-container s-article-cover-wrap">
             <figure className="s-frame s-frame--plain s-article-cover">
-              <img src={cover} alt={post.title} fetchPriority="high" />
+              <img {...cmsImage(`rec.posts.${post.id}`, 'Ảnh bìa bài viết', { scope: 'record', scopeLabel: 'Bài viết này' })} src={cover} alt={post.title} fetchPriority="high" />
             </figure>
           </div>
         )}

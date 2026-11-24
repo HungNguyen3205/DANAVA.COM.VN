@@ -1,28 +1,37 @@
 'use client';
 /**
- * Website → Trang → Chỉnh trực tiếp: trang thật (đúng component công khai, hiển thị BẢN NHÁP) gần như toàn màn hình.
- * Trình chỉnh trong trang: components/site/cms-editor.ts (nhấn giữ để chọn, sửa chữ tại chỗ, đổi ảnh, sửa nút).
+ * Chỉnh sửa website: trang thật (đúng component công khai, hiển thị BẢN NHÁP) gần như toàn màn hình.
+ * Trình chỉnh trong trang: components/site/cms-editor.ts (nhấn giữ để chọn, sửa chữ tại chỗ, đổi ảnh, sửa nút, chọn khối).
  * Màn này giữ dữ liệu: nhận thay đổi theo khóa (lib/cms-paths.ts) → cập nhật bản nháp đang soạn của admin,
  * hoàn tác / làm lại trong phiên, Lưu nháp / Xuất bản qua đúng luồng lưu hiện có (API kiểm tra quyền + chống ghi đè).
+ * Bộ chọn trang (tìm kiếm + lọc loại), đi theo liên kết nội bộ trong chế độ Xem, ngăn thiết lập trang / website / menu / landing page.
  */
-import { ArrowLeft, Check, Eye, ImagePlus, Loader2, Monitor, PenLine, Redo2, Rocket, Save, Smartphone, Tablet, Undo2, Upload } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { ArrowLeft, Blocks, Check, ChevronDown, Eye, FileCog, ImagePlus, Loader2, Monitor, PenLine, Redo2, Rocket, Save, Search, Settings2, Smartphone, Tablet, Undo2, Upload, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import type { SiteData } from '@/lib/content';
 import { cmsLimit, readCms, writeCms } from '@/lib/cms-paths';
 import { Button, Modal, Tip } from './kit';
-import type { SitePage } from './websitePages';
 
 type Mode = 'view' | 'edit';
 type SaveMode = 'draft' | 'publish';
+export type EditorPage = { path: string; label: string; type: string; note?: string };
+export type EditorPanel = { title: string; scope?: 'global' | 'page' | 'record'; scopeLabel?: string; body: ReactNode };
 const DEVICES = [
   { id: 'desktop', label: 'Máy tính', width: '100%', Icon: Monitor },
   { id: 'tablet', label: 'Máy tính bảng', width: '820px', Icon: Tablet },
   { id: 'mobile', label: 'Điện thoại', width: '390px', Icon: Smartphone }
 ] as const;
 const HISTORY = 100;
+const SHOW = 40;
+const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 
-export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDraft, error, canEdit, canPublish, onExit }: {
-  page: SitePage;
+export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPanel, draft, setDraft, onSave, saving, dirty, hasDraft, error, canEdit, canPublish, onExit }: {
+  path: string;
+  onPathChange: (path: string) => void;
+  pages: EditorPage[];
+  panel: string;
+  onPanel: (panel: string) => void;
+  renderPanel: (panel: string, path: string) => EditorPanel | null;
   draft: SiteData;
   setDraft: Dispatch<SetStateAction<SiteData>>;
   onSave: (mode: SaveMode) => Promise<void>;
@@ -38,12 +47,29 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
   const [selected, setSelected] = useState('');
   const [picker, setPicker] = useState<{ base: string; label: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [choosing, setChoosing] = useState(false);
+  const [pending, setPending] = useState<{ kind: 'page'; path: string } | { kind: 'exit' } | null>(null);
+  const [src, setSrc] = useState(`${path}?cms=1`);
+  const framePath = useRef(path);
   const [, force] = useState(0);
   const draftRef = useRef(draft);
   draftRef.current = draft;
   const undo = useRef<SiteData[]>([]);
   const redo = useRef<SiteData[]>([]);
   const before = useRef<SiteData | null>(null);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
+
+  const current = pages.find(p => p.path === path);
+  const title = current?.label || 'Trang';
+
+  /* Đổi trang từ bộ chọn / URL → nạp lại khung; trang tự điều hướng (chế độ Xem) đã cập nhật framePath trước */
+  useEffect(() => {
+    if (path === framePath.current) return;
+    framePath.current = path;
+    setLoaded(false);
+    setSrc(`${path}?cms=1`);
+  }, [path]);
 
   const send = useCallback((type: string, payload: Record<string, unknown> = {}) => {
     frame.current?.contentWindow?.postMessage({ type: `danava-cms:${type}`, ...payload }, location.origin);
@@ -59,7 +85,7 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
 
   const setMode = (m: Mode) => { if (m === 'edit' && !canEdit) return; setModeState(m); send('mode', { mode: m }); };
 
-  /* Đồng bộ giá trị xuống trang mỗi khi bản nháp đổi (hoàn tác, đổi ảnh, hủy…); trang bỏ qua phần đang gõ */
+  /* Đồng bộ giá trị xuống trang mỗi khi bản nháp đổi; trang bỏ qua phần đang gõ */
   useEffect(() => {
     if (!paths.length) return;
     const t = setTimeout(() => send('values', { values: valuesOf(draft, paths) }), 40);
@@ -67,9 +93,9 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
   }, [draft, paths, send, valuesOf]);
 
   /** Ghi một giá trị theo khóa; lỗi → báo ngay trên thanh công cụ trong trang, không ghi. */
-  const apply = useCallback((path: string, value: string) => {
+  const apply = useCallback((p: string, value: string) => {
     try {
-      const next = writeCms(draftRef.current, path, value);
+      const next = writeCms(draftRef.current, p, value);
       draftRef.current = next;
       setDraft(next);
       send('clear-error');
@@ -100,7 +126,16 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
     replaceDraft(next);
     force(n => n + 1);
   }, [replaceDraft]);
-  const save = useCallback((m: SaveMode) => { send('deselect'); void onSave(m); }, [onSave, send]);
+  const save = useCallback((m: SaveMode) => { send('deselect'); return onSave(m); }, [onSave, send]);
+
+  /** Đổi trang: có thay đổi chưa lưu → hỏi (lưu nháp rồi chuyển / chuyển và giữ thay đổi trong phiên / ở lại). */
+  const goTo = (p: string) => {
+    setChoosing(false);
+    if (p === path) return;
+    if (dirty && canEdit) { setPending({ kind: 'page', path: p }); return; }
+    onPathChange(p);
+  };
+  const exit = () => { if (dirty && canEdit) setPending({ kind: 'exit' }); else onExit(); };
 
   /* Tin nhắn từ trang (chỉ cùng nguồn, chỉ từ đúng khung) */
   useEffect(() => {
@@ -113,8 +148,13 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
           setPaths(list);
           pathsRef.current = list;
           setPageImages(Array.isArray(d.images) ? d.images.map(String) : []);
+          setSelected('');
           setLoaded(true);
-          send('init', { mode, canEdit, limits: Object.fromEntries(list.map(p => [p, cmsLimit(p)])), values: valuesOf(draftRef.current, list) });
+          // Trang tự chuyển (người dùng bấm menu / liên kết trong chế độ Xem) → nhận diện trang mới, giữ trình biên tập
+          const at = typeof d.path === 'string' ? d.path : '';
+          if (at && at !== framePath.current) { framePath.current = at; onPathChange(at); }
+          send('init', { mode: modeRef.current, canEdit, limits: Object.fromEntries(list.map(p => [p, cmsLimit(p)])), values: valuesOf(draftRef.current, list) });
+          if (dirty) send('toast', { message: 'Các thay đổi chưa lưu vẫn được giữ trong phiên này.' });
           break;
         }
         case 'danava-cms:mode': setModeState(d.mode === 'edit' ? 'edit' : 'view'); break;
@@ -124,10 +164,11 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
         case 'danava-cms:commit': if (before.current) pushHistory(before.current); before.current = null; break;
         case 'danava-cms:cancel': if (before.current) replaceDraft(before.current); before.current = null; break;
         case 'danava-cms:pick-image': if (canEdit) setPicker({ base: String(d.base), label: String(d.label || 'Ảnh') }); break;
+        case 'danava-cms:open-panel': onPanel(String(d.panel || '')); break;
         case 'danava-cms:key':
           if (d.key === 'undo') doUndo();
           if (d.key === 'redo') doRedo();
-          if (d.key === 'save' && canEdit) save('draft');
+          if (d.key === 'save' && canEdit) void save('draft');
           break;
       }
     };
@@ -143,6 +184,7 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
       const k = e.key.toLowerCase();
       if (k === 'z') { e.preventDefault(); e.stopPropagation(); if (e.shiftKey) doRedo(); else doUndo(); }
       if (k === 'y') { e.preventDefault(); e.stopPropagation(); doRedo(); }
+      if (k === 'k' && e.shiftKey) { e.preventDefault(); setChoosing(true); }
     };
     addEventListener('keydown', onKey, true);
     return () => removeEventListener('keydown', onKey, true);
@@ -152,20 +194,25 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
   async function preview() {
     const w = window.open('about:blank', '_blank');
     if (dirty && canEdit) await onSave('draft');
-    if (w) w.location.href = `${page.path}?cms=1`;
+    if (w) w.location.href = `${path}?cms=1`;
   }
 
   const status = error ? { cls: 'is-error', text: `Chưa lưu được: ${/fetch|network|mạng/i.test(error) ? 'mất kết nối, thử lại' : error}` }
     : saving ? { cls: 'is-saving', text: 'Đang lưu…' }
       : dirty ? { cls: 'is-dirty', text: 'Chưa lưu' }
         : hasDraft ? { cls: 'is-draft', text: 'Đã lưu nháp' } : { cls: 'is-live', text: 'Đã xuất bản' };
+  const landing = /^\/lp\/[^/]+\/$/.test(path);
+  const drawer = panel ? renderPanel(panel, path) : null;
 
   return (
-    <div className="lv ax-scope" role="region" aria-label={`Chỉnh trực tiếp: ${page.label}`}>
+    <div className="lv ax-scope" role="region" aria-label={`Chỉnh sửa website: ${title}`}>
       <header className="lv-bar">
         <div className="lv-bar__left">
-          <Tip side="bottom" label="Thoát chỉnh trực tiếp"><button type="button" className="ax-icon-btn" onClick={onExit} aria-label="Thoát chỉnh trực tiếp"><ArrowLeft size={18} /></button></Tip>
-          <div className="lv-title"><b>{page.label}</b><small>{selected ? `Đang chọn: ${selected}` : mode === 'edit' ? 'Chạm vào chữ, ảnh hoặc nút để sửa' : 'Nhấn giữ phần cần sửa'}</small></div>
+          <Tip side="bottom" label="Thoát trình biên tập"><button type="button" className="ax-icon-btn" onClick={exit} aria-label="Thoát trình biên tập"><ArrowLeft size={18} /></button></Tip>
+          <button type="button" className="lv-page" onClick={() => setChoosing(true)} aria-haspopup="dialog" aria-label={`Trang đang chỉnh: ${title} (${path}). Bấm để chọn trang khác`}>
+            <span className="lv-page__text"><b>{title}</b><small>{selected ? `Đang chọn: ${selected}` : path}</small></span>
+            <ChevronDown size={16} aria-hidden="true" />
+          </button>
         </div>
         <div className="lv-bar__mid">
           <span className={`lv-status lv-status--sm ${status.cls}`} aria-hidden="true">{status.text}</span>
@@ -183,19 +230,57 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
           <span className={`lv-status ${status.cls}`} role="status" aria-live="polite">{saving && <Loader2 size={13} className="lv-spin" />}{status.text}</span>
           {canEdit && <>
             <Tip side="bottom" label="Hoàn tác (Ctrl+Z)"><button type="button" className="ax-icon-btn" onClick={doUndo} disabled={!undo.current.length} aria-label="Hoàn tác"><Undo2 size={17} /></button></Tip>
-            <Tip side="bottom" label="Làm lại (Ctrl+Shift+Z)"><button type="button" className="ax-icon-btn" onClick={doRedo} disabled={!redo.current.length} aria-label="Làm lại"><Redo2 size={17} /></button></Tip>
+            <Tip side="bottom" label="Làm lại (Ctrl+Shift+Z)"><button type="button" className="ax-icon-btn lv-hide-xs" onClick={doRedo} disabled={!redo.current.length} aria-label="Làm lại"><Redo2 size={17} /></button></Tip>
           </>}
-          <Tip side="bottom" label="Xem trước bản nháp ở tab mới"><button type="button" className="ax-icon-btn" onClick={preview} aria-label="Xem trước bản nháp"><Eye size={17} /></button></Tip>
-          {canEdit && <Button variant="secondary" size="sm" onClick={() => save('draft')} disabled={!dirty || saving}><Save size={15} /><span className="lv-hide-sm">Lưu nháp</span></Button>}
-          {canPublish && <Button variant="primary" size="sm" onClick={() => save('publish')} disabled={(!dirty && !hasDraft) || saving}>{dirty || hasDraft ? <Rocket size={15} /> : <Check size={15} />}<span className="lv-hide-sm">Xuất bản</span></Button>}
+          {landing && canEdit && <Tip side="bottom" label="Thêm khối / sửa bố cục landing page"><button type="button" className="ax-icon-btn" onClick={() => onPanel('landing-edit')} aria-label="Thêm khối"><Blocks size={17} /></button></Tip>}
+          <Tip side="bottom" label="Thiết lập trang (nội dung khác, SEO)"><button type="button" className="ax-icon-btn" onClick={() => onPanel('page')} aria-label="Thiết lập trang"><FileCog size={17} /></button></Tip>
+          <Tip side="bottom" label="Thiết lập website (menu, chân trang, liên hệ, widget)"><button type="button" className="ax-icon-btn" onClick={() => onPanel('site')} aria-label="Thiết lập website"><Settings2 size={17} /></button></Tip>
+          <Tip side="bottom" label="Xem trước bản nháp ở tab mới"><button type="button" className="ax-icon-btn lv-hide-xs" onClick={preview} aria-label="Xem trước bản nháp"><Eye size={17} /></button></Tip>
+          {canEdit && <Button variant="secondary" size="sm" onClick={() => void save('draft')} disabled={!dirty || saving}><Save size={15} /><span className="lv-hide-sm">Lưu nháp</span></Button>}
+          {canPublish && <Button variant="primary" size="sm" onClick={() => void save('publish')} disabled={(!dirty && !hasDraft) || saving}>{dirty || hasDraft ? <Rocket size={15} /> : <Check size={15} />}<span className="lv-hide-sm">Xuất bản</span></Button>}
         </div>
       </header>
 
-      <div className={`lv-stage is-${device}`}>
-        {!loaded && <div className="lv-loading"><Loader2 size={18} className="lv-spin" /> Đang mở trang…</div>}
-        <iframe ref={frame} title={`Trang ${page.label} (chỉnh trực tiếp)`} src={`${page.path}?cms=1`} style={{ width: DEVICES.find(d => d.id === device)!.width }}
-          onLoad={() => setLoaded(true)} />
+      <div className={`lv-body${drawer ? ' has-drawer' : ''}`}>
+        <div className={`lv-stage is-${device}`}>
+          {!loaded && <div className="lv-loading"><Loader2 size={18} className="lv-spin" /> Đang mở trang…</div>}
+          <iframe ref={frame} title={`Trang ${title} (trình biên tập)`} src={src} style={{ width: DEVICES.find(d => d.id === device)!.width }}
+            onLoad={() => setLoaded(true)} />
+        </div>
+        {drawer && (
+          <aside className="lv-drawer" role="dialog" aria-modal="false" aria-label={drawer.title} onKeyDown={e => { if (e.key === 'Escape' && !(e.target as HTMLElement).closest('input, textarea, select')) onPanel(''); }}>
+            <div className="lv-drawer__head">
+              <div>
+                <b>{drawer.title}</b>
+                {drawer.scope === 'global' && <span className="lv-scope is-global">Áp dụng toàn website</span>}
+                {drawer.scope === 'page' && <span className="lv-scope">Chỉ trang {title}</span>}
+                {drawer.scope === 'record' && <span className="lv-scope">{drawer.scopeLabel || 'Hồ sơ dùng chung'}</span>}
+              </div>
+              <button type="button" className="ax-icon-btn" onClick={() => onPanel('')} aria-label="Đóng ngăn thiết lập" autoFocus><X size={18} /></button>
+            </div>
+            <div className="lv-drawer__body">{drawer.body}</div>
+          </aside>
+        )}
       </div>
+
+      {choosing && <PagePicker pages={pages} current={path} onPick={goTo} onClose={() => setChoosing(false)}
+        actions={canEdit ? [
+          { label: 'Quản lý landing page & liên kết ngoài', onClick: () => { setChoosing(false); onPanel('landings'); } },
+          { label: 'Mẫu & khối', onClick: () => { setChoosing(false); onPanel('blocks'); } }
+        ] : []} />}
+
+      {pending && (
+        <Modal open onOpenChange={o => { if (!o) setPending(null); }} size="sm"
+          title={pending.kind === 'exit' ? 'Thoát trình biên tập?' : 'Chuyển sang trang khác?'}
+          description="Bạn có thay đổi chưa lưu. Lưu nháp để giữ lại sau khi tải lại trang; website công khai chỉ đổi khi Xuất bản."
+          footer={<>
+            <Button variant="ghost" onClick={() => setPending(null)}>Ở lại</Button>
+            {pending.kind === 'page'
+              ? <Button variant="secondary" onClick={() => { const p = pending; setPending(null); onPathChange(p.path); }}>Chuyển, giữ thay đổi</Button>
+              : <Button variant="secondary" onClick={() => { setPending(null); onExit(); }}>Thoát</Button>}
+            <Button variant="primary" loading={saving} onClick={async () => { const p = pending; await save('draft'); setPending(null); if (p.kind === 'page') onPathChange(p.path); else onExit(); }}><Save size={15} /> Lưu nháp rồi {pending.kind === 'exit' ? 'thoát' : 'chuyển'}</Button>
+          </>} />
+      )}
 
       {picker && <ImagePicker label={picker.label} current={readCms(draft, `${picker.base}.image`)} pageImages={pageImages}
         onClose={() => setPicker(null)}
@@ -205,6 +290,47 @@ export function LiveEditor({ page, draft, setDraft, onSave, saving, dirty, hasDr
           setPicker(null);
         }} />}
     </div>
+  );
+}
+
+/** Bộ chọn trang: tìm theo tên/đường dẫn (không dấu cũng được), lọc theo loại; hiển thị tối đa 40 kết quả. */
+function PagePicker({ pages, current, onPick, onClose, actions }: { pages: EditorPage[]; current: string; onPick: (path: string) => void; onClose: () => void; actions: { label: string; onClick: () => void }[] }) {
+  const [q, setQ] = useState('');
+  const [type, setType] = useState('');
+  const types = useMemo(() => [...new Set(pages.map(p => p.type))], [pages]);
+  const found = useMemo(() => {
+    const n = norm(q.trim());
+    return pages.filter(p => (!type || p.type === type) && (!n || norm(`${p.label} ${p.path}`).includes(n)));
+  }, [pages, q, type]);
+  return (
+    <Modal open onOpenChange={o => { if (!o) onClose(); }} title="Chọn trang để chỉnh" size="lg">
+      <div className="lv-picker">
+        <label className="lv-picker__search"><Search size={16} aria-hidden="true" />
+          <input autoFocus placeholder="Tìm trang, sản phẩm, bài viết, dự án, landing page…" value={q} onChange={e => setQ(e.target.value)} aria-label="Tìm trang"
+            onKeyDown={e => { if (e.key === 'Enter' && found[0]) onPick(found[0].path); }} />
+        </label>
+        <div className="lv-picker__types" role="radiogroup" aria-label="Lọc theo loại">
+          {['', ...types].map(t => (
+            <button key={t || 'all'} type="button" role="radio" aria-checked={type === t} className={type === t ? 'is-on' : ''} onClick={() => setType(t)}>
+              {t || 'Tất cả'} <small>{t ? pages.filter(p => p.type === t).length : pages.length}</small>
+            </button>
+          ))}
+        </div>
+        <ul className="lv-picker__list">
+          {found.slice(0, SHOW).map(p => (
+            <li key={p.path}>
+              <button type="button" className={p.path === current ? 'is-on' : ''} aria-current={p.path === current ? 'page' : undefined} onClick={() => onPick(p.path)}>
+                <span><b>{p.label}</b><small>{p.path}{p.note ? ` · ${p.note}` : ''}</small></span>
+                <em>{p.type}</em>
+              </button>
+            </li>
+          ))}
+          {!found.length && <li className="field-note">Không tìm thấy trang phù hợp.</li>}
+        </ul>
+        {found.length > SHOW && <p className="field-note">Còn {found.length - SHOW} kết quả — gõ thêm để lọc.</p>}
+        {actions.length > 0 && <div className="lv-picker__actions">{actions.map(a => <Button key={a.label} variant="ghost" size="sm" onClick={a.onClick}>{a.label}</Button>)}</div>}
+      </div>
+    </Modal>
   );
 }
 

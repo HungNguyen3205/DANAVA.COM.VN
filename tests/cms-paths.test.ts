@@ -51,3 +51,20 @@ test('khóa sai bị từ chối (kể cả thuộc tính nguyên mẫu)', () =>
   assert.equal(({} as Record<string, unknown>).polluted, undefined);
   assert.match(cmsValueError('hero.kicker', 'x'.repeat(500)), /Tối đa/);
 });
+
+test('bản ghi: sửa trên trang chi tiết cập nhật đúng hồ sơ trong module (rec.<loại>.<id>.<trường>)', () => {
+  const svc = base.services.find(s => s.id === 'studio')!;
+  const next = writeCms(base, 'rec.services.studio.heroLead', 'Phần mềm quản lý phòng tập — thử nghiệm');
+  assert.equal(next.services.find(s => s.id === 'studio')!.heroLead, 'Phần mềm quản lý phòng tập — thử nghiệm');
+  assert.deepEqual(next.services.filter(s => s.id !== 'studio'), base.services.filter(s => s.id !== 'studio'), 'hồ sơ khác giữ nguyên');
+  assert.equal(svc.heroLead, base.services.find(s => s.id === 'studio')!.heroLead, 'không sửa bản cũ');
+  assert.equal(validateContent(next), true);
+  const post = base.posts[0];
+  const p2 = writeCms(base, `rec.posts.${post.id}.excerpt`, 'Tóm tắt mới');
+  assert.equal(p2.posts[0].excerpt, 'Tóm tắt mới');
+  assert.equal(readCms(p2, `rec.posts.${post.id}.excerpt`), 'Tóm tắt mới');
+  assert.throws(() => writeCms(base, 'rec.services.khong-co.title', 'x'), /không tồn tại/);
+  assert.throws(() => writeCms(base, 'rec.services.studio.title', '  '), /trống/);
+  assert.throws(() => writeCms(base, `rec.posts.${post.id}.image`, 'https://evil.example/a.png'));
+  for (const p of ['rec.services.studio.body', 'rec.users.x.name', 'rec.posts.x.published', 'rec.services.studio']) assert.equal(validCmsPath(p), false, p);
+});

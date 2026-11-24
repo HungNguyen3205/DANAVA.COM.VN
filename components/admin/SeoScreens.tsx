@@ -92,7 +92,7 @@ function SeoCheck({ draft }: { draft: SiteData }) {
   const missing = [
     ...draft.posts.filter(p => p.published && !p.archived && !p.seoDescription && !p.excerpt).map(p => ({ label: `Bài “${p.title}”`, href: `/admin/bai-viet/?id=${p.id}&tab=seo` })),
     ...draft.services.filter(s => s.published !== false && !s.seoDescription).map(s => ({ label: `Sản phẩm “${s.title}”`, href: `/admin/san-pham/?id=${s.id}&tab=seo` })),
-    ...(draft.landings || []).filter(l => l.kind === 'internal' && l.status === 'published' && !l.seoDescription && !l.purpose).map(l => ({ label: `Landing “${l.title}”`, href: `/admin/landing-page/?id=${l.id}&tab=seo` }))
+    ...(draft.landings || []).filter(l => l.kind === 'internal' && l.status === 'published' && !l.seoDescription && !l.purpose).map(l => ({ label: `Landing “${l.title}”`, href: `/admin/chinh-sua/?panel=landings&id=${l.id}&tab=seo` }))
   ];
   const noindex = [...draft.posts.filter(p => p.noindex && p.published).map(p => `/blogs/${p.slug}/`), ...(draft.landings || []).filter(l => l.noindex).map(l => `/lp/${l.slug}/`)];
   return (
@@ -141,7 +141,7 @@ export function ContentPerformance({ draft }: { draft: SiteData }) {
     const m = new Map<string, { type: string; title: string; href?: string }>();
     for (const p of draft.posts) m.set(`/blogs/${p.slug}/`, { type: 'Bài viết', title: p.title, href: `/admin/bai-viet/?id=${p.id}` });
     for (const s of draft.services) m.set(`/giai-phap/${s.slug}/`, { type: 'Sản phẩm', title: s.title, href: `/admin/san-pham/?id=${s.id}` });
-    for (const l of draft.landings || []) if (l.kind === 'internal') m.set(`/lp/${l.slug}/`, { type: 'Landing page', title: l.title, href: `/admin/landing-page/?id=${l.id}` });
+    for (const l of draft.landings || []) if (l.kind === 'internal') m.set(`/lp/${l.slug}/`, { type: 'Landing page', title: l.title, href: `/admin/chinh-sua/?panel=landings&id=${l.id}` });
     return m;
   }, [draft]);
   const since = Date.now() - days * 86400_000;

@@ -15,6 +15,7 @@ import { WebsitePage } from './WebsitePage';
 import { MarketingPage } from './MarketingPage';
 import { EventsPage } from './EventsPage';
 import { StudioPage } from './StudioPage';
+import { cmsText } from './cms';
 import { StudioShowcase } from './StudioShowcase';
 import { ProductGallery } from './ProductGallery';
 import { DanavaGoShowcase } from './DanavaGoShowcase';
@@ -57,8 +58,8 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
             <div className="s-svc-hero__copy">
               <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: section?.base ?? '/giai-phap/', label: section?.label ?? 'Giải pháp' }, { label: service.title }]} />
               <p className="s-eyebrow">{m.kicker}</p>
-              <h1 className="s-h1">{service.title}</h1>
-              <p className="s-lead">{service.heroLead || service.description}</p>
+              <h1 className="s-h1" {...cmsText(`rec.services.${service.id}.title`, 'Tên sản phẩm', { scope: 'record', scopeLabel: `Hồ sơ ${service.title}` })}>{service.title}</h1>
+              <p className="s-lead" {...cmsText(`rec.services.${service.id}.${service.heroLead ? 'heroLead' : 'description'}`, 'Câu dẫn sản phẩm', { multiline: true, scope: 'record', scopeLabel: `Hồ sơ ${service.title}` })}>{service.heroLead || service.description}</p>
               {!!service.audience?.length && (
                 <ul className="s-svc-audience" aria-label="Phù hợp với">
                   {service.audience.map(a => <li key={a} className="s-badge s-badge--neutral">{a}</li>)}

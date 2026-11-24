@@ -8,6 +8,7 @@ import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
 import { HrefIcon, IconBox, type Tone } from './site/icons';
 import { DICH_VU, SHOW_DICH_VU_MENU } from '@/lib/dich-vu';
+import { cmsBlock, cmsText } from './site/cms';
 import { Megaphone, MonitorSmartphone, CalendarDays, Plane } from 'lucide-react';
 
 /** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
@@ -126,7 +127,7 @@ export function Header() {
 
   return (
     <>
-      <header className={`s-header${scrolled ? ' is-scrolled' : ''}`}>
+      <header className={`s-header${scrolled ? ' is-scrolled' : ''}`} {...cmsBlock('Đầu trang & menu', 'site-header', { panel: 'menu', scope: 'global' })}>
         <div className="s-container s-header__bar">
           <Link className="s-logo" href="/" aria-label="DANAVA Solutions — Trang chủ">
             <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
@@ -259,7 +260,7 @@ export function Footer() {
   const { socials, zalo, messenger, tel } = contactChannels(data);
 
   return (
-    <footer className="s-footer">
+    <footer className="s-footer" {...cmsBlock('Chân trang', 'site-footer', { panel: 'site', scope: 'global' })}>
       <div className="s-container">
         <div className="s-footer__top">
           <div className="s-footer__brand">
@@ -270,7 +271,7 @@ export function Footer() {
             <div className="s-footer__contact">
               <a href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
               <a href={`mailto:${email}`}><Mail aria-hidden="true" />{email}</a>
-              <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" />{co.address}</a>
+              <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" /><span {...cmsText('block.company.address', 'Địa chỉ (chân trang, trang Liên hệ)', { scope: 'global' })}>{co.address}</span></a>
             </div>
             {(socials.length > 0 || zalo || messenger || tel) && (
               <ul className="s-footer__social" aria-label="Kênh liên hệ và mạng xã hội của DANAVA">

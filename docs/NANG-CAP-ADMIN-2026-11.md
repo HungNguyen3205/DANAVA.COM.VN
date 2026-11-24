@@ -189,3 +189,22 @@ Thay cho kiểu "biểu mẫu + khung xem trước" cũ (`PageVisualEditor`, đ�
   - Đầu trang và dải cuối trang của các trang: Về DANAVA, Liên hệ, Hệ sinh thái, Blogs, Đối tác, Dự án, Giải pháp.
   - Các phần khác của trang vẫn sửa ở các tab biểu mẫu bên cạnh.
 - **Test:** `tests/cms-paths.test.ts`.
+
+## 10. Chỉnh sửa website — một lối vào (11/2026)
+
+Nhóm Website trong menu còn **một mục: “Chỉnh sửa website”** (`/admin/chinh-sua/`). Bấm vào là mở thẳng trình biên tập: lần đầu Trang chủ, những lần sau mở trang chỉnh gần nhất (nếu còn tồn tại).
+
+| Trước | Bây giờ |
+|---|---|
+| Website → Trang → chọn trang → Chỉnh trực tiếp | Bộ chọn trang trên thanh công cụ (tìm không dấu, lọc: Trang / Sản phẩm / Dịch vụ / Bài viết / Dự án / Landing page) |
+| Các tab biểu mẫu của trang | Nút **Thiết lập trang** (ngăn bên phải; trang chi tiết → hồ sơ đầy đủ trong module) |
+| Website → Menu điều hướng | Chọn đầu trang → **Sửa menu** (nhãn “Áp dụng toàn website”) |
+| Website → Giao diện chung | Nút **Thiết lập website** (menu, liên hệ, widget ANNA, liên kết thông tin công ty) |
+| Website → Landing page (cả liên kết ngoài) | Bộ chọn trang → “Quản lý landing page & liên kết ngoài”; trên trang /lp/… nút **Thêm khối** |
+| Website → Mẫu & khối | Bộ chọn trang → “Mẫu & khối” |
+
+- **Chế độ Xem**: bấm menu / liên kết nội bộ của website → trang mới mở trong trình biên tập, thanh công cụ nhận đúng trang (liên kết ngoài, admin, API không mở).
+- **Nguồn dữ liệu**: tiêu đề/câu dẫn trang sản phẩm → hồ sơ sản phẩm (`rec.services.<id>.*`); tóm tắt + ảnh bìa bài viết → bài viết (`rec.posts.<id>.*`); tiêu đề/tóm tắt dự án → hồ sơ dự án; địa chỉ chân trang → thông tin công ty. Nhãn trên thanh công cụ: “Áp dụng toàn website” / “Hồ sơ …”.
+- **Chưa lưu**: đổi trang hoặc thoát → hỏi *Lưu nháp rồi chuyển / Chuyển, giữ thay đổi / Ở lại*. Đi theo liên kết trong trang vẫn giữ thay đổi trong phiên.
+- **Đường dẫn cũ** (`/admin/trang/?page=…&tab=…`, `/admin/landing-page/…`, `/admin/menu/`, `/admin/giao-dien/`, `/admin/mau-khoi/`, các mục cũ hơn như `/admin/trang-chu/`, `/admin/anna/`) chuyển tới đúng trang / ngăn trong trình biên tập.
+- **Chưa có**: chỉnh font, màu, chiều rộng chung (cố định theo bộ nhận diện trong mã nguồn); sửa thân bài viết và tiêu đề bài viết ngay trên trang (sửa trong hồ sơ bài viết); kéo/đổi kích thước khối trên trang có sẵn (landing page nội bộ đã có trình dựng khối riêng).

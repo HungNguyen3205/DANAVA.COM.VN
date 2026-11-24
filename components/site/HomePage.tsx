@@ -103,7 +103,7 @@ export default function HomePage({ data }: { data: SiteData }) {
         {/* Vùng ghim: cuộn trong vùng này để dựng mô hình (sàn → vách → bàn họp → nội thất → hoàn thiện) */}
         <div className="hb-pin">
         <div className="s-container hb-cover__grid">
-          <div className="hb-cover__copy" {...cmsBlock('Màn mở đầu', 'home-hero')}>
+          <div className="hb-cover__copy" {...cmsBlock('Màn mở đầu', 'home-hero', { panel: 'page:mo-dau' })}>
             {/* Chữ màn mở đầu: admin → Website → Trang → Trang chủ → Màn mở đầu (lib/home-hero.ts) */}
             <p className="hb-pill"><Sparkles aria-hidden="true" /><span {...cmsText('hero.kicker', 'Nhãn nhỏ')}>{hero.kicker}</span> </p>
             <h1 className="hb-title" id="home-title">

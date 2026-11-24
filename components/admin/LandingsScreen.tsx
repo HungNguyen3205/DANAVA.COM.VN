@@ -188,7 +188,7 @@ export function BlockLibraryScreen() {
           {LANDING_TEMPLATES.map(t => (
             <li key={t.id}>
               <b>{t.label}</b><span>{t.desc}</span>
-              <Link className="text-link" href={`/admin/landing-page/?new=1&mau=${t.id}`}>Tạo landing page từ mẫu này →</Link>
+              <Link className="text-link" href={`/admin/chinh-sua/?panel=landings&new=1&mau=${t.id}`}>Tạo landing page từ mẫu này →</Link>
             </li>
           ))}
         </ul>

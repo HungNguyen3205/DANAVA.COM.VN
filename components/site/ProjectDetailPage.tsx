@@ -4,6 +4,7 @@
  * kết quả (chỉ điều đã bàn giao/đã xác nhận) → nhận xét được phép công bố → dịch vụ liên quan → CTA.
  */
 import Link from 'next/link';
+import { cmsText } from './cms';
 import { ArrowUpRight, Target, Lightbulb, PackageCheck, ListChecks } from 'lucide-react';
 import type { Project, SiteData } from '@/lib/content';
 import { publicTestimonials, publishedProjects, servicesForProject } from '@/lib/site-queries';
@@ -41,8 +42,8 @@ export function ProjectDetailPage({ project: p, data, preview }: { project: Proj
               {p.category && <span className="s-badge">{p.category}</span>}
               {p.industry && <span className="s-badge s-badge--neutral">{p.industry}</span>}
             </div>
-            <h1 className="s-h1">{p.title}</h1>
-            {p.summary && <p className="s-lead">{p.summary}</p>}
+            <h1 className="s-h1" {...cmsText(`rec.projects.${p.id}.title`, 'Tên dự án', { scope: 'record', scopeLabel: 'Hồ sơ dự án' })}>{p.title}</h1>
+            {p.summary && <p className="s-lead" {...cmsText(`rec.projects.${p.id}.summary`, 'Tóm tắt dự án', { multiline: true, scope: 'record', scopeLabel: 'Hồ sơ dự án' })}>{p.summary}</p>}
             <dl className="s-proj-facts">
               {p.client && <div><dt>Khách hàng</dt><dd>{p.client}</dd></div>}
               {p.industry && <div><dt>Ngành</dt><dd>{p.industry}</dd></div>}

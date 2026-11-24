@@ -44,15 +44,15 @@ export function OverviewTasks({ data, leads, draft }: { data: SiteData; leads: A
     const hidden = data.services.filter(s => s.published === false).length;
     if (hidden) tasks.push({ text: `${hidden} sản phẩm đang ẩn`, href: '/admin/san-pham/' });
     const lp = (data.landings || []).filter(l => l.status === 'draft').length;
-    if (lp) tasks.push({ text: `${lp} landing page ở trạng thái Nháp`, href: '/admin/landing-page/' });
+    if (lp) tasks.push({ text: `${lp} landing page ở trạng thái Nháp`, href: '/admin/chinh-sua/?panel=landings' });
     const noSeo = data.posts.filter(p => p.published && !p.archived && !p.seoDescription && !p.excerpt).length + data.services.filter(s => s.published !== false && !s.seoDescription).length;
     if (noSeo) tasks.push({ text: `${noSeo} trang công khai chưa có mô tả SEO`, href: '/admin/seo/?tab=kiem-tra' });
   }
   const shortcuts = [
     can(user.role, 'content.draft') && { label: 'Viết bài', href: '/admin/bai-viet/?new=1', icon: Plus },
     can(user.role, 'content.draft') && { label: 'Thêm sản phẩm', href: '/admin/san-pham/?new=1', icon: Package },
-    can(user.role, 'content.draft') && { label: 'Tạo landing page', href: '/admin/landing-page/?new=1', icon: Rocket },
-    content && { label: 'Sửa trang chủ', href: '/admin/trang/?page=trang-chu', icon: FileText },
+    can(user.role, 'content.draft') && { label: 'Tạo landing page', href: '/admin/chinh-sua/?panel=landings&new=1', icon: Rocket },
+    content && { label: 'Chỉnh sửa website', href: '/admin/chinh-sua/?path=/', icon: FileText },
     sales && { label: 'Danh bạ khách hàng', href: '/admin/danh-ba/', icon: Users },
     can(user.role, 'reports.read') && { label: 'Hiệu quả nội dung', href: '/admin/hieu-qua/', icon: ChartColumn }
   ].filter(Boolean) as { label: string; href: string; icon: typeof Plus }[];

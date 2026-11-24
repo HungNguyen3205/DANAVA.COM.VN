@@ -25,12 +25,14 @@ import { BLOCK_META, PAGE_NAMES } from './adminBlockConfig';
 import { block, blockDefaults, savedBlock, withBlock, type BlockKey } from '@/lib/blocks';
 import { can } from '@/lib/permissions';
 import { ContactBook, FormsReport, SourcesReport } from './admin/CustomerReports';
-import { WebsitePagesScreen } from './admin/WebsitePagesScreen';
+import { EDITOR_LAST_KEY, EDITOR_SLUG, editorPages, legacyEditorTarget, recordOf } from './admin/websiteEditorData';
+import { SITE_PAGES } from './admin/websitePages';
 import { AuditScreen, RevisionsScreen, UsersScreen } from './admin/SystemScreens';
 import { GroupsScreen, ProductsScreen } from './admin/ProductsScreen';
 import { PostsScreen } from './admin/PostsScreen';
 import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
-import { LiveEditor } from './admin/LiveEditor';
+import { LiveEditor, type EditorPanel } from './admin/LiveEditor';
+import { PageSettings } from './admin/PageSettings';
 import { ContentPerformance, SeoScreen } from './admin/SeoScreens';
 import { OverviewTasks } from './admin/OverviewTasks';
 import { HomeHeroEditor } from './admin/HomeHeroEditor';
@@ -53,15 +55,23 @@ export default function Admin({ section = 'tong-quan' }: { section?: string }) {
 /** Đường dẫn admin cũ (vd. /admin/trang-chu/) → vị trí mới trong menu 8 nhóm. */
 function AdminRoute({ section }: { section: string }) {
   const router = useRouter();
-  const legacy = LEGACY_SECTIONS[section];
+  // Nhóm Website cũ (Trang, Landing page, Menu, Giao diện chung, Mẫu & khối) đã gom vào "Chỉnh sửa website"
+  const editorLegacy = ['trang', 'landing-page', 'menu', 'giao-dien', 'mau-khoi'].includes(section);
+  const legacy = LEGACY_SECTIONS[section] || (editorLegacy ? section : '');
   useEffect(() => {
-    if (legacy) router.replace(`/admin/${legacy}`);
-  }, [legacy, router]);
+    if (!legacy) return;
+    // Mục cũ → (đường dẫn mới) → nếu thuộc nhóm Website cũ thì đổi tiếp sang trình biên tập, giữ tham số
+    const [slug, query = ''] = legacy.replace(/\/$/, '').split('/?');
+    const search = editorLegacy ? location.search : query ? `?${query}` : '';
+    const target = legacyEditorTarget(slug.replace(/\/$/, ''), search) || legacy;
+    router.replace(`/admin/${target}`);
+  }, [legacy, editorLegacy, router]);
   if (legacy) return <Loading label="Đang chuyển tới vị trí mới của mục này…" />;
   return <AdminWorkspace section={section} />;
 }
 
 function AdminWorkspace({ section }: { section: string }) {
+  const router = useRouter();
   const { data, save, ready, error, draft: serverDraft, discardDraft } = useSite(),
     user = useAdminUser(),
     [draft, setDraft] = useState<SiteData>(data),
@@ -77,6 +87,8 @@ function AdminWorkspace({ section }: { section: string }) {
     setDraft(data);
   }, [data, ready]);
   const dirty = JSON.stringify(draft) !== JSON.stringify(data);
+  const [edPath, setEdPath] = useQueryParam('path');
+  const [edPanel, setEdPanel] = useQueryParam('panel');
   const dismissNotice = useCallback(() => {
     setNotice('');
     setDismissedError(error);
@@ -186,10 +198,60 @@ function AdminWorkspace({ section }: { section: string }) {
     if (t.kind === 'presentation') return <PresentationEditor value={draft.presentation || defaultPresentation} onChange={(presentation) => setDraft({ ...draft, presentation })} />;
     if (t.kind === 'block' && t.block === 'gallery') return <div className="blk-stack"><GalleryOrder draft={draft} setDraft={setDraft} />{blockPanel('gallery')}</div>;
     if (t.kind === 'block') return blockPanel(t.block);
-    if (t.kind === 'visual') return <LiveEditor page={_page} draft={draft} setDraft={setDraft} onSave={persist} saving={saving} dirty={dirty} hasDraft={serverDraft.hasDraft}
-      error={error && error !== dismissedError ? error : ''} canEdit={can(user.role, 'content.draft')} canPublish={can(user.role, 'content.publish')} onExit={exit} />;
+    if (t.kind === 'visual') { void exit; return null; }
     return <div className="blk-stack">{t.keys.map(pageTextPanel)}</div>;
   };
+
+  /* ---------------- Chỉnh sửa website: ngăn thiết lập theo ngữ cảnh ---------------- */
+  const editorPageList = useMemo(() => editorPages(draft), [draft]);
+  const renderEditorPanel = (panel: string, path: string): EditorPanel | null => {
+    const [kind, arg] = panel.split(':');
+    if (kind === 'page') {
+      const page = SITE_PAGES.find(p => p.path === path);
+      const rec = recordOf(draft, path);
+      if (page) {
+        const tabs = page.tabs.filter(t => t.kind !== 'visual');
+        return { title: `Thiết lập trang · ${page.label}`, scope: 'page', body: <PageSettings tabs={tabs} initial={arg} render={t => renderPageTab(page, t, () => undefined)} note={`Các phần khác của trang ${page.label}. Chữ, ảnh và nút ở đầu trang sửa trực tiếp trên trang. Tiêu đề tìm kiếm của trang này đặt trong mã nguồn.`} /> };
+      }
+      if (rec) {
+        const href = rec.kind === 'service' ? `/admin/san-pham/?id=${rec.id}` : rec.kind === 'post' ? `/admin/bai-viet/?id=${rec.id}` : rec.kind === 'project' ? `/admin/du-an/?tab=du-an&id=${rec.id}` : '';
+        if (rec.kind === 'landing') return { title: `Landing page · ${rec.title}`, scope: 'record', scopeLabel: 'Landing page này', body: <LandingsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} /> };
+        return { title: `Thiết lập · ${rec.title}`, scope: 'record', scopeLabel: 'Hồ sơ dùng chung', body: (
+          <div className="blk-stack">
+            <p className="field-note">Trang này hiển thị từ hồ sơ <b>{rec.title}</b>. Sửa tiêu đề, câu dẫn, ảnh bìa ngay trên trang (cập nhật thẳng vào hồ sơ). SEO, nội dung đầy đủ, gói giá, danh mục… sửa trong hồ sơ đầy đủ — cùng một bản nháp.</p>
+            <a className="ax-btn ax-btn--secondary" href={href}>Mở hồ sơ đầy đủ trong quản trị</a>
+          </div>
+        ) };
+      }
+      return { title: 'Thiết lập trang', scope: 'page', body: <p className="field-note">Trang này chưa có thiết lập riêng. Sửa chữ, ảnh và nút trực tiếp trên trang; phần dùng chung ở Thiết lập website.</p> };
+    }
+    if (kind === 'site') return { title: 'Thiết lập website', scope: 'global', body: (
+      <div className="blk-stack">
+        <div className="lv-links">
+          <button type="button" className="ax-btn ax-btn--secondary" onClick={() => setEdPanel('menu')}>Menu điều hướng (đầu trang)</button>
+          <a className="ax-btn ax-btn--secondary" href="/admin/thuong-hieu/?tab=cong-ty">Thông tin công ty (chân trang)</a>
+          <a className="ax-btn ax-btn--secondary" href="/admin/thuong-hieu/?tab=kenh-lien-he">Kênh liên hệ & mạng xã hội</a>
+        </div>
+        {contactSettings}
+        {blockPanel('anna')}
+        <p className="field-note">Font, màu và chiều rộng nội dung theo bộ nhận diện DANAVA, cố định trong mã nguồn (chưa có tùy chọn chỉnh trong quản trị).</p>
+      </div>
+    ) };
+    if (kind === 'menu') return { title: 'Menu điều hướng', scope: 'global', body: <MenuEditor draft={draft} setDraft={setDraft} /> };
+    if (kind === 'landings') return { title: 'Landing page & liên kết ngoài', scope: 'global', scopeLabel: '', body: <LandingsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} /> };
+    if (kind === 'landing-edit') return renderEditorPanel('page', path);
+    if (kind === 'blocks') return { title: 'Mẫu & khối', body: <BlockLibraryScreen /> };
+    return null;
+  };
+  // Lần đầu: Trang chủ; lần sau: trang chỉnh gần nhất (nếu còn tồn tại)
+  useEffect(() => {
+    if (section !== EDITOR_SLUG) return;
+    if (edPath) { try { localStorage.setItem(EDITOR_LAST_KEY, edPath); } catch {} return; }
+    if (new URLSearchParams(location.search).get('path')) return; // đường dẫn trên URL (liên kết / tải lại) được ưu tiên
+    let last = '/';
+    try { last = localStorage.getItem(EDITOR_LAST_KEY) || '/'; } catch {}
+    setEdPath(editorPageList.some(p => p.path === last) ? last : '/');
+  }, [section, edPath, editorPageList, setEdPath]);
   // So với nội dung gốc (normalizeContent luôn điền sẵn các trường này nên không dùng "có/không có")
   const pageEdited = (page: SitePage) => page.tabs.some(t => {
     if (t.kind === 'hero') return !!draft.homeHero || draft.headline !== BASE.headline;
@@ -322,11 +384,13 @@ function AdminWorkspace({ section }: { section: string }) {
     if (!allowed) return <Empty>Tài khoản của bạn chưa được cấp quyền dùng mục này. Liên hệ quản trị viên nếu cần.</Empty>;
     switch (section) {
       case 'tong-quan': return <div className="blk-stack"><OverviewTasks data={data} leads={leads} draft={serverDraft} />{can(user.role, 'content.read') && <AdminOverview data={data} leads={leads} />}</div>;
-      case 'trang': return <WebsitePagesScreen renderTab={renderPageTab} edited={pageEdited} />;
-      case 'landing-page': return <LandingsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
-      case 'mau-khoi': return <BlockLibraryScreen />;
-      case 'menu': return <MenuEditor draft={draft} setDraft={setDraft} />;
-      case 'giao-dien': return blockPanel('anna');
+      case EDITOR_SLUG: return edPath ? (
+        <LiveEditor path={edPath} onPathChange={p => setEdPath(p, true)} pages={editorPageList}
+          panel={edPanel} onPanel={p => setEdPanel(p)} renderPanel={renderEditorPanel}
+          draft={draft} setDraft={setDraft} onSave={persist} saving={saving} dirty={dirty} hasDraft={serverDraft.hasDraft}
+          error={error && error !== dismissedError ? error : ''} canEdit={can(user.role, 'content.draft')} canPublish={can(user.role, 'content.publish')}
+          onExit={() => router.push('/admin/tong-quan/')} />
+      ) : <Loading label="Đang mở trình biên tập…" />;
       case 'san-pham': return <ProductsScreen draft={draft} setDraft={setDraft} studioPricing={blockPanel('pricing')} ctaText={pageTextPanel} saveBar={recordSave} />;
       case 'nhom-loai': return <GroupsScreen draft={draft} setDraft={setDraft} />;
       case 'bai-viet': return tab === 'danh-muc' ? <TopicsEditor draft={draft} setDraft={setDraft} /> : <PostsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
@@ -370,7 +434,7 @@ function AdminWorkspace({ section }: { section: string }) {
       for (const p of draft.projects || []) out.push({ label: p.title, kind: 'Dự án', href: `/admin/du-an/?tab=du-an&id=${p.id}` });
       for (const x of draft.showcase || []) out.push({ label: x.name, kind: 'Portfolio', href: `/admin/du-an/?tab=portfolio&id=${x.id}` });
       for (const p of draft.staff) out.push({ label: p.name, kind: 'Đội ngũ', href: '/admin/thuong-hieu/?tab=doi-ngu' });
-      for (const l of draft.landings || []) out.push({ label: l.title, kind: 'Landing page', href: `/admin/landing-page/?id=${l.id}` });
+      for (const l of draft.landings || []) out.push({ label: l.title, kind: 'Landing page', href: `/admin/chinh-sua/?panel=landings&id=${l.id}` });
     }
     if (can(user.role, 'leads.read')) for (const l of leads) out.push({ label: `${l.name} ${l.phone || ''}`.trim(), kind: 'Khách hàng', href: '/admin/khach-hang/' });
     return out;

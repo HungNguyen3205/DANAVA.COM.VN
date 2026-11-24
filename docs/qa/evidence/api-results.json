@@ -136,7 +136,7 @@
   "module": "Bảo mật/Phản hồi",
   "scenario": "Danh sách tài khoản không lộ mật khẩu/hash",
   "expected": "Không có trường password/hash",
-  "actual": "200 {\"users\":[{\"id\":\"usr_207937b2-02f\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
+  "actual": "200 {\"users\":[{\"id\":\"usr_5d8bb06e-031\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
   "status": "PASS"
  },
  {
@@ -430,7 +430,7 @@
   "module": "Nội dung/Nháp",
   "scenario": "Đọc lại bản nháp qua API admin",
   "expected": "Có chữ nháp",
-  "actual": "QA_NHAP_Đồng_hành_cc4ed1",
+  "actual": "QA_NHAP_Đồng_hành_cf83f4",
   "status": "PASS"
  },
  {
@@ -773,7 +773,7 @@
   "module": "Tài nguyên/Tải ảnh",
   "scenario": "Tải PNG hợp lệ",
   "expected": "201 + đường dẫn /assets/uploads/*.webp",
-  "actual": "201 /assets/uploads/0bf07409-e8cd-4472-abcd-b8a3e15dc2bf.webp",
+  "actual": "201 /assets/uploads/db01c297-c64e-4d26-8603-e39f681313d6.webp",
   "status": "PASS"
  },
  {

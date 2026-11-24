@@ -59,7 +59,7 @@
   "module": "Tương tác/3D",
   "scenario": "Giảm chuyển động: mô hình 3D vẫn hiển thị (khung tĩnh), không lỗi",
   "expected": "Có canvas hoặc ảnh dự phòng, không lỗi JS",
-  "actual": "{\"office\":\"hb-office is-ready\",\"canvas\":true,\"fallback\":true}",
+  "actual": "{\"office\":\"hb-office\",\"canvas\":true,\"fallback\":true}",
   "status": "PASS",
   "evidence": "screens/home-reduced-motion.jpg"
  },

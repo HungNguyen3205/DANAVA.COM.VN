@@ -713,3 +713,48 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .ax-breakdown__list li:not(.is-top) .ax-breakdown__track i { background: linear-gradient(90deg, #b8c4dc, #8fa0c4); }
 @media (max-width: 1100px) { .ax-scope .ax-breakdown-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 700px) { .ax-scope .ax-kpis--3 { grid-template-columns: minmax(0, 1fr); } }
+
+/* ==== Chỉnh sửa website: bộ chọn trang, ngăn thiết lập (components/admin/LiveEditor.tsx) ==== */
+.ax-scope .lv-page { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 340px; padding: 4px 10px 4px 12px; border: 1px solid var(--ax-border); border-radius: 10px; background: var(--ax-surface-2); color: var(--ax-text); font: inherit; text-align: left; cursor: pointer; transition: border-color var(--ax-fast), background var(--ax-fast); }
+.ax-scope .lv-page:hover { border-color: var(--ax-border-strong); background: #fff; }
+.ax-scope .lv-page:focus-visible { outline: 2px solid var(--ax-accent); outline-offset: 1px; }
+.ax-scope .lv-page__text { display: grid; min-width: 0; line-height: 1.25; }
+.ax-scope .lv-page__text b { overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .lv-page__text small { overflow: hidden; color: var(--ax-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .lv-page > svg { flex: none; color: var(--ax-muted); }
+.ax-scope .lv-body { position: relative; flex: 1; display: flex; min-height: 0; }
+.ax-scope .lv-body > .lv-stage { flex: 1; min-width: 0; }
+.ax-scope .lv-drawer { display: flex; flex-direction: column; width: min(560px, 46vw); min-width: 360px; border-left: 1px solid var(--ax-border); background: var(--ax-bg, #f6f7fb); box-shadow: -12px 0 32px -24px rgba(12, 24, 56, .35); animation: lv-drawer-in .18s ease-out; }
+@keyframes lv-drawer-in { from { transform: translateX(16px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ax-scope .lv-drawer { animation: none; } }
+.ax-scope .lv-drawer__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s2); padding: 14px 16px; border-bottom: 1px solid var(--ax-border); background: #fff; }
+.ax-scope .lv-drawer__head > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.ax-scope .lv-drawer__head b { font-size: 15px; }
+.ax-scope .lv-drawer__body { flex: 1; overflow: auto; padding: 16px; }
+.ax-scope .lv-scope { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; background: var(--ax-info-bg); color: var(--ax-info); font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+.ax-scope .lv-scope.is-global { background: #fff1e6; color: #b54708; }
+.ax-scope .lv-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.ax-scope .lv-picker { display: grid; gap: 12px; }
+.ax-scope .lv-picker__search { display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--ax-border-strong); border-radius: 10px; background: #fff; }
+.ax-scope .lv-picker__search:focus-within { border-color: var(--ax-accent); box-shadow: var(--ax-focus); }
+.ax-scope .lv-picker__search svg { flex: none; color: var(--ax-muted); }
+.ax-scope .lv-picker__search input { flex: 1; min-width: 0; height: 40px; border: 0; background: transparent; color: var(--ax-text); font: inherit; font-size: 14px; outline: none; }
+.ax-scope .lv-picker__types { display: flex; flex-wrap: wrap; gap: 6px; }
+.ax-scope .lv-picker__types button { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border: 1px solid var(--ax-border); border-radius: 999px; background: #fff; color: var(--ax-text-2); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.ax-scope .lv-picker__types button small { color: var(--ax-muted); font-weight: 600; }
+.ax-scope .lv-picker__types button.is-on { border-color: var(--ax-accent); background: var(--ax-accent-soft); color: var(--ax-accent-text); }
+.ax-scope .lv-picker__list { display: grid; gap: 2px; max-height: 50vh; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.ax-scope .lv-picker__list button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 9px 12px; border: 0; border-radius: 10px; background: transparent; color: var(--ax-text); font: inherit; text-align: left; cursor: pointer; }
+.ax-scope .lv-picker__list button:hover, .ax-scope .lv-picker__list button:focus-visible { background: var(--ax-surface-2); outline: none; }
+.ax-scope .lv-picker__list button.is-on { background: var(--ax-accent-soft); }
+.ax-scope .lv-picker__list span { display: grid; min-width: 0; }
+.ax-scope .lv-picker__list b { overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .lv-picker__list small { overflow: hidden; color: var(--ax-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .lv-picker__list em { flex: none; padding: 2px 8px; border-radius: 999px; background: var(--ax-surface-2); color: var(--ax-text-2); font-size: 11.5px; font-style: normal; font-weight: 600; }
+.ax-scope .lv-picker__actions { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; border-top: 1px solid var(--ax-border); }
+@media (max-width: 1100px) { .ax-scope .lv-page { max-width: 220px; } }
+@media (max-width: 860px) {
+  .ax-scope .lv-drawer { position: absolute; inset: 0; z-index: 5; width: auto; min-width: 0; }
+  .ax-scope .lv-page { max-width: 180px; }
+  .ax-scope .lv-hide-xs { display: none; }
+}

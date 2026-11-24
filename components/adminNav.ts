@@ -16,13 +16,9 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
     items: [{ slug: 'tong-quan', label: 'Tổng quan', desc: 'Tình hình website, việc cần xử lý và lối tắt.' }],
   },
   {
-    group: 'Website',
+    group: 'Chỉnh sửa website',
     items: [
-      { slug: 'trang', label: 'Trang', perm: 'content.read', desc: 'Chọn một trang để sửa chữ, ảnh và các khối nội dung của trang đó.' },
-      { slug: 'landing-page', label: 'Landing page', perm: 'content.read', desc: 'Landing page nội bộ dựng trên website DANAVA và liên kết landing page bên ngoài.' },
-      { slug: 'menu', label: 'Menu điều hướng', perm: 'content.read', desc: 'Các cột và mục trong menu Giải pháp ở đầu trang và menu điện thoại.' },
-      { slug: 'giao-dien', label: 'Giao diện chung', perm: 'content.read', desc: 'Thành phần dùng chung trên mọi trang.', tabs: [{ id: 'anna', label: 'Widget ANNA' }] },
-      { slug: 'mau-khoi', label: 'Mẫu & khối', perm: 'content.read', desc: 'Thư viện khối dùng để dựng landing page nội bộ.' },
+      { slug: 'chinh-sua', label: 'Chỉnh sửa website', perm: 'content.read', desc: 'Mở website trong trình biên tập: chọn trang, nhấn giữ nội dung để sửa ngay tại chỗ, lưu nháp và xuất bản.' },
     ],
   },
   {

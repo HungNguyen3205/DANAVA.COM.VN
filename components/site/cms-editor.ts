@@ -61,6 +61,8 @@ export function startCmsEditor() {
     * { box-sizing: border-box; font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif; }
     .bar { position: fixed; display: none; align-items: center; gap: 4px; max-width: calc(100vw - 16px); padding: 4px; border-radius: 12px; background: #0f1c3f; color: #fff; box-shadow: 0 12px 32px -12px rgba(8,16,40,.6); pointer-events: auto; font-size: 13px; animation: in .16s ease-out; }
     .bar.on { display: flex; }
+    .scope { padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.12); color: #dbe4f7; font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+    .scope.is-global { background: #ffb27a; color: #3b1d06; }
     .tag { padding: 0 8px 0 6px; color: #c9d3ea; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
     button { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #fff; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
     button:hover { background: rgba(255,255,255,.12); }
@@ -185,12 +187,24 @@ export function startCmsEditor() {
     document.querySelectorAll<HTMLElement>('[data-cms]').forEach(el => paths.add(el.dataset.cms!));
     document.querySelectorAll<HTMLImageElement>('img[data-cms-img]').forEach(img => {
       const b = img.dataset.cmsImg!;
-      paths.add(`${b}.image`); paths.add(`${b}.alt`); paths.add(`${b}.focus`);
+      paths.add(`${b}.image`);
+      if (img.hasAttribute('data-cms-img-meta')) { paths.add(`${b}.alt`); paths.add(`${b}.focus`); }
       images.push(img.getAttribute('src') || '');
     });
     document.querySelectorAll<HTMLElement>('[data-cms-link]').forEach(a => { paths.add(a.dataset.cmsLink!); paths.add(a.dataset.cmsHref!); });
-    return { paths: [...paths], images: [...new Set(images.filter(Boolean))] };
+    // Trang đang mở (để trình biên tập nhận diện khi người dùng đi theo menu / liên kết trong chế độ Xem)
+    return { paths: [...paths], images: [...new Set(images.filter(Boolean))], path: location.pathname, title: document.title };
   }
+
+  /** Phạm vi dữ liệu của phần đang chọn: toàn website / hồ sơ dùng chung / chỉ trang này. */
+  function scopeOf(el: HTMLElement): { text: string; global: boolean } | null {
+    const s = el.closest<HTMLElement>('[data-cms-scope]');
+    const path = el.dataset.cms || '';
+    if (s?.dataset.cmsScope === 'global' || path.startsWith('pages.mac-dinh.') || path.startsWith('block.company.')) return { text: 'Áp dụng toàn website', global: true };
+    if (s?.dataset.cmsScope === 'record') return { text: s.dataset.cmsScopeLabel || 'Hồ sơ dùng chung', global: false };
+    return null;
+  }
+  const PANEL_LABEL: Record<string, string> = { menu: 'Sửa menu', site: 'Thiết lập chân trang' };
 
   /* ---------------- Chọn / bỏ chọn ---------------- */
   function kindOf(el: HTMLElement): Kind {
@@ -388,6 +402,8 @@ export function startCmsEditor() {
     const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = sel.kind === 'block' ? `Khối: ${sel.label}` : sel.label;
     const msg = document.createElement('span'); msg.className = 'msg'; msg.setAttribute('role', 'alert');
     bar.append(tag);
+    const sc = scopeOf(sel.el);
+    if (sc) { const b = document.createElement('span'); b.className = `scope${sc.global ? ' is-global' : ''}`; b.textContent = sc.text; b.title = sc.global ? 'Thay đổi hiển thị trên mọi trang dùng phần này' : 'Cập nhật hồ sơ gốc trong module quản trị'; bar.append(b); }
     if (sel.kind === 'text') {
       if (editing?.rich) { const b = btn(`${ICON.em} Nhấn mạnh`, 'Nhấn mạnh phần chữ đang chọn', toggleEm); bar.append(b); }
       bar.append(btn(ICON.x, 'Hủy (Esc)', () => deselect(false)), btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri'));
@@ -395,14 +411,16 @@ export function startCmsEditor() {
       const img = sel.el as HTMLImageElement;
       bar.append(
         btn(`${ICON.image} Đổi ảnh`, 'Đổi ảnh', () => post('pick-image', { base: img.dataset.cmsImg, label: sel?.label })),
-        btn(`${ICON.sliders} Mô tả & cắt`, 'Mô tả ảnh và vị trí cắt', () => imagePanel(img)),
+        ...(img.hasAttribute('data-cms-img-meta') ? [btn(`${ICON.sliders} Mô tả & cắt`, 'Mô tả ảnh và vị trí cắt', () => imagePanel(img))] : []),
         btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri')
       );
     } else if (sel.kind === 'link') {
       bar.append(btn(`${ICON.link} Sửa nút`, 'Sửa chữ và đường dẫn', () => openLink(sel!.el)), btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri'));
     } else {
-      const hint = document.createElement('span'); hint.className = 'tag'; hint.style.color = '#8fa0c8'; hint.textContent = 'Chọn chữ, ảnh hoặc nút trong khối';
-      bar.append(hint, btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri'));
+      const panel = sel.el.dataset.cmsPanel;
+      if (panel) bar.append(btn(`${ICON.sliders} ${PANEL_LABEL[panel] || 'Thuộc tính khối'}`, PANEL_LABEL[panel] || 'Mở thuộc tính của khối', () => { const p = panel; deselect(); post('open-panel', { panel: p }); }));
+      else { const hint = document.createElement('span'); hint.className = 'tag'; hint.style.color = '#8fa0c8'; hint.textContent = 'Chọn chữ, ảnh hoặc nút trong khối'; bar.append(hint); }
+      bar.append(btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri'));
     }
     bar.append(msg);
     bar.classList.add('on');
@@ -495,7 +513,16 @@ export function startCmsEditor() {
       if (el) select(el, { x: e.clientX, y: e.clientY });
       return;
     }
-    if (nav) { e.preventDefault(); say('Đang ở trình chỉnh: liên kết không mở. Nhấn giữ để sửa.'); }
+    if (nav && a) {
+      e.preventDefault();
+      // Chế độ Xem: đi theo liên kết nội bộ trong trình biên tập (giữ ?cms=1); liên kết ngoài / admin / API không mở
+      let url: URL | null = null;
+      try { url = new URL(a.getAttribute('href') || '', location.href); } catch {}
+      if (url && url.origin === location.origin && !/^\/(admin|api)(\/|$)/.test(url.pathname) && !/\.[a-z0-9]{2,5}$/i.test(url.pathname)) {
+        url.searchParams.set('cms', '1');
+        location.assign(url.pathname + url.search + url.hash);
+      } else say('Liên kết ra ngoài website — không mở trong trình biên tập.');
+    }
   }, true);
   document.addEventListener('submit', e => { e.preventDefault(); say('Biểu mẫu không gửi trong trình chỉnh.'); }, true);
 

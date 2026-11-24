@@ -49,7 +49,7 @@ type Props = {
 };
 
 const ICONS: Record<string, LucideIcon> = {
-  'tong-quan': LayoutGrid, trang: PanelsTopLeft, 'landing-page': Rocket, menu: Navigation, 'giao-dien': Palette, 'mau-khoi': Blocks,
+  'tong-quan': LayoutGrid, 'chinh-sua': PanelsTopLeft, trang: PanelsTopLeft, 'landing-page': Rocket, menu: Navigation, 'giao-dien': Palette, 'mau-khoi': Blocks,
   'san-pham': Package, 'nhom-loai': Tags, 'bai-viet': FileText, 'du-an': Briefcase, 'thuong-hieu': Building2,
   'khach-hang': Inbox, 'danh-ba': ContactRound, 'bieu-mau': ClipboardList, 'thu-vien': ImageIcon,
   'thong-ke': ChartColumn, 'nguon-khach': PieChart, 'hieu-qua': Gauge,
@@ -130,7 +130,7 @@ function Shell({
   const creatable = [
     { label: 'Bài viết', href: '/admin/bai-viet/?new=1', icon: FileText },
     { label: 'Sản phẩm / dịch vụ', href: '/admin/san-pham/?new=1', icon: Package },
-    { label: 'Landing page', href: '/admin/landing-page/?new=1', icon: Rocket }
+    { label: 'Landing page', href: '/admin/chinh-sua/?panel=landings&new=1', icon: Rocket }
   ].filter(() => canDraft);
 
   const sidebar = (mini: boolean, inDrawer = false) => (

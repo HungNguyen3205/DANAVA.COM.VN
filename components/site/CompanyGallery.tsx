@@ -11,7 +11,7 @@ export function CompanyGallery({ data }: { data: SiteData }) {
   if (!gallery.visible || !photos.length) return null;
 
   return (
-    <section className="hb-sec hb-gallery" id="hinh-anh" aria-labelledby="t-gallery" {...cmsBlock('Ảnh doanh nghiệp', 'gallery')}>
+    <section className="hb-sec hb-gallery" id="hinh-anh" aria-labelledby="t-gallery" {...cmsBlock('Ảnh doanh nghiệp', 'gallery', { panel: 'page:anh' })}>
       <div className="s-container">
         <div className="hb-gallery__head">
           <p className="hb-eyebrow" {...cmsText('block.gallery.kicker', 'Nhãn nhỏ')}>{gallery.kicker}</p>
@@ -22,7 +22,7 @@ export function CompanyGallery({ data }: { data: SiteData }) {
           {photos.map((photo, i) => (
             <li key={`${photo.image}-${i}`} data-reveal>
               <figure>
-                <img {...cmsImage(`block.gallery.photos.${photo.at}`, `Ảnh ${photo.at + 1}`)} src={photo.image} alt={photo.alt || photo.caption} style={photo.focus ? { objectPosition: photo.focus } : undefined} loading="lazy" decoding="async" />
+                <img {...cmsImage(`block.gallery.photos.${photo.at}`, `Ảnh ${photo.at + 1}`, { meta: true })} src={photo.image} alt={photo.alt || photo.caption} style={photo.focus ? { objectPosition: photo.focus } : undefined} loading="lazy" decoding="async" />
                 {photo.caption && <figcaption {...cmsText(`block.gallery.photos.${photo.at}.caption`, `Chú thích ảnh ${photo.at + 1}`)}>{photo.caption}</figcaption>}
               </figure>
             </li>

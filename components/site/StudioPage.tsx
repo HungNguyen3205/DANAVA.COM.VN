@@ -17,6 +17,7 @@ import { StudioTour, type TourRole } from './StudioTour';
 import { StudioModules } from './StudioModules';
 import { contactHrefFor } from './ServiceDetailPage';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { rich } from './rich';
 
 const S = '/assets/studio/';
@@ -64,8 +65,8 @@ export function StudioPage({ service, data }: { service: Service; data: SiteData
           <div className="st-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/', label: 'Giải pháp' }, { label: service.title }]} />
             <p className="st-hero__kicker">Phần mềm quản lý Gym · Yoga · Pilates · Spa · Bể bơi</p>
-            <h1 className="st-hero__title" id="st-title">{service.title}</h1>
-            <p className="st-hero__lead">{service.heroLead || service.description}</p>
+            <h1 className="st-hero__title" id="st-title" {...cmsText(`rec.services.${service.id}.title`, 'Tên sản phẩm', { scope: 'record', scopeLabel: `Hồ sơ ${service.title}` })}>{service.title}</h1>
+            <p className="st-hero__lead" {...cmsText(`rec.services.${service.id}.${service.heroLead ? 'heroLead' : 'description'}`, 'Câu dẫn sản phẩm', { multiline: true, scope: 'record', scopeLabel: `Hồ sơ ${service.title}` })}>{service.heroLead || service.description}</p>
             <div className="st-hero__cta">
               <Link className="s-btn s-btn--primary s-btn--lg" href={contactHref}>Đăng ký demo</Link>
               <a className="s-btn s-btn--lg st-btn-ghost" href={productUrl} target="_blank" rel="noopener">Xem gói & báo giá <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>
