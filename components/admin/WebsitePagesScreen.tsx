@@ -1,13 +1,12 @@
 'use client';
 /** Website → Trang: danh sách trang; chọn một trang để sửa các phần của trang đó theo tab. */
-import { ArrowLeft, ExternalLink, Wand2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, PenLine } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { SITE_PAGES, findSitePage, type PageTab, type SitePage } from './websitePages';
-import { pageFields } from './PageVisualEditor';
 import { useQueryParam } from './ui';
 import { Button, PageHeader, TabBar } from './kit';
 
-export function WebsitePagesScreen({ renderTab, edited }: { renderTab: (page: SitePage, tab: PageTab) => ReactNode; edited: (page: SitePage) => boolean }) {
+export function WebsitePagesScreen({ renderTab, edited }: { renderTab: (page: SitePage, tab: PageTab, exit: () => void) => ReactNode; edited: (page: SitePage) => boolean }) {
   const [pageId, setPageId] = useQueryParam('page');
   const [tabId, setTabId] = useQueryParam('tab');
   const page = findSitePage(pageId);
@@ -34,21 +33,22 @@ export function WebsitePagesScreen({ renderTab, edited }: { renderTab: (page: Si
     );
   }
 
-  // Trang có chữ chỉnh được → thêm tab Chỉnh giao diện (sửa trực tiếp trên trang thật)
-  const tabs: PageTab[] = pageFields(page).length ? [...page.tabs, { id: 'giao-dien', label: 'Chỉnh giao diện', kind: 'visual' }] : page.tabs;
-  const tab = tabs.find(t => t.id === tabId) || tabs[0];
+  // Mọi trang có tab Chỉnh trực tiếp (sửa ngay trên trang thật: components/admin/LiveEditor.tsx); "giao-dien" = đường dẫn cũ
+  const tabs: PageTab[] = [...page.tabs, { id: 'truc-tiep', label: 'Chỉnh trực tiếp', kind: 'visual' }];
+  const tab = tabs.find(t => t.id === (tabId === 'giao-dien' ? 'truc-tiep' : tabId)) || tabs[0];
+  const exit = () => setTabId('');
   return (
     <div className="blk-stack">
       <PageHeader
         back={<Button variant="ghost" onClick={() => { setTabId(''); setPageId('', true); }}><ArrowLeft size={16} /> Tất cả trang</Button>}
         title={<>{page.label} <code className="ax-pagehead__path">{page.path}</code></>}
         actions={<>
-          {tabs.some(t => t.kind === 'visual') && tab.kind !== 'visual' && <Button variant="primary" onClick={() => setTabId('giao-dien')}><Wand2 size={15} /> Chỉnh giao diện</Button>}
+          {tab.kind !== 'visual' && <Button variant="primary" onClick={() => setTabId('truc-tiep')}><PenLine size={15} /> Chỉnh trực tiếp</Button>}
           <a className="ax-btn ax-btn--secondary" href={page.path} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>
         </>}
       />
       {tabs.length > 1 && <TabBar tabs={tabs} value={tab.id} onChange={id => setTabId(id)} label={`Các phần của trang ${page.label}`} />}
-      <div key={`${page.id}-${tab.id}`}>{renderTab(page, tab)}</div>
+      <div key={`${page.id}-${tab.id}`}>{renderTab(page, tab, exit)}</div>
     </div>
   );
 }

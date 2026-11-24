@@ -7,6 +7,7 @@ import { SectionHeading, CtaBand, IconTile, ArrowLink, Crumbs } from './ui';
 import { StaffAvatar } from './TeamPage';
 import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { rich } from './rich';
 
 const PRINCIPLE_ICONS = { field: Compass, transparent: BarChart3, ownership: KeyRound, longterm: InfinityIcon } as const;
@@ -28,9 +29,9 @@ export default function AboutPage() {
         <div className="s-container s-split">
           <div className="s-about-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giới thiệu' }]} />
-            <p className="s-eyebrow">{copy.kicker}</p>
-            <h1 className="s-h1">{rich(copy.title, 's-hl')}</h1>
-            <p className="s-lead">{copy.lead}</p>
+            <p className="s-eyebrow" {...cmsText('pages.ve-danava.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</p>
+            <h1 className="s-h1" {...cmsText('pages.ve-danava.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title, 's-hl')}</h1>
+            <p className="s-lead" {...cmsText('pages.ve-danava.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
             <div className="s-row s-stack-m">
               <a className="s-btn s-btn--primary s-btn--lg" href="#cau-chuyen">Câu chuyện của chúng tôi</a>
               <Link className="s-btn s-btn--secondary s-btn--lg" href="/doi-ngu/">Gặp đội ngũ</Link>
@@ -181,7 +182,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand cms={{ title: 'pages.ve-danava.ctaTitle', lead: copy.ctaLead ? 'pages.ve-danava.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

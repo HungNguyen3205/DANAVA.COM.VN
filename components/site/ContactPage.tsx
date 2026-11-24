@@ -12,6 +12,7 @@ import { CONTACT, formatPhone } from './catalog';
 import { Crumbs } from './ui';
 import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { contactChannels } from '@/lib/contact-channels';
 import { rich } from './rich';
 import { useAnna } from './anna/AnnaProvider';
@@ -167,13 +168,13 @@ export function ContactPage({ initialService }: { initialService: string }) {
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
           <div className="c-hero__grid">
             <div className="c-hero__copy">
-              <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />{copy.kicker}</p>
-              <h1 className="c-hero__title c-hero__title--hello">{rich(copy.title, 'c-grad c-brand')}</h1>
+              <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" /><span {...cmsText('pages.lien-he.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</span></p>
+              <h1 className="c-hero__title c-hero__title--hello" {...cmsText('pages.lien-he.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title, 'c-grad c-brand')}</h1>
               <p className="c-motto">
                 {data.headline || 'Cùng bạn phát triển.'}
                 <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 14 C 60 2, 120 20, 180 9 S 270 4, 298 12" /></svg>
               </p>
-              <p className="c-hero__lead">{copy.lead}</p>
+              <p className="c-hero__lead" {...cmsText('pages.lien-he.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
             </div>
 
             <div className="c-reach">

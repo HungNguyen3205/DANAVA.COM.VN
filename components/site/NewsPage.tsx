@@ -14,6 +14,7 @@ import { Crumbs, CtaBand } from './ui';
 import { formatDate, excerpt } from './catalog';
 import { postCover } from './blocks';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { rich } from './rich';
 import { sentenceCase } from '@/lib/sentence-case';
 import { BlogExplorer, type BlogTopic } from './BlogExplorer';
@@ -73,9 +74,9 @@ export default function NewsPage({ data, filter }: { data: SiteData; filter: Blo
         <div className="s-container bl-hero__grid">
           <div className="bl-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Blogs' }]} />
-            <p className="bl-hero__kicker">{copy.kicker || 'DANAVA Blogs'}</p>
-            <h1 className="bl-hero__title" id="bl-title">{rich(copy.title)}</h1>
-            <p className="bl-hero__lead">{copy.lead}</p>
+            <p className="bl-hero__kicker" {...cmsText('pages.kien-thuc.kicker', 'Dòng chữ nhỏ')}>{copy.kicker || 'DANAVA Blogs'}</p>
+            <h1 className="bl-hero__title" id="bl-title" {...cmsText('pages.kien-thuc.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title)}</h1>
+            <p className="bl-hero__lead" {...cmsText('pages.kien-thuc.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
             <BlogSearch data={data} filter={filter} />
             {!filtering && <dl className="bl-hero__stats">
               <div><dt>Bài viết</dt><dd>{posts.length}</dd></div>
@@ -189,7 +190,7 @@ export default function NewsPage({ data, filter }: { data: SiteData; filter: Blo
 
       </>}
 
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand cms={{ title: 'pages.kien-thuc.ctaTitle', lead: copy.ctaLead ? 'pages.kien-thuc.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

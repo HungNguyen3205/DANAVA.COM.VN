@@ -635,3 +635,57 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 /* Nút chữ dài (vd. "Bổ sung đối tác từ danava.vn…"): không vượt khung, xuống dòng gọn trên màn hẹp */
 .ax .ax-content :is(.admin-secondary, .admin-primary, .adm-btn) { max-width: 100%; }
 @media (max-width: 700px) { .ax .ax-content :is(.admin-secondary, .admin-primary) { height: auto; min-height: 38px; padding-block: 8px; white-space: normal; text-align: center; line-height: 1.35; } }
+
+/* ==== Chỉnh trực tiếp (components/admin/LiveEditor.tsx): trang thật gần như toàn màn hình ==== */
+.lv.ax-scope { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; background: #e9edf4; }
+.ax-scope .lv-bar { display: flex; align-items: center; gap: var(--s3); height: 56px; padding: 0 var(--s3); border-bottom: 1px solid var(--ax-border); background: #fff; }
+.ax-scope .lv-bar__left, .ax-scope .lv-bar__right { display: flex; align-items: center; gap: var(--s2); min-width: 0; }
+.ax-scope .lv-bar__left { flex: 1 1 0; }
+.ax-scope .lv-bar__right { flex: 1 1 0; justify-content: flex-end; }
+.ax-scope .lv-bar__mid { display: flex; align-items: center; gap: var(--s2); flex: none; }
+.ax-scope .lv-title { display: grid; min-width: 0; line-height: 1.25; }
+.ax-scope .lv-title b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ax-scope .lv-title small { color: var(--ax-muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ax-scope .lv-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--ax-border); border-radius: 10px; background: var(--ax-surface-2); }
+.ax-scope .lv-seg button { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--ax-text-2); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background var(--ax-fast), color var(--ax-fast); }
+.ax-scope .lv-seg--icons button { width: 34px; padding: 0; justify-content: center; }
+.ax-scope .lv-seg button:hover { color: var(--ax-text); }
+.ax-scope .lv-seg button.is-on { background: #fff; color: var(--ax-text); box-shadow: 0 1px 2px rgba(17, 26, 51, .12); }
+.ax-scope .lv-seg button[aria-checked=true]:first-child:not(:only-child) svg { color: var(--ax-text-2); }
+.ax-scope .lv-seg button.is-on svg { color: var(--ax-accent); }
+.ax-scope .lv-seg button:focus-visible { outline: 2px solid var(--ax-accent); outline-offset: 1px; }
+.ax-scope .lv-status { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--ax-surface-2); color: var(--ax-muted); font-size: 12px; font-weight: 600; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+.ax-scope .lv-status.is-dirty { background: #fff4e8; color: #b54708; }
+.ax-scope .lv-status.is-draft { background: #eef4ff; color: #2f54b8; }
+.ax-scope .lv-status.is-live { background: #e8f6ee; color: #18794e; }
+.ax-scope .lv-status.is-error { background: #fdecea; color: #b42318; }
+.ax-scope .lv-stage { position: relative; flex: 1; display: flex; justify-content: center; overflow: hidden; }
+.ax-scope .lv-stage iframe { display: block; height: 100%; max-width: 100%; border: 0; background: #fff; transition: width .2s ease; }
+.ax-scope .lv-stage:not(.is-desktop) { padding: 12px 0; }
+.ax-scope .lv-stage:not(.is-desktop) iframe { border-radius: 14px; box-shadow: 0 12px 40px -18px rgba(12, 24, 56, .45); }
+.ax-scope .lv-loading { position: absolute; top: 40%; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: #fff; color: var(--ax-text-2); font-size: 13px; font-weight: 600; box-shadow: var(--ax-shadow-sm, 0 4px 12px rgba(0,0,0,.08)); }
+.ax-scope .lv-spin { animation: lv-spin 1s linear infinite; }
+@keyframes lv-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ax-scope .lv-spin { animation: none; } .ax-scope .lv-stage iframe { transition: none; } }
+.ax-scope .lv-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ax-scope .lv-media button { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; padding: 0; overflow: hidden; border: 2px solid transparent; border-radius: 10px; background: var(--ax-surface-2); cursor: pointer; }
+.ax-scope .lv-media button:hover { border-color: var(--ax-border-strong); }
+.ax-scope .lv-media button.is-on { border-color: var(--ax-accent); }
+.ax-scope .lv-media button:focus-visible { outline: 2px solid var(--ax-accent); outline-offset: 2px; }
+.ax-scope .lv-media img { width: 100%; height: 100%; object-fit: cover; }
+.ax-scope .lv-media__cur { position: absolute; left: 6px; top: 6px; display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 999px; background: var(--ax-accent); color: #fff; font-size: 11px; font-weight: 700; }
+.ax-dialog.ax-scope .lv-media { max-height: 52vh; overflow: auto; }
+@media (max-width: 1100px) { .ax-scope .lv-title small { display: none; } .ax-scope .lv-status { max-width: 140px; } }
+@media (max-width: 860px) {
+  .ax-scope .lv-bar { flex-wrap: wrap; height: auto; padding: 8px; row-gap: 8px; }
+  .ax-scope .lv-bar__mid { order: 3; flex: 1 1 100%; justify-content: center; }
+  .ax-scope .lv-hide-sm { display: none; }
+  .ax-scope .lv-seg--icons { display: none; }
+  .ax-scope .lv-stage:not(.is-desktop) { padding: 0; }
+}
+/* Trạng thái lưu: màn hẹp chuyển xuống hàng thứ hai (cạnh Xem / Chỉnh sửa) để không bị cắt */
+.ax-scope .lv-status--sm { display: none; }
+@media (max-width: 860px) {
+  .ax-scope .lv-bar__right .lv-status { display: none; }
+  .ax-scope .lv-status--sm { display: inline-flex; max-width: 50%; }
+}

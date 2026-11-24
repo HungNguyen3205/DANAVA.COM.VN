@@ -23,10 +23,18 @@ async function table(): Promise<Map<string, string>> {
   }
 }
 
+/** Cờ "đang mở trong trình chỉnh trực tiếp": chỉ proxy được đặt (xóa giá trị gửi từ trình duyệt). Máy chủ còn kiểm tra phiên admin. */
+const CMS_HEADER = 'x-danava-cms';
+
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname.endsWith('/') ? request.nextUrl.pathname : request.nextUrl.pathname + '/';
   const to = (await table()).get(path);
-  if (!to) return NextResponse.next();
+  if (!to) {
+    const headers = new Headers(request.headers);
+    headers.delete(CMS_HEADER);
+    if (request.nextUrl.searchParams.get('cms') === '1') headers.set(CMS_HEADER, '1');
+    return NextResponse.next({ request: { headers } });
+  }
   const target = to.startsWith('http') ? new URL(to) : new URL(to, request.url);
   if (!to.startsWith('http')) target.search = request.nextUrl.search;
   return NextResponse.redirect(target, 301);

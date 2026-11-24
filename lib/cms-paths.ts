@@ -1,0 +1,103 @@
+/**
+ * Khóa dữ liệu của vùng chỉnh trực tiếp trên trang (admin → Website → Trang → Chỉnh trực tiếp).
+ * Mỗi vùng trên website mang thuộc tính data-cms… với một khóa ổn định, ánh xạ tới đúng trường trong SiteData:
+ *  - hero.<trường>                 chữ/nút màn mở đầu trang chủ (lib/home-hero.ts)
+ *  - pages.<mã trang>.<trường>     chữ đầu trang / dải cuối trang (khối `pages`, lib/blocks.ts → pageCopy)
+ *  - block.<khối>.<a>.<b>…         trường lồng trong một khối (vd. block.gallery.photos.2.image)
+ * Đọc trả về giá trị đang hiển thị (đã điền mặc định); ghi trả về bản SiteData mới (không sửa bản cũ).
+ */
+import type { SiteData } from './content';
+import { block, pageCopy, withBlock, type BlockKey } from './blocks.ts';
+import { DEFAULT_HOME_HERO, HOME_HERO_LIMITS, homeHero, type HomeHero } from './home-hero.ts';
+import { okLink } from './page-blocks.ts';
+import { PHOTO_FOCUS } from './site-extras.ts';
+
+export type CmsKind = 'text' | 'rich' | 'image' | 'href' | 'focus';
+
+const SEG = /^[a-zA-Z0-9_-]{1,60}$/;
+const IMAGE = /^\/assets\/[a-zA-Z0-9/_.-]+\.(webp|png|jpe?g)$/;
+
+/** Khóa hợp lệ: chỉ gồm các đoạn chữ/số/gạch, không trỏ vào thuộc tính nguyên mẫu. */
+export function validCmsPath(path: string): boolean {
+  const parts = path.split('.');
+  if (parts.length < 2 || parts.length > 8 || !parts.every(p => SEG.test(p))) return false;
+  if (parts.some(p => p === '__proto__' || p === 'prototype' || p === 'constructor')) return false;
+  if (parts[0] === 'hero') return parts.length === 2 && parts[1] in DEFAULT_HOME_HERO;
+  if (parts[0] === 'pages') return parts.length === 3;
+  return parts[0] === 'block' && parts.length >= 3;
+}
+
+function getIn(obj: unknown, keys: string[]): unknown {
+  let cur = obj;
+  for (const k of keys) {
+    if (cur === null || typeof cur !== 'object') return undefined;
+    cur = (cur as Record<string, unknown>)[k];
+  }
+  return cur;
+}
+
+/** Bản sao với một giá trị lồng được thay (mảng giữ nguyên là mảng). Không tạo khóa mới ở mức trung gian. */
+function setIn(obj: unknown, keys: string[], value: unknown): unknown {
+  const [k, ...rest] = keys;
+  if (Array.isArray(obj)) {
+    const i = Number(k);
+    if (!Number.isInteger(i) || i < 0 || i >= obj.length) throw Error('Vị trí không tồn tại');
+    const copy = obj.slice();
+    copy[i] = rest.length ? setIn(obj[i], rest, value) : value;
+    return copy;
+  }
+  if (obj === null || typeof obj !== 'object' || !(k in (obj as object))) throw Error('Trường không tồn tại');
+  const src = obj as Record<string, unknown>;
+  return { ...src, [k]: rest.length ? setIn(src[k], rest, value) : value };
+}
+
+/** Giá trị đang hiển thị của một khóa (chuỗi). */
+export function readCms(data: SiteData, path: string): string {
+  if (!validCmsPath(path)) return '';
+  const [kind, a, ...rest] = path.split('.');
+  if (kind === 'hero') return homeHero(data)[a as keyof HomeHero];
+  if (kind === 'pages') return String((pageCopy(data, a as never) as Record<string, string>)[rest[0]] ?? '');
+  const v = getIn(block(data, a as BlockKey), rest);
+  return typeof v === 'string' ? v : v === undefined || v === null ? '' : String(v);
+}
+
+/** Giới hạn độ dài theo khóa (máy chủ kiểm tra lại toàn bộ nội dung khi lưu). */
+export function cmsLimit(path: string): number {
+  const [kind, a] = path.split('.');
+  if (kind === 'hero') return HOME_HERO_LIMITS[a as keyof HomeHero] ?? 200;
+  if (/(href|url|link)$/i.test(path)) return 300;
+  if (/(lead|text|desc|body|caption)$/i.test(path)) return 600;
+  return 200;
+}
+
+/** Lỗi của một giá trị trước khi ghi (rỗng = hợp lệ). */
+export function cmsValueError(path: string, value: string): string {
+  if (!validCmsPath(path)) return 'Vùng này không chỉnh được.';
+  if (value.length > cmsLimit(path)) return `Tối đa ${cmsLimit(path)} ký tự.`;
+  const last = path.split('.').pop() || '';
+  if (/href$/i.test(last) && !okLink(value)) return 'Đường dẫn dạng /trang/, #muc hoặc https://…';
+  if (last === 'image' && value && (!IMAGE.test(value) || value.includes('..'))) return 'Ảnh phải là đường dẫn /assets/… (ảnh đã tải lên).';
+  if (last === 'focus' && !PHOTO_FOCUS.includes(value)) return 'Vị trí cắt không hợp lệ.';
+  return '';
+}
+
+/** Bản SiteData mới với giá trị của khóa được thay. Ném lỗi khi khóa hoặc giá trị không hợp lệ. */
+export function writeCms(data: SiteData, path: string, value: string): SiteData {
+  const err = cmsValueError(path, value);
+  if (err) throw Error(err);
+  const [kind, a, ...rest] = path.split('.');
+  if (kind === 'hero') {
+    const key = a as keyof HomeHero;
+    const next: Partial<HomeHero> = { ...(data.homeHero || {}), [key]: value };
+    // Trống hoặc trùng chữ mặc định → không lưu riêng (website tự dùng mặc định)
+    if (!value.trim() || value === DEFAULT_HOME_HERO[key]) delete next[key];
+    return { ...data, homeHero: Object.keys(next).length ? next : undefined };
+  }
+  if (kind === 'pages') {
+    const pages = block(data, 'pages') as Record<string, Record<string, string>>;
+    if (!pages[a] || !(rest[0] in pages[a])) throw Error('Trường không tồn tại');
+    return withBlock(data, 'pages', { ...pages, [a]: { ...pages[a], [rest[0]]: value } });
+  }
+  const key = a as BlockKey;
+  return withBlock(data, key, setIn(block(data, key), rest, value));
+}

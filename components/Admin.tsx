@@ -30,7 +30,7 @@ import { AuditScreen, RevisionsScreen, UsersScreen } from './admin/SystemScreens
 import { GroupsScreen, ProductsScreen } from './admin/ProductsScreen';
 import { PostsScreen } from './admin/PostsScreen';
 import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
-import { PageVisualEditor } from './admin/PageVisualEditor';
+import { LiveEditor } from './admin/LiveEditor';
 import { ContentPerformance, SeoScreen } from './admin/SeoScreens';
 import { OverviewTasks } from './admin/OverviewTasks';
 import { HomeHeroEditor } from './admin/HomeHeroEditor';
@@ -181,12 +181,13 @@ function AdminWorkspace({ section }: { section: string }) {
     );
   };
 
-  const renderPageTab = (_page: SitePage, t: PageTab) => {
+  const renderPageTab = (_page: SitePage, t: PageTab, exit: () => void) => {
     if (t.kind === 'hero') return <HomeHeroEditor draft={draft} setDraft={setDraft} />;
     if (t.kind === 'presentation') return <PresentationEditor value={draft.presentation || defaultPresentation} onChange={(presentation) => setDraft({ ...draft, presentation })} />;
     if (t.kind === 'block' && t.block === 'gallery') return <div className="blk-stack"><GalleryOrder draft={draft} setDraft={setDraft} />{blockPanel('gallery')}</div>;
     if (t.kind === 'block') return blockPanel(t.block);
-    if (t.kind === 'visual') return <PageVisualEditor page={_page} draft={draft} setDraft={setDraft} />;
+    if (t.kind === 'visual') return <LiveEditor page={_page} draft={draft} setDraft={setDraft} onSave={persist} saving={saving} dirty={dirty} hasDraft={serverDraft.hasDraft}
+      error={error && error !== dismissedError ? error : ''} canEdit={can(user.role, 'content.draft')} canPublish={can(user.role, 'content.publish')} onExit={exit} />;
     return <div className="blk-stack">{t.keys.map(pageTextPanel)}</div>;
   };
   // So với nội dung gốc (normalizeContent luôn điền sẵn các trường này nên không dùng "có/không có")

@@ -10,6 +10,7 @@ import { publicPartners, publicPlaces, publishedProjects } from '@/lib/site-quer
 import { PlacesDirectory, type PlaceCard } from './PlacesDirectory';
 import { Crumbs, CtaBand } from './ui';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { rich } from './rich';
 
 const cityOf = (c: Client) => (c.city || 'Khác').replace(/^Thừa Thiên /, '').replace(/^Hồ Chí Minh$/, 'TP. Hồ Chí Minh');
@@ -37,9 +38,9 @@ export function PartnersPage({ data }: { data: SiteData }) {
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/he-sinh-thai/', label: 'Hệ sinh thái' }, { label: 'Đối tác đồng hành' }]} />
           <div className="pt-hero__grid">
             <div>
-              <p className="pt-hero__kicker">{copy.kicker}</p>
-              <h1 className="pt-hero__title" id="pt-title">{rich(copy.title)}</h1>
-              <p className="pt-hero__lead">{copy.lead}</p>
+              <p className="pt-hero__kicker" {...cmsText('pages.doi-tac.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</p>
+              <h1 className="pt-hero__title" id="pt-title" {...cmsText('pages.doi-tac.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title)}</h1>
+              <p className="pt-hero__lead" {...cmsText('pages.doi-tac.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
             </div>
             <dl className="pt-hero__facts">
               <div><dt>Đối tác đồng hành</dt><dd>{partners.length}</dd></div>
@@ -121,7 +122,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/?service=danava-studio', label: 'Đăng ký demo' }} secondary={{ href: '/he-sinh-thai/', label: 'Xem hệ sinh thái' }} />
+      <CtaBand cms={{ title: 'pages.doi-tac.ctaTitle', lead: copy.ctaLead ? 'pages.doi-tac.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/?service=danava-studio', label: 'Đăng ký demo' }} secondary={{ href: '/he-sinh-thai/', label: 'Xem hệ sinh thái' }} />
     </main>
   );
 }

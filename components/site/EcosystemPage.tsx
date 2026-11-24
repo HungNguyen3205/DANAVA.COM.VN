@@ -14,6 +14,7 @@ import { publicPartners, publishedProjects } from '@/lib/site-queries';
 import { Crumbs, CtaBand } from './ui';
 import { BrowserFrame } from './showcase';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { markOf } from '@/lib/partner-marks';
 import { rich } from './rich';
 
@@ -118,9 +119,9 @@ export function EcosystemPage({ data }: { data: SiteData }) {
         <div className="s-container hx-hero__grid">
           <div className="hx-hero__copy">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Hệ sinh thái' }]} />
-            <p className="hx-kicker">{copy.kicker}</p>
-            <h1 className="hx-hero__title" id="hx-title">{rich(copy.title)}</h1>
-            <p className="hx-hero__lead">{copy.lead}</p>
+            <p className="hx-kicker" {...cmsText('pages.he-sinh-thai.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</p>
+            <h1 className="hx-hero__title" id="hx-title" {...cmsText('pages.he-sinh-thai.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title)}</h1>
+            <p className="hx-hero__lead" {...cmsText('pages.he-sinh-thai.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
             <div className="hx-hero__actions">
               <Link className="hx-btn hx-btn--sun" href="/lien-he/">Trao đổi với DANAVA <ArrowRight aria-hidden="true" /></Link>
               <a className="hx-btn hx-btn--ghost" href="#dang-chay">Sản phẩm đang chạy</a>
@@ -292,7 +293,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} secondary={{ href: '/giai-phap/', label: 'Xem giải pháp' }} />
+      <CtaBand cms={{ title: 'pages.he-sinh-thai.ctaTitle', lead: copy.ctaLead ? 'pages.he-sinh-thai.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} secondary={{ href: '/giai-phap/', label: 'Xem giải pháp' }} />
     </main>
   );
 }

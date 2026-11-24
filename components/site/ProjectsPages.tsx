@@ -8,6 +8,7 @@ import { excerpt } from './catalog';
 import { PageHead, CtaBand, Visual } from './ui';
 import { FeaturedShowcase, ShowcaseStrip } from './showcase';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { rich } from './rich';
 import { HomeCases, type HomeCase } from './HomeCases';
 import { MARKETING_ENGAGEMENTS } from '@/lib/marketing-portfolio';
@@ -70,9 +71,9 @@ export function ProjectsIndex() {
         <div className="s-container pj-head__grid">
           <div>
             <nav className="pj-crumbs" aria-label="Breadcrumb"><Link href="/">Trang chủ</Link><span aria-hidden="true">/</span><span aria-current="page">Dự án</span></nav>
-            <p className="hb-eyebrow">{copy.kicker}</p>
-            <h1 className="hb-title pj-head__title" id="proj-title">{rich(copy.title)}</h1>
-            <p className="hb-lead">{copy.lead}</p>
+            <p className="hb-eyebrow" {...cmsText('pages.du-an.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</p>
+            <h1 className="hb-title pj-head__title" id="proj-title" {...cmsText('pages.du-an.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title)}</h1>
+            <p className="hb-lead" {...cmsText('pages.du-an.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
             <dl className="pj-head__stats">
               <div><dd>{cases.length}</dd><dt>dự án đã thực hiện</dt></div>
               <div><dd>{projects.length}</dd><dt>case study chi tiết</dt></div>
@@ -107,7 +108,7 @@ export function ProjectsIndex() {
           </div>
         </section>
       )}
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand cms={{ title: 'pages.du-an.ctaTitle', lead: copy.ctaLead ? 'pages.du-an.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

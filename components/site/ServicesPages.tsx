@@ -6,6 +6,7 @@ import { useSite } from '../SiteStore';
 import { serviceMeta, sortServices, excerpt, GROUPS, type Tone } from './catalog';
 import { CtaBand, Crumbs, IconTile, Visual } from './ui';
 import { pageCopy } from '@/lib/blocks';
+import { cmsText } from './cms';
 import { rich } from './rich';
 import type { LucideIcon } from 'lucide-react';
 
@@ -39,9 +40,9 @@ export function ServicesIndex() {
           <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giải pháp' }]} />
           <div className="svn-hero__grid">
             <div className="svn-hero__copy">
-              <p className="svn-kicker"><Layers aria-hidden="true" /> {copy.kicker}</p>
-              <h1 className="svn-title" id="svn-title">{rich(copy.title, 'svn-em')}</h1>
-              <p className="svn-lead">{copy.lead}</p>
+              <p className="svn-kicker"><Layers aria-hidden="true" /> <span {...cmsText('pages.giai-phap.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</span></p>
+              <h1 className="svn-title" id="svn-title" {...cmsText('pages.giai-phap.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title, 'svn-em')}</h1>
+              <p className="svn-lead" {...cmsText('pages.giai-phap.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
               <nav className="svn-jump" aria-label="Các nhóm giải pháp">
                 {groups.map(g => (
                   <a key={g.id} href={`#nhom-${g.id}`}>{g.short} <span>{g.items.length}</span></a>
@@ -100,7 +101,7 @@ export function ServicesIndex() {
         </div>
       </section>
 
-      <CtaBand title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand cms={{ title: 'pages.giai-phap.ctaTitle', lead: copy.ctaLead ? 'pages.giai-phap.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

@@ -343,8 +343,21 @@ export async function getContent(): Promise<ContentEnvelope> {
  * (sản phẩm chưa xuất bản và trang con của nó). Không dùng để đọc–sửa–ghi lại (sẽ mất bản ghi bị ẩn).
  */
 export async function getSiteContent(): Promise<ContentEnvelope> {
-  const envelope = await getContent();
+  // Trình chỉnh trực tiếp của admin (iframe ?cms=1, đã đăng nhập, có quyền xem nội dung): hiển thị BẢN NHÁP bằng đúng component công khai
+  const envelope = (await cmsDraftRequested()) ? await getWorkingContent() : await getContent();
   return { ...envelope, data: siteView(envelope.data) };
+}
+
+/** Yêu cầu hiện tại đến từ trình chỉnh trực tiếp của người có quyền xem nội dung? Ngoài yêu cầu web (script, test) → không. */
+async function cmsDraftRequested(): Promise<boolean> {
+  try {
+    const { headers } = await import('next/headers');
+    if ((await headers()).get('x-danava-cms') !== '1') return false;
+    const { canPreview } = await import('./auth.ts');
+    return await canPreview();
+  } catch {
+    return false;
+  }
 }
 
 /** Bản đang soạn cho admin: bản nháp phía máy chủ nếu có, không thì bản công khai. */

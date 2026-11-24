@@ -26,6 +26,7 @@ import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { homeHero } from '@/lib/home-hero';
 import { markOf } from '@/lib/partner-marks';
 import { contactChannels } from '@/lib/contact-channels';
+import { cmsBlock, cmsLink, cmsLinkText, cmsSkip, cmsText } from './cms';
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return <p className="hb-eyebrow">{children}</p>;
@@ -102,17 +103,17 @@ export default function HomePage({ data }: { data: SiteData }) {
         {/* Vùng ghim: cuộn trong vùng này để dựng mô hình (sàn → vách → bàn họp → nội thất → hoàn thiện) */}
         <div className="hb-pin">
         <div className="s-container hb-cover__grid">
-          <div className="hb-cover__copy">
+          <div className="hb-cover__copy" {...cmsBlock('Màn mở đầu', 'home-hero')}>
             {/* Chữ màn mở đầu: admin → Website → Trang → Trang chủ → Màn mở đầu (lib/home-hero.ts) */}
-            <p className="hb-pill"><Sparkles aria-hidden="true" />{hero.kicker} </p>
+            <p className="hb-pill"><Sparkles aria-hidden="true" /><span {...cmsText('hero.kicker', 'Nhãn nhỏ')}>{hero.kicker}</span> </p>
             <h1 className="hb-title" id="home-title">
-              <span className="hb-line" style={{ ['--l' as string]: 0 }}>{hero.line1}</span>
-              <em className="hb-line" style={{ ['--l' as string]: 1 }}>{hero.line2}</em>
+              <span className="hb-line" style={{ ['--l' as string]: 0 }} {...cmsText('hero.line1', 'Tiêu đề dòng 1')}>{hero.line1}</span>
+              <em className="hb-line" style={{ ['--l' as string]: 1 }} {...cmsText('hero.line2', 'Tiêu đề dòng 2')}>{hero.line2}</em>
             </h1>
-            <p className="hb-lead">{hero.lead}</p>
+            <p className="hb-lead" {...cmsText('hero.lead', 'Câu dẫn', { multiline: true })}>{hero.lead}</p>
             <div className="hb-cta">
-              <Link className="hb-btn hb-btn--primary" href={hero.primaryHref}>{hero.primaryLabel} <ArrowRight aria-hidden="true" /></Link>
-              {hero.secondaryLabel && <Link className="hb-btn hb-btn--ghost" href={hero.secondaryHref}>{hero.secondaryLabel}</Link>}
+              <Link className="hb-btn hb-btn--primary" href={hero.primaryHref} {...cmsLink('hero.primaryLabel', 'hero.primaryHref', 'Nút chính')}><span {...cmsLinkText}>{hero.primaryLabel}</span> <ArrowRight aria-hidden="true" /></Link>
+              {hero.secondaryLabel && <Link className="hb-btn hb-btn--ghost" href={hero.secondaryHref} {...cmsLink('hero.secondaryLabel', 'hero.secondaryHref', 'Nút phụ')}><span {...cmsLinkText}>{hero.secondaryLabel}</span></Link>}
             </div>
             {/* Đường hành trình DANAVA 2016 → nay (mốc năm thật, không có trục số) */}
             <figure className="hb-journey">
@@ -136,7 +137,7 @@ export default function HomePage({ data }: { data: SiteData }) {
               <p className="hb-journey__now"><i />{journey.last.year} · {journey.last.title}</p>
             </figure>
           </div>
-          <div className="hb-cover__3d">
+          <div className="hb-cover__3d" {...cmsSkip}>
             <OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={contactChannels(data).zalo} />
             <span className="hb-float hb-float--a" aria-hidden="true"><MapPin />Văn phòng DANAVA · Đà Nẵng · {P.years.replace(' - ', ' – ')}</span>
             <span className="hb-float hb-float--b" aria-hidden="true"><i />{logos.length} thương hiệu đã đồng hành</span>

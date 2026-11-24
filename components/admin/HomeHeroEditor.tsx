@@ -81,7 +81,7 @@ export function HomeHeroEditor({ draft, setDraft }: { draft: SiteData; setDraft:
           <div className="ax-hero-pv__media"><OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={contactChannels(draft).zalo} /></div>
         </div>
         <p className="field-note" style={{ marginTop: 12 }}>
-          <Monitor size={13} style={{ verticalAlign: -2 }} /> / <Smartphone size={13} style={{ verticalAlign: -2 }} /> Bấm “Chỉnh giao diện” để sửa trực tiếp trên trang chủ thật.
+          <Monitor size={13} style={{ verticalAlign: -2 }} /> / <Smartphone size={13} style={{ verticalAlign: -2 }} /> Bấm “Chỉnh trực tiếp” để sửa ngay trên trang chủ thật (nhấn giữ phần cần sửa).
         </p>
       </Card>
     </div>

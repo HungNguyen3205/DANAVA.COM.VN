@@ -98,17 +98,20 @@ export function CtaBand({
   title = 'Bắt đầu cùng DANAVA',
   lead = 'Chia sẻ bài toán của bạn. Chuyên viên DANAVA sẽ liên hệ lại để tư vấn giải pháp phù hợp, không ràng buộc.',
   primary = { href: '/lien-he/', label: 'Nhận tư vấn' },
-  secondary
+  secondary,
+  cms
 }: {
   title?: ReactNode; lead?: ReactNode; primary?: { href: string; label: string }; secondary?: { href: string; label: string };
+  /** Khóa chỉnh trực tiếp của tiêu đề / câu dẫn (lib/cms-paths.ts) */
+  cms?: { title?: string; lead?: string };
 }) {
   return (
-    <section className="s-section s-section--tight" aria-label="Liên hệ tư vấn">
+    <section className="s-section s-section--tight" aria-label="Liên hệ tư vấn" data-cms-block="Dải cuối trang">
       <div className="s-container">
         <div className="s-cta">
           <div>
-            <h2 className="s-h2">{title}</h2>
-            {lead && <p className="s-lead">{lead}</p>}
+            <h2 className="s-h2" {...(cms?.title ? { 'data-cms': cms.title, 'data-cms-label': 'Dải cuối trang: tiêu đề', 'data-cms-rich': '' } : {})}>{title}</h2>
+            {lead && <p className="s-lead" {...(cms?.lead ? { 'data-cms': cms.lead, 'data-cms-label': cms.lead.startsWith('pages.mac-dinh.') ? 'Dải cuối trang: câu dẫn (dùng chung)' : 'Dải cuối trang: câu dẫn', 'data-cms-multiline': '' } : {})}>{lead}</p>}
           </div>
           <div className="s-row">
             <Link className="s-btn s-btn--light s-btn--lg" href={primary.href}>{primary.label}</Link>

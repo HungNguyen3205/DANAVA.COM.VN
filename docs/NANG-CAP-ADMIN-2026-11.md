@@ -7,7 +7,7 @@ Tài liệu cho người phát triển và người quản trị website. Ghi r�
 | Nhóm | Mục | Ghi chú |
 |---|---|---|
 | Tổng quan | Tổng quan | Việc cần xử lý, lối tắt, số liệu |
-| Website | Trang · Landing page · Menu điều hướng · Giao diện chung · Mẫu & khối | Trang → chọn trang → tab biểu mẫu + **Chỉnh giao diện** |
+| Website | Trang · Landing page · Menu điều hướng · Giao diện chung · Mẫu & khối | Trang → chọn trang → tab biểu mẫu + **Chỉnh trực tiếp** (mục 9) |
 | Sản phẩm & Dịch vụ | Danh sách · Nhóm & loại | Hồ sơ: Thông tin chung, Nội dung, Gói & giá, Hiển thị, SEO, Lịch sử |
 | Nội dung | Bài viết · Dự án & Portfolio · Hồ sơ thương hiệu | Hồ sơ thương hiệu: Công ty, Kênh liên hệ, Đội ngũ, Hồ sơ nhân sự, Đối tác & nhận xét, Số liệu |
 | Khách hàng | Yêu cầu tư vấn · Danh bạ · Biểu mẫu | |
@@ -97,7 +97,7 @@ Thử nhanh theo yêu cầu nghiệm thu:
 3. Landing page → Tạo từ mẫu → tab Thiết kế: bấm chữ trên bản xem trước để sửa, đổi cỡ chữ/nền/khoảng cách, kéo đổi thứ tự khối, xem chế độ Điện thoại → Xuất bản → `/lp/{đường-dẫn}/`.
 4. Sửa giá trong hồ sơ sản phẩm → khối Bảng giá trên landing page đổi theo.
 5. Đổi đường dẫn landing đã công khai → Xuất bản → đường dẫn cũ chuyển 301.
-6. Website → Trang → Liên hệ → Chỉnh giao diện: bấm tiêu đề trên trang, sửa, xem cập nhật ngay.
+6. Website → Trang → Trang chủ → Chỉnh trực tiếp: nhấn giữ tiêu đề, gõ chữ mới ngay trên trang, Lưu nháp, Xuất bản (mục 9).
 7. Tạo tài khoản Cộng tác viên → đăng nhập → nút Xuất bản không có; API từ chối xuất bản (403).
 
 ## 7. Phần hoàn chỉnh và phần mới chuẩn bị cấu trúc
@@ -109,7 +109,7 @@ Hoàn chỉnh (đã chạy thật, có test):
 - Hồ sơ sản phẩm theo loại/nhóm, gói & giá, lịch sử theo bản ghi; thêm sản phẩm không cần sửa code.
 - Bài viết: thẻ, lưu trữ, lọc, phân trang, lịch sử.
 - Landing page nội bộ (khối, trình chỉnh sửa trực quan: chọn để sửa chữ/ảnh/liên kết/nút, cỡ chữ/căn lề/màu/độ rộng/chiều cao/khoảng cách, kéo thả/ẩn/nhân bản/thêm từ thư viện, xem trước 3 thiết bị) và liên kết ngoài.
-- Chỉnh giao diện trang có sẵn: sửa chữ đầu trang/dải kêu gọi trực tiếp trên trang thật.
+- Chỉnh trực tiếp trang có sẵn: chữ, ảnh, nút ngay trên trang thật (mục 9).
 - Chuyển hướng 301 tự động và thêm tay; kiểm tra đường dẫn trùng; báo cáo Danh bạ, Biểu mẫu, Nguồn khách, Hiệu quả nội dung.
 
 Giới hạn hiện tại:
@@ -150,3 +150,42 @@ Giới hạn hiện tại:
 ### Đánh giá Puck và React Grid Layout
 - **Puck** (trình dựng trang kéo thả): mô hình dữ liệu của Puck (`{ content: [{ type, props }] }`) gần với khối landing hiện có, nhưng trình chỉnh sửa hiện tại đã đủ chọn-để-sửa, thuộc tính, kéo thả, ẩn/nhân bản, xem trước 3 thiết bị, và dùng chung renderer với trang công khai. Chuyển sang Puck đáng cân nhắc khi cần: khối lồng nhau (cột trong cột), kéo thả trực tiếp trên khung xem trước, hoặc nhiều loại trang dựng bằng khối. Cách tích hợp đề xuất: map `BLOCKS` → `config.components` của Puck, giữ `validPageBlock()` làm bước kiểm tra ở máy chủ. **Chưa cài** trong đợt này.
 - **React Grid Layout** (dashboard kéo/giãn ô): Tổng quan hiện có 4 chỉ số + 2 khối, chưa có nhu cầu tùy biến bố cục theo người dùng. Cài khi có yêu cầu thực tế (lưu bố cục theo tài khoản: thêm cột `dashboard_layout` cho bảng `users` qua migration mới). **Chưa cài**.
+
+## 9. Chỉnh trực tiếp trên trang (11/2026)
+
+Thay cho kiểu "biểu mẫu + khung xem trước" cũ (`PageVisualEditor`, đã gỡ). Đường đi: **Website → Trang → chọn trang → Chỉnh trực tiếp**.
+
+**Cách dùng**
+- Màn hình gần như toàn bộ là trang thật, hiển thị bằng đúng component công khai, dữ liệu là **bản nháp**.
+- Hai chế độ: **Xem** (cuộn, xem bình thường) và **Chỉnh sửa** (hiện viền các phần sửa được).
+- **Nhấn giữ ~550 ms** vào chữ, ảnh hoặc nút sẽ chuyển sang Chỉnh sửa và chọn đúng phần đó. Có rung nhẹ trên điện thoại.
+  - Ở chế độ Chỉnh sửa, chỉ cần chạm hoặc bấm để chọn.
+  - Người dùng bàn phím: bấm nút "Chỉnh sửa", dùng Tab để đi giữa các phần, Enter để chọn.
+- **Chữ:** sửa ngay tại chỗ, giữ nguyên font, màu và bố cục.
+  - Enter để xong (trường nhiều dòng thì Enter xuống dòng). Esc để hủy lần sửa đó.
+  - Dán chỉ nhận chữ thuần. Tiêu đề cho phép nút **Nhấn mạnh**, lưu dạng `*chữ*`.
+  - Hỗ trợ bộ gõ tiếng Việt: không ghi đè phần đang gõ.
+- **Ảnh:** "Đổi ảnh" mở thư viện (ảnh đã tải lên và ảnh đang dùng trên trang), có thể tải ảnh mới. Có thêm "Mô tả & cắt" để sửa mô tả ảnh và vị trí giữ khi cắt.
+- **Nút:** popover sửa chữ và đường dẫn, kiểm tra đường dẫn trước khi áp dụng. Khi đang chỉnh, bấm nút không điều hướng khỏi trang.
+- **Khối:** có viền và tên khối. Thuộc tính `data-cms-block-id` là điểm mở rộng để thêm kéo/đổi kích thước sau này.
+- Thanh trên có: Hoàn tác/Làm lại (Ctrl+Z, Ctrl+Shift+Z), Xem trước bản nháp (tab mới), Lưu nháp, Xuất bản, và trạng thái lưu (đang lưu, đã lưu nháp, chưa lưu, lỗi).
+
+**Kỹ thuật**
+- **Khóa dữ liệu ổn định.** Các thuộc tính `data-cms*` được tạo bởi `components/site/cms.ts` và ánh xạ sang dữ liệu qua `lib/cms-paths.ts`:
+  - `hero.<trường>`
+  - `pages.<trang>.<trường>`
+  - `block.<khối>.<…>` (ví dụ `block.gallery.photos.2.image`).
+
+  `writeCms` kiểm tra khóa (chặn cả `__proto__`), độ dài, đường dẫn (`okLink`), ảnh (`/assets/…`) và vị trí cắt.
+- **Trình chỉnh trong trang** (`components/site/cms-editor.ts`):
+  - Chỉ được tải bằng import động khi trang nằm trong admin cùng nguồn và có `?cms=1` (`CmsOverlay`). Khách truy cập không tải file này.
+  - Giao diện nổi đặt trong shadow DOM.
+  - Nhấn giữ bị hủy khi: di chuyển quá 8px, `pointercancel` hoặc thả tay, lăn chuột, hoặc phần đang nhấn bị cuộn đi.
+  - Nếu máy bận (đang dựng 3D), trình chỉnh đợi tới khung hình kế tiếp rồi mới mở chế độ chỉnh. Vùng `data-cms-skip` (mô hình 3D) không nhận nhấn giữ.
+- **Bản nháp trên trang thật.** `proxy.ts` gắn header `x-danava-cms` khi có `?cms=1` và xóa giá trị giả mạo gửi từ bên ngoài. `getSiteContent()` chỉ trả bản nháp khi có header này **và** phiên admin có quyền `content.read`. Các trường hợp còn lại luôn dùng bản đã xuất bản.
+- **Lưu.** Màn admin (`components/admin/LiveEditor.tsx`) cập nhật bản nháp đang soạn rồi lưu qua đúng API cũ: kiểm tra quyền, kiểm tra hợp lệ toàn bộ nội dung, chống ghi đè (409), lịch sử phiên bản. Xuất bản sẽ `revalidatePath` như trước.
+- **Vùng đã gắn khóa:**
+  - Trang chủ: màn mở đầu (chữ và hai nút), khối Ảnh doanh nghiệp (chữ, từng ảnh, chú thích).
+  - Đầu trang và dải cuối trang của các trang: Về DANAVA, Liên hệ, Hệ sinh thái, Blogs, Đối tác, Dự án, Giải pháp.
+  - Các phần khác của trang vẫn sửa ở các tab biểu mẫu bên cạnh.
+- **Test:** `tests/cms-paths.test.ts`.
