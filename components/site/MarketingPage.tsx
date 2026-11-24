@@ -281,7 +281,7 @@ export function MarketingPage({ service, data }: { service: Service; data: SiteD
       {(service.pricing?.trim() || !!service.faqs?.length) && (
         <div className="mk-help">
           <PricingSection pricing={service.pricing || ''} contactHref={contactHref} />
-          <FaqSection faqs={service.faqs || []} contactHref={contactHref} />
+          <FaqSection faqs={service.faqs || []} contactHref={contactHref} rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
         </div>
       )}
       <section className="mk-finale" aria-labelledby="mk-finale-title">

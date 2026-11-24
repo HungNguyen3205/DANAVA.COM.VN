@@ -5,13 +5,21 @@
  */
 import { useMemo, useState } from 'react';
 import { ArrowUpRight, BadgeCheck, Clock, MapPin } from 'lucide-react';
+import { useSite } from '../SiteStore';
+import { cmsText, ct } from './cms';
 
 export type PlaceCard = {
   id: string; name: string; role: string; city: string; address: string; hours: string;
   logo: string; cover: string; url: string; verified: boolean; about: string; amenities: string[];
+  /** role lấy đúng từ hồ sơ (không phải chữ mặc định) → sửa được */
+  hasRole?: boolean;
 };
 
 export function PlacesDirectory({ places }: { places: PlaceCard[] }) {
+  const { data } = useSite();
+  const t = (k: string, def: string, label: string) => ct(data, `partners.places.dir.${k}`, def, label);
+  const rec = (p: PlaceCard, field: string, label: string) => cmsText(`rec.clients.${p.id}.${field}`, label, { scope: 'record', scopeLabel: `Hồ sơ ${p.name}` });
+  const all = t('all', 'Tất cả', 'Bộ lọc: tất cả'), unit = t('unit', 'địa điểm', 'Đơn vị đếm'), ver = t('verified', 'DANAVA Verified', 'Nhãn xác minh'), link = t('link', 'Xem trên danava.vn', 'Chữ liên kết');
   const [role, setRole] = useState('');
   const [city, setCity] = useState('');
   const roles = useMemo(() => Array.from(new Set(places.map(p => p.role))).sort((a, b) => a.localeCompare(b, 'vi')), [places]);
@@ -24,7 +32,7 @@ export function PlacesDirectory({ places }: { places: PlaceCard[] }) {
         <div className="pd-chips" role="radiogroup" aria-label="Loại hình">
           {['', ...roles].map(r => (
             <button key={r || 'all'} type="button" role="radio" aria-checked={role === r} className={role === r ? 'is-on' : ''} onClick={() => setRole(r)}>
-              {r || 'Tất cả'} <span>{places.filter(p => !r || p.role === r).length}</span>
+              {r || <b style={{ fontWeight: 'inherit' }} {...all.a}>{all.v}</b>} <span>{places.filter(p => !r || p.role === r).length}</span>
             </button>
           ))}
         </div>
@@ -36,29 +44,29 @@ export function PlacesDirectory({ places }: { places: PlaceCard[] }) {
           </select>
         </label>
       </div>
-      <p className="pd-count" aria-live="polite">{shown.length} địa điểm</p>
+      <p className="pd-count" aria-live="polite">{shown.length} <span {...unit.a}>{unit.v}</span></p>
       <ul className="pd-grid">
         {shown.map(p => (
           <li key={p.id} id={p.id} className="pd-card">
             <div className="pd-card__cover">
               {p.cover ? <img src={p.cover} alt="" width={800} height={500} loading="lazy" decoding="async" /> : <span aria-hidden="true" />}
-              {p.verified && <span className="pd-card__verified"><BadgeCheck aria-hidden="true" /> DANAVA Verified</span>}
+              {p.verified && <span className="pd-card__verified"><BadgeCheck aria-hidden="true" /> <span {...ver.a}>{ver.v}</span></span>}
             </div>
             <div className="pd-card__body">
               <div className="pd-card__head">
                 {p.logo && <img className="pd-card__logo" src={p.logo} alt="" width={56} height={56} loading="lazy" />}
                 <div>
-                  <p className="pd-card__role">{p.role}{p.city ? ` · ${p.city}` : ''}</p>
-                  <h3 className="pd-card__name">{p.name}</h3>
+                  <p className="pd-card__role"><span {...(p.hasRole ? rec(p, 'role', 'Lĩnh vực') : {})}>{p.role}</span>{p.city ? ` · ${p.city}` : ''}</p>
+                  <h3 className="pd-card__name" {...rec(p, 'name', 'Tên địa điểm')}>{p.name}</h3>
                 </div>
               </div>
               {p.about && <p className="pd-card__about">{p.about}</p>}
               <ul className="pd-card__meta">
-                {p.address && <li><MapPin aria-hidden="true" /><span>{p.address}</span></li>}
-                {p.hours && <li><Clock aria-hidden="true" /><span>{p.hours}</span></li>}
+                {p.address && <li><MapPin aria-hidden="true" /><span {...rec(p, 'address', 'Địa chỉ')}>{p.address}</span></li>}
+                {p.hours && <li><Clock aria-hidden="true" /><span {...rec(p, 'hours', 'Giờ mở cửa')}>{p.hours}</span></li>}
               </ul>
-              {p.amenities.length > 0 && <ul className="pd-card__amen" aria-label="Dịch vụ & tiện ích">{p.amenities.map(a => <li key={a}>{a}</li>)}</ul>}
-              <a className="pd-card__link" href={p.url} target="_blank" rel="noopener">Xem trên danava.vn <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>
+              {p.amenities.length > 0 && <ul className="pd-card__amen" aria-label="Dịch vụ & tiện ích">{p.amenities.map((a, i) => <li key={a} {...rec(p, `amenities.${i}`, 'Dịch vụ / tiện ích')}>{a}</li>)}</ul>}
+              <a className="pd-card__link" href={p.url} target="_blank" rel="noopener"><span {...link.a}>{link.v}</span> <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>
             </div>
           </li>
         ))}

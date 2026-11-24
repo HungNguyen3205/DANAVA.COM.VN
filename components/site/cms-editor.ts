@@ -163,7 +163,9 @@ export function startCmsEditor() {
     document.querySelectorAll<HTMLElement>('[data-cms]').forEach(el => {
       const path = el.dataset.cms!;
       if (!(path in next) || editing?.el === el) return;
-      if (serialize(el, el.hasAttribute('data-cms-rich'), el.hasAttribute('data-cms-multiline')) !== next[path]) render(el, next[path], el.hasAttribute('data-cms-rich'));
+      // Chữ cố định (txt.*): giá trị trống = chữ mặc định trong mã nguồn
+      const want = next[path] || (el.dataset.cmsDefault ?? next[path]);
+      if (serialize(el, el.hasAttribute('data-cms-rich'), el.hasAttribute('data-cms-multiline')) !== want) render(el, want, el.hasAttribute('data-cms-rich'));
     });
     document.querySelectorAll<HTMLImageElement>('img[data-cms-img]').forEach(img => {
       const base = img.dataset.cmsImg!;
@@ -303,7 +305,8 @@ export function startCmsEditor() {
     sendText(true);
     const value = serialize(el, rich, multiline);
     stopEditable(el);
-    render(el, value, rich); // chuẩn hóa hiển thị (vd. *nhấn mạnh* gõ tay)
+    // chuẩn hóa hiển thị (vd. *nhấn mạnh* gõ tay); chữ cố định để trống → hiện lại chữ mặc định
+    render(el, value || (el.dataset.cmsDefault ?? ''), rich);
     editing = null;
     post('commit');
   }

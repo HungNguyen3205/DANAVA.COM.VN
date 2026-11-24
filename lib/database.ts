@@ -345,6 +345,8 @@ export async function getContent(): Promise<ContentEnvelope> {
 export async function getSiteContent(): Promise<ContentEnvelope> {
   // Trình chỉnh trực tiếp của admin (iframe ?cms=1, đã đăng nhập, có quyền xem nội dung): hiển thị BẢN NHÁP bằng đúng component công khai
   const envelope = (await cmsDraftRequested()) ? await getWorkingContent() : await getContent();
+  // Chữ đã sửa cho các khối dùng chung (lib/request-texts.ts); ngoài React Server Components thì bỏ qua
+  try { const { requestTexts } = await import('./request-texts.ts'); requestTexts().texts = envelope.data.texts; } catch {}
   return { ...envelope, data: siteView(envelope.data) };
 }
 

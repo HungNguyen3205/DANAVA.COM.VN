@@ -5,8 +5,14 @@
  */
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import type { ShowcaseItem } from '@/lib/content';
+import type { ReactNode } from 'react';
+import type { ShowcaseItem, SiteData } from '@/lib/content';
 import { showcaseHref } from '@/lib/site-queries';
+import { cmsText, ct } from './cms';
+
+/** Vùng chỉnh của một trường trong hồ sơ sản phẩm trưng bày (rec.showcase.<id>.<trường>). */
+const R = (item: ShowcaseItem, f: string, label: string, multiline = false) =>
+  cmsText(`rec.showcase.${item.id}.${f}`, label, { scope: 'record', scopeLabel: `Hồ sơ ${item.name}`, ...(multiline ? { multiline: true } : {}) });
 
 export const hostOf = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
@@ -42,8 +48,13 @@ export function PhoneFrame({ item, className = '' }: { item: ShowcaseItem; class
 }
 
 /** Khối dự án nổi bật: ảnh desktop lớn + điện thoại chồng lên, nội dung và 2 CTA. */
-export function FeaturedShowcase({ item, headingLevel = 'h2', eyebrow = 'Dự án website nổi bật', id }: { item: ShowcaseItem; headingLevel?: 'h2' | 'h3'; eyebrow?: string; id?: string }) {
+export function FeaturedShowcase({ item, headingLevel = 'h2', eyebrow = 'Dự án website nổi bật', id, data = null }: { item: ShowcaseItem; headingLevel?: 'h2' | 'h3'; eyebrow?: ReactNode; id?: string; data?: Pick<SiteData, 'texts'> | null }) {
   const H = headingLevel;
+  // Chữ cố định sửa được (lib/site-text.ts) — khóa showcase.*; nhãn nhỏ theo từng nơi đặt khối (id), nút dùng chung toàn website
+  const where = (id || 'default').toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+/, '') || 'default';
+  const eb = typeof eyebrow === 'string' ? ct(data, `showcase.featured.${where}.eyebrow`, eyebrow, 'Nhãn nhỏ khối nổi bật') : null;
+  const explore = ct(data, 'showcase.featured.explore', 'Khám phá thiết kế', 'Nút khám phá thiết kế', { scope: 'global' });
+  const open = ct(data, 'showcase.featured.open', 'Mở website', 'Nút mở website', { scope: 'global' });
   return (
     <article className="sc-featured" aria-labelledby={id || `sc-${item.id}`}>
       <div className="sc-featured__media">
@@ -51,20 +62,20 @@ export function FeaturedShowcase({ item, headingLevel = 'h2', eyebrow = 'Dự á
         <PhoneFrame item={item} className="sc-featured__phone" />
       </div>
       <div className="sc-featured__body">
-        <p className="sc-featured__eyebrow">{eyebrow}</p>
-        <H className="sc-featured__title" id={id || `sc-${item.id}`}>{item.name}</H>
-        <p className="sc-featured__kind">{item.kind}</p>
-        <p className="sc-featured__lead">{item.description}</p>
+        {eb ? <p className="sc-featured__eyebrow" {...eb.a}>{eb.v}</p> : <p className="sc-featured__eyebrow">{eyebrow}</p>}
+        <H className="sc-featured__title" id={id || `sc-${item.id}`} {...R(item, 'name', 'Tên sản phẩm')}>{item.name}</H>
+        <p className="sc-featured__kind" {...R(item, 'kind', 'Loại sản phẩm')}>{item.kind}</p>
+        <p className="sc-featured__lead" {...R(item, 'description', 'Mô tả', true)}>{item.description}</p>
         {item.highlights.length > 0 && (
           <ul className="sc-featured__points">
-            {item.highlights.slice(0, 3).map(h => <li key={h.title}><strong>{h.title}.</strong> {h.text}</li>)}
+            {item.highlights.slice(0, 3).map((h, i) => <li key={h.title}><strong><span {...R(item, `highlights.${i}.title`, 'Điểm nổi bật: tên')}>{h.title}</span>.</strong> <span {...R(item, `highlights.${i}.text`, 'Điểm nổi bật: mô tả', true)}>{h.text}</span></li>)}
           </ul>
         )}
         <div className="sc-featured__cta">
-          {item.caseStudy && <Link className="s-btn s-btn--primary s-btn--lg" href={showcaseHref(item)}>Khám phá thiết kế <ArrowRight aria-hidden="true" /></Link>}
-          {item.url && <a className="s-btn s-btn--secondary s-btn--lg" href={item.url} target="_blank" rel="noopener">Mở website <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>}
+          {item.caseStudy && <Link className="s-btn s-btn--primary s-btn--lg" href={showcaseHref(item)}><span {...explore.a}>{explore.v}</span> <ArrowRight aria-hidden="true" /></Link>}
+          {item.url && <a className="s-btn s-btn--secondary s-btn--lg" href={item.url} target="_blank" rel="noopener"><span {...open.a}>{open.v}</span> <ArrowUpRight aria-hidden="true" /><span className="s-sr">(mở tab mới)</span></a>}
         </div>
-        {item.disclaimer && <p className="sc-featured__note">{item.disclaimer}</p>}
+        {item.disclaimer && <p className="sc-featured__note" {...R(item, 'disclaimer', 'Ghi chú vai trò', true)}>{item.disclaimer}</p>}
       </div>
     </article>
   );
@@ -81,7 +92,7 @@ export function ShowcaseStrip({ items }: { items: ShowcaseItem[] }) {
         const inner = (
           <>
             <span className="sc-strip__shot"><img src={w.image} alt="" loading="lazy" decoding="async" width={1200} height={750} /></span>
-            <span className="sc-strip__body"><strong>{w.name}</strong><small>{w.kind}</small></span>
+            <span className="sc-strip__body"><strong {...R(w, 'name', 'Tên sản phẩm')}>{w.name}</strong><small {...R(w, 'kind', 'Loại sản phẩm')}>{w.kind}</small></span>
           </>
         );
         return (

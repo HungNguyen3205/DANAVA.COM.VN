@@ -245,6 +245,8 @@ export type SiteData = {
   redirects?: Redirect[];
   /** Màn mở đầu trang chủ (lib/home-hero.ts). Trống = chữ mặc định đang hiển thị. */
   homeHero?: Partial<HomeHero>;
+  /** Chữ sửa trực tiếp trên website (khóa ổn định → chữ); trống = dùng chữ mặc định trong mã nguồn (lib/site-text.ts). */
+  texts?: Record<string, string>;
 };
 
 /**
@@ -456,6 +458,14 @@ function validTestimonial(t: unknown) {
     && (!t.published || (t.permission && (t.quote as string).trim() !== '' && (t.name as string).trim() !== ''));
 }
 
+/** Chữ sửa trên trang: tối đa 800 mục, khóa dạng a.b.c (chữ thường, số, gạch), mỗi chữ ≤ 2.000 ký tự. */
+export const TEXT_KEY = /^[a-z0-9][a-z0-9-]*(\.[a-z0-9][a-z0-9-]*){0,6}$/;
+function validTexts(t: unknown) {
+  if (!object(t)) return false;
+  const entries = Object.entries(t);
+  return entries.length <= 800 && entries.every(([k, x]) => TEXT_KEY.test(k) && k.length <= 100 && typeof x === 'string' && x.length <= 2000);
+}
+
 function validHomeHero(h: unknown) {
   return object(h) && Object.entries(h).every(([k, x]) => k in HOME_HERO_LIMITS && str(x, HOME_HERO_LIMITS[k as keyof HomeHero]) && (!k.endsWith('Href') || okLink(x)));
 }
@@ -464,6 +474,7 @@ export function validateContent(v: unknown): v is SiteData {
   if (!object(v) || v.version !== 1 || !str(v.headline, 150) || !str(v.description, 1000) || !str(v.email, 200) || !str(v.phone, 50)) return false;
   if (!optStr(v.heroTitle, 150)) return false;
   if (v.homeHero !== undefined && !validHomeHero(v.homeHero)) return false;
+  if (v.texts !== undefined && !validTexts(v.texts)) return false;
   if (v.presentation !== undefined && !validPresentation(v.presentation)) return false;
   if (!validBlocks(v.blocks) || !validExtras(v.extras) || !validCareers(v.careers)) return false;
   if (!Array.isArray(v.staff) || v.staff.length > 100 || !v.staff.every(p => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image))))) return false;

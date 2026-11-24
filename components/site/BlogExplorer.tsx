@@ -7,10 +7,18 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { BlogCardItem, type BlogCard } from './BlogCardItem';
+import { useSite } from '../SiteStore';
+import { cmsText, ct } from './cms';
 
 export type BlogTopic = { id: string; name: string; slug: string; tone: number; count: number; page?: string };
 
+/** Tên chủ đề sửa được trên trang (hồ sơ chủ đề, dùng chung mọi nơi). */
+const topicAttrs = (id: string) => cmsText(`rec.topics.${id}.name`, 'Tên chủ đề', { scope: 'record', scopeLabel: 'Hồ sơ chủ đề' });
+// .bl-chip span là ô đếm số → chữ trong nút lọc dùng <b> giữ nguyên độ đậm của nút
+const plain = { fontWeight: 'inherit' } as const;
+
 export function BlogExplorer({ cards, topics, featuredId }: { cards: BlogCard[]; topics: BlogTopic[]; featuredId?: string }) {
+  const { data } = useSite();
   const [current, setCurrent] = useState('');
   useEffect(() => {
     const read = () => {
@@ -31,27 +39,35 @@ export function BlogExplorer({ cards, topics, featuredId }: { cards: BlogCard[];
   const shown = current ? cards.filter(c => c.topic === current) : cards.filter(c => c.id !== featuredId);
   const active = topics.find(t => t.id === current);
   const toneOf = (id: string) => topics.find(t => t.id === id)?.tone ?? 0;
-  const nameOf = (id: string) => topics.find(t => t.id === id)?.name || 'Bài viết';
+  const nameOf = (id: string) => topics.find(t => t.id === id)?.name || '';
+  const all = ct(data, 'blog.explore.all', 'Tất cả', 'Nhãn lọc tất cả');
+  const viewing = ct(data, 'blog.explore.viewing', 'Đang xem', 'Chữ trạng thái lọc');
+  const unit = ct(data, 'blog.explore.unit', 'bài', 'Đơn vị số bài');
+  const latest = ct(data, 'blog.explore.latest', 'bài viết mới nhất', 'Chữ trạng thái');
+  const topicPage = ct(data, 'blog.explore.topic-page', 'Trang chủ đề', 'Chữ liên kết');
 
   return (
     <div className="bl-explore">
       {topics.map(t => <span key={t.id} id={`chu-de-${t.slug}`} className="bl-anchor" aria-hidden="true" />)}
       <div className="bl-chips" role="group" aria-label="Lọc bài viết theo chủ đề">
         <button type="button" className={`bl-chip${!current ? ' is-on' : ''}`} aria-pressed={!current} onClick={() => pick('')}>
-          Tất cả<span>{cards.length}</span>
+          <b style={plain} {...all.a}>{all.v}</b><span>{cards.length}</span>
         </button>
         {topics.map(t => (
           <button key={t.id} type="button" className={`bl-chip bl-tone-${t.tone}${current === t.id ? ' is-on' : ''}`} aria-pressed={current === t.id} onClick={() => pick(t.id)}>
-            <i aria-hidden="true" />{t.name}<span>{t.count}</span>
+            <i aria-hidden="true" /><b style={plain} {...topicAttrs(t.id)}>{t.name}</b><span>{t.count}</span>
           </button>
         ))}
       </div>
+      {/* Khung flex: giữ đúng các nhóm chữ như cũ ("Đang xem" | tên | "· n bài") */}
       <p className="bl-explore__status" aria-live="polite">
-        {active ? <>Đang xem <b>{active.name}</b> · {shown.length} bài</> : <>{shown.length} bài viết mới nhất</>}
-        {active?.page && <Link href={active.page}>Trang chủ đề <ArrowUpRight aria-hidden="true" /></Link>}
+        {active
+          ? <><span {...viewing.a}>{viewing.v}</span> <b {...topicAttrs(active.id)}>{active.name}</b><span> · {shown.length} <span {...unit.a}>{unit.v}</span></span></>
+          : <span>{shown.length} <span {...latest.a}>{latest.v}</span></span>}
+        {active?.page && <Link href={active.page}><span {...topicPage.a}>{topicPage.v}</span> <ArrowUpRight aria-hidden="true" /></Link>}
       </p>
       <ul className="bl-grid">
-        {shown.map((c, i) => <BlogCardItem key={c.id} card={c} topicName={nameOf(c.topic)} tone={toneOf(c.topic)} wide={i % 7 === 0} />)}
+        {shown.map((c, i) => <BlogCardItem key={c.id} data={data} card={c} topicName={nameOf(c.topic)} tone={toneOf(c.topic)} wide={i % 7 === 0} />)}
       </ul>
     </div>
   );

@@ -14,7 +14,11 @@ export type HomeCase = {
   logo?: string;
   href: string;
   tag: string;
+  /** Thuộc tính vùng chỉnh trực tiếp cho từng phần chữ (components/site/cms.ts) */
+  cms?: Partial<Record<'client' | 'title' | 'text' | 'tag', Record<string, string>>>;
 };
+/** Chữ giao diện sửa được: { v: chữ, a: thuộc tính } theo khóa all / product / marketing / more */
+export type CaseUi = Partial<Record<'all' | 'product' | 'marketing' | 'more', { v: string; a: Record<string, string> }>>;
 
 const TABS = [
   { id: 'all', label: 'Tất cả' },
@@ -22,7 +26,7 @@ const TABS = [
   { id: 'marketing', label: 'Marketing & Truyền thông' }
 ] as const;
 
-export function HomeCases({ items, limit = 6 }: { items: HomeCase[]; limit?: number }) {
+export function HomeCases({ items, limit = 6, ui }: { items: HomeCase[]; limit?: number; ui?: CaseUi }) {
   const [tab, setTab] = useState<(typeof TABS)[number]['id']>('all');
   const list = items.filter(x => tab === 'all' || x.group === tab).slice(0, limit);
   return (
@@ -30,7 +34,7 @@ export function HomeCases({ items, limit = 6 }: { items: HomeCase[]; limit?: num
       <div className="hb-tabs" role="tablist" aria-label="Lọc dự án theo mảng">
         {TABS.filter(t => t.id === 'all' || items.some(x => x.group === t.id)).map(t => (
           <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? 'is-on' : undefined} onClick={() => setTab(t.id)}>
-            {t.label}<span>{t.id === 'all' ? items.length : items.filter(x => x.group === t.id).length}</span>
+            <span {...ui?.[t.id]?.a}>{ui?.[t.id]?.v ?? t.label}</span><span>{t.id === 'all' ? items.length : items.filter(x => x.group === t.id).length}</span>
           </button>
         ))}
       </div>
@@ -40,16 +44,16 @@ export function HomeCases({ items, limit = 6 }: { items: HomeCase[]; limit?: num
             <Link href={c.href} className="hb-case">
               <span className="hb-case__media">
                 {c.image ? <img src={c.image} alt="" loading="lazy" decoding="async" width={800} height={560} /> : <span className="hb-case__ph">{c.client}</span>}
-                <span className="hb-case__tag">{c.tag}</span>
+                <span className="hb-case__tag" {...c.cms?.tag}>{c.tag}</span>
               </span>
               <span className="hb-case__body">
                 <span className="hb-case__client">
                   {c.logo && <img src={c.logo} alt="" loading="lazy" decoding="async" width={40} height={40} />}
-                  {c.client}
+                  <span {...c.cms?.client}>{c.client}</span>
                 </span>
-                <strong>{c.title}</strong>
-                <span className="hb-case__text">{c.text}</span>
-                <span className="hb-case__go">Xem thêm <ArrowUpRight aria-hidden="true" /></span>
+                <strong {...c.cms?.title}>{c.title}</strong>
+                <span className="hb-case__text" {...c.cms?.text}>{c.text}</span>
+                <span className="hb-case__go"><span {...ui?.more?.a}>{ui?.more?.v ?? 'Xem thêm'}</span> <ArrowUpRight aria-hidden="true" /></span>
               </span>
             </Link>
           </li>

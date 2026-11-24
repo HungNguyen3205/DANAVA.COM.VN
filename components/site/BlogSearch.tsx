@@ -2,10 +2,12 @@ import Form from 'next/form';
 import { Search } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { QUERY_MAX, searchTopics, type BlogFilter } from '@/lib/blog-search';
+import { ct } from './cms';
 
 /** Ô tìm kiếm + chọn chủ đề. Là form GET nên kết quả có URL riêng, chia sẻ được. */
 export function BlogSearch({ data, filter }: { data: SiteData; filter: BlogFilter }) {
   const topics = searchTopics(data);
+  const go = ct(data, 'blog.search.submit', 'Tìm kiếm', 'Chữ nút tìm kiếm');
   return (
     // key: điền lại ô nhập khi URL đổi (xóa bộ lọc, bấm chủ đề khác, nút Back)
     <Form key={`${filter.q}|${filter.topic}`} action="/blogs/" className="bl-search" role="search" aria-label="Tìm bài viết">
@@ -23,7 +25,7 @@ export function BlogSearch({ data, filter }: { data: SiteData; filter: BlogFilte
           </select>
         </label>
       )}
-      <button type="submit" className="bl-search__go">Tìm kiếm</button>
+      <button type="submit" className="bl-search__go"><span {...go.a}>{go.v}</span></button>
     </Form>
   );
 }

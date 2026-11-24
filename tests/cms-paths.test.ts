@@ -46,7 +46,7 @@ test('ảnh trong khối: đổi ảnh, mô tả, vị trí cắt; chặn ảnh 
 });
 
 test('khóa sai bị từ chối (kể cả thuộc tính nguyên mẫu)', () => {
-  for (const p of ['hero', 'hero.khong', 'block.__proto__.x', 'block.gallery.constructor', 'site.email', 'pages.a', 'block.gallery.photos.0.image.x.y.z.w']) assert.equal(validCmsPath(p), false, p);
+  for (const p of ['hero', 'hero.khong', 'block.__proto__.x', 'block.gallery.constructor', 'site.password', 'pages.a', 'block.gallery.photos.0.image.x.y.z.w']) assert.equal(validCmsPath(p), false, p);
   assert.throws(() => writeCms(base, 'block.__proto__.polluted', 'x'));
   assert.equal(({} as Record<string, unknown>).polluted, undefined);
   assert.match(cmsValueError('hero.kicker', 'x'.repeat(500)), /Tối đa/);
@@ -67,4 +67,32 @@ test('bản ghi: sửa trên trang chi tiết cập nhật đúng hồ sơ trong
   assert.throws(() => writeCms(base, 'rec.services.studio.title', '  '), /trống/);
   assert.throws(() => writeCms(base, `rec.posts.${post.id}.image`, 'https://evil.example/a.png'));
   for (const p of ['rec.services.studio.body', 'rec.users.x.name', 'rec.posts.x.published', 'rec.services.studio']) assert.equal(validCmsPath(p), false, p);
+});
+
+test('chữ cố định (txt.*): lưu bản sửa vào texts, trống = về chữ mặc định, khóa sai bị từ chối', async () => {
+  const { txt } = await import('../lib/site-text.ts');
+  const next = writeCms(base, 'txt.home.why.title', 'Vì sao *DANAVA*');
+  assert.equal(next.texts?.['home.why.title'], 'Vì sao *DANAVA*');
+  assert.equal(readCms(next, 'txt.home.why.title'), 'Vì sao *DANAVA*');
+  assert.equal(txt(next, 'home.why.title', 'Mặc định'), 'Vì sao *DANAVA*');
+  assert.equal(txt(base, 'home.why.title', 'Mặc định'), 'Mặc định');
+  assert.equal(validateContent(next), true);
+  const back = writeCms(next, 'txt.home.why.title', '   ');
+  assert.equal(back.texts, undefined);
+  for (const p of ['txt', 'txt.Home', 'txt.a_b', 'txt.__proto__', 'txt.a..b']) assert.equal(validCmsPath(p), false, p);
+  assert.equal(validateContent({ ...base, texts: { 'Khoa Sai': 'x' } }), false);
+  assert.equal(validateContent({ ...base, texts: { 'a.b': 'x'.repeat(2001) } }), false);
+});
+
+test('email/hotline (site.*) và bản ghi lồng (rec.<loại>.<id>.<trường>.<vị trí>)', () => {
+  assert.equal(readCms(writeCms(base, 'site.email', 'lienhe@danava.vn'), 'site.email'), 'lienhe@danava.vn');
+  assert.throws(() => writeCms(base, 'site.email', 'khong-phai-email'), /Email/);
+  const s = base.services.find(x => x.items.length)!;
+  const next = writeCms(base, `rec.services.${s.id}.items.0`, 'Hạng mục mới');
+  assert.equal(next.services.find(x => x.id === s.id)!.items[0], 'Hạng mục mới');
+  assert.equal(validateContent(next), true);
+  assert.throws(() => writeCms(base, `rec.services.${s.id}.items.99`, 'x'), /không/);
+  const person = base.staff[0];
+  assert.equal(readCms(writeCms(base, `rec.staff.${person.id}.role`, 'Giám đốc'), `rec.staff.${person.id}.role`), 'Giám đốc');
+  for (const p of [`rec.services.${s.id}.slug`, `rec.services.${s.id}.published`, `rec.posts.x.body`, 'rec.users.x.name']) assert.equal(validCmsPath(p), false, p);
 });

@@ -11,6 +11,9 @@ import {
   ArrowLeft, ArrowRight, LayoutDashboard, Users, Package, Ticket, CalendarDays, ClipboardCheck, UserRound, QrCode, Lock,
   ShoppingCart, BadgeDollarSign, Boxes, IdCard, Percent, BarChart3, Wallet, type LucideIcon
 } from 'lucide-react';
+import { useSite } from '../SiteStore';
+import { ct } from './cms';
+import { shotKey } from './StudioTour';
 
 export type ModuleShot = { src: string; title: string; text: string };
 
@@ -29,6 +32,10 @@ const GROUPS: { label: string; hint: string; titles: string[] }[] = [
 ];
 
 export function StudioModules({ modules }: { modules: ModuleShot[] }) {
+  const { data } = useSite();
+  // Chữ sửa được (lib/site-text.ts). Nhóm và biểu tượng vẫn khớp theo tên gốc của phân hệ (m.title).
+  const view = (m: ModuleShot) => ({ t: ct(data, `${shotKey(m.src)}.title`, m.title, 'Tên phân hệ'), x: ct(data, `${shotKey(m.src)}.text`, m.text, 'Mô tả phân hệ', { multiline: true }) });
+  const note = ct(data, 'studio.modules.note', 'Ảnh chụp màn hình thật của phần mềm, dữ liệu mẫu.', 'Ghi chú dưới màn hình');
   // Thứ tự hiển thị theo nhóm; phân hệ không thuộc nhóm nào vẫn được giữ ở cuối.
   const grouped = GROUPS.map(g => ({ ...g, items: g.titles.map(t => modules.find(m => m.title === t)).filter((m): m is ModuleShot => !!m) }));
   const order = [...grouped.flatMap(g => g.items), ...modules.filter(m => !GROUPS.some(g => g.titles.includes(m.title)))];
@@ -36,6 +43,7 @@ export function StudioModules({ modules }: { modules: ModuleShot[] }) {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const cur = order[active];
   const Icon = ICONS[cur.title] || LayoutDashboard;
+  const cv = view(cur);
 
   const go = (i: number, focus = false) => {
     const n = (i + order.length) % order.length;
@@ -51,14 +59,17 @@ export function StudioModules({ modules }: { modules: ModuleShot[] }) {
   return (
     <div className="smx">
       <div className="smx__nav" aria-label="Chọn phân hệ">
-        {grouped.map(g => (
+        {grouped.map((g, gi) => {
+          const gl = ct(data, `studio.modules.groups.${gi}.label`, g.label, 'Tên nhóm phân hệ'), gh = ct(data, `studio.modules.groups.${gi}.hint`, g.hint, 'Gợi ý nhóm phân hệ');
+          return (
           <div key={g.label} className="smx__group">
-            <p className="smx__glabel"><span>{g.label}</span><small>{g.hint}</small></p>
+            <p className="smx__glabel"><span {...gl.a}>{gl.v}</span><small {...gh.a}>{gh.v}</small></p>
             <ul>
               {g.items.map(m => {
                 k += 1;
                 const i = k;
                 const MIcon = ICONS[m.title] || LayoutDashboard;
+                const mv = view(m);
                 return (
                   <li key={m.src}>
                     <button
@@ -71,8 +82,8 @@ export function StudioModules({ modules }: { modules: ModuleShot[] }) {
                     >
                       <span className="smx__icon"><MIcon aria-hidden="true" /></span>
                       <span className="smx__t">
-                        <strong>{m.title}</strong>
-                        <small>{m.text}</small>
+                        <strong {...mv.t.a}>{mv.t.v}</strong>
+                        <small {...mv.x.a}>{mv.x.v}</small>
                       </span>
                     </button>
                   </li>
@@ -80,7 +91,8 @@ export function StudioModules({ modules }: { modules: ModuleShot[] }) {
               })}
             </ul>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="smx__stage">
@@ -88,22 +100,22 @@ export function StudioModules({ modules }: { modules: ModuleShot[] }) {
           <span className="smx__bar" aria-hidden="true"><i /><i /><i /><b>studio.danava.vn</b></span>
           <div className="smx__screen">
             {/* key đổi theo phân hệ → ảnh mới hiện dần; ảnh trước được trình duyệt giữ trong bộ nhớ đệm */}
-            <img key={cur.src} src={cur.src} alt={`Màn hình ${cur.title} trong DANAVA Studio — ${cur.text}`} width={1280} height={800} decoding="async" />
+            <img key={cur.src} src={cur.src} alt={`Màn hình ${cv.t.v} trong DANAVA Studio — ${cv.x.v}`} width={1280} height={800} decoding="async" />
           </div>
         </div>
         <div className="smx__caption" aria-live="polite">
           <span className="smx__cicon"><Icon aria-hidden="true" /></span>
           <div>
             <p className="smx__count">{String(active + 1).padStart(2, '0')} <span>/ {String(order.length).padStart(2, '0')}</span></p>
-            <p className="smx__ctitle">{cur.title}</p>
-            <p className="smx__ctext">{cur.text}</p>
+            <p className="smx__ctitle" {...cv.t.a}>{cv.t.v}</p>
+            <p className="smx__ctext" {...cv.x.a}>{cv.x.v}</p>
           </div>
           <div className="smx__arrows">
             <button type="button" onClick={() => go(active - 1)} aria-label="Phân hệ trước"><ArrowLeft aria-hidden="true" /></button>
             <button type="button" onClick={() => go(active + 1)} aria-label="Phân hệ tiếp theo"><ArrowRight aria-hidden="true" /></button>
           </div>
         </div>
-        <p className="smx__note">Ảnh chụp màn hình thật của phần mềm, dữ liệu mẫu.</p>
+        <p className="smx__note" {...note.a}>{note.v}</p>
       </div>
     </div>
   );

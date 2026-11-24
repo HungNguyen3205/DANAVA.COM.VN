@@ -5,6 +5,8 @@ import { JsonLd } from '@/components/site/blocks';
 import { DichVuAsk } from '@/components/site/DichVuAsk';
 import { Crumbs, CtaBand } from '@/components/site/ui';
 import { DICH_VU } from '@/lib/dich-vu';
+import { getSiteContent } from '@/lib/database';
+import { ct } from '@/components/site/cms';
 
 export const metadata = seo(
   'Dịch vụ: truyền thông, landing page, sự kiện và du lịch',
@@ -14,7 +16,13 @@ export const metadata = seo(
 
 const ICONS = [Megaphone, MonitorSmartphone, CalendarDays, Plane];
 
-export default function Page() {
+export default async function Page() {
+  const { data } = await getSiteContent();
+  /** Chữ sửa được trong trình biên tập (khóa services.*). */
+  const t = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => ct(data, `services.${k}`, def, label, opts);
+  const T = (k: string, def: string, label: string, opts: { multiline?: boolean } = {}) => { const x = t(k, def, label, opts); return <span {...x.a}>{x.v}</span>; };
+  const P = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => { const x = t(k, def, label, opts); return { ...x.a, children: x.v }; };
+  const title = t('hero.title', 'Đồng hành cùng *thương hiệu* của bạn', 'Tiêu đề trang', { rich: true });
   return (
     <>
       <JsonLd value={breadcrumbLD([{ label: 'Trang chủ', href: '/' }, { label: 'Dịch vụ', href: '/dich-vu/' }])} />
@@ -22,9 +30,9 @@ export default function Page() {
         <section className="svc-hero">
           <div className="s-container">
             <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Dịch vụ' }]} />
-            <p className="svc-kicker">Dịch vụ DANAVA</p>
-            <h1 className="svc-title">Đồng hành cùng <span>thương hiệu</span> của bạn</h1>
-            <p className="svc-lead">Truyền thông, landing page, sự kiện và hành trình trải nghiệm: những dịch vụ DANAVA triển khai trọn gói, ngoài các sản phẩm phần mềm.</p>
+            <p className="svc-kicker" {...P('hero.kicker', 'Dịch vụ DANAVA', 'Nhãn nhỏ')} />
+            <h1 className="svc-title" {...title.a}>{title.v.split(/\*([^*]+)\*/g).map((part, i) => (i % 2 ? <span key={i}>{part}</span> : part))}</h1>
+            <p className="svc-lead" {...P('hero.lead', 'Truyền thông, landing page, sự kiện và hành trình trải nghiệm: những dịch vụ DANAVA triển khai trọn gói, ngoài các sản phẩm phần mềm.', 'Câu dẫn', { multiline: true })} />
           </div>
         </section>
 
@@ -36,12 +44,12 @@ export default function Page() {
                 <Link key={s.id} href={`/dich-vu/${s.slug}/`} className="svc-card">
                   <span className="svc-card__no">0{i + 1}</span>
                   <span className="svc-card__ico" aria-hidden="true"><Icon /></span>
-                  <h2 className="svc-card__title">{s.title}</h2>
-                  <p className="svc-card__text">{s.description}</p>
+                  <h2 className="svc-card__title" {...P(`cards.${i}.title`, s.title, 'Tên dịch vụ')} />
+                  <p className="svc-card__text" {...P(`cards.${i}.text`, s.description, 'Mô tả dịch vụ', { multiline: true })} />
                   <ul className="svc-card__items">
-                    {s.items.slice(0, 3).map(item => <li key={item}>{item}</li>)}
+                    {s.items.slice(0, 3).map((item, j) => <li key={item} {...P(`cards.${i}.items.${j}`, item, 'Hạng mục')} />)}
                   </ul>
-                  <span className="svc-card__go">Xem chi tiết <ArrowRight aria-hidden="true" /></span>
+                  <span className="svc-card__go">{T('cards.go', 'Xem chi tiết', 'Chữ liên kết thẻ')} <ArrowRight aria-hidden="true" /></span>
                 </Link>
               );
             })}
@@ -50,7 +58,7 @@ export default function Page() {
 
         <DichVuAsk />
 
-        <CtaBand title="Cần tư vấn dịch vụ?" lead="Chia sẻ mục tiêu của bạn, chuyên viên DANAVA sẽ đề xuất phương án và báo giá theo phạm vi." primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+        <CtaBand title={T('cta.title', 'Cần tư vấn dịch vụ?', 'Dải cuối trang: tiêu đề')} lead={T('cta.lead', 'Chia sẻ mục tiêu của bạn, chuyên viên DANAVA sẽ đề xuất phương án và báo giá theo phạm vi.', 'Dải cuối trang: câu dẫn', { multiline: true })} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
       </main>
     </>
   );

@@ -3,6 +3,9 @@
  * Chỉ là thuộc tính data-*: khách truy cập không thấy gì khác; trình chỉnh (components/site/cms-editor)
  * đọc khóa ở đây để biết vùng nào ứng với trường nào trong dữ liệu (lib/cms-paths.ts).
  */
+import type { SiteData } from '@/lib/content';
+import { txt } from '@/lib/site-text';
+
 type Attrs = Record<`data-${string}`, string>;
 
 /** Chữ một dòng / nhiều dòng; rich = cho phép *nhấn mạnh* (hiển thị qua rich()). */
@@ -42,3 +45,12 @@ export function cmsBlock(name: string, id?: string, opts: { panel?: string } & S
 
 /** Vùng tương tác riêng (vd. mô hình 3D): nhấn giữ ở đây không mở chế độ chỉnh. */
 export const cmsSkip: Attrs = { 'data-cms-skip': '' };
+
+/**
+ * Chữ cố định sửa được (lib/site-text.ts): trả về chữ đang hiển thị + thuộc tính vùng chỉnh.
+ * Dùng: const t = ct(data, 'home.why.title', 'Chữ mặc định', 'Tiêu đề', { rich: true }); <h2 {...t.a}>{rich(t.v)}</h2>
+ * data-cms-default giữ chữ mặc định để trình chỉnh hiển thị lại khi xóa trắng / hoàn tác.
+ */
+export function ct(data: Pick<SiteData, 'texts'> | null | undefined, key: string, fallback: string, label: string, opts: { rich?: boolean; multiline?: boolean } & Scope = {}) {
+  return { v: txt(data, key, fallback), a: { ...cmsText(`txt.${key}`, label, opts), 'data-cms-default': fallback } as Attrs };
+}

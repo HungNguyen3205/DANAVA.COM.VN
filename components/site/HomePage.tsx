@@ -26,10 +26,25 @@ import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
 import { homeHero } from '@/lib/home-hero';
 import { markOf } from '@/lib/partner-marks';
 import { contactChannels } from '@/lib/contact-channels';
-import { cmsBlock, cmsLink, cmsLinkText, cmsSkip, cmsText } from './cms';
+import { cmsBlock, cmsLink, cmsLinkText, cmsSkip, cmsText, ct } from './cms';
+import { rich } from './rich';
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="hb-eyebrow">{children}</p>;
+type TextFn = ReturnType<typeof textFn>;
+/** Chữ cố định của trang chủ sửa được trong trình biên tập (khóa home.*, lib/site-text.ts). */
+function textFn(data: SiteData) {
+  return (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => ct(data, `home.${k}`, def, label, opts);
+}
+function Eyebrow({ t, k, def }: { t: TextFn; k: string; def: string }) {
+  const x = t(k, def, 'Nhãn nhỏ');
+  return <p className="hb-eyebrow" {...x.a}>{x.v}</p>;
+}
+function Title({ t, k, def, id }: { t: TextFn; k: string; def: string; id: string }) {
+  const x = t(k, def, 'Tiêu đề khối', { rich: true });
+  return <h2 className="hb-h2" id={id} {...x.a}>{rich(x.v)}</h2>;
+}
+function More({ t, k, def, href }: { t: TextFn; k: string; def: string; href: string }) {
+  const x = t(k, def, 'Chữ liên kết');
+  return <Link className="hb-more" href={href}><span {...x.a}>{x.v}</span> <ArrowRight aria-hidden="true" /></Link>;
 }
 
 export default function HomePage({ data }: { data: SiteData }) {
@@ -43,12 +58,16 @@ export default function HomePage({ data }: { data: SiteData }) {
   const cases: HomeCase[] = [
     ...[...allProjects].sort((x, y) => Number(y.featured) - Number(x.featured)).map(p => ({
       id: 'p-' + p.id, group: 'product' as const, client: p.client, title: p.title, text: p.summary, image: p.image || undefined,
-      href: projectHref(p), tag: p.industry || p.category || 'Dự án'
+      href: projectHref(p), tag: p.industry || p.category || 'Dự án',
+      cms: { ...(p.industry || p.category ? { tag: cmsText(`rec.projects.${p.id}.${p.industry ? 'industry' : 'category'}`, p.industry ? 'Ngành (hồ sơ dự án)' : 'Danh mục (hồ sơ dự án)', { scope: 'record', scopeLabel: 'Hồ sơ dự án' }) } : {}), client: cmsText(`rec.projects.${p.id}.client`, 'Khách hàng (hồ sơ dự án)', { scope: 'record', scopeLabel: 'Hồ sơ dự án' }), title: cmsText(`rec.projects.${p.id}.title`, 'Tên dự án', { scope: 'record', scopeLabel: 'Hồ sơ dự án' }), text: cmsText(`rec.projects.${p.id}.summary`, 'Tóm tắt dự án', { multiline: true, scope: 'record', scopeLabel: 'Hồ sơ dự án' }) }
     })),
-    ...MARKETING_ENGAGEMENTS.filter(m => m.image).map(m => ({
-      id: 'm-' + m.id, group: 'marketing' as const, client: m.client, title: m.title, text: m.scope.join(' · '), image: m.image!.src, logo: m.logo,
-      href: '/giai-phap/digital-marketing/#du-an-marketing', tag: m.throughPartner ? 'Qua đối tác' : 'Marketing'
-    }))
+    ...MARKETING_ENGAGEMENTS.filter(m => m.image).map(m => {
+      const c = ct(data, `home.mkt.${m.id}.client`, m.client, 'Khách hàng'), ti = ct(data, `home.mkt.${m.id}.title`, m.title, 'Tên hoạt động'), tx = ct(data, `home.mkt.${m.id}.text`, m.scope.join(' · '), 'Mô tả', { multiline: true }), tg = ct(data, `home.mkt.${m.id}.tag`, m.throughPartner ? 'Qua đối tác' : 'Marketing', 'Nhãn');
+      return {
+        id: 'm-' + m.id, group: 'marketing' as const, client: c.v, title: ti.v, text: tx.v, image: m.image!.src, logo: m.logo,
+        href: '/giai-phap/digital-marketing/#du-an-marketing', tag: tg.v, cms: { client: c.a, title: ti.a, text: tx.a, tag: tg.a }
+      };
+    })
   ];
   // Toàn bộ khách hàng & đối tác: đối tác trên nền tảng + khách hàng marketing (bỏ trùng theo tên)
   const logos = (() => {
@@ -66,7 +85,8 @@ export default function HomePage({ data }: { data: SiteData }) {
     }
     return out;
   })();
-  const products = block(data, 'menu').columns[0]?.items.filter(it => it.href) ?? [];
+  // Giữ vị trí gốc trong menu để sửa đúng mục (block.menu.columns.0.items.<i>)
+  const products = (block(data, 'menu').columns[0]?.items ?? []).map((it, at) => ({ ...it, at })).filter(it => it.href);
   // Đường hành trình 2016 → 2026: 2016 theo chủ sở hữu (21/11/2026), 2016 theo đăng ký doanh nghiệp, 2021–2026 theo MILESTONES (trang Về chúng tôi)
   const journey = (() => {
     const steps = [
@@ -92,6 +112,8 @@ export default function HomePage({ data }: { data: SiteData }) {
   })();
   const posts = knowledgePosts(data).slice(0, 3);
   const hero = homeHero(data);
+  const t = textFn(data);
+  const j = t('journey.title', 'Hành trình DANAVA', 'Tiêu đề hành trình'), js = t('journey.range', '2016 – nay', 'Khoảng thời gian');
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
 
   return (
@@ -117,7 +139,7 @@ export default function HomePage({ data }: { data: SiteData }) {
             </div>
             {/* Đường hành trình DANAVA 2016 → nay (mốc năm thật, không có trục số) */}
             <figure className="hb-journey">
-              <figcaption>Hành trình DANAVA <small>2016 – nay</small></figcaption>
+              <figcaption><span {...j.a}>{j.v}</span> <small {...js.a}>{js.v}</small></figcaption>
               <svg viewBox={`0 0 ${journey.W} 108`} role="img" aria-label={`Hành trình DANAVA: ${journey.pts.map(p => `${p.year} ${p.title}`).join('; ')}`}>
                 <defs>
                   <linearGradient id="hb-journey-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#e0611a" stopOpacity=".28" /><stop offset="1" stopColor="#e0611a" stopOpacity="0" /></linearGradient>
@@ -134,7 +156,7 @@ export default function HomePage({ data }: { data: SiteData }) {
                   </g>
                 ))}
               </svg>
-              <p className="hb-journey__now"><i />{journey.last.year} · {journey.last.title}</p>
+              {(() => { const x = t('journey.now', journey.last.title, 'Cột mốc hiện tại'); return <p className="hb-journey__now"><i />{journey.last.year} · <span {...x.a}>{x.v}</span></p>; })()}
             </figure>
           </div>
           <div className="hb-cover__3d" {...cmsSkip}>
@@ -162,7 +184,7 @@ export default function HomePage({ data }: { data: SiteData }) {
                 <li key={sv.title} data-reveal style={{ ['--d' as string]: `${i * 70}ms` }}>
                   <Link href={sv.href}>
                     {Ico ? <IconBox icon={Ico} tone={i % 2 ? 'blue' : 'orange'} /> : <HrefIcon href={sv.href} />}
-                    <span><strong>{sv.title}</strong><small>{sv.text}</small></span>
+                    {(() => { const a = t(`sol.${i}.title`, sv.title, 'Tên giải pháp'), b = t(`sol.${i}.text`, sv.text, 'Mô tả giải pháp'); return <span><strong {...a.a}>{a.v}</strong><small {...b.a}>{b.v}</small></span>; })()}
                     <ArrowUpRight className="hb-sol__go" aria-hidden="true" />
                   </Link>
                 </li>
@@ -177,9 +199,9 @@ export default function HomePage({ data }: { data: SiteData }) {
         <div className="s-container">
           <h2 className="s-sr" id="t-num">Số liệu của DANAVA</h2>
           <dl className="hb-stats">
-            {A.stats.map(st => <div key={st.label}><dd><CountUp value={st.value} /></dd><dt>{st.label}</dt></div>)}
+            {A.stats.map((st, i) => { const x = t(`stats.${i}.label`, st.label, 'Nhãn số liệu'); return <div key={st.label}><dd><CountUp value={st.value} /></dd><dt {...x.a}>{x.v}</dt></div>; })}
           </dl>
-          <p className="hb-src">Số liệu trên nền tảng danava.vn · {A.checked}</p>
+          {(() => { const x = t('stats.source', `Số liệu trên nền tảng danava.vn · ${A.checked}`, 'Nguồn số liệu'); return <p className="hb-src" {...x.a}>{x.v}</p>; })()}
         </div>
       </section>
 
@@ -190,10 +212,10 @@ export default function HomePage({ data }: { data: SiteData }) {
         <section className="hb-sec" id="du-an" aria-labelledby="t-cases">
           <div className="s-container">
             <div className="hb-row">
-              <div><Eyebrow>Dự án tiêu biểu</Eyebrow><h2 className="hb-h2" id="t-cases">Những dự án <em>DANAVA đã thực hiện.</em></h2></div>
-              <Link className="hb-more" href="/du-an/">Xem tất cả dự án <ArrowRight aria-hidden="true" /></Link>
+              <div><Eyebrow t={t} k="cases.eyebrow" def="Dự án tiêu biểu" /><Title t={t} k="cases.title" def="Những dự án *DANAVA đã thực hiện.*" id="t-cases" /></div>
+              <More t={t} k="cases.more" def="Xem tất cả dự án" href="/du-an/" />
             </div>
-            <HomeCases items={cases} />
+            <HomeCases items={cases} ui={{ all: t('cases.tab.all', 'Tất cả', 'Nhãn tab'), product: t('cases.tab.product', 'Phần mềm & Website', 'Nhãn tab'), marketing: t('cases.tab.marketing', 'Marketing & Truyền thông', 'Nhãn tab'), more: t('cases.card.more', 'Xem thêm', 'Chữ liên kết') }} />
           </div>
         </section>
       )}
@@ -203,9 +225,8 @@ export default function HomePage({ data }: { data: SiteData }) {
         <section className="hb-sec hb-cream hb-clients" id="doi-tac" aria-labelledby="t-clients">
           <div className="s-container">
             <div className="hb-clients__head">
-              <Eyebrow>Khách hàng & đối tác</Eyebrow>
-              <h2 className="hb-h2" id="t-clients"><em><CountUp value={logos.length} suffix="" /> thương hiệu</em> đã đồng hành cùng DANAVA.</h2>
-              <p className="hb-text">Từ phòng tập, studio wellness trên nền tảng danava.vn đến các thương hiệu bất động sản, nội thất và ẩm thực tin chọn DANAVA cho phần mềm, website và truyền thông.</p>
+              <Eyebrow t={t} k="clients.eyebrow" def="Khách hàng & đối tác" />
+              {(() => { const u = t('clients.unit', 'thương hiệu', 'Đơn vị'), h = t('clients.title', 'đã đồng hành cùng DANAVA.', 'Tiêu đề khối'), p = t('clients.text', 'Từ phòng tập, studio wellness trên nền tảng danava.vn đến các thương hiệu bất động sản, nội thất và ẩm thực tin chọn DANAVA cho phần mềm, website và truyền thông.', 'Đoạn giới thiệu', { multiline: true }); return <><h2 className="hb-h2" id="t-clients"><em><CountUp value={logos.length} suffix="" /> <span {...u.a}>{u.v}</span></em> <span {...h.a}>{h.v}</span></h2><p className="hb-text" {...p.a}>{p.v}</p></>; })()}
             </div>
           </div>
           {/* Dải logo trôi ngang (ý tưởng cleverads.vn): chỉ logo, rê chuột dừng lại và hiện tên */}
@@ -231,7 +252,7 @@ export default function HomePage({ data }: { data: SiteData }) {
             })}
           </div>
           <div className="s-container hb-clients__more">
-            <Link className="hb-more" href="/doi-tac/">Xem chi tiết đối tác <ArrowRight aria-hidden="true" /></Link>
+            <More t={t} k="clients.more" def="Xem chi tiết đối tác" href="/doi-tac/" />
           </div>
         </section>
       )}
@@ -241,30 +262,29 @@ export default function HomePage({ data }: { data: SiteData }) {
         <div className="s-container">
           <div className="hb-why__intro">
             <div data-reveal>
-              <Eyebrow>Vì sao chọn DANAVA</Eyebrow>
-              <h2 className="hb-h2" id="t-why">Chuyển đổi số không chỉ là công nghệ, <em>đó là hành trình kiến tạo giá trị.</em></h2>
-              <p className="hb-text">{P.about[0]}</p>
-              <Link className="hb-more" href="/ve-danava/">Câu chuyện & đội ngũ DANAVA <ArrowRight aria-hidden="true" /></Link>
+              <Eyebrow t={t} k="why.eyebrow" def="Vì sao chọn DANAVA" />
+              <Title t={t} k="why.title" def="Chuyển đổi số không chỉ là công nghệ, *đó là hành trình kiến tạo giá trị.*" id="t-why" />
+              {(() => { const x = t('why.text', P.about[0], 'Đoạn giới thiệu', { multiline: true }); return <p className="hb-text" {...x.a}>{x.v}</p>; })()}
+              <More t={t} k="why.more" def="Câu chuyện & đội ngũ DANAVA" href="/ve-danava/" />
             </div>
             <figure className="hb-why__photo" data-reveal>
               <img src={A.founder.image} alt={`${A.founder.name}, ${A.founder.title} DANAVA`} loading="lazy" decoding="async" width={1200} height={885} />
-              <figcaption><b>{A.founder.name}</b>{A.founder.title}</figcaption>
+              {(() => { const a = t('why.founder.name', A.founder.name, 'Tên người sáng lập'), b = t('why.founder.role', A.founder.title, 'Chức danh'); return <figcaption><b {...a.a}>{a.v}</b><span {...b.a}>{b.v}</span></figcaption>; })()}
             </figure>
           </div>
           <ol className="hb-why__grid">
             {P.why.map((w, i) => (
               <li key={w.title} data-reveal style={{ ['--d' as string]: `${i * 80}ms` }}>
                 <IconBox icon={WHY_ICONS[i % WHY_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} />
-                <h3>{w.title}</h3>
-                <p>{w.text}</p>
+                {(() => { const a = t(`why.items.${i}.title`, w.title, 'Tiêu đề lý do'), b = t(`why.items.${i}.text`, w.text, 'Mô tả lý do', { multiline: true }); return <><h3 {...a.a}>{a.v}</h3><p {...b.a}>{b.v}</p></>; })()}
               </li>
             ))}
           </ol>
           <div className="hb-network" data-reveal>
-            <p className="hb-network__title">Mạng lưới đồng hành</p>
+            {(() => { const x = t('network.title', 'Mạng lưới đồng hành', 'Tiêu đề'); return <p className="hb-network__title" {...x.a}>{x.v}</p>; })()}
             <ul>
               {A.network.map((n, i) => (
-                <li key={n.name}><IconBox icon={NETWORK_ICONS[i % NETWORK_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} /><span><strong>{n.name}</strong><small>{n.text}</small></span></li>
+                <li key={n.name}><IconBox icon={NETWORK_ICONS[i % NETWORK_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} />{(() => { const a = t(`network.${i}.name`, n.name, 'Tên'), b = t(`network.${i}.text`, n.text, 'Mô tả'); return <span><strong {...a.a}>{a.v}</strong><small {...b.a}>{b.v}</small></span>; })()}</li>
               ))}
             </ul>
           </div>
@@ -277,17 +297,17 @@ export default function HomePage({ data }: { data: SiteData }) {
       <section className="hb-sec hb-cream" aria-labelledby="t-products">
         <div className="s-container">
           <div className="hb-row">
-            <div><Eyebrow>Sản phẩm của DANAVA</Eyebrow><h2 className="hb-h2" id="t-products">Nền tảng do DANAVA <em>tự phát triển.</em></h2></div>
-            <Link className="hb-more" href="/he-sinh-thai/">Hệ sinh thái DANAVA <ArrowRight aria-hidden="true" /></Link>
+            <div><Eyebrow t={t} k="products.eyebrow" def="Sản phẩm của DANAVA" /><Title t={t} k="products.title" def="Nền tảng do DANAVA *tự phát triển.*" id="t-products" /></div>
+            <More t={t} k="products.more" def="Hệ sinh thái DANAVA" href="/he-sinh-thai/" />
           </div>
           <ul className="hb-products">
             {products.map((it, i) => (
               <li key={it.href} data-reveal style={{ ['--d' as string]: `${i * 70}ms` }}>
                 <Link href={it.href}>
                   <HrefIcon href={it.href} />
-                  <h3>{it.label}{it.badge && <span className="hb-products__badge">{it.badge}</span>}</h3>
-                  <p>{it.desc}</p>
-                  <span className="hb-services__go">Tìm hiểu <ArrowUpRight aria-hidden="true" /></span>
+                  <h3><span {...cmsText(`block.menu.columns.0.items.${it.at}.label`, 'Tên sản phẩm (menu)', { scope: 'global' })}>{it.label}</span>{it.badge && <span className="hb-products__badge">{it.badge}</span>}</h3>
+                  <p {...cmsText(`block.menu.columns.0.items.${it.at}.desc`, 'Mô tả sản phẩm (menu)', { scope: 'global' })}>{it.desc}</p>
+                  {(() => { const x = t('products.go', 'Tìm hiểu', 'Chữ liên kết'); return <span className="hb-services__go"><span {...x.a}>{x.v}</span> <ArrowUpRight aria-hidden="true" /></span>; })()}
                 </Link>
               </li>
             ))}
@@ -299,15 +319,14 @@ export default function HomePage({ data }: { data: SiteData }) {
       <section className="hb-sec hb-process" aria-labelledby="t-process">
         <div className="s-container">
           <div className="hb-row">
-            <div><Eyebrow>Quy trình làm việc</Eyebrow><h2 className="hb-h2" id="t-process">Bảy bước <em>đồng hành cùng bạn.</em></h2></div>
+            <div><Eyebrow t={t} k="process.eyebrow" def="Quy trình làm việc" /><Title t={t} k="process.title" def="Bảy bước *đồng hành cùng bạn.*" id="t-process" /></div>
           </div>
           <ol className="hb-steps">
             {A.process.map((st, i) => (
               <li key={st.name} data-reveal style={{ ['--d' as string]: `${i * 60}ms` }}>
                 <IconBox icon={PROCESS_ICONS[i % PROCESS_ICONS.length]} tone={i % 2 ? 'orange' : 'blue'} />
                 <span className="hb-steps__no">{String(i + 1).padStart(2, '0')}</span>
-                <strong>{st.name}</strong>
-                <small>{st.text}</small>
+                {(() => { const a = t(`process.${i}.name`, st.name, 'Tên bước'), b = t(`process.${i}.text`, st.text, 'Mô tả bước', { multiline: true }); return <><strong {...a.a}>{a.v}</strong><small {...b.a}>{b.v}</small></>; })()}
               </li>
             ))}
           </ol>
@@ -321,13 +340,13 @@ export default function HomePage({ data }: { data: SiteData }) {
         <section className="hb-sec hb-cream" aria-labelledby="home-news">
           <div className="s-container">
             <div className="hb-row">
-              <div><Eyebrow>Blogs</Eyebrow><h2 className="hb-h2" id="home-news">Tin mới <em>từ DANAVA.</em></h2></div>
-              <Link className="hb-more" href="/blogs/">Xem tất cả <ArrowRight aria-hidden="true" /></Link>
+              <div><Eyebrow t={t} k="news.eyebrow" def="Blogs" /><Title t={t} k="news.title" def="Tin mới *từ DANAVA.*" id="home-news" /></div>
+              <More t={t} k="news.more" def="Xem tất cả" href="/blogs/" />
             </div>
             <div className={`s-grid s-snap ${posts.length >= 3 ? 's-grid--3' : 's-grid--2'}`}>{posts.map(p => <PostTile key={p.id} post={p} data={data} />)}</div>
             {social.length > 1 && (
               <div className="s-home-social u-subblock">
-                <p className="s-home-social__title">Từ kênh chính thức</p>
+                {(() => { const x = t('news.social', 'Từ kênh chính thức', 'Tiêu đề'); return <p className="s-home-social__title" {...x.a}>{x.v}</p>; })()}
                 {social.map(s => (
                   <a key={s.id} href={s.originalUrl} target="_blank" rel="noopener" className="s-home-social__item">
                     <span className="s-badge s-badge--neutral">{s.platformLabel}</span>
@@ -345,20 +364,17 @@ export default function HomePage({ data }: { data: SiteData }) {
       <section className="hb-final" id="lien-he-nhanh" aria-labelledby="t-contact">
         <div className="s-container">
           <img className="hb-final__logo" src="/assets/danava-logo.png" alt="DANAVA Solutions" width={709} height={352} loading="lazy" />
-          <h2 className="hb-final__title" id="t-contact">Sẵn sàng phát triển <em>cùng DANAVA?</em></h2>
-          <p className="hb-lead hb-final__lead">{P.tagline}.</p>
+          {(() => { const a = t('final.title', 'Sẵn sàng phát triển *cùng DANAVA?*', 'Tiêu đề', { rich: true }), b = t('final.lead', `${P.tagline}.`, 'Câu dẫn', { multiline: true }); return <><h2 className="hb-final__title" id="t-contact" {...a.a}>{rich(a.v)}</h2><p className="hb-lead hb-final__lead" {...b.a}>{b.v}</p></>; })()}
           <div className="hb-cta hb-final__cta">
-            <Link className="hb-btn hb-btn--primary" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
-            <Link className="hb-btn hb-btn--ghost" href="/lien-he/?service=danava-studio">Đăng ký demo DANAVA Studio</Link>
+            {(() => { const a = t('final.primary', 'Nhận tư vấn', 'Chữ nút chính'), b = t('final.secondary', 'Đăng ký demo DANAVA Studio', 'Chữ nút phụ'); return <><Link className="hb-btn hb-btn--primary" href="/lien-he/"><span {...a.a}>{a.v}</span> <ArrowRight aria-hidden="true" /></Link><Link className="hb-btn hb-btn--ghost" href="/lien-he/?service=danava-studio"><span {...b.a}>{b.v}</span></Link></>; })()}
           </div>
           <ul className="hb-final__info">
             <li><Phone aria-hidden="true" /><a href={`tel:${phone}`}>{formatPhone(phone)}</a></li>
-            <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{email}</a></li>
-            <li><AtSign aria-hidden="true" /><a href={co.facebook} target="_blank" rel="noopener">{P.social}<span className="s-sr"> (mở tab mới)</span></a></li>
-            <li><Globe aria-hidden="true" /><a href="https://danava.vn" target="_blank" rel="noopener">{P.website}<span className="s-sr"> (mở tab mới)</span></a></li>
-            <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener">{co.address}</a></li>
+            <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}><span {...cmsText('site.email', 'Email liên hệ', { scope: 'global' })}>{email}</span></a></li>
+            {(() => { const a = t('final.social', P.social, 'Tên kênh mạng xã hội'), b = t('final.website', P.website, 'Tên website'); return <><li><AtSign aria-hidden="true" /><a href={co.facebook} target="_blank" rel="noopener"><span {...a.a}>{a.v}</span><span className="s-sr"> (mở tab mới)</span></a></li><li><Globe aria-hidden="true" /><a href="https://danava.vn" target="_blank" rel="noopener"><span {...b.a}>{b.v}</span><span className="s-sr"> (mở tab mới)</span></a></li></>; })()}
+            <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener"><span {...cmsText('block.company.address', 'Địa chỉ công ty', { scope: 'global' })}>{co.address}</span></a></li>
           </ul>
-          <p className="hb-final__legal">{A.company}</p>
+          {(() => { const x = t('final.legal', A.company, 'Tên pháp nhân'); return <p className="hb-final__legal" {...x.a}>{x.v}</p>; })()}
         </div>
       </section>
     </main>

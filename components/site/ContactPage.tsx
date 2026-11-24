@@ -13,7 +13,7 @@ import { CONTACT, formatPhone } from './catalog';
 import { Crumbs } from './ui';
 import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
-import { cmsText } from './cms';
+import { cmsText, ct } from './cms';
 import { contactChannels } from '@/lib/contact-channels';
 import { rich } from './rich';
 import { useAnna } from './anna/AnnaProvider';
@@ -85,6 +85,14 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { zalo } = contactChannels(data);
+  /** Chữ cố định sửa được trong trình biên tập (khóa contact.*). */
+  const t = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => ct(data, `contact.${k}`, def, label, opts);
+  /** Ghi chữ cố định ngay trong <span> (giữ nguyên markup xung quanh). */
+  const T = (k: string, def: string, label: string) => <span {...P(k, def, label)} />;
+  /** Thuộc tính vùng chỉnh + chữ (children) cho phần tử chỉ chứa chữ: <h3 {...P(…)} />. */
+  const P = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => { const x = t(k, def, label, opts); return { ...x.a, children: x.v }; };
+  const G = { scope: 'global' as const };
+  const mail = <span {...cmsText('site.email', 'Email liên hệ', G)}>{email}</span>;
 
   // Trạng thái giờ làm việc tính trên trình duyệt (tránh lệch khi render máy chủ)
   useEffect(() => { setIsOpen(openNow(co.hours)); }, [co.hours]);
@@ -181,14 +189,14 @@ export function ContactPage({ initialService }: { initialService: string }) {
 
             <div className="c-reach">
               <div className="c-dock">
-                <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><CutePhone /><span><small>Gọi ngay</small>{formatPhone(phone)}</span></a>
-                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><CuteChat /><span><small>Nhắn tin</small>Chat Zalo</span><span className="c-sr"> (mở tab mới)</span></a>
-                <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><CuteMail /><span><small>Gửi email</small>{email}</span></a>
+                <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><CutePhone /><span><small {...P('dock.call', 'Gọi ngay', 'Nhãn nút gọi')} />{formatPhone(phone)}</span></a>
+                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><CuteChat /><span><small {...P('dock.zalo-kicker', 'Nhắn tin', 'Nhãn nút Zalo')} />{T('dock.zalo-label', 'Chat Zalo', 'Chữ nút Zalo')}</span><span className="c-sr"> (mở tab mới)</span></a>
+                <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><CuteMail /><span><small {...P('dock.mail', 'Gửi email', 'Nhãn nút email')} />{mail}</span></a>
               </div>
               <p className="c-alt">
-                <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />Fanpage<span className="c-sr"> (mở tab mới)</span></a>
-                <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />YouTube<span className="c-sr"> (mở tab mới)</span></a>
-                <a href={`mailto:${co.supportEmail}`}><CuteSupport />Hỗ trợ kỹ thuật</a>
+                <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />{T('alt.facebook', 'Fanpage', 'Liên kết Fanpage')}<span className="c-sr"> (mở tab mới)</span></a>
+                <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />{T('alt.youtube', 'YouTube', 'Liên kết YouTube')}<span className="c-sr"> (mở tab mới)</span></a>
+                <a href={`mailto:${co.supportEmail}`}><CuteSupport />{T('alt.support', 'Hỗ trợ kỹ thuật', 'Liên kết hỗ trợ kỹ thuật')}</a>
               </p>
             </div>
 
@@ -197,9 +205,9 @@ export function ContactPage({ initialService }: { initialService: string }) {
               {isOpen !== null && (
                 <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
                   {isOpen ? <CuteSun /> : <CuteMoon />}
-                  <strong>{isOpen ? 'Đang trong giờ làm việc' : 'Ngoài giờ làm việc'}</strong>
-                  {!isOpen && <small>DANAVA gọi lại vào ngày làm việc kế tiếp</small>}
-                  <span>{co.hours}</span>
+                  <strong {...(isOpen ? P('status.open', 'Đang trong giờ làm việc', 'Trạng thái: trong giờ') : P('status.closed', 'Ngoài giờ làm việc', 'Trạng thái: ngoài giờ'))} />
+                  {!isOpen && <small {...P('status.closed-note', 'DANAVA gọi lại vào ngày làm việc kế tiếp', 'Ghi chú ngoài giờ')} />}
+                  <span {...cmsText('block.company.hours', 'Giờ làm việc', G)}>{co.hours}</span>
                 </p>
               )}
             </div>
@@ -215,19 +223,19 @@ export function ContactPage({ initialService }: { initialService: string }) {
                     <span className="c-namecard__logo"><img src="/assets/danava-logo-light.png" alt="DANAVA Solutions" width={554} height={135} /></span>
                     <span className="c-namecard__chip" aria-hidden="true" />
                   </div>
-                  <p className="c-namecard__label">Hotline · Zalo</p>
+                  <p className="c-namecard__label" {...P('card.label', 'Hotline · Zalo', 'Nhãn danh thiếp')} />
                   <p className="c-namecard__phone"><a href={`tel:${phone}`}>{formatPhone(phone)}</a></p>
                   <ul className="c-namecard__lines">
-                    <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{email}</a></li>
-                    <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener noreferrer">{co.address}</a></li>
-                    <li><Globe aria-hidden="true" /><span>danava.com.vn</span></li>
+                    <li><Mail aria-hidden="true" /><a href={`mailto:${email}`}>{mail}</a></li>
+                    <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener noreferrer" {...cmsText('block.company.address', 'Địa chỉ công ty', G)}>{co.address}</a></li>
+                    <li><Globe aria-hidden="true" /><span {...P('card.web', 'danava.com.vn', 'Website trên danh thiếp')} /></li>
                   </ul>
                   <p className="c-namecard__motto">{data.headline || 'Cùng bạn phát triển.'}</p>
                 </div>
               </div>
               <div className="c-cardacts">
-                <button type="button" className="c-cardacts__btn" onClick={saveContact}><UserPlus aria-hidden="true" />Lưu vào danh bạ</button>
-                <button type="button" className="c-cardacts__btn" onClick={copyPhone} aria-live="polite">{copied ? <><Check aria-hidden="true" />Đã sao chép</> : <><Copy aria-hidden="true" />Sao chép số</>}</button>
+                <button type="button" className="c-cardacts__btn" onClick={saveContact}><UserPlus aria-hidden="true" />{T('card.save', 'Lưu vào danh bạ', 'Nút lưu danh bạ')}</button>
+                <button type="button" className="c-cardacts__btn" onClick={copyPhone} aria-live="polite">{copied ? <><Check aria-hidden="true" />{T('card.copied', 'Đã sao chép', 'Nút sao chép (đã chép)')}</> : <><Copy aria-hidden="true" />{T('card.copy', 'Sao chép số', 'Nút sao chép số')}</>}</button>
               </div>
             </div>
           </div>
@@ -241,8 +249,8 @@ export function ContactPage({ initialService }: { initialService: string }) {
       {about.steps.length > 0 && (
         <section className="c-journey" aria-labelledby="c-journey-title">
           <div className="s-container">
-            <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />Sau lời chào</p>
-            <h2 className="c-journey__title" id="c-journey-title">Một lời chào, <em>một hành trình cùng phát triển.</em></h2>
+            <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" />{T('journey.kicker', 'Sau lời chào', 'Nhãn nhỏ')}</p>
+            {(() => { const x = t('journey.title', 'Một lời chào, *một hành trình cùng phát triển.*', 'Tiêu đề quy trình', { rich: true }); return <h2 className="c-journey__title" id="c-journey-title" {...x.a}>{rich(x.v)}</h2>; })()}
             <div className="c-journey__track">
               <svg className="c-journey__river" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
                 <path d="M0 70 C 150 10, 300 110, 450 60 S 750 10, 900 60 S 1100 110, 1200 50" />
@@ -251,8 +259,8 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 {about.steps.map((st, i) => (
                   <li key={i} style={{ ['--i' as string]: i }}>
                     <span className="c-journey__node">{String(i + 1).padStart(2, '0')}</span>
-                    <h3>{st.title}</h3>
-                    <p>{st.text}</p>
+                    <h3 {...cmsText(`block.about.steps.${i}.title`, 'Tên bước (Quy trình hợp tác)')}>{st.title}</h3>
+                    <p {...cmsText(`block.about.steps.${i}.text`, 'Mô tả bước', { multiline: true })}>{st.text}</p>
                   </li>
                 ))}
               </ol>
@@ -266,24 +274,21 @@ export function ContactPage({ initialService }: { initialService: string }) {
         <div className="c-gridbg c-gridbg--dark" aria-hidden="true" />
         <div className="s-container c-contact__grid">
           <div>
-            <p className="c-tag"><b>01</b> / Liên hệ</p>
-            <h2 className="c-contact__heading" id="c-contact-heading">
-              Kể cho chúng tôi nghe về doanh nghiệp của bạn.
-              <span className="c-grad c-grad--light">DANAVA sẽ gọi lại để tư vấn.</span>
-            </h2>
+            <p className="c-tag"><b>01</b> / {T('form-sec.kicker', 'Liên hệ', 'Nhãn mục')}</p>
+            {(() => { const x = t('form-sec.title', 'Kể cho chúng tôi nghe về doanh nghiệp của bạn. *DANAVA sẽ gọi lại để tư vấn.*', 'Tiêu đề mục liên hệ', { rich: true }); return <h2 className="c-contact__heading" id="c-contact-heading" {...x.a}>{rich(x.v, 'c-grad c-grad--light')}</h2>; })()}
 
             <dl className="c-info">
-              <div><dt>Liên hệ trực tiếp</dt><dd><a href={`tel:${phone}`}>Hotline · Zalo: {formatPhone(phone)}</a></dd></div>
-              <div><dt>Email</dt><dd><a href={`mailto:${email}`}>{email}</a><br /><a href={`mailto:${co.supportEmail}`}>{co.supportEmail}</a> (hỗ trợ kỹ thuật)</dd></div>
-              <div><dt>Giờ làm việc</dt><dd>{co.hours}</dd></div>
-              <div><dt>Pháp nhân</dt><dd>{co.companyName} · Đại diện: {co.representative}</dd></div>
-              <div><dt>Trụ sở</dt><dd>{co.legalAddress}</dd></div>
+              <div><dt {...P('info.direct', 'Liên hệ trực tiếp', 'Nhãn liên hệ trực tiếp')} /><dd><a href={`tel:${phone}`}>{T('info.hotline', 'Hotline · Zalo:', 'Nhãn hotline')} {formatPhone(phone)}</a></dd></div>
+              <div><dt {...P('info.email', 'Email', 'Nhãn email')} /><dd><a href={`mailto:${email}`}>{mail}</a><br /><a href={`mailto:${co.supportEmail}`} {...cmsText('block.company.supportEmail', 'Email hỗ trợ kỹ thuật', G)}>{co.supportEmail}</a> {T('info.support-note', '(hỗ trợ kỹ thuật)', 'Ghi chú email hỗ trợ')}</dd></div>
+              <div><dt {...P('info.hours', 'Giờ làm việc', 'Nhãn giờ làm việc')} /><dd {...cmsText('block.company.hours', 'Giờ làm việc', G)}>{co.hours}</dd></div>
+              <div><dt {...P('info.legal', 'Pháp nhân', 'Nhãn pháp nhân')} /><dd><span {...cmsText('block.company.companyName', 'Tên pháp nhân', G)}>{co.companyName}</span> · {T('info.rep', 'Đại diện:', 'Nhãn người đại diện')} <span {...cmsText('block.company.representative', 'Người đại diện', G)}>{co.representative}</span></dd></div>
+              <div><dt {...P('info.hq', 'Trụ sở', 'Nhãn trụ sở')} /><dd {...cmsText('block.company.legalAddress', 'Địa chỉ trụ sở', G)}>{co.legalAddress}</dd></div>
             </dl>
           </div>
 
           <div className="c-form">
             {anna.enabled && <MayPerch onPick={() => anna.ask()} />}
-            <h3>Đăng ký tư vấn</h3>
+            <h3 {...P('form.title', 'Đăng ký tư vấn', 'Tiêu đề biểu mẫu')} />
             <form className="c-form__grid" onSubmit={lock(submit)} noValidate>
               <div className="s-honeypot" aria-hidden="true">
                 <label htmlFor="contact-website-trap">Website</label>
@@ -313,11 +318,11 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 </select>
               </div>
               <div className="c-field c-field--full">
-                <p className="c-chips__label" id="c-chips-label">Bạn quan tâm đến</p>
+                <p className="c-chips__label" id="c-chips-label" {...P('form.chips-label', 'Bạn quan tâm đến', 'Nhãn chọn nhanh dịch vụ')} />
                 <div className="c-chips" role="group" aria-labelledby="c-chips-label">
                   {VALID_CONTACT_SERVICES.filter(x => CHIP[x.id]).map(x => (
                     <button key={x.id} type="button" className={fields.service === x.label ? 'is-on' : ''} aria-pressed={fields.service === x.label}
-                      onClick={() => setFields(prev => ({ ...prev, service: prev.service === x.label ? '' : x.label }))}>{CHIP[x.id]}</button>
+                      onClick={() => setFields(prev => ({ ...prev, service: prev.service === x.label ? '' : x.label }))}>{T(`form.chips.${x.id}`, CHIP[x.id], 'Nút chọn nhanh dịch vụ')}</button>
                   ))}
                 </div>
               </div>
@@ -342,10 +347,10 @@ export function ContactPage({ initialService }: { initialService: string }) {
               )}
 
               <button type="submit" className="c-submit c-field--full" disabled={status === 'sending'}>
-                {status === 'sending' ? 'Đang gửi…' : <>Đăng ký tư vấn <ArrowRight aria-hidden="true" /></>}
+                {status === 'sending' ? 'Đang gửi…' : <>{T('form.submit', 'Đăng ký tư vấn', 'Nút gửi biểu mẫu')} <ArrowRight aria-hidden="true" /></>}
               </button>
               <p className="c-form__note c-field--full">
-                Trường có dấu * là bắt buộc. Bằng việc gửi biểu mẫu, bạn đồng ý với <Link href="/chinh-sach-rieng-tu/">chính sách riêng tư</Link> của DANAVA.
+                {T('form.note', 'Trường có dấu * là bắt buộc. Bằng việc gửi biểu mẫu, bạn đồng ý với', 'Ghi chú biểu mẫu')} <Link href="/chinh-sach-rieng-tu/">{T('form.note-link', 'chính sách riêng tư', 'Liên kết chính sách riêng tư')}</Link> {T('form.note-end', 'của DANAVA.', 'Ghi chú biểu mẫu (cuối)')}
               </p>
             </form>
           </div>
@@ -355,16 +360,16 @@ export function ContactPage({ initialService }: { initialService: string }) {
       {/* 02 / Văn phòng: thẻ có bản đồ nằm ngay trong thẻ */}
       <section className="c-offices-sec" aria-labelledby="c-office-heading">
         <div className="s-container">
-          <p className="c-tag"><b>02</b> / Văn phòng</p>
-          <h2 className="c-offices-sec__heading" id="c-office-heading">Đà Nẵng · <span className="c-grad">Phục vụ toàn quốc</span></h2>
+          <p className="c-tag"><b>02</b> / {T('office.kicker', 'Văn phòng', 'Nhãn mục')}</p>
+          {(() => { const x = t('office.title', 'Đà Nẵng · *Phục vụ toàn quốc*', 'Tiêu đề mục văn phòng', { rich: true }); return <h2 className="c-offices-sec__heading" id="c-office-heading" {...x.a}>{rich(x.v, 'c-grad')}</h2>; })()}
 
           <div className="c-offices">
             <div className="c-office c-office--main">
               <div className="c-office__body">
-                <span className="c-office__city">Đà Nẵng</span>
-                <h3><MapPin aria-hidden="true" />Trụ sở chính</h3>
-                <p>{co.legalAddress}</p>
-                <a href={co.mapUrl} target="_blank" rel="noopener noreferrer">Chỉ đường trên Google Maps →</a>
+                <span className="c-office__city" {...P('office.main.city', 'Đà Nẵng', 'Thành phố')} />
+                <h3><MapPin aria-hidden="true" />{T('office.main.title', 'Trụ sở chính', 'Tên thẻ')}</h3>
+                <p {...cmsText('block.company.legalAddress', 'Địa chỉ trụ sở', G)}>{co.legalAddress}</p>
+                <a href={co.mapUrl} target="_blank" rel="noopener noreferrer">{T('office.main.link', 'Chỉ đường trên Google Maps →', 'Liên kết chỉ đường')}</a>
               </div>
               <iframe
                 title={`Bản đồ văn phòng DANAVA: ${co.legalAddress}`}
@@ -375,18 +380,18 @@ export function ContactPage({ initialService }: { initialService: string }) {
             </div>
             <div className="c-office">
               <div className="c-office__body">
-                <span className="c-office__city">Giờ làm việc</span>
-                <h3><Clock aria-hidden="true" />{co.hours}</h3>
-                <p>Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.</p>
-                <a href={zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />Nhắn Zalo</a>
+                <span className="c-office__city" {...P('office.hours.city', 'Giờ làm việc', 'Nhãn thẻ')} />
+                <h3><Clock aria-hidden="true" /><span {...cmsText('block.company.hours', 'Giờ làm việc', G)}>{co.hours}</span></h3>
+                <p {...P('office.hours.text', 'Ngoài giờ, bạn cứ để lại yêu cầu — chúng tôi gọi lại vào ngày làm việc kế tiếp.', 'Mô tả', { multiline: true })} />
+                <a href={zalo} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />{T('office.hours.link', 'Nhắn Zalo', 'Liên kết Zalo')}</a>
               </div>
             </div>
             <div className="c-office">
               <div className="c-office__body">
-                <span className="c-office__city">Khách hàng hiện tại</span>
-                <h3><LifeBuoy aria-hidden="true" />Hỗ trợ kỹ thuật &amp; bảo hành</h3>
-                <p>Đang sử dụng dịch vụ của DANAVA và cần hỗ trợ?</p>
-                <Link href="/chinh-sach-dich-vu/#kenh-tiep-nhan">Xem kênh hỗ trợ kỹ thuật →</Link>
+                <span className="c-office__city" {...P('office.support.city', 'Khách hàng hiện tại', 'Nhãn thẻ')} />
+                <h3><LifeBuoy aria-hidden="true" />{T('office.support.title', 'Hỗ trợ kỹ thuật & bảo hành', 'Tên thẻ')}</h3>
+                <p {...P('office.support.text', 'Đang sử dụng dịch vụ của DANAVA và cần hỗ trợ?', 'Mô tả', { multiline: true })} />
+                <Link href="/chinh-sach-dich-vu/#kenh-tiep-nhan">{T('office.support.link', 'Xem kênh hỗ trợ kỹ thuật →', 'Liên kết hỗ trợ')}</Link>
               </div>
             </div>
           </div>
@@ -397,25 +402,25 @@ export function ContactPage({ initialService }: { initialService: string }) {
       {about.moments.length > 0 && (
         <section className="c-moments" aria-labelledby="c-moments-title">
           <div className="s-container">
-            <h2 className="c-moments__title" id="c-moments-title">Mỗi dự án <em>bắt đầu bằng một lời chào.</em></h2>
+            {(() => { const x = t('moments.title', 'Mỗi dự án *bắt đầu bằng một lời chào.*', 'Tiêu đề ảnh hoạt động', { rich: true }); return <h2 className="c-moments__title" id="c-moments-title" {...x.a}>{rich(x.v)}</h2>; })()}
           </div>
           <div className="c-moments__rail">
             <ul className="c-moments__track">
               {[...about.moments, ...about.moments].map((m, i) => (
                 <li key={i} aria-hidden={i >= about.moments.length ? true : undefined} style={{ ['--t' as string]: `${(i % 5) - 2}deg` }}>
-                  <figure><img src={m.src} alt={i >= about.moments.length ? '' : m.title} width={480} height={360} loading="lazy" decoding="async" /><figcaption>{m.title}</figcaption></figure>
+                  <figure><img src={m.src} alt={i >= about.moments.length ? '' : m.title} width={480} height={360} loading="lazy" decoding="async" /><figcaption {...(i < about.moments.length ? cmsText(`block.about.moments.${i}.title`, 'Chú thích ảnh hoạt động') : {})}>{m.title}</figcaption></figure>
                 </li>
               ))}
             </ul>
           </div>
           <div className="s-container c-moments__cta">
-            <p className="c-start__ask">Câu chuyện tiếp theo có thể là của bạn.</p>
+            <p className="c-start__ask" {...P('moments.ask', 'Câu chuyện tiếp theo có thể là của bạn.', 'Câu mời')} />
             <div className="c-start">
               <a className="c-start__btn c-start__btn--main" href="#dang-ky-tu-van">
-                <CuteChat /><span><small>Bắt đầu ngay</small>Gửi lời chào tới DANAVA</span><ArrowRight className="c-start__arrow" aria-hidden="true" />
+                <CuteChat /><span><small {...P('moments.cta.kicker', 'Bắt đầu ngay', 'Nhãn nút')} />{T('moments.cta.label', 'Gửi lời chào tới DANAVA', 'Chữ nút')}</span><ArrowRight className="c-start__arrow" aria-hidden="true" />
               </a>
               <a className="c-start__btn" href={`tel:${phone}`}>
-                <CutePhone /><span><small>Hoặc gọi</small>{formatPhone(phone)}</span>
+                <CutePhone /><span><small {...P('moments.call', 'Hoặc gọi', 'Nhãn nút gọi')} />{formatPhone(phone)}</span>
               </a>
             </div>
           </div>
@@ -427,10 +432,10 @@ export function ContactPage({ initialService }: { initialService: string }) {
         <div className="c-modal" role="dialog" aria-modal="true" aria-labelledby="c-modal-title" onClick={e => { if (e.target === e.currentTarget) setStatus('idle'); }}>
           <div className="c-modal__box">
             <span className="c-modal__icon" aria-hidden="true"><CheckCircle2 /></span>
-            <h2 id="c-modal-title">Thông báo</h2>
-            <p>{feedback} DANAVA sẽ liên hệ lại với bạn trong thời gian sớm nhất.</p>
-            <p className="s-small s-muted">Cần gấp? Gọi <a className="s-textlink" href={`tel:${phone}`}>{formatPhone(phone)}</a></p>
-            <button ref={confirmRef} type="button" className="s-btn s-btn--primary s-btn--block" onClick={() => setStatus('idle')}>Xác nhận</button>
+            <h2 id="c-modal-title" {...P('modal.title', 'Thông báo', 'Tiêu đề hộp xác nhận')} />
+            <p>{feedback} {T('modal.text', 'DANAVA sẽ liên hệ lại với bạn trong thời gian sớm nhất.', 'Lời nhắn sau khi gửi')}</p>
+            <p className="s-small s-muted">{T('modal.urgent', 'Cần gấp? Gọi', 'Gợi ý gọi gấp')} <a className="s-textlink" href={`tel:${phone}`}>{formatPhone(phone)}</a></p>
+            <button ref={confirmRef} type="button" className="s-btn s-btn--primary s-btn--block" onClick={() => setStatus('idle')} {...P('modal.ok', 'Xác nhận', 'Nút xác nhận')} />
           </div>
         </div>
       )}

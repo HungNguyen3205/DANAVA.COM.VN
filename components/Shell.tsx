@@ -8,7 +8,14 @@ import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
 import { HrefIcon, IconBox, type Tone } from './site/icons';
 import { DICH_VU, SHOW_DICH_VU_MENU } from '@/lib/dich-vu';
-import { cmsBlock, cmsText } from './site/cms';
+import { cmsBlock, cmsText, ct } from './site/cms';
+import type { SiteData } from '@/lib/content';
+
+/** Chữ cố định của đầu trang / chân trang (khóa shell.*, dùng chung toàn website). */
+function S({ data, k, def, label }: { data: SiteData; k: string; def: string; label: string }) {
+  const x = ct(data, `shell.${k}`, def, label, { scope: 'global' });
+  return <span {...x.a}>{x.v}</span>;
+}
 import { Megaphone, MonitorSmartphone, CalendarDays, Plane } from 'lucide-react';
 
 /** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
@@ -136,7 +143,7 @@ export function Header() {
           <nav className="s-nav" aria-label="Điều hướng chính">
             <ul className="s-nav__list">
               <li className="s-nav__item">
-                <Link className="s-nav__link" href="/" aria-current={path === '/' ? 'page' : undefined}>Trang chủ</Link>
+                <Link className="s-nav__link" href="/" aria-current={path === '/' ? 'page' : undefined}><S data={data} k="nav.home" def="Trang chủ" label="Menu: Trang chủ" /></Link>
               </li>
               <li ref={megaRef} className={`s-nav__item s-nav__item--mega${mega ? ' is-open' : ''}`} onMouseEnter={enter} onMouseLeave={leave}>
                 <button
@@ -147,7 +154,7 @@ export function Header() {
                   aria-current={active('/giai-phap/') ? 'page' : undefined}
                   onClick={() => setMega(v => !v)}
                 >
-                  Giải pháp <ChevronDown aria-hidden="true" />
+                  <S data={data} k="nav.solutions" def="Giải pháp" label="Menu: Giải pháp" /> <ChevronDown aria-hidden="true" />
                 </button>
                 <div className="s-mega s-mega--cols" id="s-mega-solutions">
                   <div className="s-mega__cols" style={menu.columns.length === 3 ? undefined : { gridTemplateColumns: `repeat(${menu.columns.length}, minmax(0, 1fr))` }}>
@@ -193,7 +200,7 @@ export function Header() {
                 </div>
               </li>)}
               <li className="s-nav__item">
-                <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}>Hệ sinh thái</Link>
+                <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}><S data={data} k="nav.ecosystem" def="Hệ sinh thái" label="Menu: Hệ sinh thái" /></Link>
               </li>
               <li ref={aboutRef} className={`s-nav__item s-nav__item--mega${about ? ' is-open' : ''}`} onMouseEnter={() => setAbout(true)} onMouseLeave={() => setAbout(false)}>
                 <button
@@ -204,7 +211,7 @@ export function Header() {
                   aria-current={ABOUT_COLS.some(c => c.items.some(x => active(x.href))) ? 'page' : undefined}
                   onClick={() => setAbout(v => !v)}
                 >
-                  Về chúng tôi <ChevronDown aria-hidden="true" />
+                  <S data={data} k="nav.about" def="Về chúng tôi" label="Menu: Về chúng tôi" /> <ChevronDown aria-hidden="true" />
                 </button>
                 <div className="s-mega s-mega--cols s-mega--about" id="s-mega-about">
                   <div className="s-mega__cols">
@@ -224,13 +231,13 @@ export function Header() {
                 </div>
               </li>
               <li className="s-nav__item">
-                <Link className="s-nav__link" href="/lien-he/" aria-current={active('/lien-he/') ? 'page' : undefined}>Liên hệ</Link>
+                <Link className="s-nav__link" href="/lien-he/" aria-current={active('/lien-he/') ? 'page' : undefined}><S data={data} k="nav.contact" def="Liên hệ" label="Menu: Liên hệ" /></Link>
               </li>
             </ul>
           </nav>
 
           <div className="s-header__actions">
-            <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/#dang-ky-tu-van">Nhận tư vấn</Link>
+            <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/#dang-ky-tu-van"><S data={data} k="nav.cta" def="Nhận tư vấn" label="Nút đầu trang" /></Link>
             <button
               type="button"
               className="s-burger"
@@ -267,10 +274,10 @@ export function Footer() {
             <Link className="s-logo" href="/" aria-label="DANAVA Solutions — Trang chủ">
               <img src="/assets/danava-logo-light.png" alt="DANAVA Solutions" width={554} height={135} />
             </Link>
-            <p>Công nghệ tạo khả năng, con người tạo giá trị. DANAVA đồng hành cùng doanh nghiệp bằng phần mềm quản lý, truyền thông và trải nghiệm.</p>
+            <p><S data={data} k="footer.intro" def="Công nghệ tạo khả năng, con người tạo giá trị. DANAVA đồng hành cùng doanh nghiệp bằng phần mềm quản lý, truyền thông và trải nghiệm." label="Giới thiệu chân trang" /></p>
             <div className="s-footer__contact">
               <a href={`tel:${phone}`}><Phone aria-hidden="true" />{formatPhone(phone)}</a>
-              <a href={`mailto:${email}`}><Mail aria-hidden="true" />{email}</a>
+              <a href={`mailto:${email}`}><Mail aria-hidden="true" /><span {...cmsText('site.email', 'Email liên hệ', { scope: 'global' })}>{email}</span></a>
               <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" /><span {...cmsText('block.company.address', 'Địa chỉ (chân trang, trang Liên hệ)', { scope: 'global' })}>{co.address}</span></a>
             </div>
             {(socials.length > 0 || zalo || messenger || tel) && (
@@ -300,43 +307,43 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="s-footer__title">Giải pháp</p>
+            <p className="s-footer__title"><S data={data} k="footer.col1" def="Giải pháp" label="Tiêu đề cột" /></p>
             <ul className="s-footer__list">
-              {services.map(s => <li key={s.id}><Link href={`/giai-phap/${s.slug}/`}>{s.title}</Link></li>)}
+              {services.map(s => <li key={s.id}><Link href={`/giai-phap/${s.slug}/`}><span {...cmsText(`rec.services.${s.id}.title`, 'Tên sản phẩm', { scope: 'record', scopeLabel: `Hồ sơ ${s.title}` })}>{s.title}</span></Link></li>)}
             </ul>
           </div>
 
           <div>
-            <p className="s-footer__title">Công ty</p>
+            <p className="s-footer__title"><S data={data} k="footer.col2" def="Công ty" label="Tiêu đề cột" /></p>
             <ul className="s-footer__list">
-              <li><Link href="/ve-danava/">Về DANAVA</Link></li>
-              <li><Link href="/doi-ngu/">Đội ngũ</Link></li>
-              <li><Link href="/tuyen-dung/">Tuyển dụng</Link></li>
-              <li><Link href="/he-sinh-thai/">Hệ sinh thái</Link></li>
-              <li><Link href="/doi-tac/">Đối tác đồng hành</Link></li>
-              <li><Link href="/du-an/">Dự án</Link></li>
-              <li><Link href="/blogs/">Blogs</Link></li>
+              <li><Link href="/ve-danava/"><S data={data} k="footer.company.about" def="Về DANAVA" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/doi-ngu/"><S data={data} k="footer.company.team" def="Đội ngũ" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/tuyen-dung/"><S data={data} k="footer.company.careers" def="Tuyển dụng" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/he-sinh-thai/"><S data={data} k="footer.company.ecosystem" def="Hệ sinh thái" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/doi-tac/"><S data={data} k="footer.company.partners" def="Đối tác đồng hành" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/du-an/"><S data={data} k="footer.company.projects" def="Dự án" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/blogs/"><S data={data} k="footer.company.blogs" def="Blogs" label="Liên kết chân trang" /></Link></li>
             </ul>
           </div>
 
           <div>
-            <p className="s-footer__title">Hỗ trợ</p>
+            <p className="s-footer__title"><S data={data} k="footer.col3" def="Hỗ trợ" label="Tiêu đề cột" /></p>
             <ul className="s-footer__list">
-              <li><Link href="/lien-he/">Liên hệ tư vấn</Link></li>
-              <li><Link href="/chinh-sach-dich-vu/">Chính sách dịch vụ</Link></li>
-              <li><Link href="/chinh-sach-rieng-tu/">Chính sách riêng tư</Link></li>
-              <li><a href="https://danava.vn/" target="_blank" rel="noopener">Nền tảng danava.vn</a></li>
+              <li><Link href="/lien-he/"><S data={data} k="footer.support.contact" def="Liên hệ tư vấn" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/chinh-sach-dich-vu/"><S data={data} k="footer.support.service" def="Chính sách dịch vụ" label="Liên kết chân trang" /></Link></li>
+              <li><Link href="/chinh-sach-rieng-tu/"><S data={data} k="footer.support.privacy" def="Chính sách riêng tư" label="Liên kết chân trang" /></Link></li>
+              <li><a href="https://danava.vn/" target="_blank" rel="noopener"><S data={data} k="footer.support.platform" def="Nền tảng danava.vn" label="Liên kết chân trang" /></a></li>
             </ul>
           </div>
         </div>
 
         <div className="s-footer__bottom">
-          <span>© {new Date().getFullYear()} DANAVA Solutions. Bảo lưu mọi quyền.</span>
+          <span>© {new Date().getFullYear()} <S data={data} k="footer.copyright" def="DANAVA Solutions. Bảo lưu mọi quyền." label="Bản quyền" /></span>
           <div className="s-footer__legal">
-            <Link href="/chinh-sach-dich-vu/">Điều khoản dịch vụ</Link>
-            <Link href="/chinh-sach-rieng-tu/">Quyền riêng tư</Link>
+            <Link href="/chinh-sach-dich-vu/"><S data={data} k="footer.terms" def="Điều khoản dịch vụ" label="Liên kết chân trang" /></Link>
+            <Link href="/chinh-sach-rieng-tu/"><S data={data} k="footer.privacy" def="Quyền riêng tư" label="Liên kết chân trang" /></Link>
             {/* Link thường (không phải <Link>) để CMS tải lại toàn trang với stylesheet riêng */}
-            <a href="/admin/" rel="nofollow">Quản trị</a>
+            <a href="/admin/" rel="nofollow"><S data={data} k="footer.admin" def="Quản trị" label="Liên kết chân trang" /></a>
           </div>
           {/* Logo xác nhận của Bộ Công Thương, trỏ về hồ sơ của danava.com.vn trên online.gov.vn */}
           <a

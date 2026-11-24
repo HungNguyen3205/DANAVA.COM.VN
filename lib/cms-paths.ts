@@ -23,21 +23,21 @@ export function validCmsPath(path: string): boolean {
   if (parts.length < 2 || parts.length > 8 || !parts.every(p => SEG.test(p))) return false;
   if (parts.some(p => p === '__proto__' || p === 'prototype' || p === 'constructor')) return false;
   if (parts[0] === 'hero') return parts.length === 2 && parts[1] in DEFAULT_HOME_HERO;
+  if (parts[0] === 'site') return parts.length === 2 && (parts[1] === 'email' || parts[1] === 'phone');
+  if (parts[0] === 'txt') return parts.length >= 2 && parts.length <= 8 && parts.slice(1).every(p => /^[a-z0-9][a-z0-9-]*$/.test(p)) && path.length <= 104;
   if (parts[0] === 'pages') return parts.length === 3;
-  if (parts[0] === 'rec') return parts.length === 4 && parts[1] in REC_FIELDS && (REC_FIELDS[parts[1] as RecKind] as readonly string[]).includes(parts[3]);
+  if (parts[0] === 'rec') return parts.length >= 4 && parts.length <= 7 && (REC_KINDS as readonly string[]).includes(parts[1]) && !REC_BLOCKED.has(parts[3]) && parts.slice(4).every(p => /^\d{1,3}$|^[a-zA-Z]{1,40}$/.test(p) && !REC_BLOCKED.has(p));
   return parts[0] === 'block' && parts.length >= 3;
 }
 
 /**
- * Bản ghi sửa được ngay trên trang chi tiết: rec.<loại>.<id>.<trường> — cùng nguồn với module quản trị
- * (Sản phẩm & Dịch vụ, Bài viết, Dự án). Chỉ các trường chữ/ảnh hiển thị ở đầu trang chi tiết.
+ * Bản ghi sửa được ngay trên trang: rec.<loại>.<id>.<trường>[.<vị trí>.<trường con>…] — cùng nguồn với module quản trị
+ * (Sản phẩm & Dịch vụ, Bài viết, Dự án, Hồ sơ thương hiệu…). Chỉ ghi vào trường đang là chữ;
+ * trường kỹ thuật (mã, đường dẫn, liên kết, quan hệ, trạng thái) không sửa ở đây.
  */
-export const REC_FIELDS = {
-  services: ['title', 'description', 'heroLead'],
-  posts: ['excerpt', 'image'],
-  projects: ['title', 'summary']
-} as const;
-type RecKind = keyof typeof REC_FIELDS;
+export const REC_KINDS = ['services', 'subServices', 'posts', 'projects', 'topics', 'staff', 'testimonials', 'clients', 'showcase', 'metrics'] as const;
+const REC_BLOCKED = new Set(['id', 'slug', 'parentId', 'serviceId', 'serviceIds', 'projectId', 'topicId', 'authorId', 'groupId', 'type', 'href', 'url', 'source', 'date', 'updated', 'published', 'visible', 'featured', 'status', 'order', 'logo', 'icon', 'tone', 'body']);
+type RecKind = (typeof REC_KINDS)[number];
 type RecItem = { id: string } & Record<string, unknown>;
 const recList = (data: SiteData, kind: RecKind) => ((data as unknown as Record<string, RecItem[] | undefined>)[kind] || []);
 
@@ -70,8 +70,11 @@ export function readCms(data: SiteData, path: string): string {
   if (!validCmsPath(path)) return '';
   const [kind, a, ...rest] = path.split('.');
   if (kind === 'hero') return homeHero(data)[a as keyof HomeHero];
+  // Chữ cố định: chỉ có bản sửa; trống = trang dùng chữ mặc định (data-cms-default trên trang)
+  if (kind === 'txt') return data.texts?.[path.slice(4)] ?? '';
+  if (kind === 'site') return String((data as unknown as Record<string, unknown>)[a] ?? '');
   if (kind === 'pages') return String((pageCopy(data, a as never) as Record<string, string>)[rest[0]] ?? '');
-  if (kind === 'rec') { const v = recList(data, a as RecKind).find(r => r.id === rest[0])?.[rest[1]]; return typeof v === 'string' ? v : ''; }
+  if (kind === 'rec') { const v = getIn(recList(data, a as RecKind).find(r => r.id === rest[0]), rest.slice(1)); return typeof v === 'string' ? v : ''; }
   const v = getIn(block(data, a as BlockKey), rest);
   return typeof v === 'string' ? v : v === undefined || v === null ? '' : String(v);
 }
@@ -80,11 +83,12 @@ export function readCms(data: SiteData, path: string): string {
 export function cmsLimit(path: string): number {
   const [kind, a] = path.split('.');
   if (kind === 'hero') return HOME_HERO_LIMITS[a as keyof HomeHero] ?? 200;
+  if (kind === 'txt') return /(title|label|name|kicker|eyebrow|button)$/.test(path) ? 300 : 2000;
   if (kind === 'rec') {
-    const field = path.split('.')[3];
-    if (field === 'title') return a === 'posts' ? 250 : 200;
+    const field = path.split('.').pop() || '';
+    if (/^(title|name|label|role|client|company|category|industry|kicker)$/.test(field)) return a === 'posts' ? 250 : 200;
     if (field === 'image') return 300;
-    return a === 'projects' ? 2000 : 1000; // description / heroLead / excerpt / summary (giới hạn của validateContent)
+    return a === 'projects' || a === 'subServices' ? 2000 : 1000; // máy chủ kiểm tra lại đúng giới hạn khi lưu (validateContent)
   }
   if (/(href|url|link)$/i.test(path)) return 300;
   if (/(lead|text|desc|body|caption)$/i.test(path)) return 600;
@@ -99,6 +103,8 @@ export function cmsValueError(path: string, value: string): string {
   if (/href$/i.test(last) && !okLink(value)) return 'Đường dẫn dạng /trang/, #muc hoặc https://…';
   if (last === 'image' && value && (!IMAGE.test(value) || value.includes('..'))) return 'Ảnh phải là đường dẫn /assets/… (ảnh đã tải lên).';
   if (last === 'focus' && !PHOTO_FOCUS.includes(value)) return 'Vị trí cắt không hợp lệ.';
+  if (path === 'site.email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim())) return 'Email không đúng định dạng.';
+  if (path === 'site.phone' && !/^[+\d][\d .()-]{7,20}$/.test(value.trim())) return 'Số điện thoại không hợp lệ.';
   return '';
 }
 
@@ -107,6 +113,13 @@ export function writeCms(data: SiteData, path: string, value: string): SiteData 
   const err = cmsValueError(path, value);
   if (err) throw Error(err);
   const [kind, a, ...rest] = path.split('.');
+  if (kind === 'site') return { ...data, [a]: value.trim() };
+  if (kind === 'txt') {
+    const key = path.slice(4);
+    const texts = { ...(data.texts || {}) };
+    if (value.trim()) texts[key] = value; else delete texts[key];
+    return { ...data, texts: Object.keys(texts).length ? texts : undefined };
+  }
   if (kind === 'hero') {
     const key = a as keyof HomeHero;
     const next: Partial<HomeHero> = { ...(data.homeHero || {}), [key]: value };
@@ -116,10 +129,13 @@ export function writeCms(data: SiteData, path: string, value: string): SiteData 
   }
   if (kind === 'rec') {
     const list = recList(data, a as RecKind);
-    const [id, field] = rest;
-    if (!list.some(r => r.id === id)) throw Error('Bản ghi không tồn tại');
-    if (field === 'title' && !value.trim()) throw Error('Tên không được để trống.');
-    return { ...data, [a]: list.map(r => (r.id === id ? { ...r, [field]: value } : r)) } as SiteData;
+    const [id, ...keys] = rest;
+    const rec = list.find(r => r.id === id);
+    if (!rec) throw Error('Bản ghi không tồn tại');
+    if (typeof getIn(rec, keys) !== 'string' && !(keys.length === 1 && getIn(rec, keys) === undefined && ['excerpt', 'heroLead', 'image', 'summary'].includes(keys[0]))) throw Error('Trường không sửa được ở đây.');
+    if (/^(title|name)$/.test(keys[keys.length - 1]) && !value.trim()) throw Error('Tên không được để trống.');
+    const next = keys.length === 1 ? { ...rec, [keys[0]]: value } : setIn(rec, keys, value);
+    return { ...data, [a]: list.map(r => (r.id === id ? next : r)) } as SiteData;
   }
   if (kind === 'pages') {
     const pages = block(data, 'pages') as Record<string, Record<string, string>>;

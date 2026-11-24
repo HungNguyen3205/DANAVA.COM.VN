@@ -5,6 +5,14 @@ import { createContext, useContext, useRef, useState, type FormEvent, type React
 import { ArrowRight, Check } from 'lucide-react';
 import { APPLY_LIMITS, parseApplication, type Position } from '@/lib/careers';
 import { useLanyard } from './useLanyard';
+import { useSite } from '../../SiteStore';
+import { ct } from '../cms';
+
+/** Chữ cố định sửa được trong trình biên tập (khóa careers.*), bọc trong <span>. */
+function useText() {
+  const { data } = useSite();
+  return (k: string, def: string, label: string, opts: { multiline?: boolean } = {}) => { const x = ct(data, `careers.${k}`, def, label, opts); return <span {...x.a}>{x.v}</span>; };
+}
 
 type State = {
   positions: Position[];
@@ -42,11 +50,12 @@ export function CareersProvider({ positions, children }: { positions: Position[]
 
 export function NameField() {
   const { name, setName, goToForm } = useCareers();
+  const T = useText();
   return (
     <form className="td-sign" onSubmit={event => { event.preventDefault(); goToForm(); }}>
       <label className="s-sr" htmlFor="td-hero-name">Tên của bạn</label>
       <input id="td-hero-name" value={name} maxLength={APPLY_LIMITS.name} placeholder="Viết tên bạn vào đây…" autoComplete="name" enterKeyHint="next" onChange={e => setName(e.target.value)} />
-      <button type="submit"><span>Nhận thẻ</span><ArrowRight aria-hidden="true" /></button>
+      <button type="submit">{T('sign.button', 'Nhận thẻ', 'Nút nhận thẻ')}<ArrowRight aria-hidden="true" /></button>
     </form>
   );
 }
@@ -97,6 +106,7 @@ export function ApplyForm() {
   const [fields, setFields] = useState(EMPTY);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<{ text: string; field?: string } | null>(null);
+  const T = useText();
 
   const set = (key: keyof typeof EMPTY, value: string | boolean) => {
     setFields(current => ({ ...current, [key]: value }));
@@ -133,8 +143,8 @@ export function ApplyForm() {
       <div className="td-form td-form--done" id="td-form" role="status" tabIndex={-1} ref={el => el?.focus({ preventScroll: true })}>
         <span className="td-form__check"><Check aria-hidden="true" /></span>
         <h3>Cảm ơn {name.trim()}!</h3>
-        <p>DANAVA đã nhận được hồ sơ của bạn.</p>
-        <button type="button" className="td-btn td-btn--ghost" onClick={() => setSent(false)}>Gửi hồ sơ khác</button>
+        <p>{T('form.done-text', 'DANAVA đã nhận được hồ sơ của bạn.', 'Lời nhắn sau khi gửi', { multiline: true })}</p>
+        <button type="button" className="td-btn td-btn--ghost" onClick={() => setSent(false)}>{T('form.again', 'Gửi hồ sơ khác', 'Nút gửi hồ sơ khác')}</button>
       </div>
     );
   }
@@ -144,30 +154,30 @@ export function ApplyForm() {
   return (
     <form className="td-form" id="td-form" onSubmit={submit} noValidate>
       <div className="td-field">
-        <label htmlFor="td-name">Họ và tên</label>
+        <label htmlFor="td-name">{T('form.name', 'Họ và tên', 'Nhãn họ tên')}</label>
         <input id="td-name" value={name} maxLength={APPLY_LIMITS.name} autoComplete="name" onChange={e => { setName(e.target.value); if (problem?.field === 'name') setProblem(null); }} {...invalid('name')} />
       </div>
       <div className="td-field">
-        <label htmlFor="td-phone">Số điện thoại</label>
+        <label htmlFor="td-phone">{T('form.phone', 'Số điện thoại', 'Nhãn số điện thoại')}</label>
         <input id="td-phone" type="tel" value={fields.phone} maxLength={APPLY_LIMITS.phone} autoComplete="tel" onChange={e => set('phone', e.target.value)} {...invalid('phone')} />
       </div>
       <div className="td-field">
-        <label htmlFor="td-email">Email</label>
+        <label htmlFor="td-email">{T('form.email', 'Email', 'Nhãn email')}</label>
         <input id="td-email" type="email" value={fields.email} maxLength={APPLY_LIMITS.email} autoComplete="email" onChange={e => set('email', e.target.value)} {...invalid('email')} />
       </div>
       <div className="td-field">
-        <label htmlFor="td-position">Vị trí hoặc mảng</label>
+        <label htmlFor="td-position">{T('form.position', 'Vị trí hoặc mảng', 'Nhãn vị trí')}</label>
         <select id="td-position" value={position} onChange={e => { setPosition(e.target.value); if (problem?.field === 'position') setProblem(null); }} {...invalid('position')}>
           <option value="">Chọn một cánh cửa</option>
           {positions.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
         </select>
       </div>
       <div className="td-field td-field--wide">
-        <label htmlFor="td-link">Link CV hoặc portfolio <small>nhớ mở quyền xem</small></label>
+        <label htmlFor="td-link">{T('form.link', 'Link CV hoặc portfolio', 'Nhãn link CV')} <small>{T('form.link-hint', 'nhớ mở quyền xem', 'Gợi ý link CV')}</small></label>
         <input id="td-link" type="url" value={fields.link} maxLength={APPLY_LIMITS.link} placeholder="https://" onChange={e => set('link', e.target.value)} {...invalid('link')} />
       </div>
       <div className="td-field td-field--wide">
-        <label htmlFor="td-intro">Đôi dòng về bạn <small>bắt buộc nếu không có CV</small></label>
+        <label htmlFor="td-intro">{T('form.intro', 'Đôi dòng về bạn', 'Nhãn giới thiệu')} <small>{T('form.intro-hint', 'bắt buộc nếu không có CV', 'Gợi ý giới thiệu')}</small></label>
         <textarea id="td-intro" rows={4} value={fields.intro} maxLength={APPLY_LIMITS.intro} onChange={e => set('intro', e.target.value)} {...invalid('intro')} />
       </div>
       <div className="td-trap" aria-hidden="true">
@@ -175,10 +185,10 @@ export function ApplyForm() {
       </div>
       <label className="td-consent">
         <input id="td-consent" type="checkbox" checked={fields.consent} onChange={e => set('consent', e.target.checked)} {...invalid('consent')} />
-        <span>Tôi đồng ý để DANAVA sử dụng thông tin này để xét tuyển và liên hệ với tôi. <Link href="/chinh-sach-rieng-tu/">Chính sách riêng tư</Link></span>
+        <span>{T('form.consent', 'Tôi đồng ý để DANAVA sử dụng thông tin này để xét tuyển và liên hệ với tôi.', 'Câu đồng ý', { multiline: true })} <Link href="/chinh-sach-rieng-tu/">{T('form.consent-link', 'Chính sách riêng tư', 'Liên kết chính sách riêng tư')}</Link></span>
       </label>
       {problem && <p className="td-problem" id="td-problem" role="alert">{problem.text}</p>}
-      <button className="td-btn td-btn--send" type="submit" disabled={busy}>{busy ? 'Đang gửi…' : 'Gửi hồ sơ'}<ArrowRight aria-hidden="true" /></button>
+      <button className="td-btn td-btn--send" type="submit" disabled={busy}>{busy ? 'Đang gửi…' : T('form.submit', 'Gửi hồ sơ', 'Nút gửi hồ sơ')}<ArrowRight aria-hidden="true" /></button>
     </form>
   );
 }

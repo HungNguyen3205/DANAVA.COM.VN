@@ -7,10 +7,16 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import type { ShowcaseItem } from '@/lib/content';
+import { useSite } from '../SiteStore';
+import { cmsText, ct } from './cms';
 
 const host = (url: string) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
 export function PortfolioGallery({ items, label = 'Lọc sản phẩm theo loại' }: { items: ShowcaseItem[]; label?: string }) {
+  const { data } = useSite();
+  const t = (k: string, def: string, label: string) => ct(data, `portfolio.${k}`, def, label, { scope: 'global' });
+  const all = t('all', 'Tất cả', 'Bộ lọc: tất cả'), caseL = t('case', 'Xem case study', 'Chữ liên kết'), internal = t('internal', 'Sản phẩm nội bộ / chưa công khai tên miền', 'Ghi chú');
+  const rec = (w: ShowcaseItem, field: string, label: string, multiline = false) => cmsText(`rec.showcase.${w.id}.${field}`, label, { multiline, scope: 'record', scopeLabel: `Hồ sơ ${w.name}` });
   const categories = useMemo(() => Array.from(new Set(items.map(i => i.category).filter(Boolean))), [items]);
   const [cat, setCat] = useState('');
   const shown = cat ? items.filter(i => i.category === cat) : items;
@@ -19,7 +25,7 @@ export function PortfolioGallery({ items, label = 'Lọc sản phẩm theo loạ
     <div className="pf">
       {categories.length > 1 && (
         <div className="pf__filters" role="group" aria-label={label}>
-          <button type="button" aria-pressed={!cat} onClick={() => setCat('')}>Tất cả <span>{items.length}</span></button>
+          <button type="button" aria-pressed={!cat} onClick={() => setCat('')}><b style={{ fontWeight: 'inherit' }} {...all.a}>{all.v}</b> <span>{items.length}</span></button>
           {categories.map(c => (
             <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}>
               {c} <span>{items.filter(i => i.category === c).length}</span>
@@ -39,18 +45,18 @@ export function PortfolioGallery({ items, label = 'Lọc sản phẩm theo loạ
                 <img src={w.image} alt={`Giao diện ${w.name}`} loading="lazy" decoding="async" width={1200} height={750} />
               </div>
               <div className="pf__body">
-                <p className="pf__kind">{w.kind}</p>
+                <p className="pf__kind" {...rec(w, 'kind', 'Loại sản phẩm')}>{w.kind}</p>
                 <h3 className="pf__name">
                   {href
                     ? (w.caseStudy
-                      ? <Link className="pf__cover" href={href}>{w.name}</Link>
-                      : <a className="pf__cover" href={href} target="_blank" rel="noopener">{w.name}<span className="s-sr"> (mở website trong tab mới)</span></a>)
-                    : w.name}
+                      ? <Link className="pf__cover" href={href}><span {...rec(w, 'name', 'Tên sản phẩm')}>{w.name}</span></Link>
+                      : <a className="pf__cover" href={href} target="_blank" rel="noopener"><span {...rec(w, 'name', 'Tên sản phẩm')}>{w.name}</span><span className="s-sr"> (mở website trong tab mới)</span></a>)
+                    : <span {...rec(w, 'name', 'Tên sản phẩm')}>{w.name}</span>}
                 </h3>
-                <p className="pf__desc">{w.description}</p>
+                <p className="pf__desc" {...rec(w, 'description', 'Mô tả', true)}>{w.description}</p>
                 <p className="pf__foot">
-                  {w.url ? <span className="pf__go">{w.caseStudy ? <>Xem case study <ArrowRight aria-hidden="true" /></> : <>{host(w.url)} <ArrowUpRight aria-hidden="true" /></>}</span> : <span className="pf__go is-muted">Sản phẩm nội bộ / chưa công khai tên miền</span>}
-                  {w.tags.length > 0 && <span className="pf__tags">{w.tags.slice(0, 3).join(' · ')}</span>}
+                  {w.url ? <span className="pf__go">{w.caseStudy ? <><span {...caseL.a}>{caseL.v}</span> <ArrowRight aria-hidden="true" /></> : <>{host(w.url)} <ArrowUpRight aria-hidden="true" /></>}</span> : <span className="pf__go is-muted" {...internal.a}>{internal.v}</span>}
+                  {w.tags.length > 0 && <span className="pf__tags">{w.tags.slice(0, 3).map((tg, i) => <span key={i}>{i > 0 && ' · '}<span {...rec(w, `tags.${i}`, 'Thẻ')}>{tg}</span></span>)}</span>}
                 </p>
               </div>
             </li>

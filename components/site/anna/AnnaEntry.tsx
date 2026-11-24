@@ -6,6 +6,7 @@ import { useSite } from '../../SiteStore';
 import { block } from '@/lib/blocks';
 import { ANNA_LIMITS } from '@/lib/anna-shared';
 import { rich } from '../rich';
+import { cmsBlock, cmsText, ct } from '../cms';
 import { useAnna } from './AnnaProvider';
 import { MayFigure } from './MayFigure';
 import { MayPerch } from './MayPerch';
@@ -39,22 +40,22 @@ export function AnnaHome() {
   };
 
   return (
-    <section className="an-home" id="hoi-anna" aria-labelledby="t-anna">
+    <section className="an-home" id="hoi-anna" aria-labelledby="t-anna" {...cmsBlock('Khối ANNA (chữ gợi ý trong ô nhập, bật/tắt)', 'anna', { panel: 'site', scope: 'global' })}>
       <span className="an-home__clouds" aria-hidden="true"><i /><i /><i /><i /></span>
       <div className="s-container">
         <div className="an-home__inner">
           <MayPerch onPick={() => ask()} />
-          <p className="hb-eyebrow an-home__eyebrow"><Sparkles aria-hidden="true" />ANNA · Trợ lý AI DANAVA</p>
-          <h2 className="hb-h2" id="t-anna">{rich(config.title)}</h2>
-          <p className="hb-text">{config.lead}</p>
+          {(() => { const e = ct(data, 'anna.eyebrow', 'ANNA · Trợ lý AI DANAVA', 'Nhãn nhỏ', { scope: 'global' }); return <p className="hb-eyebrow an-home__eyebrow"><Sparkles aria-hidden="true" /><span {...e.a}>{e.v}</span></p>; })()}
+          <h2 className="hb-h2" id="t-anna" {...cmsText('block.anna.title', 'Tiêu đề khối ANNA', { rich: true, scope: 'global' })}>{rich(config.title)}</h2>
+          <p className="hb-text" {...cmsText('block.anna.lead', 'Câu dẫn khối ANNA', { multiline: true, scope: 'global' })}>{config.lead}</p>
           <form className="an-ask" onSubmit={submit}>
             <label className="s-sr" htmlFor="an-home-input">Mô tả nhu cầu của bạn</label>
             <input id="an-home-input" value={text} maxLength={ANNA_LIMITS.message} placeholder={config.placeholder} autoComplete="off" enterKeyHint="send" onChange={e => setText(e.target.value)} />
-            <button type="submit" aria-label="Bắt đầu hội thoại với ANNA"><span>Hỏi ANNA</span><ArrowUp aria-hidden="true" /></button>
+            <button type="submit" aria-label="Bắt đầu hội thoại với ANNA">{(() => { const x = ct(data, 'anna.ask', 'Hỏi ANNA', 'Chữ nút gửi', { scope: 'global' }); return <span {...x.a}>{x.v}</span>; })()}<ArrowUp aria-hidden="true" /></button>
           </form>
           <ul className="an-home__chips" aria-label="Câu hỏi gợi ý">
-            {config.suggestions.filter(s => s.trim()).map((s, i) => <li key={i}><button type="button" onClick={() => ask(s)}>{s}</button></li>)}
-            <li><button type="button" className="is-quote" onClick={quote}><Calculator aria-hidden="true" />Báo giá nhanh</button></li>
+            {config.suggestions.map((s, at) => ({ s, at })).filter(x => x.s.trim()).map(({ s, at }) => <li key={at}><button type="button" onClick={() => ask(s)}><span {...cmsText(`block.anna.suggestions.${at}`, `Câu hỏi gợi ý ${at + 1}`, { scope: 'global' })}>{s}</span></button></li>)}
+            <li><button type="button" className="is-quote" onClick={quote}><Calculator aria-hidden="true" />{(() => { const x = ct(data, 'anna.quote', 'Báo giá nhanh', 'Chữ nút báo giá', { scope: 'global' }); return <span {...x.a}>{x.v}</span>; })()}</button></li>
           </ul>
         </div>
       </div>

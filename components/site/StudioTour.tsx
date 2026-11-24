@@ -6,11 +6,28 @@
  */
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { Check } from 'lucide-react';
+import { useSite } from '../SiteStore';
+import { ct } from './cms';
 
 export type TourShot = { src: string; title: string; text: string };
 export type TourRole = { id: string; label: string; lead: string; device: 'desktop' | 'phone'; shots: TourShot[] };
 
-export function StudioTour({ roles }: { roles: TourRole[] }) {
+/** Khóa chữ sửa được của một ảnh màn hình (dùng chung giữa tham quan, bảng phân hệ, dải app): studio.shots.<tên tệp> */
+export const shotKey = (src: string) => `studio.shots.${(src.split('/').pop() || '').replace(/\.[a-z]+$/i, '').toLowerCase().replace(/[^a-z0-9-]/g, '-')}`;
+
+export function StudioTour({ roles: base }: { roles: TourRole[] }) {
+  const { data } = useSite();
+  // Chữ sửa được (lib/site-text.ts): tên vai trò, câu dẫn và tiêu đề / mô tả từng màn hình
+  const roles = base.map((r, i) => {
+    const label = ct(data, `studio.tour.${i}.label`, r.label, 'Tên vai trò');
+    const lead = ct(data, `studio.tour.${i}.lead`, r.lead, 'Câu dẫn vai trò', { multiline: true });
+    const shots = r.shots.map(s => {
+      const t = ct(data, `${shotKey(s.src)}.title`, s.title, 'Tên màn hình');
+      const x = ct(data, `${shotKey(s.src)}.text`, s.text, 'Mô tả màn hình', { multiline: true });
+      return { ...s, title: t.v, text: x.v, ta: t.a, xa: x.a };
+    });
+    return { ...r, label: label.v, lead: lead.v, la: label.a, lda: lead.a, shots };
+  });
   const [active, setActive] = useState(0);
   const [step, setStep] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -40,7 +57,7 @@ export function StudioTour({ roles }: { roles: TourRole[] }) {
             onClick={() => { setActive(i); setStep(0); }}
             onKeyDown={onKey}
           >
-            <span className="st-tour__n">{String(i + 1).padStart(2, '0')}</span>{r.label}
+            <span className="st-tour__n">{String(i + 1).padStart(2, '0')}</span><span {...r.la}>{r.label}</span>
           </button>
         ))}
       </div>
@@ -54,13 +71,13 @@ export function StudioTour({ roles }: { roles: TourRole[] }) {
           className={`st-tour__panel st-tour__panel--${r.device}`}
         >
           <div className="st-tour__copy">
-            <p className="st-tour__lead">{r.lead}</p>
+            <p className="st-tour__lead" {...r.lda}>{r.lead}</p>
             <ol className="st-tour__steps">
               {r.shots.map((s, k) => (
                 <li key={s.src}>
                   <button type="button" aria-pressed={i === active && k === step} onClick={() => setStep(k)}>
                     <span className="st-tour__dot" aria-hidden="true">{k === step && i === active ? <Check /> : k + 1}</span>
-                    <span><strong>{s.title}</strong><small>{s.text}</small></span>
+                    <span><strong {...s.ta}>{s.title}</strong><small {...s.xa}>{s.text}</small></span>
                   </button>
                 </li>
               ))}

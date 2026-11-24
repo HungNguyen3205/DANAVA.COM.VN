@@ -2,15 +2,41 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
+import { useSite } from '../SiteStore';
+import { ct } from './cms';
 
 export type Shot = { src: string; title: string; text?: string };
 export type ShotGroup = { id: string; label: string; device: 'desktop' | 'phone'; lead?: string; shots: Shot[] };
+
+const seg = (x: string) => x.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/^-+/, '') || 'x';
+/**
+ * Khóa chữ của một ảnh theo tên tệp. Ảnh DANAVA Studio dùng chung khóa với StudioTour.shotKey / StudioModules
+ * (sửa một lần, đổi ở mọi nơi); ảnh sản phẩm khác: gallery.shots.<thư mục>-<tệp>.
+ */
+const galleryShotKey = (src: string) => {
+  const parts = src.split('/');
+  const file = seg((parts.pop() || '').replace(/\.[a-z]+$/i, ''));
+  return src.startsWith('/assets/studio/') ? `studio.shots.${file}` : `gallery.shots.${seg(parts.pop() || '')}-${file}`;
+};
 
 /**
  * Thư viện ảnh giao diện sản phẩm: tab theo nhóm màn hình, bấm ảnh để phóng to,
  * xem ảnh trước/sau bằng nút, phím mũi tên hoặc vuốt ngang (điện thoại), Esc để đóng.
  */
-export function ProductGallery({ groups, idPrefix }: { groups: ShotGroup[]; idPrefix: string }) {
+export function ProductGallery({ groups: base, idPrefix }: { groups: ShotGroup[]; idPrefix: string }) {
+  const { data } = useSite();
+  // Chữ sửa được (lib/site-text.ts): tên nhóm, câu dẫn nhóm, tiêu đề / mô tả từng ảnh
+  const groups = base.map(g => {
+    const k = `gallery.${seg(idPrefix)}.groups.${seg(g.id)}`;
+    const label = ct(data, `${k}.label`, g.label, 'Tên nhóm màn hình');
+    const lead = g.lead ? ct(data, `${k}.lead`, g.lead, 'Câu dẫn nhóm màn hình', { multiline: true }) : null;
+    const shots = g.shots.map(s => {
+      const t = ct(data, `${galleryShotKey(s.src)}.title`, s.title, 'Tên màn hình');
+      const x = s.text ? ct(data, `${galleryShotKey(s.src)}.text`, s.text, 'Mô tả màn hình', { multiline: true }) : null;
+      return { ...s, title: t.v, text: x?.v, ta: t.a, xa: x?.a };
+    });
+    return { ...g, label: label.v, lead: lead?.v, la: label.a, lda: lead?.a, shots };
+  });
   const [tab, setTab] = useState(groups[0]?.id);
   const [open, setOpen] = useState<number | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -51,12 +77,12 @@ export function ProductGallery({ groups, idPrefix }: { groups: ShotGroup[]; idPr
               className="s-tab"
               onClick={() => { setTab(g.id); setOpen(null); }}
             >
-              {g.label}<span className="s-tab__count">{g.shots.length}</span>
+              <span {...g.la}>{g.label}</span><span className="s-tab__count">{g.shots.length}</span>
             </button>
           ))}
         </div>
       )}
-      {group.lead && <p className="s-gallery__lead">{group.lead}</p>}
+      {group.lead && <p className="s-gallery__lead" {...group.lda}>{group.lead}</p>}
 
       <ul
         id={`${idPrefix}-panel`}
@@ -72,8 +98,8 @@ export function ProductGallery({ groups, idPrefix }: { groups: ShotGroup[]; idPr
                 <img src={s.src} alt={s.title} loading="lazy" decoding="async" />
                 <span className="s-shot__zoom" aria-hidden="true"><Maximize2 /></span>
               </span>
-              <span className="s-shot__title">{s.title}</span>
-              {s.text && <span className="s-shot__text">{s.text}</span>}
+              <span className="s-shot__title" {...s.ta}>{s.title}</span>
+              {s.text && <span className="s-shot__text" {...s.xa}>{s.text}</span>}
             </button>
           </li>
         ))}
@@ -99,8 +125,8 @@ export function ProductGallery({ groups, idPrefix }: { groups: ShotGroup[]; idPr
           <figure className={`s-lightbox__fig s-lightbox__fig--${group.device}`}>
             <img src={current.src} alt={current.title} />
             <figcaption>
-              <strong>{current.title}</strong>
-              {current.text && <span>{current.text}</span>}
+              <strong {...current.ta}>{current.title}</strong>
+              {current.text && <span {...current.xa}>{current.text}</span>}
               <small>{(open ?? 0) + 1} / {count}</small>
             </figcaption>
           </figure>
