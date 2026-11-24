@@ -540,7 +540,20 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .ax-hero-pv__cta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .ax-scope .ax-hero-pv__btn { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 14px; border: 1.5px solid rgba(19, 36, 79, .18); border-radius: 999px; background: #fff; color: #13244f; font-size: 12px; font-weight: 800; white-space: nowrap; }
 .ax-scope .ax-hero-pv__btn.is-primary { border-color: transparent; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; box-shadow: 0 10px 22px -12px rgba(242, 107, 29, .9); }
-.ax-scope .ax-hero-pv__media img { display: block; width: 100%; aspect-ratio: 4 / 3.2; object-fit: cover; border-radius: 18px; box-shadow: 0 24px 48px -28px rgba(19, 36, 79, .55); transform: rotate(1.5deg); }
+/* Mô hình 3D văn phòng (components/site/OfficeScene.tsx): CSS tối thiểu, website dùng site-home3.css */
+.ax-scope .ax-hero-pv__media { position: relative; align-self: stretch; min-height: 300px; }
+.ax-scope .ax-hero-pv .hb-office { position: absolute; inset: 0; }
+.ax-scope .ax-hero-pv .hb-office__stage { position: absolute; inset: 0; cursor: grab; touch-action: pan-y; }
+.ax-scope .ax-hero-pv .hb-office__stage.is-drag { cursor: grabbing; }
+.ax-scope .ax-hero-pv .hb-office__canvas { position: absolute; inset: 0; display: block; width: 100% !important; height: 100% !important; opacity: 0; transition: opacity .8s ease; }
+.ax-scope .ax-hero-pv .hb-office.is-ready .hb-office__canvas { opacity: 1; }
+.ax-scope .ax-hero-pv .hb-office__fallback { position: absolute; inset: 8% 4%; width: 92%; height: 84%; object-fit: cover; border-radius: 18px; box-shadow: 0 24px 48px -28px rgba(19, 36, 79, .55); opacity: 0; transition: opacity .5s ease; }
+.ax-scope .ax-hero-pv .hb-office.is-fallback .hb-office__fallback { opacity: 1; }
+.ax-scope .ax-hero-pv .hb-office__reset { position: absolute; right: 8px; bottom: 8px; z-index: 3; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid rgba(255, 255, 255, .85); border-radius: 50%; background: rgba(255, 255, 255, .8); color: #13244f; cursor: pointer; }
+.ax-scope .ax-hero-pv .hb-office__reset[hidden] { display: none; }
+.ax-scope .ax-hero-pv .hb-office__reset.is-moved, .ax-scope .ax-hero-pv .hb-office__reset:hover { color: #f26b1d; }
+.ax-scope .ax-hero-pv .hb-office__reset svg { width: 15px; height: 15px; }
+.ax-scope .ax-hero-pv.is-mobile .ax-hero-pv__media { min-height: 280px; }
 .ax-scope .ax-hero-pv.is-mobile { grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-inline: auto; padding: 24px 18px; }
 .ax-scope .ax-hero-pv.is-mobile .ax-hero-pv__title { font-size: 26px; }
 @media (max-width: 1100px) {

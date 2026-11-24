@@ -2,13 +2,14 @@
 /**
  * Website → Trang → Trang chủ → Màn mở đầu: sửa chữ màn mở đầu đang hiển thị (lib/home-hero.ts)
  * và xem trước theo đúng bố cục hiện tại của trang chủ (nhãn nhỏ, tiêu đề 2 dòng navy/cam, câu dẫn, 2 nút, ảnh văn phòng).
- * Hiệu ứng 3D dựng văn phòng và hành trình DANAVA giữ nguyên trên website, không sửa ở đây.
+ * Mô hình 3D văn phòng dùng chung component OfficeScene với trang chủ (không có nút mã QR trong admin).
  */
 import { ArrowRight, ExternalLink, Monitor, RotateCcw, Smartphone, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import type { SiteData } from '@/lib/content';
 import { DEFAULT_HOME_HERO, HOME_HERO_LIMITS, homeHero, type HomeHero } from '@/lib/home-hero';
 import { okLink } from '@/lib/page-blocks';
+import { OfficeScene } from '../site/OfficeScene';
 import { Button, Card, FormSection, TabBar, ask } from './kit';
 
 const FIELDS: { key: keyof HomeHero; label: string; hint?: string; long?: boolean }[] = [
@@ -63,7 +64,7 @@ export function HomeHeroEditor({ draft, setDraft }: { draft: SiteData; setDraft:
         )}
       </div>
 
-      <Card title="Xem trước" description="Theo bố cục trang chủ hiện tại. Hiệu ứng 3D văn phòng hiển thị trên website."
+      <Card title="Xem trước" description="Theo bố cục trang chủ hiện tại. Mô hình 3D văn phòng kéo xoay được như trên website."
         actions={<a className="ax-btn ax-btn--secondary ax-btn--sm" href="/" target="_blank" rel="noopener"><ExternalLink size={14} /> Mở trang chủ</a>}>
         <TabBar size="sm" tabs={[{ id: 'desktop', label: 'Máy tính' }, { id: 'mobile', label: 'Điện thoại' }]} value={device} onChange={setDevice} label="Thiết bị xem trước" />
         <div className={`ax-hero-pv${device === 'mobile' ? ' is-mobile' : ''}`} aria-label="Xem trước màn mở đầu">
@@ -76,7 +77,7 @@ export function HomeHeroEditor({ draft, setDraft }: { draft: SiteData; setDraft:
               {hero.secondaryLabel && <span className="ax-hero-pv__btn">{hero.secondaryLabel}</span>}
             </div>
           </div>
-          <div className="ax-hero-pv__media"><img src="/assets/about/office-sm.webp" alt="" /></div>
+          <div className="ax-hero-pv__media"><OfficeScene fallback="/assets/about/office-sm.webp" /></div>
         </div>
         <p className="field-note" style={{ marginTop: 12 }}>
           <Monitor size={13} style={{ verticalAlign: -2 }} /> / <Smartphone size={13} style={{ verticalAlign: -2 }} /> Bấm “Chỉnh giao diện” để sửa trực tiếp trên trang chủ thật.
