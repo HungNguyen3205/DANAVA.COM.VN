@@ -632,3 +632,6 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 }
 /* Nhãn trong hàng tạo nhanh / biểu mẫu dọc: bỏ lề dưới của giao diện cũ để ô và nút thẳng đáy */
 .ax-scope .adm .adm-create-row > label, .ax-scope .adm .adm-form > label, .ax .ax-content .adm-create-row > label, .ax .ax-content .adm-form > label { margin: 0; }
+/* Nút chữ dài (vd. "Bổ sung đối tác từ danava.vn…"): không vượt khung, xuống dòng gọn trên màn hẹp */
+.ax .ax-content :is(.admin-secondary, .admin-primary, .adm-btn) { max-width: 100%; }
+@media (max-width: 700px) { .ax .ax-content :is(.admin-secondary, .admin-primary) { height: auto; min-height: 38px; padding-block: 8px; white-space: normal; text-align: center; line-height: 1.35; } }
