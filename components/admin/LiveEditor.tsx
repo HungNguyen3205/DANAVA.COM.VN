@@ -13,6 +13,7 @@ import { cmsLimit, readCms, writeCms, writeTextStyle, writeTranslation } from '@
 import { LOCALES, LOCALE_INFO, localePath, splitLocale, type ForeignLocale, type Locale } from '@/lib/i18n';
 import type { TextStyle } from '@/lib/text-styles';
 import { Button, Modal, Tip } from './kit';
+import { Flag } from '../site/Flag';
 
 type Mode = 'view' | 'edit';
 type SaveMode = 'draft' | 'publish';
@@ -306,7 +307,7 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
           <div className="lv-seg lv-seg--lang" role="radiogroup" aria-label="Ngôn ngữ đang chỉnh">
             {LOCALES.map(l => (
               <Tip key={l} side="bottom" label={l === 'vi' ? 'Tiếng Việt (nội dung gốc)' : `Bản dịch ${LOCALE_INFO[l].label}`}>
-                <button type="button" role="radio" aria-checked={lang === l} className={lang === l ? 'is-on' : ''} onClick={() => switchLang(l)} lang={LOCALE_INFO[l].html}>{LOCALE_INFO[l].short}</button>
+                <button type="button" role="radio" aria-checked={lang === l} className={lang === l ? 'is-on' : ''} onClick={() => switchLang(l)} lang={LOCALE_INFO[l].html}><Flag loc={l} className="lv-flag" />{LOCALE_INFO[l].short}</button>
               </Tip>
             ))}
           </div>

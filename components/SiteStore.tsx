@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useRef, useState, type ReactNode } from 'react';
 import { initial, validateContent, type SiteData } from '@/lib/content';
 import { extraError } from '@/lib/site-extras';
 import { careersError } from '@/lib/careers';
@@ -8,6 +8,8 @@ import { contentProblem } from '@/lib/content-check';
 export type SaveMode = 'draft' | 'publish';
 /** Trạng thái bản đang soạn trên máy chủ. */
 export type DraftInfo = { hasDraft: boolean; updatedAt: number | null; author: string | null };
+/** Kết quả tự dịch khi xuất bản (app/api/admin/content → lib/i18n-auto.ts). */
+export type AutoTranslateInfo = { done: number; failed: number; noKey: boolean; locales: string[] };
 
 type Store = {
   data: SiteData;
@@ -20,9 +22,11 @@ type Store = {
   error: string;
   draft: DraftInfo;
   revision: number;
+  /** Lấy (và xóa) kết quả tự dịch của lần xuất bản gần nhất. */
+  takeAutoInfo: () => AutoTranslateInfo | null;
 };
 const NO_DRAFT: DraftInfo = { hasDraft: false, updatedAt: null, author: null };
-const Context = createContext<Store>({ data: initial, save: async () => false, discardDraft: async () => false, refresh: async () => {}, ready: false, error: '', draft: NO_DRAFT, revision: 0 });
+const Context = createContext<Store>({ data: initial, save: async () => false, discardDraft: async () => false, refresh: async () => {}, ready: false, error: '', draft: NO_DRAFT, revision: 0, takeAutoInfo: () => null });
 
 async function csrf() {
   const auth = await fetch('/api/admin/session/', { cache: 'no-store' }).then(r => r.json());
@@ -70,7 +74,9 @@ export function SiteStore({ children, initialData = initial }: { children: React
       });
       const result = await r.json().catch(() => ({}));
       if (!r.ok) throw Error(result.error || (r.status === 401 ? 'Phiên đăng nhập hết hạn. Đăng nhập lại để lưu.' : 'Không lưu được nội dung.'));
-      setData(next);
+      // Xuất bản có tự dịch: máy chủ trả bộ bản dịch mới → cập nhật ngay để lần lưu sau không làm mất
+      setData(result.i18n !== undefined ? { ...next, i18n: result.i18n || undefined } : next);
+      autoInfo.current = result.auto || null;
       setRevision(result.revision);
       setDraft(mode === 'draft' ? { hasDraft: true, updatedAt: Date.now(), author: null } : NO_DRAFT);
       setError('');
@@ -80,6 +86,9 @@ export function SiteStore({ children, initialData = initial }: { children: React
       return false;
     }
   }
+
+  const autoInfo = useRef<AutoTranslateInfo | null>(null);
+  const takeAutoInfo = () => { const v = autoInfo.current; autoInfo.current = null; return v; };
 
   async function discardDraft() {
     try {
@@ -94,7 +103,7 @@ export function SiteStore({ children, initialData = initial }: { children: React
     }
   }
 
-  return <Context.Provider value={{ data, save, discardDraft, refresh, ready: true, error, draft, revision }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ data, save, discardDraft, refresh, ready: true, error, draft, revision, takeAutoInfo }}>{children}</Context.Provider>;
 }
 
 export const useSite = () => useContext(Context);

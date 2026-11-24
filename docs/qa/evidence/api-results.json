@@ -136,7 +136,7 @@
   "module": "Bảo mật/Phản hồi",
   "scenario": "Danh sách tài khoản không lộ mật khẩu/hash",
   "expected": "Không có trường password/hash",
-  "actual": "200 {\"users\":[{\"id\":\"usr_99238561-d49\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
+  "actual": "200 {\"users\":[{\"id\":\"usr_2f9e617a-4a1\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
   "status": "PASS"
  },
  {
@@ -430,7 +430,7 @@
   "module": "Nội dung/Nháp",
   "scenario": "Đọc lại bản nháp qua API admin",
   "expected": "Có chữ nháp",
-  "actual": "QA_NHAP_Đồng_hành_81beef",
+  "actual": "QA_NHAP_Đồng_hành_d93b2d",
   "status": "PASS"
  },
  {
@@ -717,7 +717,7 @@
   "module": "Khách hàng/Biểu mẫu",
   "scenario": "Thân yêu cầu rất lớn (3 MB)",
   "expected": "413 hoặc máy chủ đóng kết nối sớm; không lưu",
-  "actual": "đóng kết nối, lưu=false",
+  "actual": "413, lưu=false",
   "status": "PASS"
  },
  {
@@ -773,7 +773,7 @@
   "module": "Tài nguyên/Tải ảnh",
   "scenario": "Tải PNG hợp lệ",
   "expected": "201 + đường dẫn /assets/uploads/*.webp",
-  "actual": "201 /assets/uploads/bdcd0227-d916-43d3-8f14-406f51cf52ef.webp",
+  "actual": "201 /assets/uploads/1650aa63-0b64-4aa8-8665-075e491cbd3e.webp",
   "status": "PASS"
  },
  {

@@ -195,7 +195,7 @@
 .s-lang__menu button b { display: grid; place-items: center; width: 30px; height: 24px; border-radius: 7px; background: #f2f4f9; color: #4a5675; font-size: 11.5px; font-weight: 800; }
 .s-lang__menu button:hover, .s-lang__menu button:focus-visible { background: #fff4ec; color: #b84c0d; outline: none; }
 .s-lang__menu button[aria-checked=true] b { background: linear-gradient(135deg, #ff9a4d, #f26b1d); color: #fff; }
-.s-lang__menu button svg { width: 16px; height: 16px; margin-left: auto; color: #f26b1d; }
+.s-lang__menu button svg:not(.s-flag) { width: 16px; height: 16px; margin-left: auto; color: #f26b1d; }
 @keyframes s-lang-in { from { opacity: 0; transform: translateY(-4px); } }
 /* Menu điện thoại: hàng nút ngôn ngữ ở đầu */
 .s-lang-row { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; padding: 6px; border-radius: 14px; background: #f5f6fa; }
@@ -205,3 +205,14 @@
 /* Màn hẹp: nút gọn (chỉ biểu tượng + mã) — menu điện thoại đã có hàng chọn đầy đủ */
 @media (max-width: 760px) { .s-header .s-lang { display: none; } }
 @media (prefers-reduced-motion: reduce) { .s-lang__menu { animation: none; } }
+/* Lá cờ trước tên ngôn ngữ (components/site/Flag.tsx) */
+.s-flag { display: block; flex: none; width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(17, 26, 51, .12); overflow: hidden; }
+.s-lang__btn .s-flag { width: 21px; height: 14px; }
+.s-lang__menu { min-width: 210px; }
+.s-lang__menu button { gap: 12px; }
+.s-lang__menu button .s-flag { width: 26px; height: 18px; border-radius: 4px; }
+.s-lang__menu button small { margin-left: auto; padding: 2px 7px; border-radius: 6px; background: #f2f4f9; color: #7a8399; font-size: 11px; font-weight: 800; letter-spacing: .04em; }
+.s-lang__menu button[aria-checked=true] small { background: #ffe8d6; color: #b84c0d; }
+.s-lang__menu button svg:not(.s-flag) { margin-left: 0; }
+.s-lang-row button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.s-lang-row button .s-flag { width: 20px; height: 14px; }

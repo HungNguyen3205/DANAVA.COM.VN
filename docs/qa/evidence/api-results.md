@@ -19,7 +19,7 @@
 | 17 | Hệ thống/Tài khoản | Tạo tài khoản vai trò sales (tên có dấu) | 201 | 201 | PASS |
 | 18 | Hệ thống/Tài khoản | Tạo trùng tên đăng nhập | 409 | 409 | PASS |
 | 19 | Hệ thống/Tài khoản | Mật khẩu quá ngắn | 400 | 400 | PASS |
-| 20 | Bảo mật/Phản hồi | Danh sách tài khoản không lộ mật khẩu/hash | Không có trường password/hash | 200 {"users":[{"id":"usr_99238561-d49","username":"qa.admin","name":"QA admin Nguyễn Thị Ánh","role":"admin","active":true," | PASS |
+| 20 | Bảo mật/Phản hồi | Danh sách tài khoản không lộ mật khẩu/hash | Không có trường password/hash | 200 {"users":[{"id":"usr_2f9e617a-4a1","username":"qa.admin","name":"QA admin Nguyễn Thị Ánh","role":"admin","active":true," | PASS |
 | 21 | Phân quyền/Ma trận | admin GET /api/admin/content/ | 200 | 200 | PASS |
 | 22 | Phân quyền/Ma trận | admin GET /api/admin/media/ | 200 | 200 | PASS |
 | 23 | Phân quyền/Ma trận | admin GET /api/admin/leads/ | 200 | 200 | PASS |
@@ -61,7 +61,7 @@
 | 59 | Phân quyền/Ma trận | editor tạo tài khoản (không có users.manage) | 403 | 403 | PASS |
 | 60 | Phân quyền/Ma trận | admin tự nâng vai trò owner cho tài khoản khác | 400/403 (không có vai trò owner gán được) | 400 | PASS |
 | 61 | Nội dung/Nháp | Lưu nháp chữ màn mở đầu (có dấu) | 200 | 200 | PASS |
-| 62 | Nội dung/Nháp | Đọc lại bản nháp qua API admin | Có chữ nháp | QA_NHAP_Đồng_hành_81beef | PASS |
+| 62 | Nội dung/Nháp | Đọc lại bản nháp qua API admin | Có chữ nháp | QA_NHAP_Đồng_hành_d93b2d | PASS |
 | 63 | Bảo mật/Lộ bản nháp | Khách mở / | Không chứa chữ nháp | 200 chứa nháp=false | PASS |
 | 64 | Bảo mật/Lộ bản nháp | Khách mở /?cms=1 | Không chứa chữ nháp | 200 chứa nháp=false | PASS |
 | 65 | Bảo mật/Lộ bản nháp | Khách mở /sitemap.xml | Không chứa chữ nháp | 200 chứa nháp=false | PASS |
@@ -102,7 +102,7 @@
 | 100 | Khách hàng/Biểu mẫu | JSON hỏng | 400 | 400 | PASS |
 | 101 | Khách hàng/Biểu mẫu | Bot điền trường bẫy (honeypot) | 201 giả, không lưu | 201 lưu=false | PASS |
 | 102 | Khách hàng/Biểu mẫu | Gửi từ website khác (Origin lạ) | 403 (chặn gửi hộ từ trang ngoài) | 403 | PASS |
-| 103 | Khách hàng/Biểu mẫu | Thân yêu cầu rất lớn (3 MB) | 413 hoặc máy chủ đóng kết nối sớm; không lưu | đóng kết nối, lưu=false | PASS |
+| 103 | Khách hàng/Biểu mẫu | Thân yêu cầu rất lớn (3 MB) | 413 hoặc máy chủ đóng kết nối sớm; không lưu | 413, lưu=false | PASS |
 | 104 | Khách hàng/Yêu cầu | Yêu cầu hiển thị trong admin đúng dữ liệu, chỉ 1 bản | 1 bản, tên có dấu đúng | 1 bản, Trần Thị Bích Ngọc | PASS |
 | 105 | Khách hàng/Yêu cầu | sales phân công + đổi trạng thái | 200, lưu lại được | 200 status=contacted assigned_to=QA Nguyễn Kinh Doanh | PASS |
 | 106 | Khách hàng/Yêu cầu | Cập nhật yêu cầu không tồn tại | 404 | 404 | PASS |
@@ -110,7 +110,7 @@
 | 108 | Khách hàng/Yêu cầu | editor xem khách hàng (không có leads.read) | 403 | 403 | PASS |
 | 109 | Website/Tuyển dụng | Ứng tuyển từ Origin lạ | 403 | 403 | PASS |
 | 110 | Website/Tuyển dụng | Ứng tuyển thiếu dữ liệu | 400 | 400 | PASS |
-| 111 | Tài nguyên/Tải ảnh | Tải PNG hợp lệ | 201 + đường dẫn /assets/uploads/*.webp | 201 /assets/uploads/bdcd0227-d916-43d3-8f14-406f51cf52ef.webp | PASS |
+| 111 | Tài nguyên/Tải ảnh | Tải PNG hợp lệ | 201 + đường dẫn /assets/uploads/*.webp | 201 /assets/uploads/1650aa63-0b64-4aa8-8665-075e491cbd3e.webp | PASS |
 | 112 | Tài nguyên/Tải ảnh | Tải JPEG hợp lệ | 201 | 201 | PASS |
 | 113 | Tài nguyên/Tải ảnh | File chữ đổi đuôi thành ảnh | 400 | 400 | PASS |
 | 114 | Tài nguyên/Tải ảnh | PNG hỏng (đúng chữ ký, dữ liệu rác) | 400 | 400 | PASS |

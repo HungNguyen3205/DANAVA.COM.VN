@@ -72,7 +72,7 @@ function AdminRoute({ section }: { section: string }) {
 
 function AdminWorkspace({ section }: { section: string }) {
   const router = useRouter();
-  const { data, save, ready, error, draft: serverDraft, discardDraft } = useSite(),
+  const { data, save, ready, error, draft: serverDraft, discardDraft, takeAutoInfo } = useSite(),
     user = useAdminUser(),
     [draft, setDraft] = useState<SiteData>(data),
     [notice, setNotice] = useState(''),
@@ -118,7 +118,11 @@ function AdminWorkspace({ section }: { section: string }) {
       const next = cleaned(draft);
       if (await save(next, mode)) {
         setDraft(next);
-        setNotice(mode === 'draft' ? 'Đã lưu nháp trên máy chủ. Website chưa thay đổi cho tới khi bấm Xuất bản.' : 'Đã xuất bản. Website đã cập nhật nội dung mới.');
+        const auto = mode === 'publish' ? takeAutoInfo() : null;
+        const tail = !auto ? '' : auto.noKey ? ' Có câu tiếng Việt vừa đổi chưa được dịch: máy chủ chưa cấu hình dịch tự động, bản tiếng Anh / tiếng Nhật tạm hiện tiếng Việt cho các câu đó.'
+          : auto.done && !auto.failed ? ` Đã tự dịch ${auto.done} câu vừa đổi sang English / 日本語.`
+          : auto.done || auto.failed ? ` Đã tự dịch ${auto.done} câu; ${auto.failed} câu chưa dịch được (tạm hiện tiếng Việt, bấm Dịch tự động trong trình biên tập để thử lại).` : '';
+        setNotice((mode === 'draft' ? 'Đã lưu nháp trên máy chủ. Website chưa thay đổi cho tới khi bấm Xuất bản.' : 'Đã xuất bản. Website đã cập nhật nội dung mới.') + tail);
       }
     } finally {
       setSaving(false);

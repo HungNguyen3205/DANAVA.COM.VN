@@ -7,7 +7,8 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Check, ChevronDown, Globe } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
+import { Flag } from './Flag';
 import { useSite } from '../SiteStore';
 import { LOCALES, LOCALE_INFO, localePath, localizable, splitLocale, type Locale } from '@/lib/i18n';
 
@@ -40,9 +41,8 @@ export function LangSwitch({ variant = 'menu', onPick }: { variant?: 'menu' | 'r
   if (variant === 'row') {
     return (
       <div className="s-lang-row" role="group" aria-label="Ngôn ngữ / Language / 言語">
-        <Globe aria-hidden="true" />
         {LOCALES.map(l => (
-          <button key={l} type="button" lang={LOCALE_INFO[l].html} aria-pressed={l === current} onClick={() => go(l)}>{LOCALE_INFO[l].label}</button>
+          <button key={l} type="button" lang={LOCALE_INFO[l].html} aria-pressed={l === current} onClick={() => go(l)}><Flag loc={l} /><span>{LOCALE_INFO[l].label}</span></button>
         ))}
       </div>
     );
@@ -51,14 +51,14 @@ export function LangSwitch({ variant = 'menu', onPick }: { variant?: 'menu' | 'r
     <div className="s-lang" ref={box}>
       <button type="button" className="s-lang__btn" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen(v => !v)}
         aria-label={`Ngôn ngữ / Language / 言語: ${LOCALE_INFO[current].label}`}>
-        <Globe aria-hidden="true" /><span>{LOCALE_INFO[current].short}</span><ChevronDown aria-hidden="true" className="s-lang__chev" />
+        <Flag loc={current} /><span>{LOCALE_INFO[current].short}</span><ChevronDown aria-hidden="true" className="s-lang__chev" />
       </button>
       {open && (
         <ul className="s-lang__menu" role="menu">
           {LOCALES.map(l => (
             <li key={l} role="none">
               <button type="button" role="menuitemradio" aria-checked={l === current} lang={LOCALE_INFO[l].html} onClick={() => go(l)}>
-                <b>{LOCALE_INFO[l].short}</b><span>{LOCALE_INFO[l].label}</span>{l === current && <Check aria-hidden="true" />}
+                <Flag loc={l} /><span>{LOCALE_INFO[l].label}</span><small>{LOCALE_INFO[l].short}</small>{l === current && <Check aria-hidden="true" />}
               </button>
             </li>
           ))}

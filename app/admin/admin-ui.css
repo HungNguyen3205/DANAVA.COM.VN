@@ -846,3 +846,5 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .lv-seg--lang button.is-on { color: #b84c0d; }
 .ax-scope .lv-translate { color: #b84c0d; background: #fff4ec; }
 .ax-scope .lv-translate:hover:not(:disabled) { background: #ffe6d4; }
+.ax-scope .lv-seg--lang button { gap: 6px; }
+.ax-scope .lv-flag { display: block; flex: none; width: 18px; height: 12px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(17, 26, 51, .14); }
