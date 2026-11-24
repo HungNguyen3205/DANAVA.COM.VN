@@ -207,4 +207,14 @@ Nhóm Website trong menu còn **một mục: “Chỉnh sửa website”** (`/ad
 - **Nguồn dữ liệu**: tiêu đề/câu dẫn trang sản phẩm → hồ sơ sản phẩm (`rec.services.<id>.*`); tóm tắt + ảnh bìa bài viết → bài viết (`rec.posts.<id>.*`); tiêu đề/tóm tắt dự án → hồ sơ dự án; địa chỉ chân trang → thông tin công ty. Nhãn trên thanh công cụ: “Áp dụng toàn website” / “Hồ sơ …”.
 - **Chưa lưu**: đổi trang hoặc thoát → hỏi *Lưu nháp rồi chuyển / Chuyển, giữ thay đổi / Ở lại*. Đi theo liên kết trong trang vẫn giữ thay đổi trong phiên.
 - **Đường dẫn cũ** (`/admin/trang/?page=…&tab=…`, `/admin/landing-page/…`, `/admin/menu/`, `/admin/giao-dien/`, `/admin/mau-khoi/`, các mục cũ hơn như `/admin/trang-chu/`, `/admin/anna/`) chuyển tới đúng trang / ngăn trong trình biên tập.
-- **Chưa có**: chỉnh font, màu, chiều rộng chung (cố định theo bộ nhận diện trong mã nguồn); sửa thân bài viết và tiêu đề bài viết ngay trên trang (sửa trong hồ sơ bài viết); kéo/đổi kích thước khối trên trang có sẵn (landing page nội bộ đã có trình dựng khối riêng).
+- **Chưa có**: chỉnh font, chiều rộng chung, màu chung của giao diện (cố định theo bộ nhận diện trong mã nguồn); sửa thân bài viết và tiêu đề bài viết ngay trên trang (sửa trong hồ sơ bài viết); kéo/đổi kích thước khối trên trang có sẵn (landing page nội bộ đã có trình dựng khối riêng).
+
+## 11. Kiểu chữ theo từng phần: màu + cỡ chữ (11/2026)
+
+- **Thao tác**: chọn một tiêu đề / đoạn văn (nhấn giữ hoặc bấm ở chế độ Chỉnh sửa) → nút **Kiểu chữ** trên thanh công cụ → bảng ngay cạnh phần đó (điện thoại: bảng sát đáy, trang tự cuộn để phần đang chỉnh nằm phía trên).
+- **Màu chữ**: 7 màu nhận diện DANAVA, ô chọn màu, ô mã HEX (kiểm tra ngay khi gõ). Nhãn *Mặc định giao diện* / *Đã tùy chỉnh*. *Khôi phục màu mặc định* chỉ xóa màu của phần này.
+- **Cỡ chữ**: ô số (px), nút −/+, thanh trượt; giới hạn theo loại nội dung (tiêu đề 18–120px máy tính, 16–80px điện thoại; đoạn văn 12–40 / 12–32; nhãn 10–36 / 10–28). Hai thiết lập riêng **Máy tính (từ 768px)** và **Điện thoại (dưới 768px)**; chưa đặt = theo cỡ chữ responsive sẵn có. Bấm *Máy tính / Điện thoại* trong bảng → khung xem đổi theo, luôn ghi rõ đang chỉnh cho thiết bị nào.
+- **Dữ liệu**: `SiteData.textStyles[khóa data-cms] = { color?, size?, sizeMobile? }`, tách khỏi nội dung (`lib/text-styles.ts`). Máy chủ kiểm tra quyền (lưu nháp / xuất bản) và giá trị (màu #rrggbb, số nguyên trong giới hạn, khóa hợp lệ, tối đa 600 phần), báo lỗi rõ ràng (`lib/content-check.ts`). Website xuất một thẻ CSS theo đúng khóa (`components/site/CmsStyles.tsx`): khách thấy bản đã xuất bản, trình biên tập thấy bản nháp. Dữ liệu cũ không có `textStyles` → kiểu mặc định.
+- **Hoàn tác / làm lại**: mỗi thao tác (bấm màu, +/−, khôi phục, một lần kéo thanh trượt, một lần nhập) là một bước trong lịch sử của trình biên tập.
+- **Lưu ý**: kiểu chữ gắn theo khóa, nên các chỗ hiển thị cùng một dữ liệu (vd. email ở đầu và chân trang) đổi cùng nhau. Phần nhấn mạnh trong tiêu đề giữ màu riêng.
+- **Bằng chứng**: `docs/qa/evidence/text-style/` (ảnh máy tính + điện thoại, `desktop-steps.log`), test `tests/text-styles.test.ts`.

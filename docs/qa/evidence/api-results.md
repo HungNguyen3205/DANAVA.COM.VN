@@ -19,7 +19,7 @@
 | 17 | Hệ thống/Tài khoản | Tạo tài khoản vai trò sales (tên có dấu) | 201 | 201 | PASS |
 | 18 | Hệ thống/Tài khoản | Tạo trùng tên đăng nhập | 409 | 409 | PASS |
 | 19 | Hệ thống/Tài khoản | Mật khẩu quá ngắn | 400 | 400 | PASS |
-| 20 | Bảo mật/Phản hồi | Danh sách tài khoản không lộ mật khẩu/hash | Không có trường password/hash | 200 {"users":[{"id":"usr_d490a8ee-11f","username":"qa.admin","name":"QA admin Nguyễn Thị Ánh","role":"admin","active":true," | PASS |
+| 20 | Bảo mật/Phản hồi | Danh sách tài khoản không lộ mật khẩu/hash | Không có trường password/hash | 200 {"users":[{"id":"usr_70666399-028","username":"qa.admin","name":"QA admin Nguyễn Thị Ánh","role":"admin","active":true," | PASS |
 | 21 | Phân quyền/Ma trận | admin GET /api/admin/content/ | 200 | 200 | PASS |
 | 22 | Phân quyền/Ma trận | admin GET /api/admin/media/ | 200 | 200 | PASS |
 | 23 | Phân quyền/Ma trận | admin GET /api/admin/leads/ | 200 | 200 | PASS |
@@ -61,7 +61,7 @@
 | 59 | Phân quyền/Ma trận | editor tạo tài khoản (không có users.manage) | 403 | 403 | PASS |
 | 60 | Phân quyền/Ma trận | admin tự nâng vai trò owner cho tài khoản khác | 400/403 (không có vai trò owner gán được) | 400 | PASS |
 | 61 | Nội dung/Nháp | Lưu nháp chữ màn mở đầu (có dấu) | 200 | 200 | PASS |
-| 62 | Nội dung/Nháp | Đọc lại bản nháp qua API admin | Có chữ nháp | QA_NHAP_Đồng_hành_d188dc | PASS |
+| 62 | Nội dung/Nháp | Đọc lại bản nháp qua API admin | Có chữ nháp | QA_NHAP_Đồng_hành_a36543 | PASS |
 | 63 | Bảo mật/Lộ bản nháp | Khách mở / | Không chứa chữ nháp | 200 chứa nháp=false | PASS |
 | 64 | Bảo mật/Lộ bản nháp | Khách mở /?cms=1 | Không chứa chữ nháp | 200 chứa nháp=false | PASS |
 | 65 | Bảo mật/Lộ bản nháp | Khách mở /sitemap.xml | Không chứa chữ nháp | 200 chứa nháp=false | PASS |
@@ -110,12 +110,12 @@
 | 108 | Khách hàng/Yêu cầu | editor xem khách hàng (không có leads.read) | 403 | 403 | PASS |
 | 109 | Website/Tuyển dụng | Ứng tuyển từ Origin lạ | 403 | 403 | PASS |
 | 110 | Website/Tuyển dụng | Ứng tuyển thiếu dữ liệu | 400 | 400 | PASS |
-| 111 | Tài nguyên/Tải ảnh | Tải PNG hợp lệ | 201 + đường dẫn /assets/uploads/*.webp | 201 /assets/uploads/09c15caf-cd7d-4003-95ee-e2a985d3724b.webp | PASS |
+| 111 | Tài nguyên/Tải ảnh | Tải PNG hợp lệ | 201 + đường dẫn /assets/uploads/*.webp | 201 /assets/uploads/f5d91e19-8187-40d0-989e-b7e1de2d8d13.webp | PASS |
 | 112 | Tài nguyên/Tải ảnh | Tải JPEG hợp lệ | 201 | 201 | PASS |
 | 113 | Tài nguyên/Tải ảnh | File chữ đổi đuôi thành ảnh | 400 | 400 | PASS |
 | 114 | Tài nguyên/Tải ảnh | PNG hỏng (đúng chữ ký, dữ liệu rác) | 400 | 400 | PASS |
 | 115 | Tài nguyên/Tải ảnh | SVG chứa script | 400 | 400 | PASS |
-| 116 | Tài nguyên/Tải ảnh | Ảnh > 6 MB | 413 hoặc máy chủ đóng kết nối sớm; không thêm ảnh | 413, ảnh 3→3 | PASS |
+| 116 | Tài nguyên/Tải ảnh | Ảnh > 6 MB | 413 hoặc máy chủ đóng kết nối sớm; không thêm ảnh | đóng kết nối, ảnh 3→3 | PASS |
 | 117 | Tài nguyên/Phục vụ ảnh | Ảnh tải lên được phục vụ đúng loại, chặn đoán MIME | 200 image/webp + nosniff | 200 image/webp nosniff=nosniff | PASS |
 | 118 | Tài nguyên/Phục vụ ảnh | Đường dẫn vượt thư mục ../ | 404/400 | 404 | PASS |
 | 119 | Tài nguyên/Thư viện | Ảnh mới có trong danh sách thư viện | Có | 3 ảnh | PASS |

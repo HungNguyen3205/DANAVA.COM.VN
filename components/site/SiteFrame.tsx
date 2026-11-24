@@ -3,6 +3,7 @@ import { Header, Footer, MobileBar } from '../Shell';
 import { ContactDock } from './ContactDock';
 import { AnnaProvider } from './anna/AnnaProvider';
 import { AnnaLauncher } from './anna/AnnaEntry';
+import { CmsStyles } from './CmsStyles';
 
 /** Khung chung của website công khai: skip link, header, nội dung, footer. */
 export function SiteFrame({ children }: { children: ReactNode }) {
@@ -17,6 +18,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
         <MobileBar />
         <ContactDock />
         <AnnaLauncher />
+        <CmsStyles />
       </AnnaProvider>
     </div>
   );

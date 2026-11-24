@@ -11,6 +11,7 @@ import { block, pageCopy, withBlock, type BlockKey } from './blocks.ts';
 import { DEFAULT_HOME_HERO, HOME_HERO_LIMITS, homeHero, type HomeHero } from './home-hero.ts';
 import { okLink } from './page-blocks.ts';
 import { PHOTO_FOCUS } from './site-extras.ts';
+import { withTextStyle, type TextStyle } from './text-styles.ts';
 
 export type CmsKind = 'text' | 'rich' | 'image' | 'href' | 'focus';
 
@@ -144,4 +145,10 @@ export function writeCms(data: SiteData, path: string, value: string): SiteData 
   }
   const key = a as BlockKey;
   return withBlock(data, key, setIn(block(data, key), rest, value));
+}
+
+/** Bản SiteData mới với màu / cỡ chữ của một phần chữ được thay (null = về kiểu mặc định). Nội dung không đổi. */
+export function writeTextStyle(data: SiteData, path: string, style: TextStyle | null): SiteData {
+  if (!validCmsPath(path) || path.endsWith('.image') || path.endsWith('.href')) throw Error('Phần này không đổi kiểu chữ được.');
+  return { ...data, textStyles: withTextStyle(data.textStyles, path, style) };
 }

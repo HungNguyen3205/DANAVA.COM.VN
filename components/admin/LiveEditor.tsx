@@ -9,7 +9,8 @@
 import { ArrowLeft, Blocks, Check, ChevronDown, Eye, FileCog, ImagePlus, Loader2, Monitor, PenLine, Redo2, Rocket, Save, Search, Settings2, Smartphone, Tablet, Undo2, Upload, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import type { SiteData } from '@/lib/content';
-import { cmsLimit, readCms, writeCms } from '@/lib/cms-paths';
+import { cmsLimit, readCms, writeCms, writeTextStyle } from '@/lib/cms-paths';
+import type { TextStyle } from '@/lib/text-styles';
 import { Button, Modal, Tip } from './kit';
 
 type Mode = 'view' | 'edit';
@@ -57,6 +58,7 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
   const undo = useRef<SiteData[]>([]);
   const redo = useRef<SiteData[]>([]);
   const before = useRef<SiteData | null>(null);
+  const styleBefore = useRef<SiteData | null>(null);
   const modeRef = useRef(mode);
   modeRef.current = mode;
 
@@ -81,14 +83,18 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
     draftRef.current = d;
     setDraft(d);
     if (pathsRef.current.length) send('values', { values: valuesOf(d, pathsRef.current) });
+    send('styles', { styles: d.textStyles || {} });
   }, [send, setDraft, valuesOf]);
+
+  /* Đổi khung xem (máy tính / máy tính bảng / điện thoại) → báo trang cập nhật bảng kiểu chữ theo thiết bị */
+  useEffect(() => { const id = setTimeout(() => send('device-changed'), 80); return () => clearTimeout(id); }, [device, send]);
 
   const setMode = (m: Mode) => { if (m === 'edit' && !canEdit) return; setModeState(m); send('mode', { mode: m }); };
 
   /* Đồng bộ giá trị xuống trang mỗi khi bản nháp đổi; trang bỏ qua phần đang gõ */
   useEffect(() => {
     if (!paths.length) return;
-    const t = setTimeout(() => send('values', { values: valuesOf(draft, paths) }), 40);
+    const t = setTimeout(() => { send('values', { values: valuesOf(draft, paths) }); send('styles', { styles: draft.textStyles || {} }); }, 40);
     return () => clearTimeout(t);
   }, [draft, paths, send, valuesOf]);
 
@@ -103,6 +109,19 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
     } catch (e) {
       send('error', { message: e instanceof Error ? e.message : 'Giá trị không hợp lệ' });
       return false;
+    }
+  }, [send, setDraft]);
+
+  /** Màu / cỡ chữ của một phần chữ (bảng Kiểu chữ trong trang); lỗi → báo trên trang, không ghi. */
+  const applyStyle = useCallback((p: string, style: TextStyle | null) => {
+    try {
+      const next = writeTextStyle(draftRef.current, p, style);
+      draftRef.current = next;
+      setDraft(next);
+      send('clear-error');
+    } catch (e) {
+      send('error', { message: e instanceof Error ? e.message : 'Kiểu chữ không hợp lệ' });
+      send('styles', { styles: draftRef.current.textStyles || {} });
     }
   }, [send, setDraft]);
 
@@ -153,7 +172,7 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
           // Trang tự chuyển (người dùng bấm menu / liên kết trong chế độ Xem) → nhận diện trang mới, giữ trình biên tập
           const at = typeof d.path === 'string' ? d.path : '';
           if (at && at !== framePath.current) { framePath.current = at; onPathChange(at); }
-          send('init', { mode: modeRef.current, canEdit, limits: Object.fromEntries(list.map(p => [p, cmsLimit(p)])), values: valuesOf(draftRef.current, list) });
+          send('init', { mode: modeRef.current, canEdit, limits: Object.fromEntries(list.map(p => [p, cmsLimit(p)])), values: valuesOf(draftRef.current, list), styles: draftRef.current.textStyles || {} });
           if (dirty) send('toast', { message: 'Các thay đổi chưa lưu vẫn được giữ trong phiên này.' });
           break;
         }
@@ -163,6 +182,10 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
         case 'danava-cms:change': if (canEdit) apply(String(d.path), String(d.value ?? '')); break;
         case 'danava-cms:commit': if (before.current) pushHistory(before.current); before.current = null; break;
         case 'danava-cms:cancel': if (before.current) replaceDraft(before.current); before.current = null; break;
+        case 'danava-cms:style-begin': styleBefore.current = draftRef.current; break;
+        case 'danava-cms:style': if (canEdit && typeof d.path === 'string') applyStyle(d.path, d.style && typeof d.style === 'object' ? d.style as TextStyle : null); break;
+        case 'danava-cms:style-commit': if (styleBefore.current) pushHistory(styleBefore.current); styleBefore.current = null; break;
+        case 'danava-cms:device': if (d.device === 'mobile' || d.device === 'desktop') setDevice(d.device); break;
         case 'danava-cms:pick-image': if (canEdit) setPicker({ base: String(d.base), label: String(d.label || 'Ảnh') }); break;
         case 'danava-cms:open-panel': onPanel(String(d.panel || '')); break;
         case 'danava-cms:key':

@@ -4,6 +4,7 @@ import { defaultPresentation, type Presentation } from './presentation.ts';
 import { validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
 import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.ts';
 import { HOME_HERO_LIMITS, type HomeHero } from './home-hero.ts';
+import { validTextStyles, type TextStyles } from './text-styles.ts';
 
 /*
  * Mô hình nội dung website. Toàn bộ nội dung được lưu thành MỘT bản JSON trong bảng `content`
@@ -247,6 +248,8 @@ export type SiteData = {
   homeHero?: Partial<HomeHero>;
   /** Chữ sửa trực tiếp trên website (khóa ổn định → chữ); trống = dùng chữ mặc định trong mã nguồn (lib/site-text.ts). */
   texts?: Record<string, string>;
+  /** Màu / cỡ chữ riêng của từng phần chữ (khóa data-cms → kiểu chữ), tách khỏi nội dung (lib/text-styles.ts). Trống = kiểu mặc định. */
+  textStyles?: TextStyles;
 };
 
 /**
@@ -475,6 +478,7 @@ export function validateContent(v: unknown): v is SiteData {
   if (!optStr(v.heroTitle, 150)) return false;
   if (v.homeHero !== undefined && !validHomeHero(v.homeHero)) return false;
   if (v.texts !== undefined && !validTexts(v.texts)) return false;
+  if (v.textStyles !== undefined && !validTextStyles(v.textStyles)) return false;
   if (v.presentation !== undefined && !validPresentation(v.presentation)) return false;
   if (!validBlocks(v.blocks) || !validExtras(v.extras) || !validCareers(v.careers)) return false;
   if (!Array.isArray(v.staff) || v.staff.length > 100 || !v.staff.every(p => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image))))) return false;

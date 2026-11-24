@@ -3,6 +3,7 @@
  * Chủ yếu là đường dẫn trùng: hai bản ghi cùng một URL thì một bản ghi sẽ không mở được.
  */
 import { RESERVED_POST_SLUGS, type SiteData } from './content.ts';
+import { MAX_STYLES, styleError, validTextStyle, validTextStyleKey } from './text-styles.ts';
 import { isCoreProduct, missingForPublish } from './product-types.ts';
 
 const SLUG = /^[a-z0-9-]+$/;
@@ -25,6 +26,16 @@ export function recordUrls(data: SiteData): { url: string; label: string }[] {
 
 /** Lỗi đầu tiên tìm thấy (để hiện cho người dùng), hoặc null. */
 export function contentProblem(data: SiteData): string | null {
+  // Kiểu chữ theo phần (lib/text-styles.ts): báo đúng phần và lý do thay vì lỗi cấu trúc chung
+  if (data.textStyles !== undefined) {
+    if (!data.textStyles || typeof data.textStyles !== 'object' || Array.isArray(data.textStyles)) return 'Kiểu chữ không đúng cấu trúc.';
+    const entries = Object.entries(data.textStyles);
+    if (entries.length > MAX_STYLES) return `Tối đa ${MAX_STYLES} phần có kiểu chữ riêng.`;
+    for (const [k, v] of entries) {
+      if (!validTextStyleKey(k)) return 'Kiểu chữ gắn với một phần không hợp lệ.';
+      if (!validTextStyle(v)) return `Kiểu chữ không hợp lệ: ${styleError(v as never) || 'chỉ đổi được màu (#RRGGBB) và cỡ chữ (số nguyên px).'}`;
+    }
+  }
   for (const p of data.posts) {
     if (!SLUG.test(p.slug)) return `Đường dẫn bài “${p.title}” chỉ được dùng chữ thường không dấu, số và dấu gạch ngang.`;
     if (RESERVED_POST_SLUGS.includes(p.slug)) return `Đường dẫn “${p.slug}” đã dành cho trang hệ thống, hãy đặt đường dẫn khác cho bài “${p.title}”.`;

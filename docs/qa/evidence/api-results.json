@@ -136,7 +136,7 @@
   "module": "Bảo mật/Phản hồi",
   "scenario": "Danh sách tài khoản không lộ mật khẩu/hash",
   "expected": "Không có trường password/hash",
-  "actual": "200 {\"users\":[{\"id\":\"usr_d490a8ee-11f\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
+  "actual": "200 {\"users\":[{\"id\":\"usr_70666399-028\",\"username\":\"qa.admin\",\"name\":\"QA admin Nguyễn Thị Ánh\",\"role\":\"admin\",\"active\":true,\"",
   "status": "PASS"
  },
  {
@@ -430,7 +430,7 @@
   "module": "Nội dung/Nháp",
   "scenario": "Đọc lại bản nháp qua API admin",
   "expected": "Có chữ nháp",
-  "actual": "QA_NHAP_Đồng_hành_d188dc",
+  "actual": "QA_NHAP_Đồng_hành_a36543",
   "status": "PASS"
  },
  {
@@ -773,7 +773,7 @@
   "module": "Tài nguyên/Tải ảnh",
   "scenario": "Tải PNG hợp lệ",
   "expected": "201 + đường dẫn /assets/uploads/*.webp",
-  "actual": "201 /assets/uploads/09c15caf-cd7d-4003-95ee-e2a985d3724b.webp",
+  "actual": "201 /assets/uploads/f5d91e19-8187-40d0-989e-b7e1de2d8d13.webp",
   "status": "PASS"
  },
  {
@@ -808,7 +808,7 @@
   "module": "Tài nguyên/Tải ảnh",
   "scenario": "Ảnh > 6 MB",
   "expected": "413 hoặc máy chủ đóng kết nối sớm; không thêm ảnh",
-  "actual": "413, ảnh 3→3",
+  "actual": "đóng kết nối, ảnh 3→3",
   "status": "PASS"
  },
  {

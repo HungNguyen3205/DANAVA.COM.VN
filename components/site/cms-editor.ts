@@ -8,7 +8,11 @@
  * - Mỗi vùng mang khóa dữ liệu ổn định (components/site/cms.ts → lib/cms-paths.ts). Thay đổi gửi về cửa sổ admin
  *   (postMessage cùng nguồn) để cập nhật BẢN NHÁP; admin lưu nháp / xuất bản qua API có kiểm tra quyền.
  * - Không ghi DOM của phần đang gõ khi nhận dữ liệu từ admin → không mất con trỏ, không vỡ bộ gõ tiếng Việt.
+ * - Kiểu chữ (màu, cỡ chữ máy tính / điện thoại) của phần chữ đang chọn: nút "Kiểu chữ" → bảng ngay cạnh phần đó;
+ *   xem trước ngay bằng thẻ <style id="cms-text-styles"> (cùng CSS với website, lib/text-styles.ts), lưu vào bản nháp qua admin.
  */
+
+import { BRAND_COLORS, MOBILE_MAX, SIZE_BY_KIND, SIZE_LIMITS, normalizeHex, textStylesCss, type StyleDevice, type TextStyle, type TextStyles } from '@/lib/text-styles';
 
 type Mode = 'view' | 'edit';
 type Kind = 'text' | 'image' | 'link' | 'block';
@@ -32,6 +36,9 @@ export function startCmsEditor() {
   let sel: Sel | null = null;
   let editing: { el: HTMLElement; path: string; before: string; rich: boolean; multiline: boolean } | null = null;
   let suppressClick = false;
+  let styles: TextStyles = {};
+  let styleOpen = false;
+  let styleSession = false;
 
   /* ---------------- CSS trên trang (chỉ trong khung chỉnh) ---------------- */
   const css = document.createElement('style');
@@ -87,6 +94,32 @@ export function startCmsEditor() {
     .toast.on { display: block; animation: in .16s ease-out; }
     .msg { padding: 0 8px; color: #ffb4a8; font-weight: 600; white-space: nowrap; }
     .msg:empty { display: none; }
+    .pop.is-style { width: min(340px, calc(100vw - 16px)); max-height: calc(100vh - 16px); overflow: auto; gap: 12px; overscroll-behavior: contain; }
+    .pop.is-sheet { width: auto; max-height: min(62vh, 460px); border-radius: 16px; }
+    .sec { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid #eef1f6; }
+    .sec.first { padding-top: 0; border-top: 0; }
+    .hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 700; color: #13244f; }
+    .chip { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #eef1f6; color: #51607f; white-space: nowrap; }
+    .chip.on { background: #fff1e6; color: #b4500c; }
+    .sw { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pop .sw button { width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 1px solid rgba(15,28,63,.22); }
+    .pop .sw button[aria-pressed=true] { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #f26b1d; }
+    .line { display: flex; align-items: center; gap: 6px; }
+    .line input[type=color] { width: 44px; height: 36px; padding: 3px; flex: none; cursor: pointer; }
+    .line .num { width: 76px; flex: none; text-align: center; }
+    .line .px { color: #5b6886; font-weight: 600; }
+    .pop button.ghost { color: #13244f; border: 1px solid #e3e8f0; }
+    .pop button.ghost:hover { background: #f3f5f9; }
+    .pop button.sq { width: 36px; height: 36px; padding: 0; justify-content: center; font-size: 18px; flex: none; }
+    .pop button.reset { justify-self: start; height: 30px; color: #b4500c; border: 1px solid #f6d3bb; }
+    .pop button.reset:hover { background: #fff6ef; }
+    .pop button.reset:disabled { color: #9aa5bd; border-color: #e3e8f0; cursor: default; background: none; }
+    .seg { display: inline-flex; justify-self: start; padding: 3px; border-radius: 10px; background: #eef1f6; gap: 2px; }
+    .pop .seg button { height: 28px; padding: 0 10px; color: #3d4a6b; font-size: 12.5px; }
+    .pop .seg button[aria-pressed=true] { background: #fff; color: #13244f; box-shadow: 0 1px 2px rgba(8,16,40,.14); }
+    .pop input[type=range] { height: 28px; padding: 0; border: 0; accent-color: #f26b1d; box-shadow: none; touch-action: pan-y; cursor: pointer; }
+    .note { margin: 0; color: #5b6886; font-size: 12px; font-weight: 500; }
+    .note b { font-size: 12px; color: #13244f; }
     @keyframes in { from { opacity: 0; transform: translateY(4px); } }
     @media (prefers-reduced-motion: reduce) { .bar, .pop, .toast.on { animation: none; } }
   </style>
@@ -103,6 +136,7 @@ export function startCmsEditor() {
     image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>',
     link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
     em: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 4h-9M14 20H5M15 4 9 20"/></svg>',
+    type: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h11v2M9.5 5v14M7 19h5"/><path d="M14 13v-1h7v1M17.5 12v7M16 19h3"/></svg>',
     sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>'
   };
   let toastTimer = 0;
@@ -247,6 +281,7 @@ export function startCmsEditor() {
   }
 
   function deselect(commitText = true) {
+    endStyle();
     if (editing) commitText ? finishText() : cancelText();
     if (!sel) return;
     sel.el.classList.remove('is-cms-sel');
@@ -398,6 +433,222 @@ export function startCmsEditor() {
     requestAnimationFrame(() => { place(); label.focus(); label.select(); });
   }
 
+  /* ---------------- Kiểu chữ: màu + cỡ chữ (máy tính / điện thoại) ---------------- */
+  const styleTag = () => {
+    let t = document.getElementById('cms-text-styles') as HTMLStyleElement | null;
+    if (!t) { t = document.createElement('style'); t.id = 'cms-text-styles'; document.body.appendChild(t); }
+    return t;
+  };
+  const renderStyles = () => { styleTag().textContent = textStylesCss(styles); };
+  // Cùng mốc với CSS của website (lib/text-styles.ts) → bảng luôn chỉnh đúng thiết bị đang xem
+  const mobileMq = matchMedia(`(max-width: ${MOBILE_MAX}.98px)`);
+  const deviceNow = (): StyleDevice => (mobileMq.matches ? 'mobile' : 'desktop');
+  const DEVICE_TEXT: Record<StyleDevice, string> = { desktop: 'Máy tính (từ 768px)', mobile: 'Điện thoại (dưới 768px)' };
+  const toHex = (c: string) => {
+    const m = c.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+    return m ? '#' + m.slice(1, 4).map(x => Math.round(Number(x)).toString(16).padStart(2, '0')).join('') : '#000000';
+  };
+  /**
+   * Kiểu chữ giao diện của phần (không tính tùy chỉnh của chính nó) → hiển thị "mặc định".
+   * Đo trên bản sao tạm không mang khóa data-cms, đặt cạnh phần gốc (cùng kế thừa); không đụng thẻ CSS đang áp.
+   */
+  function natural(el: HTMLElement) {
+    const probe = el.cloneNode(false) as HTMLElement;
+    probe.removeAttribute('data-cms');
+    probe.removeAttribute('contenteditable');
+    probe.classList.remove('is-cms-sel', 'is-cms-press');
+    probe.setAttribute('aria-hidden', 'true');
+    probe.textContent = 'x';
+    probe.style.setProperty('position', 'absolute', 'important');
+    probe.style.setProperty('visibility', 'hidden', 'important');
+    probe.style.setProperty('pointer-events', 'none', 'important');
+    el.after(probe);
+    const cs = getComputedStyle(probe);
+    const out = { color: toHex(cs.color), size: Math.round(parseFloat(cs.fontSize)) };
+    probe.remove();
+    return out;
+  }
+  /** Giới hạn hợp lý theo loại nội dung (tiêu đề / đoạn văn / nhãn), luôn chứa cỡ chữ mặc định. */
+  function boundsFor(el: HTMLElement, def: number, d: StyleDevice): [number, number] {
+    const kind = el.closest('h1,h2,h3') || def >= 28 ? 'heading' : el.hasAttribute('data-cms-multiline') || el.closest('p,blockquote,li,dd') ? 'text' : 'label';
+    const [lo, hi] = SIZE_BY_KIND[kind][d];
+    return [Math.max(SIZE_LIMITS[d][0], Math.min(lo, def)), Math.min(SIZE_LIMITS[d][1], Math.max(hi, def))];
+  }
+  const editPath = () => (sel?.kind === 'text' ? sel.el.dataset.cms || '' : '');
+  const curStyle = (): TextStyle => (editPath() ? styles[editPath()] || {} : {});
+  const beginStyle = () => { if (!styleSession) { styleSession = true; post('style-begin', { path: editPath() }); } };
+  const commitStyle = () => { if (styleSession) { styleSession = false; post('style-commit'); } };
+  /** Áp một thay đổi kiểu chữ: xem trước ngay + gửi về bản nháp (máy chủ kiểm tra lại khi lưu). */
+  function setStyle(patch: Partial<Record<keyof TextStyle, number | string | undefined>>) {
+    const path = editPath();
+    if (!path) return;
+    const next: Record<string, unknown> = { ...curStyle(), ...patch };
+    for (const k of Object.keys(next)) if (next[k] === undefined) delete next[k];
+    if (Object.keys(next).length) styles = { ...styles, [path]: next as TextStyle };
+    else { styles = { ...styles }; delete styles[path]; }
+    renderStyles();
+    post('style', { path, style: Object.keys(next).length ? next : null });
+    refreshStyle();
+    place();
+  }
+  /** Một thao tác rời (bấm màu, +/−, khôi phục) = một bước hoàn tác. */
+  const once = (patch: Parameters<typeof setStyle>[0]) => { beginStyle(); setStyle(patch); commitStyle(); };
+
+  let resumeText = false;
+  function openStyle() {
+    if (!sel || sel.kind !== 'text') return;
+    resumeText = !!editing;
+    if (editing) finishText(); // ghi nhận phần chữ vừa gõ (hoàn tác riêng), vẫn giữ đúng phần đang chọn
+    styleOpen = true;
+    buildStyle();
+    pop.classList.add('on', 'is-style');
+    toolbar();
+    place();
+    keepVisible();
+    (pop.querySelector<HTMLElement>('.sw button[aria-pressed=true]') || pop.querySelector<HTMLElement>('.sw button'))?.focus({ preventScroll: true });
+  }
+  /** Đóng bảng kiểu chữ; quay lại gõ chữ nếu trước đó đang gõ. */
+  function closeStyle() {
+    if (!styleOpen) return;
+    endStyle();
+    if (sel?.kind === 'text') { if (resumeText) startText(sel.el); toolbar(); place(); }
+  }
+  function endStyle() {
+    if (!styleOpen) return;
+    commitStyle();
+    styleOpen = false;
+    pop.classList.remove('on', 'is-style', 'is-sheet');
+    pop.style.right = ''; pop.style.bottom = '';
+    pop.innerHTML = '';
+  }
+  /** Điện thoại: bảng nằm sát đáy màn hình; cuộn để phần đang chỉnh nằm phía trên bảng (không bị che). */
+  function keepVisible() {
+    if (!sel || !pop.classList.contains('is-sheet')) return;
+    const r = sel.el.getBoundingClientRect(), free = innerHeight - pop.offsetHeight - 16;
+    const want = Math.max(56, (free - Math.min(r.height, free - 56)) / 2);
+    if (r.top < 48 || r.bottom > free) { scrollBy({ top: r.top - want, behavior: 'instant' as ScrollBehavior }); place(); }
+  }
+
+  function buildStyle() {
+    pop.innerHTML = '';
+    if (!sel) return;
+    const el = sel.el;
+    const h = document.createElement('b'); h.textContent = `Kiểu chữ · ${sel.label}`;
+    // Màu chữ
+    const cSec = document.createElement('div'); cSec.className = 'sec first';
+    cSec.innerHTML = '<div class="hd"><span>Màu chữ</span><span class="chip" data-k="cchip"></span></div>';
+    const sw = document.createElement('div'); sw.className = 'sw'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Màu nhận diện DANAVA');
+    for (const c of BRAND_COLORS) {
+      const b = btn('', `${c.name} (${c.hex.toUpperCase()})`, () => once({ color: c.hex }));
+      b.style.background = c.hex; b.dataset.hex = c.hex;
+      sw.append(b);
+    }
+    const line = document.createElement('div'); line.className = 'line';
+    const picker = document.createElement('input'); picker.type = 'color'; picker.setAttribute('aria-label', 'Chọn màu tùy chỉnh'); picker.dataset.k = 'picker';
+    picker.addEventListener('input', () => { beginStyle(); setStyle({ color: picker.value.toLowerCase() }); });
+    picker.addEventListener('change', commitStyle);
+    const hex = document.createElement('input'); hex.maxLength = 7; hex.spellcheck = false; hex.autocapitalize = 'off'; hex.setAttribute('aria-label', 'Mã màu HEX'); hex.placeholder = '#RRGGBB'; hex.dataset.k = 'hex';
+    const cErr = document.createElement('p'); cErr.className = 'err'; cErr.setAttribute('role', 'alert');
+    hex.addEventListener('input', () => {
+      const raw = hex.value.trim();
+      const v = normalizeHex(raw);
+      hex.setAttribute('aria-invalid', String(!v && raw !== ''));
+      cErr.textContent = v || !raw ? '' : 'Mã màu dạng #RRGGBB (vd. #F08A1C).';
+      if (v) { beginStyle(); setStyle({ color: v }); }
+    });
+    hex.addEventListener('change', () => {
+      commitStyle();
+      if (!normalizeHex(hex.value)) { hex.removeAttribute('aria-invalid'); cErr.textContent = ''; }
+      refreshStyle(true);
+    });
+    hex.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); hex.blur(); } });
+    line.append(picker, hex);
+    const cReset = btn('Khôi phục màu mặc định', 'Khôi phục màu mặc định của phần này', () => once({ color: undefined }), 'reset');
+    cReset.dataset.k = 'creset';
+    cSec.append(sw, line, cErr, cReset);
+
+    // Cỡ chữ
+    const sSec = document.createElement('div'); sSec.className = 'sec';
+    sSec.innerHTML = '<div class="hd"><span>Cỡ chữ</span><span class="chip" data-k="schip"></span></div>';
+    const seg = document.createElement('div'); seg.className = 'seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Thiết bị áp dụng cỡ chữ');
+    for (const d of ['desktop', 'mobile'] as const) {
+      const b = btn(d === 'desktop' ? 'Máy tính' : 'Điện thoại', `Chỉnh cỡ chữ cho ${DEVICE_TEXT[d]}`, () => { if (deviceNow() !== d) post('device', { device: d }); });
+      b.dataset.dev = d; seg.append(b);
+    }
+    const note = document.createElement('p'); note.className = 'note'; note.dataset.k = 'dev';
+    const row = document.createElement('div'); row.className = 'line';
+    const num = document.createElement('input'); num.type = 'number'; num.inputMode = 'numeric'; num.step = '1'; num.className = 'num'; num.dataset.k = 'num';
+    num.setAttribute('aria-label', 'Cỡ chữ (px)');
+    const px = document.createElement('span'); px.className = 'px'; px.textContent = 'px';
+    const sErr = document.createElement('p'); sErr.className = 'err'; sErr.setAttribute('role', 'alert');
+    const field = () => (deviceNow() === 'desktop' ? 'size' : 'sizeMobile') as 'size' | 'sizeMobile';
+    const sizeNow = () => curStyle()[field()] ?? natural(el).size;
+    const step = (by: number) => {
+      const [lo, hi] = boundsFor(el, natural(el).size, deviceNow());
+      once({ [field()]: Math.max(lo, Math.min(hi, sizeNow() + by)) });
+    };
+    const minus = btn('−', 'Giảm cỡ chữ 1px', () => step(-1), 'ghost sq');
+    const plus = btn('+', 'Tăng cỡ chữ 1px', () => step(1), 'ghost sq');
+    num.addEventListener('input', () => {
+      const [lo, hi] = boundsFor(el, natural(el).size, deviceNow());
+      const v = Number(num.value);
+      const ok = num.value !== '' && Number.isInteger(v) && v >= lo && v <= hi;
+      num.setAttribute('aria-invalid', String(!ok && num.value !== ''));
+      sErr.textContent = ok || num.value === '' ? '' : `Nhập số nguyên từ ${lo} đến ${hi}px.`;
+      if (ok) { beginStyle(); setStyle({ [field()]: v }); }
+    });
+    num.addEventListener('change', () => { commitStyle(); num.removeAttribute('aria-invalid'); sErr.textContent = ''; refreshStyle(true); });
+    num.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); num.blur(); } });
+    row.append(minus, num, px, plus);
+    const range = document.createElement('input'); range.type = 'range'; range.step = '1'; range.dataset.k = 'range'; range.setAttribute('aria-label', 'Kéo để đổi cỡ chữ');
+    range.addEventListener('input', () => { beginStyle(); setStyle({ [field()]: Number(range.value) }); });
+    range.addEventListener('change', commitStyle);
+    range.addEventListener('pointerup', commitStyle);
+    const sReset = btn('Khôi phục cỡ chữ mặc định', 'Khôi phục cỡ chữ mặc định cho thiết bị này', () => once({ [field()]: undefined }), 'reset');
+    sReset.dataset.k = 'sreset';
+    sSec.append(seg, note, row, range, sErr, sReset);
+
+    const foot = document.createElement('div'); foot.className = 'row';
+    foot.append(btn(`${ICON.check} Xong`, 'Đóng bảng kiểu chữ', () => closeStyle(), 'pri'));
+    pop.append(h, cSec, sSec, foot);
+    refreshStyle(true);
+  }
+
+  /** Cập nhật giá trị đang hiển thị trong bảng (không đè ô người dùng đang gõ). */
+  function refreshStyle(all = false) {
+    if (!styleOpen || !sel) return;
+    const el = sel.el;
+    const q = <T extends HTMLElement>(k: string) => pop.querySelector<T>(`[data-k="${k}"]`);
+    const num = q<HTMLInputElement>('num'), range = q<HTMLInputElement>('range'), hex = q<HTMLInputElement>('hex'), picker = q<HTMLInputElement>('picker');
+    if (!num || !range || !hex || !picker) return;
+    const active = shadow.activeElement;
+    const st = curStyle(), nat = natural(el), d = deviceNow();
+    const color = st.color || nat.color;
+    const cchip = q('cchip')!; cchip.textContent = st.color ? 'Đã tùy chỉnh' : 'Mặc định giao diện'; cchip.classList.toggle('on', !!st.color);
+    pop.querySelectorAll<HTMLButtonElement>('.sw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hex === color)));
+    if (active !== picker) picker.value = color;
+    if (active !== hex || all) hex.value = color.toUpperCase();
+    q<HTMLButtonElement>('creset')!.disabled = !st.color;
+    const custom = d === 'desktop' ? st.size : st.sizeMobile;
+    const size = custom ?? nat.size;
+    const [lo, hi] = boundsFor(el, nat.size, d);
+    const schip = q('schip')!; schip.textContent = custom ? 'Đã tùy chỉnh' : `Mặc định · ${nat.size}px`; schip.classList.toggle('on', !!custom);
+    pop.querySelectorAll<HTMLButtonElement>('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dev === d)));
+    const other = d === 'desktop' ? st.sizeMobile : st.size;
+    const otherName = d === 'desktop' ? 'Điện thoại' : 'Máy tính';
+    const dev = q('dev')!; dev.textContent = 'Đang chỉnh cho: ';
+    const nb = document.createElement('b'); nb.textContent = DEVICE_TEXT[d];
+    dev.append(nb, other ? ` · ${otherName}: ${other}px` : ` · ${otherName}: theo giao diện`);
+    num.min = String(lo); num.max = String(hi); if (active !== num || all) num.value = String(size);
+    range.min = String(lo); range.max = String(hi); if (active !== range) range.value = String(size);
+    range.setAttribute('aria-valuetext', `${size}px`);
+    q<HTMLButtonElement>('sreset')!.disabled = !custom;
+  }
+  pop.addEventListener('keydown', e => { if (styleOpen && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeStyle(); } });
+  const onDevice = () => { if (styleOpen) { refreshStyle(true); place(); keepVisible(); } };
+  addEventListener('resize', onDevice);
+  mobileMq.addEventListener('change', onDevice);
+
   /* ---------------- Thanh công cụ theo phần đang chọn ---------------- */
   function toolbar() {
     bar.innerHTML = '';
@@ -409,6 +660,10 @@ export function startCmsEditor() {
     if (sc) { const b = document.createElement('span'); b.className = `scope${sc.global ? ' is-global' : ''}`; b.textContent = sc.text; b.title = sc.global ? 'Thay đổi hiển thị trên mọi trang dùng phần này' : 'Cập nhật hồ sơ gốc trong module quản trị'; bar.append(b); }
     if (sel.kind === 'text') {
       if (editing?.rich) { const b = btn(`${ICON.em} Nhấn mạnh`, 'Nhấn mạnh phần chữ đang chọn', toggleEm); bar.append(b); }
+      const st = btn(`${ICON.type} Kiểu chữ`, 'Màu và cỡ chữ của phần này', () => (styleOpen ? closeStyle() : openStyle()));
+      st.setAttribute('aria-pressed', String(styleOpen));
+      st.setAttribute('aria-haspopup', 'dialog');
+      bar.append(st);
       bar.append(btn(ICON.x, 'Hủy (Esc)', () => deselect(false)), btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri'));
     } else if (sel.kind === 'image') {
       const img = sel.el as HTMLImageElement;
@@ -440,12 +695,27 @@ export function startCmsEditor() {
     const left = Math.max(8, Math.min(r.left, vw - bw - 8));
     bar.style.top = `${Math.max(8, top)}px`;
     bar.style.left = `${left}px`;
+    pop.classList.toggle('is-sheet', styleOpen && vw < 600);
+    if (pop.classList.contains('is-sheet')) {
+      pop.style.left = '8px'; pop.style.right = '8px'; pop.style.top = 'auto'; pop.style.bottom = '8px';
+      // Thanh công cụ không chồng lên bảng kiểu chữ
+      const limit = vh - pop.offsetHeight - bh - 16;
+      if (top > limit) bar.style.top = `${Math.max(8, Math.min(r.top - bh - gap, limit))}px`;
+      return;
+    }
+    pop.style.right = ''; pop.style.bottom = '';
     if (pop.classList.contains('on')) {
       const pw = pop.offsetWidth, ph = pop.offsetHeight;
       let pt = below ? Math.max(8, top) + bh + 6 : r.bottom + gap;
       if (pt + ph > vh - 8) pt = Math.max(8, r.top - ph - gap - (below ? 0 : bh + 6));
+      let pl = Math.max(8, Math.min(r.left, vw - pw - 8));
+      // Không đủ chỗ trên/dưới → đặt bên cạnh để không che phần đang chỉnh
+      if (pt < r.bottom && pt + ph > r.top) {
+        if (vw - r.right > pw + 20) { pl = r.right + gap; pt = Math.max(8, Math.min(r.top, vh - ph - 8)); }
+        else if (r.left > pw + 20) { pl = r.left - pw - gap; pt = Math.max(8, Math.min(r.top, vh - ph - 8)); }
+      }
       pop.style.top = `${pt}px`;
-      pop.style.left = `${Math.max(8, Math.min(r.left, vw - pw - 8))}px`;
+      pop.style.left = `${pl}px`;
     }
   }
   let raf = 0;
@@ -531,6 +801,7 @@ export function startCmsEditor() {
 
   /* ---------------- Bàn phím ---------------- */
   document.addEventListener('keydown', e => {
+    if (styleOpen && e.composedPath().includes(pop)) return; // phím trong bảng kiểu chữ (Esc xử lý riêng, Enter trong ô nhập)
     const mod = e.ctrlKey || e.metaKey;
     if (editing) {
       if (e.key === 'Escape') { e.preventDefault(); deselect(false); return; }
@@ -577,13 +848,17 @@ export function startCmsEditor() {
     const d = e.data || {};
     if (d.type === 'danava-cms:init') {
       canEdit = !!d.canEdit;
+      styles = d.styles && typeof d.styles === 'object' ? d.styles : {};
+      renderStyles();
       limits = d.limits || {};
       applyValues(d.values || {});
       setMode(d.mode === 'edit' ? 'edit' : 'view', false);
     }
     if (d.type === 'danava-cms:mode') setMode(d.mode === 'edit' ? 'edit' : 'view', false);
     if (d.type === 'danava-cms:values') applyValues(d.values || {});
+    if (d.type === 'danava-cms:styles') { styles = d.styles && typeof d.styles === 'object' ? d.styles : {}; renderStyles(); refreshStyle(); }
     if (d.type === 'danava-cms:deselect') deselect();
+    if (d.type === 'danava-cms:device-changed') onDevice();
     if (d.type === 'danava-cms:error') { const m = bar.querySelector('.msg'); if (m) m.textContent = String(d.message || ''); else say(String(d.message || '')); }
     if (d.type === 'danava-cms:clear-error') { const m = bar.querySelector('.msg'); if (m) m.textContent = ''; }
     if (d.type === 'danava-cms:toast') say(String(d.message || ''));
