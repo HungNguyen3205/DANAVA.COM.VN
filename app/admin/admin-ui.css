@@ -231,7 +231,8 @@
 .ax-scope .ax-card__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
 .ax-scope .ax-pagehead { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
 .ax-scope .ax-pagehead__text { flex: 1; min-width: 200px; }
-.ax-scope .ax-pagehead h2 { margin: 0; font-size: 19px; font-weight: 800; }
+.ax-scope .ax-pagehead h2 { margin: 0; font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.ax-scope .ax-pagehead__path { font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1; color: var(--ax-muted); background: var(--ax-surface-2, #eef1f6); border: 1px solid var(--ax-border, #e3e7ef); border-radius: 999px; padding: 5px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
 .ax-scope .ax-pagehead p { margin: 2px 0 0; color: var(--ax-muted); font-size: 13px; }
 .ax-scope .ax-pagehead__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
 .ax-scope .ax-formsec { border: 1px solid var(--ax-border); border-radius: var(--ax-radius); background: var(--ax-surface); }

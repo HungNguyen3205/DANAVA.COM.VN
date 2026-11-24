@@ -41,8 +41,7 @@ export function WebsitePagesScreen({ renderTab, edited }: { renderTab: (page: Si
     <div className="blk-stack">
       <PageHeader
         back={<Button variant="ghost" onClick={() => { setTabId(''); setPageId('', true); }}><ArrowLeft size={16} /> Tất cả trang</Button>}
-        title={page.label}
-        description={page.path}
+        title={<>{page.label} <code className="ax-pagehead__path">{page.path}</code></>}
         actions={<>
           {tabs.some(t => t.kind === 'visual') && tab.kind !== 'visual' && <Button variant="primary" onClick={() => setTabId('giao-dien')}><Wand2 size={15} /> Chỉnh giao diện</Button>}
           <a className="ax-btn ax-btn--secondary" href={page.path} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>
