@@ -174,15 +174,51 @@
 
 /* ---------------------------------------------------------------- Tooltip, menu, dialog, sheet (render trong portal) */
 .ax-tooltip { z-index: 200; padding: 6px 10px; border-radius: 8px; background: #0c1838; color: #fff; font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; box-shadow: 0 6px 18px rgba(12, 24, 56, .28); animation: ax-pop var(--ax-fast) var(--ax-ease); }
-.ax-menu { z-index: 200; min-width: 200px; padding: 6px; border: 1px solid #e3e8f0; border-radius: 12px; background: #fff; font-family: var(--font-sans); font-size: 13.5px; box-shadow: 0 12px 32px -8px rgba(17, 26, 51, .2); animation: ax-pop var(--ax-fast) var(--ax-ease); }
-.ax-scope .ax-menu__label { padding: 6px 10px 4px; color: #6b7690; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.ax-scope .ax-menu__item { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 10px; border-radius: 8px; color: #111a33; outline: none; cursor: pointer; user-select: none; }
-.ax-scope .ax-menu__item[data-highlighted] { background: #fff1e7; color: #b84c0d; }
-.ax-scope .ax-menu__item[data-disabled] { opacity: .45; cursor: not-allowed; }
-.ax-scope .ax-menu__item.is-danger { color: #b42318; }
-.ax-scope .ax-menu__item.is-danger[data-highlighted] { background: #fdeceb; }
-.ax-scope .ax-menu__item.is-active { font-weight: 700; color: #b84c0d; }
-.ax-scope .ax-menu__sep { height: 1px; margin: 6px 0; background: #e3e8f0; }
+/* Menu thả xuống (tài khoản, tạo mới, thông báo, menu bay ra từ thanh bên thu gọn, menu thao tác).
+   Render trong portal (ngoài .ax-scope) → mọi quy tắc gắn với .ax-menu, không phụ thuộc khung admin. */
+.ax-menu { z-index: 200; box-sizing: border-box; min-width: 232px; max-width: min(360px, calc(100vw - 24px)); padding: 8px; border: 1px solid #e6eaf2; border-radius: 16px; background: rgba(255, 255, 255, .98); color: #111a33; font-family: var(--font-sans); font-size: 14px; line-height: 1.35; box-shadow: 0 24px 48px -18px rgba(17, 26, 51, .32), 0 2px 6px rgba(17, 26, 51, .05); animation: ax-pop var(--ax-fast) var(--ax-ease); transform-origin: var(--radix-dropdown-menu-content-transform-origin); }
+.ax-menu *, .ax-menu *::before { box-sizing: border-box; }
+.ax-menu--wide { width: 340px; }
+.ax-menu--account { width: 288px; }
+.ax-menu--fly { min-width: 248px; }
+.ax-menu__label { display: flex; align-items: center; gap: 8px; padding: 8px 10px 6px; color: #7a8399; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.ax-menu__item { position: relative; display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 5px 10px 5px 6px; border-radius: 11px; color: #111a33; font-weight: 600; outline: none; cursor: pointer; user-select: none; transition: background .14s ease, color .14s ease; }
+.ax-menu__item + .ax-menu__item { margin-top: 2px; }
+/* Ô biểu tượng đầu mục */
+.ax-menu__item > svg:first-child { box-sizing: content-box; flex: none; width: 16px; height: 16px; padding: 7px; border-radius: 9px; background: #f2f4f9; color: #4a5675; transition: background .14s ease, color .14s ease; }
+.ax-menu__text { display: grid; flex: 1; min-width: 0; }
+.ax-menu__text b { overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.ax-menu__text small { overflow: hidden; color: #7a8399; font-size: 12.5px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.ax-menu__item[data-highlighted] { background: #fff4ec; color: #b84c0d; }
+.ax-menu__item[data-highlighted] > svg:first-child { background: #ffe2cd; color: #e0600f; }
+.ax-menu__item[data-disabled] { opacity: .45; cursor: not-allowed; }
+.ax-menu__item.is-danger { color: #b42318; }
+.ax-menu__item.is-danger > svg:first-child { background: #fdeeec; color: #c4321c; }
+.ax-menu__item.is-danger[data-highlighted] { background: #fdeceb; }
+.ax-menu__item.is-danger[data-highlighted] > svg:first-child { background: #fbd5d0; }
+.ax-menu__item.is-active { background: #fff1e6; color: #b84c0d; }
+.ax-menu__item.is-active > svg:first-child { background: linear-gradient(135deg, #ff9a4d, #f26b1d); color: #fff; }
+.ax-menu__item.is-active::before { content: ""; position: absolute; left: -8px; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: #f26b1d; }
+.ax-menu__item:focus-visible { box-shadow: 0 0 0 2px #f26b1d inset; }
+.ax-menu__count { flex: none; min-width: 22px; padding: 0 7px; border-radius: 999px; background: #f26b1d; color: #fff; font-size: 11.5px; font-weight: 800; line-height: 20px; text-align: center; letter-spacing: 0; }
+.ax-menu__hint { flex: none; padding: 2px 8px; border-radius: 999px; background: #f2f4f9; color: #7a8399; font-size: 11.5px; font-weight: 600; }
+.ax-menu__sep { height: 1px; margin: 6px 4px; background: #edf0f5; }
+.ax-menu__empty { margin: 4px 10px 10px; color: #7a8399; font-size: 13.5px; }
+/* Đầu menu bay ra từ thanh bên: ô biểu tượng nhóm + tên nhóm */
+.ax-menu__head { display: flex; align-items: center; gap: 12px; margin: -2px -2px 6px; padding: 8px 10px 10px 8px; border-bottom: 1px solid #edf0f5; }
+.ax-menu__tile { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 11px; background: #13244f; color: #fff; }
+.ax-menu__head b { color: #111a33; font-size: 14.5px; font-weight: 800; }
+/* Thẻ tài khoản ở đầu menu */
+.ax-menu__user { display: flex; align-items: center; gap: 12px; margin: -2px -2px 6px; padding: 12px; border-radius: 12px; background: linear-gradient(135deg, #fff6ee 0%, #f5f7fc 100%); }
+.ax-menu__user { align-items: flex-start; }
+.ax-menu__user .ax-menu__text { align-self: center; }
+.ax-menu__user .ax-menu__text b { font-size: 15px; line-height: 1.3; white-space: normal; overflow-wrap: anywhere; }
+.ax-menu__user small { display: flex; align-items: center; gap: 6px; }
+.ax-menu__user small i { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, .16); }
+.ax-menu__role { flex: none; padding: 3px 9px; border-radius: 999px; background: #13244f; color: #fff; font-size: 11.5px; font-weight: 700; }
+.ax-menu__avatar { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #ff9a4d, #f26b1d); color: #fff; font-size: 12px; font-weight: 800; }
+.ax-menu__avatar--lg { width: 42px; height: 42px; border-radius: 13px; font-size: 14px; box-shadow: 0 8px 16px -8px rgba(242, 107, 29, .8); }
+.ax-menu__item--rich { min-height: 52px; }
 @keyframes ax-pop { from { opacity: 0; transform: translateY(-4px) scale(.98); } }
 .ax-overlay { position: fixed; inset: 0; z-index: 150; background: rgba(12, 24, 56, .42); backdrop-filter: blur(2px); }
 .ax-dialog { position: fixed; left: 50%; top: 14vh; z-index: 160; width: min(560px, calc(100vw - 32px)); max-height: 76vh; display: flex; flex-direction: column; margin-left: calc(min(560px, calc(100vw - 32px)) / -2); border: 1px solid #e3e8f0; border-radius: 16px; background: #fff; color: #111a33; font-family: var(--font-sans); font-size: 14px; box-shadow: 0 24px 60px -12px rgba(12, 24, 56, .35); }

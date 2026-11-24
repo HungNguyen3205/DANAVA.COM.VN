@@ -85,10 +85,10 @@ export function ActionMenu({ actions, label = 'Thao tác khác', trigger, align 
         {trigger || <button type="button" className="ax-icon-btn" aria-label={label}><MoreHorizontal size={17} /></button>}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="ax-menu" align={align} sideOffset={6} onCloseAutoFocus={menu.onCloseAutoFocus}>
+        <DropdownMenu.Content className="ax-menu" align={align} sideOffset={6} collisionPadding={12} onCloseAutoFocus={menu.onCloseAutoFocus}>
           {shown.map(a => (
             <DropdownMenu.Item key={a.label} className={cx('ax-menu__item', a.danger && 'is-danger')} disabled={a.disabled} onSelect={menu.select(a.onSelect)}>
-              {a.icon}<span>{a.label}</span>
+              {a.icon}<span className="ax-menu__text">{a.label}</span>
             </DropdownMenu.Item>
           ))}
         </DropdownMenu.Content>

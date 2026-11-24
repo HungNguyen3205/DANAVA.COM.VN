@@ -56,7 +56,7 @@ const ICONS: Record<string, LucideIcon> = {
   'cai-dat': Settings, 'tai-khoan': KeyRound, seo: Link2, 'tich-hop': Plug, 'nhat-ky': History
 };
 const GROUP_ICONS: Record<string, LucideIcon> = {
-  'Tổng quan': LayoutGrid, Website: Globe, 'Sản phẩm & Dịch vụ': Layers, 'Nội dung': FileText,
+  'Tổng quan': LayoutGrid, Website: Globe, 'Chỉnh sửa website': PanelsTopLeft, 'Sản phẩm & Dịch vụ': Layers, 'Nội dung': FileText,
   'Khách hàng': Users, 'Tài nguyên': FolderOpen, 'Báo cáo': ChartColumn, 'Hệ thống': Wrench
 };
 
@@ -163,9 +163,9 @@ function Shell({
                   <DropdownMenu.Trigger asChild><button type="button" className="ax-icon-btn ax-top__create" aria-label="Tạo mới"><Plus size={19} /></button></DropdownMenu.Trigger>
                 </Tip>
                 <DropdownMenu.Portal>
-                  <DropdownMenu.Content className="ax-menu" align="end" sideOffset={6}>
+                  <DropdownMenu.Content className="ax-menu" align="end" sideOffset={8} collisionPadding={12}>
                     <div className="ax-menu__label">Tạo mới</div>
-                    {creatable.map(c => <DropdownMenu.Item key={c.href} className="ax-menu__item" onSelect={() => go(c.href)}><c.icon size={16} />{c.label}</DropdownMenu.Item>)}
+                    {creatable.map(c => <DropdownMenu.Item key={c.href} className="ax-menu__item" onSelect={() => go(c.href)}><c.icon size={16} /><span className="ax-menu__text">{c.label}</span></DropdownMenu.Item>)}
                   </DropdownMenu.Content>
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
@@ -179,17 +179,17 @@ function Shell({
                   </DropdownMenu.Trigger>
                 </Tip>
                 <DropdownMenu.Portal>
-                  <DropdownMenu.Content className="ax-menu" align="end" sideOffset={6} style={{ width: 320 }}>
-                    <div className="ax-menu__label">Khách hàng mới · {newLeads.length}</div>
-                    {!newLeads.length && <p style={{ margin: '6px 10px 10px', color: '#6b7690' }}>Không có yêu cầu mới.</p>}
+                  <DropdownMenu.Content className="ax-menu ax-menu--wide" align="end" sideOffset={8} collisionPadding={12}>
+                    <div className="ax-menu__label">Khách hàng mới <span className="ax-menu__count">{newLeads.length}</span></div>
+                    {!newLeads.length && <p className="ax-menu__empty">Không có yêu cầu mới.</p>}
                     {newLeads.slice(0, 5).map(l => (
-                      <DropdownMenu.Item key={l.id} className="ax-menu__item" onSelect={() => go('/admin/khach-hang/')}>
-                        <span className="ax-avatar" style={{ width: 28, height: 28, fontSize: 11 }}>{initials(l.name)}</span>
-                        <span style={{ display: 'grid', minWidth: 0 }}><b style={{ fontWeight: 600 }}>{l.name}</b><small style={{ color: '#6b7690', fontSize: 12 }}>{l.service || 'Tư vấn chung'} · {timeAgo(l.created_at)}</small></span>
+                      <DropdownMenu.Item key={l.id} className="ax-menu__item ax-menu__item--rich" onSelect={() => go('/admin/khach-hang/')}>
+                        <span className="ax-menu__avatar">{initials(l.name)}</span>
+                        <span className="ax-menu__text"><b>{l.name}</b><small>{l.service || 'Tư vấn chung'} · {timeAgo(l.created_at)}</small></span>
                       </DropdownMenu.Item>
                     ))}
                     <div className="ax-menu__sep" />
-                    <DropdownMenu.Item className="ax-menu__item" onSelect={() => go('/admin/khach-hang/')}><ArrowUpRight size={15} />Xem tất cả yêu cầu</DropdownMenu.Item>
+                    <DropdownMenu.Item className="ax-menu__item" onSelect={() => go('/admin/khach-hang/')}><ArrowUpRight size={16} /><span className="ax-menu__text">Xem tất cả yêu cầu</span></DropdownMenu.Item>
                   </DropdownMenu.Content>
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
@@ -317,11 +317,12 @@ function Sidebar({ groups, active, mini, counts, onNavigate, onToggle, inDrawer 
                     </DropdownMenu.Trigger>
                   </Tip>
                   <DropdownMenu.Portal>
-                    <DropdownMenu.Content className="ax-menu" side="right" align="start" sideOffset={10}>
-                      <div className="ax-menu__label">{g.group}</div>
+                    <DropdownMenu.Content className="ax-menu ax-menu--fly" side="right" align="start" sideOffset={12} collisionPadding={12}>
+                      <div className="ax-menu__head"><span className="ax-menu__tile"><Icon size={17} /></span><span className="ax-menu__text"><b>{g.group}</b><small>{g.items.length} mục</small></span></div>
                       {g.items.map(it => {
                         const ItemIcon = ICONS[it.slug] || FileText;
-                        return <DropdownMenu.Item key={it.slug} className={`ax-menu__item${it.slug === active ? ' is-active' : ''}`} onSelect={() => onNavigate(link(it.slug))}><ItemIcon size={16} />{it.label}{!!counts[it.slug] && <span className="ax-side__count">{counts[it.slug]}</span>}</DropdownMenu.Item>;
+                        const on = it.slug === active;
+                        return <DropdownMenu.Item key={it.slug} className={`ax-menu__item${on ? ' is-active' : ''}`} aria-current={on ? 'page' : undefined} onSelect={() => onNavigate(link(it.slug))}><ItemIcon size={16} /><span className="ax-menu__text">{it.label}</span>{!!counts[it.slug] && <span className="ax-menu__count">{counts[it.slug]}</span>}</DropdownMenu.Item>;
                       })}
                     </DropdownMenu.Content>
                   </DropdownMenu.Portal>
@@ -431,12 +432,16 @@ function AccountMenu({ onLogout, onSettings }: { onLogout: () => void; onSetting
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="ax-menu" align="end" sideOffset={6}>
-          <div className="ax-menu__label">{user.name} · {role}</div>
-          <DropdownMenu.Item className="ax-menu__item" onSelect={() => window.open('/', '_blank', 'noopener')}><ExternalLink size={16} />Xem website</DropdownMenu.Item>
-          {onSettings && <DropdownMenu.Item className="ax-menu__item" onSelect={onSettings}><Settings size={16} />Cài đặt</DropdownMenu.Item>}
+        <DropdownMenu.Content className="ax-menu ax-menu--account" align="end" sideOffset={8} collisionPadding={12}>
+          <div className="ax-menu__user">
+            <span className="ax-menu__avatar ax-menu__avatar--lg">{initials(user.name)}</span>
+            <span className="ax-menu__text"><b>{user.name}</b><small><i />Đang đăng nhập</small></span>
+            <span className="ax-menu__role">{role}</span>
+          </div>
+          <DropdownMenu.Item className="ax-menu__item" onSelect={() => window.open('/', '_blank', 'noopener')}><ExternalLink size={16} /><span className="ax-menu__text">Xem website</span><span className="ax-menu__hint">Tab mới</span></DropdownMenu.Item>
+          {onSettings && <DropdownMenu.Item className="ax-menu__item" onSelect={onSettings}><Settings size={16} /><span className="ax-menu__text">Cài đặt</span></DropdownMenu.Item>}
           <div className="ax-menu__sep" />
-          <DropdownMenu.Item className="ax-menu__item is-danger" onSelect={onLogout}><LogOut size={16} />Đăng xuất</DropdownMenu.Item>
+          <DropdownMenu.Item className="ax-menu__item is-danger" onSelect={onLogout}><LogOut size={16} /><span className="ax-menu__text">Đăng xuất</span></DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
