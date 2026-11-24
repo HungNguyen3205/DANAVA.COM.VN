@@ -5,6 +5,7 @@
  */
 import { NextResponse, type NextRequest } from 'next/server';
 import { getContent } from '@/lib/database';
+import { LOCALE_HEADER, localePath, splitLocale } from '@/lib/i18n';
 
 type Cache = { at: number; map: Map<string, string> };
 const g = globalThis as typeof globalThis & { __danavaRedirects?: Cache };
@@ -27,15 +28,26 @@ async function table(): Promise<Map<string, string>> {
 const CMS_HEADER = 'x-danava-cms';
 
 export async function proxy(request: NextRequest) {
-  const path = request.nextUrl.pathname.endsWith('/') ? request.nextUrl.pathname : request.nextUrl.pathname + '/';
+  // Ngôn ngữ: /en/… /ja/… → chuyển nội bộ về trang tiếng Việt cùng đường dẫn, kèm cờ ngôn ngữ (lib/i18n.ts)
+  const { locale, path: plain } = splitLocale(request.nextUrl.pathname);
+  if (locale !== 'vi' && request.nextUrl.pathname === `/${locale}`) {
+    const url = request.nextUrl.clone(); url.pathname = `/${locale}/`;
+    return NextResponse.redirect(url, 308);
+  }
+  const path = plain.endsWith('/') ? plain : plain + '/';
   const to = (await table()).get(path);
   if (!to) {
     const headers = new Headers(request.headers);
     headers.delete(CMS_HEADER);
+    // Cờ ngôn ngữ KHÔNG xóa: sau khi chuyển nội bộ /en/x → /x, proxy chạy lại với đường dẫn tiếng Việt và phải giữ cờ.
+    // Cờ chỉ đổi ngôn ngữ hiển thị (không liên quan quyền), trang không lưu bộ nhớ đệm chung (force-dynamic, no-store).
     if (request.nextUrl.searchParams.get('cms') === '1') headers.set(CMS_HEADER, '1');
-    return NextResponse.next({ request: { headers } });
+    if (locale === 'vi') return NextResponse.next({ request: { headers } });
+    headers.set(LOCALE_HEADER, locale);
+    const url = request.nextUrl.clone(); url.pathname = plain;
+    return NextResponse.rewrite(url, { request: { headers } });
   }
-  const target = to.startsWith('http') ? new URL(to) : new URL(to, request.url);
+  const target = to.startsWith('http') ? new URL(to) : new URL(localePath(to, locale), request.url);
   if (!to.startsWith('http')) target.search = request.nextUrl.search;
   return NextResponse.redirect(target, 301);
 }

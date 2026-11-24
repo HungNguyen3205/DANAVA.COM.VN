@@ -5,6 +5,7 @@
  * Nhóm và mục lấy từ CMS (Menu Giải pháp); các trang chính không có trong nhóm được liệt kê ở "Khám phá".
  */
 import Link from 'next/link';
+import { LangSwitch } from './LangSwitch';
 import { useEffect } from 'react';
 import { ArrowRight, ArrowUpRight, BriefcaseBusiness, FolderKanban, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
 import { MayFigure } from './anna/MayFigure';
@@ -20,6 +21,8 @@ const DV_ICON: LucideIcon[] = [Megaphone, MonitorSmartphone, CalendarDays, Plane
 import { iconFor } from './icons';
 import { useDialog } from './useDialog';
 import { useAnna } from './anna/AnnaProvider';
+import { cmsText, ct } from './cms';
+import { txt } from '@/lib/site-text';
 
 const PAGES: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/giai-phap/', label: 'Tất cả giải pháp', icon: LayoutGrid },
@@ -46,6 +49,18 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
   const company = block(data, 'company');
   const channels = contactChannels(data);
   const anna = useAnna();
+  // Chữ cố định của menu điện thoại (khóa shell.mobile.*, dùng chung toàn website)
+  const m = (k: string, def: string, label: string) => ct(data, `shell.mobile.${k}`, def, label, { scope: 'global' });
+  const slug = (href: string) => href.split('/').filter(Boolean)[0] || 'home';
+  const newTab = txt(data, 'shell.mobile.new-tab', ' (mở tab mới)');
+  const close = m('close', 'ĐÓNG', 'Nút đóng menu điện thoại');
+  const home = m('home', 'Trang chủ', 'Mục Trang chủ (menu điện thoại)');
+  const tServices = m('groups.services', 'Dịch vụ', 'Tên nhóm (menu điện thoại)');
+  const tAbout = m('groups.about', 'Về chúng tôi', 'Tên nhóm (menu điện thoại)');
+  const tMore = m('groups.more', 'Khám phá', 'Tên nhóm (menu điện thoại)');
+  const tAnna = m('anna', 'Hỏi trợ lý AI ANNA', 'Nút hỏi ANNA (menu điện thoại)');
+  const tCta = m('cta', 'Nhận tư vấn', 'Nút tư vấn (menu điện thoại)');
+  const tCall = m('call', 'Gọi', 'Chữ trước số điện thoại (menu điện thoại)');
   const inGroups = new Set(menu.columns.flatMap(c => c.items.map(i => i.href)));
   const current = (href: string) => {
     const here = href === '/giai-phap/' || href === '/' ? path === href : href.startsWith('/') && path.startsWith(href);
@@ -67,21 +82,22 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
         <Link className="sm__logo" href="/" onClick={onClose} aria-label="DANAVA Solutions — Trang chủ">
           <img src="/assets/danava-logo-trim.png" alt="DANAVA Solutions" width={554} height={135} />
         </Link>
-        <button type="button" className="s-burger s-burger--close" onClick={onClose} aria-label="Đóng menu" data-autofocus>
-          <X aria-hidden="true" /><span>ĐÓNG</span>
+        <button type="button" className="s-burger s-burger--close" onClick={onClose} aria-label={txt(data, 'shell.mobile.close-aria', 'Đóng menu')} data-autofocus>
+          <X aria-hidden="true" /><span {...close.a}>{close.v}</span>
         </button>
       </div>
 
       <div className="sm__scroll" data-scroll-top>
+        <LangSwitch variant="row" onPick={onClose} />
         <nav aria-label="Menu chính">
           <Link className="sm__row sm__row--home" href="/" onClick={onClose} aria-current={current('/')}>
-            <Home className="sm__icon" aria-hidden="true" /><span className="sm__label">Trang chủ</span>
+            <Home className="sm__icon" aria-hidden="true" /><span className="sm__label" {...home.a}>{home.v}</span>
           </Link>
 
           {menu.columns.map((column, index) => (
             <section key={index} className="sm__group" style={{ ['--i' as string]: index }} aria-labelledby={`sm-group-${index}`}>
               <h2 className="sm__title" id={`sm-group-${index}`}>
-                <span className="sm__no">{String(index + 1).padStart(2, '0')}.</span>{groupTitle(column.title)}
+                <span className="sm__no">{String(index + 1).padStart(2, '0')}.</span><span style={{ display: 'inline' }} {...cmsText(`block.menu.columns.${index}.title`, 'Tên cột menu', { scope: 'global' })}>{groupTitle(column.title)}</span>
               </h2>
               <ul>
                 {column.items.map((item, i) => {
@@ -90,9 +106,9 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
                   const content = (
                     <>
                       <Icon className={`sm__icon sm__icon--${tone}`} aria-hidden="true" strokeWidth={1.8} />
-                      <span className="sm__label">{item.label}</span>
-                      {item.badge && <span className="sm__badge">{item.badge}</span>}
-                      {external && <><ArrowUpRight className="sm__out" aria-hidden="true" /><span className="s-sr"> (mở tab mới)</span></>}
+                      <span className="sm__label" {...cmsText(`block.menu.columns.${index}.items.${i}.label`, 'Tên mục menu', { scope: 'global' })}>{item.label}</span>
+                      {item.badge && <span className="sm__badge" {...cmsText(`block.menu.columns.${index}.items.${i}.badge`, 'Nhãn mục menu', { scope: 'global' })}>{item.badge}</span>}
+                      {external && <><ArrowUpRight className="sm__out" aria-hidden="true" /><span className="s-sr">{newTab}</span></>}
                     </>
                   );
                   return (
@@ -108,7 +124,7 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
           ))}
 
           {SHOW_DICH_VU_MENU && (<section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-services">
-            <h2 className="sm__subtitle" id="sm-group-services">Dịch vụ</h2>
+            <h2 className="sm__subtitle" id="sm-group-services" {...tServices.a}>{tServices.v}</h2>
             <ul>
               {DICH_VU.map((s, i) => {
                 const Icon = DV_ICON[i % DV_ICON.length];
@@ -124,12 +140,12 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
           </section>)}
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-about">
-            <h2 className="sm__subtitle" id="sm-group-about">Về chúng tôi</h2>
+            <h2 className="sm__subtitle" id="sm-group-about" {...tAbout.a}>{tAbout.v}</h2>
             <ul>
               {ABOUT_PAGES.map(({ href, label, icon: Icon }) => (
                 <li key={href}>
                   <Link className="sm__row sm__row--page" href={href} onClick={onClose} aria-current={current(href)}>
-                    <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{label}</span>
+                    <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} />{(() => { const x = m(`about.${slug(href)}`, label, 'Mục menu điện thoại'); return <span className="sm__label" {...x.a}>{x.v}</span>; })()}
                   </Link>
                 </li>
               ))}
@@ -137,12 +153,12 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
           </section>
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-more">
-            <h2 className="sm__subtitle" id="sm-group-more">Khám phá</h2>
+            <h2 className="sm__subtitle" id="sm-group-more" {...tMore.a}>{tMore.v}</h2>
             <ul>
               {PAGES.filter(p => !inGroups.has(p.href)).map(({ href, label, icon: Icon }) => (
                 <li key={href}>
                   <Link className="sm__row sm__row--page" href={href} onClick={onClose} aria-current={current(href)}>
-                    <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{label}</span>
+                    <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} />{(() => { const x = m(`pages.${slug(href)}`, label, 'Mục menu điện thoại'); return <span className="sm__label" {...x.a}>{x.v}</span>; })()}
                   </Link>
                 </li>
               ))}
@@ -153,12 +169,12 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
         <div className="sm__end">
           {anna.enabled && (
             <button type="button" className="sm__row sm__anna" onClick={() => { onClose(); anna.ask(); }}>
-              <MayFigure className="sm__icon sm__may" /><span className="sm__label">Hỏi trợ lý AI ANNA</span>
+              <MayFigure className="sm__icon sm__may" /><span className="sm__label" {...tAnna.a}>{tAnna.v}</span>
             </button>
           )}
-          <Link className="sm__cta" href="/lien-he/#dang-ky-tu-van" onClick={onClose}>Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
-          {channels.tel && <a className="sm__call" href={channels.tel} onClick={onClose}><Phone aria-hidden="true" />Gọi {formatPhone(channels.phone)}</a>}
-          <p>{data.email || CONTACT.email}<br />{company.address}</p>
+          <Link className="sm__cta" href="/lien-he/#dang-ky-tu-van" onClick={onClose}><span style={{ display: 'inline' }} {...tCta.a}>{tCta.v}</span> <ArrowRight aria-hidden="true" /></Link>
+          {channels.tel && <a className="sm__call" href={channels.tel} onClick={onClose}><Phone aria-hidden="true" /><span style={{ display: 'inline' }} {...tCall.a}>{tCall.v}</span> {formatPhone(channels.phone)}</a>}
+          <p>{data.email || CONTACT.email}<br /><span {...cmsText('block.company.address', 'Địa chỉ (chân trang, trang Liên hệ)', { scope: 'global' })}>{company.address}</span></p>
         </div>
       </div>
     </dialog>

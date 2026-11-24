@@ -12,12 +12,18 @@
 import { useEffect, useRef, useState } from 'react';
 import type * as T from 'three';
 import { RotateCcw, QrCode, ArrowLeft } from 'lucide-react';
+import { useSite } from '../SiteStore';
+import { ct } from './cms';
 import { BOARD, SHADOW_SPAN, drawBeam, drawBoard, drawShadow, drawSheen, drawSheenMask, drawStud, qrLayout, type Stud } from './qr-board';
 
 type Ctl = { reset: () => void; toggleQr: () => void; dispose: () => void };
 
 /** qrUrl: bấm vào mô hình → văn phòng biến thành bảng mã QR chữ D (./qr-board.ts) dẫn tới đường dẫn này (vd. Zalo hotline). */
 export function OfficeScene({ fallback, qrUrl }: { fallback: string; qrUrl?: string }) {
+  // Chữ trên nút / chú thích: sửa được + dịch theo ngôn ngữ đang xem (lib/site-text.ts)
+  const { data } = useSite();
+  const L = (k: string, def: string) => ct(data, `home.office.${k}`, def, 'Mô hình 3D: chữ trên nút', { scope: 'global' });
+  const back = L('back', 'Về văn phòng'), qrL = L('qr', 'Mã QR Zalo'), scan = L('scan', 'Quét mã để nhắn Zalo DANAVA'), open = L('open', 'Mở Zalo'), reset = L('reset', 'Về góc nhìn ban đầu');
   const host = useRef<HTMLDivElement>(null);
   const root = useRef<HTMLDivElement>(null);
   const ctl = useRef<Ctl | null>(null);
@@ -71,14 +77,14 @@ export function OfficeScene({ fallback, qrUrl }: { fallback: string; qrUrl?: str
               block?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
             }
           }}>
-            {qr ? <><ArrowLeft aria-hidden="true" />Về văn phòng</> : <><QrCode aria-hidden="true" />Mã QR Zalo</>}
+            {qr ? <><ArrowLeft aria-hidden="true" /><span {...back.a}>{back.v}</span></> : <><QrCode aria-hidden="true" /><span {...qrL.a}>{qrL.v}</span></>}
           </button>
           <p className="hb-office__qrcap" aria-live="polite">
-            {qr && <>Quét mã để nhắn Zalo DANAVA · <a href={qrUrl} target="_blank" rel="noopener noreferrer">Mở Zalo<span className="s-sr"> (mở tab mới)</span></a></>}
+            {qr && <><span {...scan.a}>{scan.v}</span> · <a href={qrUrl} target="_blank" rel="noopener noreferrer"><span {...open.a}>{open.v}</span><span className="s-sr"> (mở tab mới)</span></a></>}
           </p>
         </>
       )}
-      <button type="button" className={`hb-office__reset${moved ? ' is-moved' : ''}`} onClick={() => ctl.current?.reset()} aria-label="Về góc nhìn ban đầu" data-tip="Về góc nhìn ban đầu" hidden={!ready}>
+      <button type="button" className={`hb-office__reset${moved ? ' is-moved' : ''}`} onClick={() => ctl.current?.reset()} aria-label={reset.v} data-tip={reset.v} hidden={!ready}>
         <RotateCcw aria-hidden="true" />
       </button>
     </div>

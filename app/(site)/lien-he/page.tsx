@@ -1,11 +1,12 @@
 import { seo, jsonLD, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
+import { seoLater } from '@/lib/seo-page';
 import { CONTACT } from '@/lib/company';
 import { ContactPage } from '@/components/site/ContactPage';
 import { resolveValidService } from '@/lib/contact-services';
 import { getSiteContent } from '@/lib/database';
 import { block } from '@/lib/blocks';
 
-export const metadata = seo(
+export const generateMetadata = seoLater(
   'Liên hệ tư vấn và báo giá',
   'Trao đổi trực tiếp với DANAVA Solutions qua hotline 0935 91 76 77, email hello@danava.vn hoặc gửi yêu cầu tư vấn số hóa phòng tập và truyền thông trực tuyến.',
   '/lien-he/',

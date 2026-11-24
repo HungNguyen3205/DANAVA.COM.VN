@@ -1,8 +1,9 @@
 import { seo, breadcrumbLD } from '@/lib/seo';
+import { seoLater } from '@/lib/seo-page';
 import { JsonLd } from '@/components/site/blocks';
 import { ProjectsIndex } from '@/components/site/ProjectsPages';
 
-export const metadata = seo(
+export const generateMetadata = seoLater(
   'Dự án và case study',
   'Câu chuyện triển khai thực tế của DANAVA Solutions cùng HARIVER Gym, Huế Pilates & Yoga và các doanh nghiệp dịch vụ.',
   '/du-an/'

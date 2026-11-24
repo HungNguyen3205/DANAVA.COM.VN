@@ -6,10 +6,11 @@
  * hoàn tác / làm lại trong phiên, Lưu nháp / Xuất bản qua đúng luồng lưu hiện có (API kiểm tra quyền + chống ghi đè).
  * Bộ chọn trang (tìm kiếm + lọc loại), đi theo liên kết nội bộ trong chế độ Xem, ngăn thiết lập trang / website / menu / landing page.
  */
-import { ArrowLeft, Blocks, Check, ChevronDown, Eye, FileCog, ImagePlus, Loader2, Monitor, PenLine, Redo2, Rocket, Save, Search, Settings2, Smartphone, Tablet, Undo2, Upload, X } from 'lucide-react';
+import { ArrowLeft, Languages, Blocks, Check, ChevronDown, Eye, FileCog, ImagePlus, Loader2, Monitor, PenLine, Redo2, Rocket, Save, Search, Settings2, Smartphone, Tablet, Undo2, Upload, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import type { SiteData } from '@/lib/content';
-import { cmsLimit, readCms, writeCms, writeTextStyle } from '@/lib/cms-paths';
+import { cmsLimit, readCms, writeCms, writeTextStyle, writeTranslation } from '@/lib/cms-paths';
+import { LOCALES, LOCALE_INFO, localePath, splitLocale, type ForeignLocale, type Locale } from '@/lib/i18n';
 import type { TextStyle } from '@/lib/text-styles';
 import { Button, Modal, Tip } from './kit';
 
@@ -50,6 +51,12 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
   const [loaded, setLoaded] = useState(false);
   const [choosing, setChoosing] = useState(false);
   const [pending, setPending] = useState<{ kind: 'page'; path: string } | { kind: 'exit' } | null>(null);
+  // Ngôn ngữ đang chỉnh: VI = nội dung gốc; EN / JA = bản dịch (lib/i18n.ts), khung trang mở /en/…, /ja/…
+  const [lang, setLang] = useState<Locale>('vi');
+  const langRef = useRef<Locale>('vi');
+  langRef.current = lang;
+  const defaultsRef = useRef<Record<string, string>>({});
+  const [translating, setTranslating] = useState(false);
   const [src, setSrc] = useState(`${path}?cms=1`);
   const framePath = useRef(path);
   const [, force] = useState(0);
@@ -70,13 +77,32 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
     if (path === framePath.current) return;
     framePath.current = path;
     setLoaded(false);
-    setSrc(`${path}?cms=1`);
+    setSrc(`${localePath(path, langRef.current)}?cms=1`);
   }, [path]);
+  /* Đổi ngôn ngữ đang chỉnh → mở trang ở ngôn ngữ đó */
+  const switchLang = (l: Locale) => {
+    if (l === langRef.current) return;
+    send('deselect');
+    langRef.current = l;
+    setLang(l);
+    setLoaded(false);
+    setSrc(`${localePath(framePath.current, l)}?cms=1`);
+  };
 
   const send = useCallback((type: string, payload: Record<string, unknown> = {}) => {
     frame.current?.contentWindow?.postMessage({ type: `danava-cms:${type}`, ...payload }, location.origin);
   }, []);
-  const valuesOf = useCallback((d: SiteData, list: string[]) => Object.fromEntries(list.map(p => [p, readCms(d, p)])), []);
+  const valuesOf = useCallback((d: SiteData, list: string[]) => {
+    const l = langRef.current;
+    if (l === 'vi') return Object.fromEntries(list.map(p => [p, readCms(d, p)]));
+    const own = d.i18n?.[l] || {};
+    return Object.fromEntries(list.filter(p => own[p]).map(p => [p, own[p].t]));
+  }, []);
+  /** Câu tiếng Việt đang hiển thị của một khóa (để gắn bản dịch đúng câu). */
+  const viOf = useCallback((d: SiteData, p: string, def?: string) => {
+    if (p.startsWith('txt.')) { const o = d.texts?.[p.slice(4)]; return o && o.trim() ? o : def ?? defaultsRef.current[p] ?? ''; }
+    return readCms(d, p);
+  }, []);
   const pathsRef = useRef<string[]>([]);
   /** Đặt bản nháp + đồng bộ NGAY xuống trang (hoàn tác, làm lại, đổi ảnh, hủy): không chờ vòng render. */
   const replaceDraft = useCallback((d: SiteData) => {
@@ -99,9 +125,12 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
   }, [draft, paths, send, valuesOf]);
 
   /** Ghi một giá trị theo khóa; lỗi → báo ngay trên thanh công cụ trong trang, không ghi. */
-  const apply = useCallback((p: string, value: string) => {
+  const apply = useCallback((p: string, value: string, def?: string) => {
     try {
-      const next = writeCms(draftRef.current, p, value);
+      const l = langRef.current;
+      // Ảnh, liên kết, vị trí cắt: dùng chung mọi ngôn ngữ → ghi vào nội dung gốc
+      const shared = /\.(image|href|focus)$/.test(p) || p === 'site.email' || p === 'site.phone';
+      const next = l === 'vi' || shared ? writeCms(draftRef.current, p, value) : writeTranslation(draftRef.current, l as ForeignLocale, p, value, viOf(draftRef.current, p, def));
       draftRef.current = next;
       setDraft(next);
       send('clear-error');
@@ -110,7 +139,7 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
       send('error', { message: e instanceof Error ? e.message : 'Giá trị không hợp lệ' });
       return false;
     }
-  }, [send, setDraft]);
+  }, [send, setDraft, viOf]);
 
   /** Màu / cỡ chữ của một phần chữ (bảng Kiểu chữ trong trang); lỗi → báo trên trang, không ghi. */
   const applyStyle = useCallback((p: string, style: TextStyle | null) => {
@@ -170,16 +199,17 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
           setSelected('');
           setLoaded(true);
           // Trang tự chuyển (người dùng bấm menu / liên kết trong chế độ Xem) → nhận diện trang mới, giữ trình biên tập
-          const at = typeof d.path === 'string' ? d.path : '';
+          defaultsRef.current = d.defaults && typeof d.defaults === 'object' ? d.defaults : {};
+          const at = typeof d.path === 'string' ? splitLocale(d.path).path : '';
           if (at && at !== framePath.current) { framePath.current = at; onPathChange(at); }
-          send('init', { mode: modeRef.current, canEdit, limits: Object.fromEntries(list.map(p => [p, cmsLimit(p)])), values: valuesOf(draftRef.current, list), styles: draftRef.current.textStyles || {} });
+          send('init', { mode: modeRef.current, canEdit, limits: Object.fromEntries(list.map(p => [p, langRef.current === 'vi' ? cmsLimit(p) : Math.min(12000, cmsLimit(p) * 2)])), values: valuesOf(draftRef.current, list), styles: draftRef.current.textStyles || {} });
           if (dirty) send('toast', { message: 'Các thay đổi chưa lưu vẫn được giữ trong phiên này.' });
           break;
         }
         case 'danava-cms:mode': setModeState(d.mode === 'edit' ? 'edit' : 'view'); break;
         case 'danava-cms:select': setSelected(String(d.label || '')); break;
         case 'danava-cms:begin': before.current = draftRef.current; break;
-        case 'danava-cms:change': if (canEdit) apply(String(d.path), String(d.value ?? '')); break;
+        case 'danava-cms:change': if (canEdit) apply(String(d.path), String(d.value ?? ''), typeof d.def === 'string' ? d.def : undefined); break;
         case 'danava-cms:commit': if (before.current) pushHistory(before.current); before.current = null; break;
         case 'danava-cms:cancel': if (before.current) replaceDraft(before.current); before.current = null; break;
         case 'danava-cms:style-begin': styleBefore.current = draftRef.current; break;
@@ -217,7 +247,37 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
   async function preview() {
     const w = window.open('about:blank', '_blank');
     if (dirty && canEdit) await onSave('draft');
-    if (w) w.location.href = `${path}?cms=1`;
+    if (w) w.location.href = `${localePath(path, lang)}?cms=1`;
+  }
+
+  /** Dịch tự động các câu chưa có bản dịch trên trang đang mở (API → Gemini); ghi vào bản nháp, hoàn tác được. */
+  async function autoTranslate() {
+    const l = langRef.current;
+    if (l === 'vi' || translating) return;
+    const items = pathsRef.current
+      .filter(p => !/\.(image|href|focus|alt)$/.test(p) && p !== 'site.email' && p !== 'site.phone')
+      .map(p => ({ path: p, vi: viOf(draftRef.current, p) }))
+      .filter(i => i.vi.trim());
+    setTranslating(true);
+    try {
+      const { csrf } = await fetch('/api/admin/session/', { cache: 'no-store' }).then(r => r.json());
+      const r = await fetch('/api/admin/translate/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf || '' }, body: JSON.stringify({ loc: l, items }) });
+      const v = await r.json();
+      if (!r.ok) throw Error(v.error || 'Không dịch được.');
+      const entries = Object.entries(v.translations as Record<string, string>);
+      if (entries.length) {
+        const snapshot = draftRef.current;
+        let next = snapshot;
+        for (const [p, t] of entries) { try { next = writeTranslation(next, l as ForeignLocale, p, t, viOf(snapshot, p)); } catch { /* bỏ khóa lỗi */ } }
+        pushHistory(snapshot);
+        replaceDraft(next);
+      }
+      send('toast', { message: entries.length ? `Đã dịch ${entries.length} câu sang ${LOCALE_INFO[l].label}${v.failed ? ` · ${v.failed} câu chưa dịch được` : ''}. Xem lại rồi Lưu nháp.` : `Trang này đã có đủ bản dịch ${LOCALE_INFO[l].label}.` });
+    } catch (e) {
+      send('toast', { message: e instanceof Error ? e.message : 'Không dịch được.' });
+    } finally {
+      setTranslating(false);
+    }
   }
 
   const status = error ? { cls: 'is-error', text: `Chưa lưu được: ${/fetch|network|mạng/i.test(error) ? 'mất kết nối, thử lại' : error}` }
@@ -243,6 +303,20 @@ export function LiveEditor({ path, onPathChange, pages, panel, onPanel, renderPa
             <button type="button" role="radio" aria-checked={mode === 'view'} className={mode === 'view' ? 'is-on' : ''} onClick={() => setMode('view')}><Eye size={15} /><span>Xem</span></button>
             {canEdit && <button type="button" role="radio" aria-checked={mode === 'edit'} className={mode === 'edit' ? 'is-on' : ''} onClick={() => setMode('edit')}><PenLine size={15} /><span>Chỉnh sửa</span></button>}
           </div>
+          <div className="lv-seg lv-seg--lang" role="radiogroup" aria-label="Ngôn ngữ đang chỉnh">
+            {LOCALES.map(l => (
+              <Tip key={l} side="bottom" label={l === 'vi' ? 'Tiếng Việt (nội dung gốc)' : `Bản dịch ${LOCALE_INFO[l].label}`}>
+                <button type="button" role="radio" aria-checked={lang === l} className={lang === l ? 'is-on' : ''} onClick={() => switchLang(l)} lang={LOCALE_INFO[l].html}>{LOCALE_INFO[l].short}</button>
+              </Tip>
+            ))}
+          </div>
+          {lang !== 'vi' && canEdit && (
+            <Tip side="bottom" label={`Dịch tự động các câu chưa có bản dịch ${LOCALE_INFO[lang].label} trên trang này`}>
+              <button type="button" className="ax-icon-btn lv-translate" onClick={() => void autoTranslate()} disabled={translating} aria-label="Dịch tự động trang này">
+                {translating ? <Loader2 size={17} className="lv-spin" /> : <Languages size={17} />}
+              </button>
+            </Tip>
+          )}
           <div className="lv-seg lv-seg--icons" role="radiogroup" aria-label="Thiết bị">
             {DEVICES.map(d => (
               <Tip key={d.id} side="bottom" label={d.label}><button type="button" role="radio" aria-checked={device === d.id} aria-label={d.label} className={device === d.id ? 'is-on' : ''} onClick={() => setDevice(d.id)}><d.Icon size={15} /></button></Tip>

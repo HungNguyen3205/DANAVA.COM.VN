@@ -128,6 +128,10 @@ export const visibleMetrics = (data: SiteData) => data.metrics.filter(m => m.vis
 export function publicContent(data: SiteData): SiteData {
   return {
     ...data,
+    // Bản dịch sửa trong admin chỉ dùng trên máy chủ (đã áp vào dữ liệu hiển thị) — không gửi xuống trình duyệt
+    i18n: undefined,
+    // Bản dịch gửi xuống trình duyệt: chỉ chữ cố định (txt.*); SEO (meta:…) chỉ dùng trên máy chủ
+    localeView: data.localeView && { loc: data.localeView.loc, tr: Object.fromEntries(Object.entries(data.localeView.tr).filter(([k]) => k.startsWith('txt.') || k.startsWith('block.menu.'))) },
     staff: data.staff.filter(p => p.visible),
     posts: data.posts.filter(p => p.published).map(p => ({ ...p, body: p.excerpt ? '' : p.body.slice(0, 400) })),
     projects: publishedProjects(data),

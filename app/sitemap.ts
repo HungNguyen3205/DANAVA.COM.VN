@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { localePath } from '@/lib/i18n';
 import { getSiteContent } from '@/lib/database';
 import { siteURL, indexable } from '@/lib/seo';
 import { DICH_VU } from '@/lib/dich-vu';
@@ -17,7 +18,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data } = await getSiteContent();
   const entry = (path: string, lastModified?: string): MetadataRoute.Sitemap[number] => ({
     url: siteURL + path,
-    ...(lastModified ? { lastModified } : {})
+    ...(lastModified ? { lastModified } : {}),
+    // Bản tiếng Anh / tiếng Nhật cùng trang (lib/i18n.ts)
+    alternates: { languages: { vi: siteURL + path, en: siteURL + localePath(path, 'en'), ja: siteURL + localePath(path, 'ja') } }
   });
   const posts = data.posts.filter(p => p.published && !p.noindex);
   const projects = publishedProjects(data);

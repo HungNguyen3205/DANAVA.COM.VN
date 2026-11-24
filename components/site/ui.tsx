@@ -1,3 +1,4 @@
+import type { SiteData } from '@/lib/content';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -13,18 +14,20 @@ function keyOf(href: string, label: string): string {
   return `${slug}.k${h.toString(36)}`;
 }
 /** Chữ nút/liên kết dùng chung sửa được (khóa shared.<nhóm>.<đường dẫn>.<mã chữ>). */
-function SharedLabel({ group, href, label, what }: { group: string; href: string; label: string; what: string }) {
-  const x = ct(null, `shared.${group}.${keyOf(href, label)}`, label, what, { scope: 'global' });
+/** Dữ liệu trang cho chữ dùng chung khi render trong component trình duyệt (bản sửa + bản dịch); trống = kho của yêu cầu (máy chủ). */
+type TextData = Pick<SiteData, 'texts' | 'localeView'> | null;
+function SharedLabel({ group, href, label, what, data = null }: { group: string; href: string; label: string; what: string; data?: TextData }) {
+  const x = ct(data, `shared.${group}.${keyOf(href, label)}`, label, what, { scope: 'global' });
   return <span {...x.a}>{x.v}</span>;
 }
 
-export function Crumbs({ items }: { items: Crumb[] }) {
+export function Crumbs({ items, data = null }: { items: Crumb[]; data?: TextData }) {
   return (
     <nav aria-label="Đường dẫn" className="s-crumbs">
       {items.map((c, i) => (
         <span key={c.label + i} style={{ display: 'contents' }}>
           {i > 0 && <span aria-hidden="true">/</span>}
-          {c.href ? <Link href={c.href}>{c.href === '/' ? (() => { const x = ct(null, 'shared.crumbs.home', c.label, 'Breadcrumb: trang chủ', { scope: 'global' }); return <span {...x.a}>{x.v}</span>; })() : <SharedLabel group="crumbs" href={c.href} label={c.label} what="Breadcrumb" />}</Link> : <span aria-current="page"><SharedLabel group="crumbs-here" href="here" label={c.label} what="Breadcrumb: trang hiện tại" /></span>}
+          {c.href ? <Link href={c.href}>{c.href === '/' ? (() => { const x = ct(data, 'shared.crumbs.home', c.label, 'Breadcrumb: trang chủ', { scope: 'global' }); return <span {...x.a}>{x.v}</span>; })() : <SharedLabel data={data} group="crumbs" href={c.href} label={c.label} what="Breadcrumb" />}</Link> : <span aria-current="page"><SharedLabel data={data} group="crumbs-here" href="here" label={c.label} what="Breadcrumb: trang hiện tại" /></span>}
         </span>
       ))}
     </nav>
@@ -112,11 +115,14 @@ export function CtaBand({
   lead = 'Chia sẻ bài toán của bạn. Chuyên viên DANAVA sẽ liên hệ lại để tư vấn giải pháp phù hợp, không ràng buộc.',
   primary = { href: '/lien-he/', label: 'Nhận tư vấn' },
   secondary,
-  cms
+  cms,
+  data = null
 }: {
   title?: ReactNode; lead?: ReactNode; primary?: { href: string; label: string }; secondary?: { href: string; label: string };
   /** Khóa chỉnh trực tiếp của tiêu đề / câu dẫn (lib/cms-paths.ts) */
   cms?: { title?: string; lead?: string; titleDefault?: string; leadDefault?: string };
+  /** Dữ liệu trang khi dùng trong component trình duyệt (bản sửa + bản dịch chữ trên nút) */
+  data?: TextData;
 }) {
   return (
     <section className="s-section s-section--tight" aria-label="Liên hệ tư vấn" data-cms-block="Dải cuối trang">
@@ -127,8 +133,8 @@ export function CtaBand({
             {lead && <p className="s-lead" {...(cms?.lead ? { 'data-cms': cms.lead, 'data-cms-label': cms.lead.startsWith('pages.mac-dinh.') ? 'Dải cuối trang: câu dẫn (dùng chung)' : 'Dải cuối trang: câu dẫn', 'data-cms-multiline': '', ...(cms.leadDefault ? { 'data-cms-default': cms.leadDefault } : {}) } : {})}>{lead}</p>}
           </div>
           <div className="s-row">
-            <Link className="s-btn s-btn--light s-btn--lg" href={primary.href}><SharedLabel group="cta" href={primary.href} label={primary.label} what="Dải cuối trang: nút chính" /></Link>
-            {secondary && <Link className="s-btn s-btn--outline-light s-btn--lg" href={secondary.href}><SharedLabel group="cta" href={secondary.href} label={secondary.label} what="Dải cuối trang: nút phụ" /></Link>}
+            <Link className="s-btn s-btn--light s-btn--lg" href={primary.href}><SharedLabel data={data} group="cta" href={primary.href} label={primary.label} what="Dải cuối trang: nút chính" /></Link>
+            {secondary && <Link className="s-btn s-btn--outline-light s-btn--lg" href={secondary.href}><SharedLabel data={data} group="cta" href={secondary.href} label={secondary.label} what="Dải cuối trang: nút phụ" /></Link>}
           </div>
         </div>
       </div>

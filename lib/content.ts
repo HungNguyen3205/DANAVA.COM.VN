@@ -5,6 +5,10 @@ import { validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults
 import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.ts';
 import { HOME_HERO_LIMITS, type HomeHero } from './home-hero.ts';
 import { validTextStyles, type TextStyles } from './text-styles.ts';
+import { validTranslations, type ForeignLocale, type TranslationMap, type Translations } from './i18n.ts';
+
+/** Ngôn ngữ đang hiển thị (chỉ khi xem /en/, /ja/; không lưu): bản dịch chữ cố định txt.* và SEO meta:… — lib/i18n-server.ts */
+export type LocaleView = { loc: ForeignLocale; tr: TranslationMap };
 
 /*
  * Mô hình nội dung website. Toàn bộ nội dung được lưu thành MỘT bản JSON trong bảng `content`
@@ -250,6 +254,10 @@ export type SiteData = {
   texts?: Record<string, string>;
   /** Màu / cỡ chữ riêng của từng phần chữ (khóa data-cms → kiểu chữ), tách khỏi nội dung (lib/text-styles.ts). Trống = kiểu mặc định. */
   textStyles?: TextStyles;
+  /** Bản dịch sửa / dịch tự động trong admin (ưu tiên hơn bản dịch máy ban đầu lib/i18n-seed). Trống = tiếng Việt / bản dịch có sẵn. */
+  i18n?: Translations;
+  /** CHỈ khi hiển thị (không lưu): ngôn ngữ đang xem — lib/i18n-server.ts → localizeSite */
+  localeView?: LocaleView;
 };
 
 /**
@@ -479,6 +487,8 @@ export function validateContent(v: unknown): v is SiteData {
   if (v.homeHero !== undefined && !validHomeHero(v.homeHero)) return false;
   if (v.texts !== undefined && !validTexts(v.texts)) return false;
   if (v.textStyles !== undefined && !validTextStyles(v.textStyles)) return false;
+  if (v.i18n !== undefined && !validTranslations(v.i18n)) return false;
+  if (v.localeView !== undefined) return false; // dữ liệu hiển thị theo ngôn ngữ, không bao giờ được lưu
   if (v.presentation !== undefined && !validPresentation(v.presentation)) return false;
   if (!validBlocks(v.blocks) || !validExtras(v.extras) || !validCareers(v.careers)) return false;
   if (!Array.isArray(v.staff) || v.staff.length > 100 || !v.staff.every(p => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image))))) return false;

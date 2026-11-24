@@ -137,7 +137,7 @@ export default function TeamPage() {
         </section>
       )}
 
-      <CtaBand cms={{ title: 'pages.doi-ngu.ctaTitle', lead: copy.ctaLead ? 'pages.doi-ngu.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} />
+      <CtaBand data={data} cms={{ title: 'pages.doi-ngu.ctaTitle', lead: copy.ctaLead ? 'pages.doi-ngu.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} />
     </main>
   );
 }

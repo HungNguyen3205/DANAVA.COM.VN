@@ -801,3 +801,48 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .lv-page { max-width: 380px; height: 38px; }
 .ax-scope .lv-bar__right .lv-status { flex: none; max-width: none; }
 @media (max-width: 1100px) { .ax-scope .lv-page__text small { display: none; } .ax-scope .lv-page { max-width: 240px; } }
+
+/* ================================================================ Thanh bên (thiết kế lại 11/2026)
+   Ô biểu tượng bo góc, mục đang mở là ô cam có quầng sáng; các cụm việc ngăn bằng vạch mảnh.
+   Thu gọn: cột 88px, mỗi mục là ô biểu tượng + nhãn ngắn bên dưới, huy hiệu số ở góc ô. */
+.adm.ds-root.ax { --ax-side-w-mini: 88px; }
+.ax-scope .ax-side { background: radial-gradient(130% 34% at 50% 104%, rgba(242, 107, 29, .2), transparent 62%), linear-gradient(180deg, #0c1838 0%, #0f1d44 100%); }
+.ax-scope .ax-side__ico { position: relative; display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 10px; color: var(--ax-side-text); transition: background .18s ease, color .18s ease, box-shadow .18s ease; }
+.ax-scope .ax-side__group-btn, .ax-scope .ax-side__foot a, .ax-scope .ax-side__foot button { gap: 10px; padding-left: 5px; }
+.ax-scope .ax-side__group-btn:hover .ax-side__ico, .ax-scope .ax-side__foot a:hover .ax-side__ico, .ax-scope .ax-side__foot button:hover .ax-side__ico { background: rgba(255, 255, 255, .09); color: #fff; }
+.ax-scope .ax-side__group-btn.has-active .ax-side__ico, .ax-scope .ax-side__single.is-active .ax-side__ico { background: linear-gradient(135deg, #ff9a4d, #f26b1d); color: #fff; box-shadow: 0 8px 18px -8px rgba(242, 107, 29, .95); }
+.ax-scope .ax-side__single.is-active { background: rgba(255, 255, 255, .05); }
+.ax-scope .ax-side__single.is-active::before { display: none; }
+.ax-scope .ax-side__group.is-section::before { content: ""; display: block; height: 1px; margin: 10px 8px; background: rgba(255, 255, 255, .08); }
+.ax-scope .ax-side__short { display: none; }
+.ax-scope .ax-side__badge { position: absolute; top: -6px; right: -8px; min-width: 18px; height: 18px; padding: 0 5px; border: 2px solid #0e1b40; border-radius: 999px; background: #f26b1d; color: #fff; font-size: 10px; font-weight: 800; line-height: 14px; text-align: center; }
+.ax-scope .ax-side__foot { gap: 2px; }
+
+/* Thu gọn */
+.ax.is-collapsed .ax-side__brand { height: var(--ax-top-h); }
+.ax.is-collapsed .ax-side__brand img { width: 40px; height: 40px; border-radius: 12px; padding: 4px; box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .6); }
+.ax.is-collapsed .ax-side__nav { padding: 10px 8px 12px; }
+.ax.is-collapsed .ax-side__group + .ax-side__group { margin-top: 2px; }
+.ax.is-collapsed .ax-side__group.is-section::before { margin: 8px 14px 10px; }
+.ax.is-collapsed .ax-side__group-btn,
+.ax.is-collapsed .ax-side__foot a,
+.ax.is-collapsed .ax-side__foot button { flex-direction: column; justify-content: center; gap: 5px; width: 100%; height: auto; min-height: 62px; padding: 7px 2px 6px; border-radius: 14px; background: none !important; }
+.ax.is-collapsed .ax-side__ico { width: 42px; height: 36px; border-radius: 12px; }
+.ax.is-collapsed .ax-side__short { display: block; max-width: 100%; overflow: hidden; color: var(--ax-side-muted); font-size: 10.5px; font-weight: 600; line-height: 1.2; text-align: center; text-overflow: ellipsis; white-space: nowrap; transition: color .18s ease; }
+.ax.is-collapsed .ax-side__group-btn:hover .ax-side__short,
+.ax.is-collapsed .ax-side__foot a:hover .ax-side__short,
+.ax.is-collapsed .ax-side__foot button:hover .ax-side__short { color: #fff; }
+.ax.is-collapsed .ax-side__group-btn.has-active .ax-side__short { color: #fff; font-weight: 800; }
+.ax.is-collapsed .ax-side__group-btn:focus-visible { outline: 2px solid #ffb27a; outline-offset: -2px; }
+.ax.is-collapsed .ax-side__foot { padding: 8px; }
+.ax.is-collapsed .ax-side__dot { display: none; }
+@media (prefers-reduced-motion: reduce) { .ax-scope .ax-side__ico, .ax.is-collapsed .ax-side__short { transition: none; } }
+.ax.is-collapsed .ax-side__foot span.ax-side__ico { display: grid; }
+.ax.is-collapsed .ax-side__foot span.ax-side__short { display: block; }
+.ax.is-collapsed .ax-side__foot span.ax-side__label { display: none; }
+
+/* Trình biên tập: chọn ngôn ngữ đang chỉnh (VI / EN / JA) + dịch tự động */
+.ax-scope .lv-seg--lang button { min-width: 36px; justify-content: center; padding: 0 8px; font-size: 12px; font-weight: 800; letter-spacing: .03em; }
+.ax-scope .lv-seg--lang button.is-on { color: #b84c0d; }
+.ax-scope .lv-translate { color: #b84c0d; background: #fff4ec; }
+.ax-scope .lv-translate:hover:not(:disabled) { background: #ffe6d4; }

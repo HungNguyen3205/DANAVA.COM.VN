@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { SiteStore } from '@/components/SiteStore';
-import { getSiteContent } from '@/lib/database';
+import { getSiteContent, requestLocale } from '@/lib/database';
+import { LOCALE_INFO } from '@/lib/i18n';
 import { publicContent } from '@/lib/site-queries';
 import Analytics from '@/components/Analytics';
 import { siteURL, jsonLD, indexable, ORG_ID, BRAND } from '@/lib/seo';
@@ -14,13 +15,20 @@ import { block } from '@/lib/blocks';
  * (nạp trong app/admin/layout.tsx) để hai giao diện không bao giờ đè style lên nhau.
  */
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = {
+/** Tiêu đề / mô tả mặc định theo ngôn ngữ (trang không tự đặt) */
+const DEFAULTS = {
+  vi: { title: 'DANAVA Solutions — Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ', desc: 'Phần mềm quản lý DANAVA Studio, thiết kế website, tổ chức sự kiện và du lịch trải nghiệm cho doanh nghiệp dịch vụ.' },
+  en: { title: 'DANAVA Solutions — Technology, websites and events for service businesses', desc: 'DANAVA Studio management software, website design, event organization and experiential travel for service businesses.' },
+  ja: { title: 'DANAVA Solutions — サービス業向けのテクノロジー・Webサイト・イベント', desc: 'DANAVA Studio 管理ソフト、Webサイト制作、イベント運営、体験型旅行をサービス業の企業に提供します。' }
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const d = DEFAULTS[await requestLocale()];
+  return { ...base, title: { default: d.title, template: `%s | ${BRAND}` }, description: d.desc };
+}
+
+const base: Metadata = {
   metadataBase: new URL(siteURL),
-  title: {
-    default: 'DANAVA Solutions — Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ',
-    template: `%s | ${BRAND}`
-  },
-  description: 'Phần mềm quản lý DANAVA Studio, thiết kế website, tổ chức sự kiện và du lịch trải nghiệm cho doanh nghiệp dịch vụ.',
   applicationName: 'DANAVA',
   // Bản preview/staging: chặn lập chỉ mục toàn site (production: cho phép).
   ...(indexable ? {} : { robots: { index: false, follow: false } }),
@@ -62,7 +70,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
     sameAs: [co.facebook, co.youtube].filter(Boolean)
   };
   return (
-    <html lang="vi" className={fontVariables}>
+    <html lang={LOCALE_INFO[await requestLocale()].html} className={fontVariables}>
       <head>
       </head>
       <body>

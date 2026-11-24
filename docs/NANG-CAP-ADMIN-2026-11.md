@@ -218,3 +218,21 @@ Nhóm Website trong menu còn **một mục: “Chỉnh sửa website”** (`/ad
 - **Hoàn tác / làm lại**: mỗi thao tác (bấm màu, +/−, khôi phục, một lần kéo thanh trượt, một lần nhập) là một bước trong lịch sử của trình biên tập.
 - **Lưu ý**: kiểu chữ gắn theo khóa, nên các chỗ hiển thị cùng một dữ liệu (vd. email ở đầu và chân trang) đổi cùng nhau. Phần nhấn mạnh trong tiêu đề giữ màu riêng.
 - **Bằng chứng**: `docs/qa/evidence/text-style/` (ảnh máy tính + điện thoại, `desktop-steps.log`), test `tests/text-styles.test.ts`.
+
+## 12. Website đa ngôn ngữ: Tiếng Việt / English / 日本語 (11/2026)
+
+- **Đường dẫn**: tiếng Việt giữ nguyên (`/giai-phap/…`); tiếng Anh `/en/…`, tiếng Nhật `/ja/…`. `proxy.ts` chuyển nội bộ về đúng trang (không nhân đôi trang), kèm cờ ngôn ngữ; `<html lang>`, link chuẩn (canonical), `hreflang` (vi / en / ja / x-default), Open Graph locale và sitemap đều theo ngôn ngữ.
+- **Chọn ngôn ngữ**: nút 🌐 VI/EN/JA trên thanh đầu trang, hàng nút ở đầu menu điện thoại. Đang xem EN/JA thì mọi liên kết nội bộ giữ nguyên ngôn ngữ (`components/site/LangSwitch.tsx`).
+- **Bản dịch gắn theo khóa vùng chữ** (cùng khóa `data-cms` của trình biên tập) kèm *dấu* của câu tiếng Việt lúc dịch (`lib/i18n.ts`). Câu tiếng Việt bị sửa → dấu không khớp → website hiện lại tiếng Việt cho câu đó đến khi dịch lại (không bao giờ hiện bản dịch cũ sai nghĩa). Câu chưa có bản dịch → tiếng Việt.
+- **Nguồn bản dịch** (`lib/i18n-server.ts`):
+  1. Bản dịch máy ban đầu trong mã: `lib/i18n-seed/en.json`, `ja.json` (≈2.300 khóa mỗi ngôn ngữ: chữ cố định, sản phẩm, dự án, đội ngũ, đối tác, menu, tiêu đề/mô tả SEO của 60 trang).
+  2. Bản sửa trong admin (`SiteData.i18n`, ưu tiên hơn) — đi qua nháp / xuất bản như nội dung thường, máy chủ kiểm tra cấu trúc.
+- **Sửa bản dịch trong admin**: Chỉnh sửa website → chọn **EN** hoặc **JA** trên thanh công cụ → khung trang mở bản tiếng Anh / Nhật, sửa chữ ngay trên trang như tiếng Việt (ảnh, liên kết, kiểu chữ dùng chung mọi ngôn ngữ). Nút **Dịch tự động** (biểu tượng 文A) dịch các câu chưa có bản dịch trên trang đang mở bằng Gemini (cần `GEMINI_API_KEY`, cùng khóa ANNA); kết quả vào bản nháp để xem lại, hoàn tác được.
+- **Tạo lại bản dịch máy khi thêm nhiều nội dung mới** (cần máy chủ bản build, dữ liệu mặc định, Microsoft Edge):
+  `node scripts/i18n-catalog.mjs http://127.0.0.1:<cổng>` → `node --experimental-strip-types scripts/i18n-sources.ts` → dịch các gói `.i18n/chunks/*.json` → `.i18n/out/*.json` → `node --experimental-strip-types scripts/i18n-merge.ts`. Câu đã dịch được dùng lại từ bộ nhớ dịch `.i18n/memory.json`.
+- **Chưa dịch** (giữ tiếng Việt): thân bài viết Blogs, mô tả do chính các cơ sở đối tác viết trên danava.vn (danh bạ địa điểm), câu trả lời của trợ lý ANNA, thông báo lỗi của biểu mẫu, ngày tháng theo định dạng Việt Nam.
+
+## 13. Thanh menu admin (thiết kế lại 11/2026)
+
+- Ô biểu tượng bo góc; mục đang mở là ô cam có quầng sáng; các cụm việc (Tổng quan & Website · Sản phẩm, Nội dung, Khách hàng, Tài nguyên · Báo cáo, Hệ thống) ngăn bằng vạch mảnh.
+- **Thu gọn** (88px): mỗi mục là ô biểu tượng + nhãn ngắn bên dưới (Tổng quan, Website, Sản phẩm, …), số yêu cầu mới là huy hiệu ở góc ô; bấm nhóm nhiều mục → menu bay ra bên phải.

@@ -51,6 +51,6 @@ export const cmsSkip: Attrs = { 'data-cms-skip': '' };
  * Dùng: const t = ct(data, 'home.why.title', 'Chữ mặc định', 'Tiêu đề', { rich: true }); <h2 {...t.a}>{rich(t.v)}</h2>
  * data-cms-default giữ chữ mặc định để trình chỉnh hiển thị lại khi xóa trắng / hoàn tác.
  */
-export function ct(data: Pick<SiteData, 'texts'> | null | undefined, key: string, fallback: string, label: string, opts: { rich?: boolean; multiline?: boolean } & Scope = {}) {
+export function ct(data: Pick<SiteData, 'texts' | 'localeView'> | null | undefined, key: string, fallback: string, label: string, opts: { rich?: boolean; multiline?: boolean } & Scope = {}) {
   return { v: txt(data, key, fallback), a: { ...cmsText(`txt.${key}`, label, opts), 'data-cms-default': fallback } as Attrs };
 }

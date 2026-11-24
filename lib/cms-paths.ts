@@ -12,6 +12,7 @@ import { DEFAULT_HOME_HERO, HOME_HERO_LIMITS, homeHero, type HomeHero } from './
 import { okLink } from './page-blocks.ts';
 import { PHOTO_FOCUS } from './site-extras.ts';
 import { withTextStyle, type TextStyle } from './text-styles.ts';
+import { textHash, type ForeignLocale, type Translation } from './i18n.ts';
 
 export type CmsKind = 'text' | 'rich' | 'image' | 'href' | 'focus';
 
@@ -24,7 +25,7 @@ export function validCmsPath(path: string): boolean {
   if (parts.length < 2 || parts.length > 8 || !parts.every(p => SEG.test(p))) return false;
   if (parts.some(p => p === '__proto__' || p === 'prototype' || p === 'constructor')) return false;
   if (parts[0] === 'hero') return parts.length === 2 && parts[1] in DEFAULT_HOME_HERO;
-  if (parts[0] === 'site') return parts.length === 2 && (parts[1] === 'email' || parts[1] === 'phone');
+  if (parts[0] === 'site') return parts.length === 2 && (parts[1] === 'email' || parts[1] === 'phone' || parts[1] === 'headline');
   if (parts[0] === 'txt') return parts.length >= 2 && parts.length <= 8 && parts.slice(1).every(p => /^[a-z0-9][a-z0-9-]*$/.test(p)) && path.length <= 104;
   if (parts[0] === 'pages') return parts.length === 3;
   if (parts[0] === 'rec') return parts.length >= 4 && parts.length <= 7 && (REC_KINDS as readonly string[]).includes(parts[1]) && !REC_BLOCKED.has(parts[3]) && parts.slice(4).every(p => /^\d{1,3}$|^[a-zA-Z]{1,40}$/.test(p) && !REC_BLOCKED.has(p));
@@ -113,6 +114,15 @@ export function cmsValueError(path: string, value: string): string {
 export function writeCms(data: SiteData, path: string, value: string): SiteData {
   const err = cmsValueError(path, value);
   if (err) throw Error(err);
+  return applyCms(data, path, value);
+}
+
+/**
+ * Ghi giá trị theo khóa KHÔNG kiểm tra độ dài / định dạng — chỉ dùng nội bộ để áp bản dịch lên bản hiển thị
+ * (lib/i18n-server.ts; không bao giờ lưu). Khóa vẫn phải hợp lệ và trỏ đúng trường đang có.
+ */
+export function applyCms(data: SiteData, path: string, value: string): SiteData {
+  if (!validCmsPath(path)) throw Error('Khóa không hợp lệ');
   const [kind, a, ...rest] = path.split('.');
   if (kind === 'site') return { ...data, [a]: value.trim() };
   if (kind === 'txt') {
@@ -151,4 +161,23 @@ export function writeCms(data: SiteData, path: string, value: string): SiteData 
 export function writeTextStyle(data: SiteData, path: string, style: TextStyle | null): SiteData {
   if (!validCmsPath(path) || path.endsWith('.image') || path.endsWith('.href')) throw Error('Phần này không đổi kiểu chữ được.');
   return { ...data, textStyles: withTextStyle(data.textStyles, path, style) };
+}
+
+/* ---------------- Bản dịch (admin → Chỉnh sửa website → EN / JA) ---------------- */
+/** Bản dịch đang lưu trong bản nháp cho một khóa (chưa tính bản dịch máy có sẵn trong mã). */
+export function readTranslation(data: SiteData, loc: ForeignLocale, path: string): Translation | undefined {
+  return data.i18n?.[loc]?.[path];
+}
+/**
+ * Ghi bản dịch của một khóa vào bản nháp, kèm dấu câu tiếng Việt hiện tại (vi).
+ * Trống = xóa bản sửa (website quay về bản dịch máy có sẵn, nếu còn khớp, hoặc tiếng Việt).
+ */
+export function writeTranslation(data: SiteData, loc: ForeignLocale, path: string, value: string, vi: string): SiteData {
+  if (!validCmsPath(path)) throw Error('Vùng này không dịch được.');
+  if (value.length > 12000) throw Error('Bản dịch quá dài.');
+  const map = { ...(data.i18n?.[loc] || {}) };
+  if (value.trim()) map[path] = { t: value, h: textHash(vi) }; else delete map[path];
+  const i18n = { ...(data.i18n || {}), [loc]: map };
+  if (!Object.keys(map).length) delete i18n[loc];
+  return { ...data, i18n: Object.keys(i18n).length ? i18n : undefined };
 }

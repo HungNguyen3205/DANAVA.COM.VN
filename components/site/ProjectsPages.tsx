@@ -130,7 +130,7 @@ export function ProjectsIndex() {
           </div>
         </section>
       )}
-      <CtaBand cms={{ title: 'pages.du-an.ctaTitle', lead: copy.ctaLead ? 'pages.du-an.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand data={data} cms={{ title: 'pages.du-an.ctaTitle', lead: copy.ctaLead ? 'pages.du-an.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

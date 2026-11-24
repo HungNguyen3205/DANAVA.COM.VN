@@ -1,6 +1,8 @@
 'use client';
 
 import type { PointerEvent } from 'react';
+import { useSite } from '../SiteStore';
+import { txt } from '@/lib/site-text';
 
 function playPreview(event: PointerEvent<HTMLVideoElement>) {
   if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -17,6 +19,7 @@ function stopPreview(event: PointerEvent<HTMLVideoElement>) {
 }
 
 export function MarketingFieldPreview() {
+  const { data } = useSite();
   return (
     <figure className="mk-content__img">
       <video
@@ -27,7 +30,7 @@ export function MarketingFieldPreview() {
         muted
         playsInline
         preload="none"
-        aria-label="Video hậu trường sản xuất nội dung tại hiện trường"
+        aria-label={txt(data, 'marketing.field-preview.aria', 'Video hậu trường sản xuất nội dung tại hiện trường')}
         onPointerEnter={playPreview}
         onPointerLeave={stopPreview}
       />

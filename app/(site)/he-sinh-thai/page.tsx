@@ -1,10 +1,11 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
+import { seoLater } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import { ecosystemFor } from '@/lib/blocks';
 import { EcosystemPage } from '@/components/site/EcosystemPage';
 import { JsonLd } from '@/components/site/blocks';
 
-export const metadata = seo(
+export const generateMetadata = seoLater(
   'Hệ sinh thái DANAVA',
   'Hệ sinh thái DANAVA: phần mềm DANAVA Studio, nền tảng danava.vn, học yoga online, website, sự kiện, đặt vé DANAVA GO và cộng đồng Yoga Club Vietnam.',
   '/he-sinh-thai/',

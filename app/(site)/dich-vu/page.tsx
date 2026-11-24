@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, CalendarDays, Megaphone, MonitorSmartphone, Plane } from 'lucide-react';
 import { seo, breadcrumbLD } from '@/lib/seo';
+import { seoLater } from '@/lib/seo-page';
 import { JsonLd } from '@/components/site/blocks';
 import { DichVuAsk } from '@/components/site/DichVuAsk';
 import { Crumbs, CtaBand } from '@/components/site/ui';
@@ -8,7 +9,7 @@ import { DICH_VU } from '@/lib/dich-vu';
 import { getSiteContent } from '@/lib/database';
 import { ct } from '@/components/site/cms';
 
-export const metadata = seo(
+export const generateMetadata = seoLater(
   'Dịch vụ: truyền thông, landing page, sự kiện và du lịch',
   'Dịch vụ của DANAVA ngoài phần mềm: truyền thông nội dung, thiết kế landing page, tổ chức sự kiện và du lịch trải nghiệm.',
   '/dich-vu/'

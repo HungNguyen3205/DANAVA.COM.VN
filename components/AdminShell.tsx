@@ -60,6 +60,14 @@ const GROUP_ICONS: Record<string, LucideIcon> = {
   'Khách hàng': Users, 'Tài nguyên': FolderOpen, 'Báo cáo': ChartColumn, 'Hệ thống': Wrench
 };
 
+/** Nhãn ngắn dưới biểu tượng khi thanh bên thu gọn */
+const SHORT: Record<string, string> = {
+  'Tổng quan': 'Tổng quan', 'Chỉnh sửa website': 'Website', 'Sản phẩm & Dịch vụ': 'Sản phẩm', 'Nội dung': 'Nội dung',
+  'Khách hàng': 'Khách hàng', 'Tài nguyên': 'Tài nguyên', 'Báo cáo': 'Báo cáo', 'Hệ thống': 'Hệ thống'
+};
+/** Nhóm bắt đầu một cụm mới trên thanh bên (vạch ngăn phía trên) */
+const SECTION_START = new Set(['Sản phẩm & Dịch vụ', 'Báo cáo']);
+
 /** Chờ menu Radix đóng hẳn (trả focus trong setTimeout 0) trước khi mở hộp thoại. */
 const settle = () => new Promise(r => setTimeout(r, 40));
 
@@ -294,11 +302,11 @@ function Sidebar({ groups, active, mini, counts, onNavigate, onToggle, inDrawer 
           if (g.items.length === 1) {
             const item = g.items[0];
             return (
-              <div key={g.group} className="ax-side__group">
+              <div key={g.group} className={`ax-side__group${SECTION_START.has(g.group) ? ' is-section' : ''}`}>
                 <Tip label={item.label} disabled={!mini}>
                   <a href={link(item.slug)} onClick={click(item.slug)} className={`ax-side__group-btn ax-side__single${has ? ' is-active has-active' : ''}`} aria-current={has ? 'page' : undefined} style={{ position: 'relative' }}>
-                    <Icon size={18} /><span className="ax-side__label">{g.group}</span>
-                    {mini && count > 0 && <span className="ax-side__dot" />}
+                    <span className="ax-side__ico"><Icon size={18} />{mini && count > 0 && <span className="ax-side__badge">{count > 99 ? '99+' : count}</span>}</span><span className="ax-side__label">{g.group}</span>
+                    {mini && <span className="ax-side__short">{SHORT[g.group] || g.group}</span>}
                   </a>
                 </Tip>
               </div>
@@ -307,12 +315,13 @@ function Sidebar({ groups, active, mini, counts, onNavigate, onToggle, inDrawer 
           // Thu gọn: icon nhóm + menu bay ra bên phải
           if (mini) {
             return (
-              <div key={g.group} className="ax-side__group">
+              <div key={g.group} className={`ax-side__group${SECTION_START.has(g.group) ? ' is-section' : ''}`}>
                 <DropdownMenu.Root>
                   <Tip label={g.group}>
                     <DropdownMenu.Trigger asChild>
                       <button type="button" className={`ax-side__group-btn${has ? ' has-active' : ''}`} aria-label={g.group} style={{ position: 'relative' }}>
-                        <Icon size={18} />{count > 0 && <span className="ax-side__dot" />}
+                        <span className="ax-side__ico"><Icon size={18} />{count > 0 && <span className="ax-side__badge">{count > 99 ? '99+' : count}</span>}</span>
+                        <span className="ax-side__short">{SHORT[g.group] || g.group}</span>
                       </button>
                     </DropdownMenu.Trigger>
                   </Tip>
@@ -332,10 +341,10 @@ function Sidebar({ groups, active, mini, counts, onNavigate, onToggle, inDrawer 
           }
           const isOpen = open.has(g.group);
           return (
-            <div key={g.group} className="ax-side__group">
+            <div key={g.group} className={`ax-side__group${SECTION_START.has(g.group) ? ' is-section' : ''}`}>
               <button type="button" className={`ax-side__group-btn${has ? ' has-active' : ''}`} aria-expanded={isOpen}
                 onClick={() => setOpen(s => { const n = new Set(s); if (n.has(g.group)) n.delete(g.group); else n.add(g.group); return n; })}>
-                <Icon size={18} /><span className="ax-side__label">{g.group}</span>
+                <span className="ax-side__ico"><Icon size={18} /></span><span className="ax-side__label">{g.group}</span>
                 {!isOpen && count > 0 && <span className="ax-side__count">{count}</span>}
                 <ChevronRight size={15} className="ax-side__chev" />
               </button>
@@ -361,12 +370,12 @@ function Sidebar({ groups, active, mini, counts, onNavigate, onToggle, inDrawer 
       </nav>
       <div className="ax-side__foot">
         <Tip label="Xem website" disabled={!mini}>
-          <a href="/" target="_blank" rel="noopener noreferrer"><Globe size={18} /><span>Xem website</span></a>
+          <a href="/" target="_blank" rel="noopener noreferrer"><span className="ax-side__ico"><Globe size={18} /></span><span className="ax-side__label">Xem website</span>{mini && <span className="ax-side__short">Xem web</span>}</a>
         </Tip>
         {!inDrawer && (
           <Tip label={mini ? 'Mở rộng menu' : 'Thu gọn menu'} disabled={!mini}>
             <button type="button" onClick={onToggle} aria-label={mini ? 'Mở rộng menu' : 'Thu gọn menu'} aria-expanded={!mini}>
-              {mini ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}<span>Thu gọn menu</span>
+              <span className="ax-side__ico">{mini ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}</span><span className="ax-side__label">Thu gọn menu</span>{mini && <span className="ax-side__short">Mở rộng</span>}
             </button>
           </Tip>
         )}

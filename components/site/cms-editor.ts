@@ -220,7 +220,8 @@ export function startCmsEditor() {
   function collect() {
     const paths = new Set<string>();
     const images: string[] = [];
-    document.querySelectorAll<HTMLElement>('[data-cms]').forEach(el => paths.add(el.dataset.cms!));
+    const defaults: Record<string, string> = {};
+    document.querySelectorAll<HTMLElement>('[data-cms]').forEach(el => { paths.add(el.dataset.cms!); if (el.dataset.cmsDefault !== undefined) defaults[el.dataset.cms!] = el.dataset.cmsDefault; });
     document.querySelectorAll<HTMLImageElement>('img[data-cms-img]').forEach(img => {
       const b = img.dataset.cmsImg!;
       paths.add(`${b}.image`);
@@ -229,7 +230,7 @@ export function startCmsEditor() {
     });
     document.querySelectorAll<HTMLElement>('[data-cms-link]').forEach(a => { paths.add(a.dataset.cmsLink!); paths.add(a.dataset.cmsHref!); });
     // Trang đang mở (để trình biên tập nhận diện khi người dùng đi theo menu / liên kết trong chế độ Xem)
-    return { paths: [...paths], images: [...new Set(images.filter(Boolean))], path: location.pathname, title: document.title };
+    return { paths: [...paths], defaults, images: [...new Set(images.filter(Boolean))], path: location.pathname, title: document.title };
   }
 
   /** Phạm vi dữ liệu của phần đang chọn: toàn website / hồ sơ dùng chung / chỉ trang này. */
@@ -322,7 +323,8 @@ export function startCmsEditor() {
   function sendText(now = false) {
     if (!editing) return;
     const { el, path, rich, multiline } = editing;
-    const run = () => post('change', { path, value: serialize(el, rich, multiline) });
+    // def: chữ mặc định trong mã (chữ cố định txt.*) — admin cần để gắn bản dịch với đúng câu tiếng Việt
+    const run = () => post('change', { path, value: serialize(el, rich, multiline), def: el.dataset.cmsDefault });
     clearTimeout(sendTimer);
     if (now) run(); else sendTimer = window.setTimeout(run, 120);
   }

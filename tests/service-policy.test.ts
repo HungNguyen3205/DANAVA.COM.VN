@@ -131,7 +131,7 @@ test('service policy route page exports valid metadata and JSON-LD schema', () =
   assert.ok(fs.existsSync(pagePath), 'Route app/chinh-sach-dich-vu/page.tsx phải tồn tại');
 
   const content = fs.readFileSync(pagePath, 'utf8');
-  assert.ok(content.includes('metadata = seo('), 'Page phải dùng hàm seo()');
+  assert.ok(content.includes('generateMetadata = seoLater('), 'Page phải dùng seoLater() (seo() theo ngôn ngữ)');
   assert.ok(content.includes('/chinh-sach-dich-vu/'), 'Canonical URL phải là /chinh-sach-dich-vu/');
   assert.ok(content.includes('ServicePolicy'), 'Page phải render ServicePolicy');
   assert.ok(content.includes('WebPage'), 'JSON-LD schema type phải là WebPage');

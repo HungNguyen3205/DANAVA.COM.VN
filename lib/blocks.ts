@@ -9,6 +9,7 @@
  *   giới hạn độ dài) để một lần sửa sai không làm hỏng trang công khai.
  */
 import type { Person, SiteData } from './content';
+import { textHash } from './i18n.ts';
 import { CONTACT, SOCIAL, company } from './company.ts';
 import { ECOSYSTEM_CATEGORIES, JOURNEY_STAGES, LIVE_PRODUCTS, initialEcosystemUnits, type EcosystemCategory, type EcosystemUnit, type JourneyStage } from './ecosystem.ts';
 import { PROJECT_STAFF_ASSIGNMENTS, getStaffDetail, getStaffProfile, staffDetailFromEdit, staffProfileFromEdit } from './staff.ts';
@@ -257,16 +258,19 @@ export function block<K extends BlockKey>(data: BlockSource, key: K): BlockDefau
     if (menu.footText === 'Chưa chắc giải pháp nào phù hợp?') menu.footText = MENU.footText;
     if (menu.footLabel === 'Xem tất cả giải pháp') menu.footLabel = MENU.footLabel;
     const services = MENU.columns[1];
+    // Đang xem /en/, /ja/: tên cố định của mục dịch vụ dùng bản dịch (khóa block.menu…, còn khớp câu gốc) — lib/i18n-server.ts
+    const tr = (data as { localeView?: { tr: Record<string, { t: string; h: string }> } }).localeView?.tr;
+    const pick = (key: string, vi: string) => { const t = tr?.[key]; return t && t.t.trim() && t.h === textHash(vi) ? t.t : vi; };
     return {
       ...menu,
-      columns: menu.columns.map(column => ({
+      columns: menu.columns.map((column, ci) => ({
         ...column,
-        title: column.title === 'Marketing' || column.title === 'Digital Marketing' ? services.title : column.title,
+        title: column.title === 'Marketing' || column.title === 'Digital Marketing' ? pick(`block.menu.columns.${ci}.title`, services.title) : column.title,
         items: column.items
           .filter(item => item.href !== '/giai-phap/su-kien-truyen-thong/#hang-muc')
-          .map(item => {
+          .map((item, ii) => {
             const service = services.items.find(s => s.href === item.href);
-            return service ? { ...item, label: service.label, desc: service.desc } : item;
+            return service ? { ...item, label: pick(`block.menu.columns.${ci}.items.${ii}.label`, service.label), desc: pick(`block.menu.columns.${ci}.items.${ii}.desc`, service.desc) } : item;
           })
       }))
     } as BlockDefaults[K];

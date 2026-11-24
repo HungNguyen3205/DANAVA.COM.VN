@@ -1,4 +1,9 @@
 import type { Metadata } from 'next';
+import { LOCALES, LOCALE_INFO, fresh, localePath, metaKey, type Locale } from './i18n.ts';
+import { requestTexts } from './request-texts.ts';
+
+/** Ngôn ngữ + bản dịch SEO của yêu cầu hiện tại (getSiteContent() ghi; ngoài máy chủ → không có). */
+function currentView() { try { return requestTexts().view; } catch { return undefined; } }
 
 /**
  * Tên miền chính dùng cho canonical, sitemap, Open Graph và JSON-LD.
@@ -39,21 +44,32 @@ type SeoOptions = {
  * Metadata chuẩn cho một trang công khai.
  * `title` KHÔNG chứa tên thương hiệu: layout gốc tự thêm " | DANAVA Solutions".
  */
-export function seo(title: string, description: string, path: string, image = '/assets/danava-logo.png', options: SeoOptions = {}): Metadata {
+export function seo(viTitle: string, description: string, path: string, image = '/assets/danava-logo.png', options: SeoOptions = {}): Metadata {
+  // Ngôn ngữ đang xem (getSiteContent() đã ghi vào kho của yêu cầu): dịch tiêu đề / mô tả nếu còn khớp câu tiếng Việt
+  const view = currentView();
+  const loc: Locale = view?.loc ?? 'vi';
+  const viDesc = description.replace(/\s+/g, ' ').trim().slice(0, 300);
+  const pick = (key: string, vi: string) => { const tr = view?.tr[key]; return fresh(tr, vi) ? tr.t : vi; };
+  const title = view ? pick(metaKey(path, 'title'), viTitle) : viTitle;
+  const desc = view ? pick(metaKey(path, 'desc'), viDesc).slice(0, 300) : viDesc;
   // Tiêu đề dài: bỏ hậu tố thương hiệu để Google không cắt mất phần chính (giữ ≤ ~65 ký tự khi có thể)
   const absolute = options.absoluteTitle || `${title} | ${BRAND}`.length > TITLE_MAX;
   const fullTitle = absolute ? title : `${title} | ${BRAND}`;
-  const url = absoluteURL(path);
+  const url = absoluteURL(localePath(path, loc));
   const img = absoluteURL(image || '/assets/danava-logo.png');
-  const desc = description.replace(/\s+/g, ' ').trim().slice(0, 300);
   return {
     title: absolute ? { absolute: title } : title,
     description: desc,
-    alternates: { canonical: url },
+    // Mỗi ngôn ngữ một đường dẫn: Google hiển thị đúng bản cho người tìm (hreflang)
+    alternates: {
+      canonical: url,
+      languages: { vi: absoluteURL(path), en: absoluteURL(localePath(path, 'en')), ja: absoluteURL(localePath(path, 'ja')), 'x-default': absoluteURL(path) }
+    },
     ...(options.noindex ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: options.type || 'website',
-      locale: 'vi_VN',
+      locale: LOCALE_INFO[loc].og,
+      alternateLocale: LOCALES.filter(l => l !== loc).map(l => LOCALE_INFO[l].og),
       siteName: BRAND,
       title: fullTitle,
       description: desc,

@@ -1,10 +1,11 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
+import { seoLater } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import { publicPartners, publicPlaces } from '@/lib/site-queries';
 import { PartnersPage } from '@/components/site/PartnersPage';
 import { JsonLd } from '@/components/site/blocks';
 
-export const metadata = seo(
+export const generateMetadata = seoLater(
   'Đối tác đồng hành',
   'Đối tác đồng hành và các địa điểm yoga, pilates, gym, spa trên nền tảng danava.vn: địa chỉ, giờ mở cửa, dịch vụ và tiện ích.',
   '/doi-tac/',

@@ -14,6 +14,7 @@ import { Crumbs } from './ui';
 import { block } from '@/lib/blocks';
 import { pageCopy } from '@/lib/blocks';
 import { cmsText, ct } from './cms';
+import { txt } from '@/lib/site-text';
 import { contactChannels } from '@/lib/contact-channels';
 import { rich } from './rich';
 import { useAnna } from './anna/AnnaProvider';
@@ -90,6 +91,8 @@ export function ContactPage({ initialService }: { initialService: string }) {
   /** Ghi chữ cố định ngay trong <span> (giữ nguyên markup xung quanh). */
   const T = (k: string, def: string, label: string) => <span {...P(k, def, label)} />;
   /** Thuộc tính vùng chỉnh + chữ (children) cho phần tử chỉ chứa chữ: <h3 {...P(…)} />. */
+  /** Chữ thuần (option, nhãn ẩn, placeholder): dịch được, giá trị gửi đi giữ nguyên */
+  const L = (k: string, def: string) => txt(data, `contact.${k}`, def);
   const P = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => { const x = t(k, def, label, opts); return { ...x.a, children: x.v }; };
   const G = { scope: 'global' as const };
   const mail = <span {...cmsText('site.email', 'Email liên hệ', G)}>{email}</span>;
@@ -175,13 +178,13 @@ export function ContactPage({ initialService }: { initialService: string }) {
       <section className="c-hero c-hero--hello c-hero--light">
         <div className="c-aurora" aria-hidden="true"><i /><i /><i /><b /></div>
         <div className="s-container">
-          <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
+          <Crumbs data={data} items={[{ href: '/', label: 'Trang chủ' }, { label: 'Liên hệ' }]} />
           <div className="c-hero__grid">
             <div className="c-hero__copy">
               <p className="c-tag"><span className="c-tag__dot" aria-hidden="true" /><span {...cmsText('pages.lien-he.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</span></p>
               <h1 className="c-hero__title c-hero__title--hello" {...cmsText('pages.lien-he.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title, 'c-grad c-brand')}</h1>
               <p className="c-motto">
-                {data.headline || 'Cùng bạn phát triển.'}
+                <span {...cmsText('site.headline', 'Khẩu hiệu', { scope: 'global' })}>{data.headline || 'Cùng bạn phát triển.'}</span>
                 <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 14 C 60 2, 120 20, 180 9 S 270 4, 298 12" /></svg>
               </p>
               <p className="c-hero__lead" {...cmsText('pages.lien-he.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
@@ -190,12 +193,12 @@ export function ContactPage({ initialService }: { initialService: string }) {
             <div className="c-reach">
               <div className="c-dock">
                 <a className="c-dock__btn c-dock__btn--call" href={`tel:${phone}`}><CutePhone /><span><small {...P('dock.call', 'Gọi ngay', 'Nhãn nút gọi')} />{formatPhone(phone)}</span></a>
-                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><CuteChat /><span><small {...P('dock.zalo-kicker', 'Nhắn tin', 'Nhãn nút Zalo')} />{T('dock.zalo-label', 'Chat Zalo', 'Chữ nút Zalo')}</span><span className="c-sr"> (mở tab mới)</span></a>
+                <a className="c-dock__btn c-dock__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer"><CuteChat /><span><small {...P('dock.zalo-kicker', 'Nhắn tin', 'Nhãn nút Zalo')} />{T('dock.zalo-label', 'Chat Zalo', 'Chữ nút Zalo')}</span><span className="c-sr">{L('new-tab', ' (mở tab mới)')}</span></a>
                 <a className="c-dock__btn c-dock__btn--mail" href={`mailto:${email}`}><CuteMail /><span><small {...P('dock.mail', 'Gửi email', 'Nhãn nút email')} />{mail}</span></a>
               </div>
               <p className="c-alt">
-                <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />{T('alt.facebook', 'Fanpage', 'Liên kết Fanpage')}<span className="c-sr"> (mở tab mới)</span></a>
-                <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />{T('alt.youtube', 'YouTube', 'Liên kết YouTube')}<span className="c-sr"> (mở tab mới)</span></a>
+                <a href={co.facebook} target="_blank" rel="noopener noreferrer"><CuteFacebook />{T('alt.facebook', 'Fanpage', 'Liên kết Fanpage')}<span className="c-sr">{L('new-tab', ' (mở tab mới)')}</span></a>
+                <a href={co.youtube} target="_blank" rel="noopener noreferrer"><CuteYoutube />{T('alt.youtube', 'YouTube', 'Liên kết YouTube')}<span className="c-sr">{L('new-tab', ' (mở tab mới)')}</span></a>
                 <a href={`mailto:${co.supportEmail}`}><CuteSupport />{T('alt.support', 'Hỗ trợ kỹ thuật', 'Liên kết hỗ trợ kỹ thuật')}</a>
               </p>
             </div>
@@ -230,7 +233,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
                     <li><MapPin aria-hidden="true" /><a href={co.mapUrl} target="_blank" rel="noopener noreferrer" {...cmsText('block.company.address', 'Địa chỉ công ty', G)}>{co.address}</a></li>
                     <li><Globe aria-hidden="true" /><span {...P('card.web', 'danava.com.vn', 'Website trên danh thiếp')} /></li>
                   </ul>
-                  <p className="c-namecard__motto">{data.headline || 'Cùng bạn phát triển.'}</p>
+                  <p className="c-namecard__motto" {...cmsText('site.headline', 'Khẩu hiệu', { scope: 'global' })}>{data.headline || 'Cùng bạn phát triển.'}</p>
                 </div>
               </div>
               <div className="c-cardacts">
@@ -296,13 +299,13 @@ export function ContactPage({ initialService }: { initialService: string }) {
               </div>
 
               <div className="c-field">
-                <label className="c-sr" htmlFor="contact-name">Họ và tên (bắt buộc)</label>
-                <input id="contact-name" name="name" autoComplete="name" maxLength={150} placeholder="Họ và tên *" value={fields.name} onChange={set('name')} {...invalid('name')} />
+                <label className="c-sr" htmlFor="contact-name">{L('form.labels.name', 'Họ và tên (bắt buộc)')}</label>
+                <input id="contact-name" name="name" autoComplete="name" maxLength={150} placeholder={L('form.placeholders.name', 'Họ và tên *')} value={fields.name} onChange={set('name')} {...invalid('name')} />
                 {err('name')}
               </div>
               <div className="c-field">
-                <label className="c-sr" htmlFor="contact-phone">Số điện thoại (bắt buộc)</label>
-                <input id="contact-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={25} placeholder="Số điện thoại *" value={fields.phone} onChange={set('phone')} {...invalid('phone')} />
+                <label className="c-sr" htmlFor="contact-phone">{L('form.labels.phone', 'Số điện thoại (bắt buộc)')}</label>
+                <input id="contact-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={25} placeholder={L('form.placeholders.phone', 'Số điện thoại *')} value={fields.phone} onChange={set('phone')} {...invalid('phone')} />
                 {err('phone')}
               </div>
               <div className="c-field">
@@ -311,10 +314,10 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 {err('email')}
               </div>
               <div className="c-field">
-                <label className="c-sr" htmlFor="contact-businessType">Loại hình kinh doanh</label>
+                <label className="c-sr" htmlFor="contact-businessType">{L('form.labels.business-type', 'Loại hình kinh doanh')}</label>
                 <select id="contact-businessType" name="businessType" value={fields.businessType} onChange={set('businessType')}>
-                  <option value="">Loại hình kinh doanh</option>
-                  {VALID_BUSINESS_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  <option value="">{L('form.options.business-type.empty', 'Loại hình kinh doanh')}</option>
+                  {VALID_BUSINESS_TYPES.map((b, i) => <option key={b} value={b}>{L(`form.options.business-type.${i}`, b)}</option>)}
                 </select>
               </div>
               <div className="c-field c-field--full">
@@ -327,15 +330,15 @@ export function ContactPage({ initialService }: { initialService: string }) {
                 </div>
               </div>
               <div className="c-field c-field--full">
-                <label className="c-sr" htmlFor="contact-service">Dịch vụ quan tâm</label>
+                <label className="c-sr" htmlFor="contact-service">{L('form.labels.service', 'Dịch vụ quan tâm')}</label>
                 <select id="contact-service" name="service" value={fields.service} onChange={set('service')}>
-                  <option value="">Dịch vụ quan tâm</option>
-                  {VALID_CONTACT_SERVICES.map(s => <option key={s.id} value={s.label}>{s.label}</option>)}
+                  <option value="">{L('form.options.service.empty', 'Dịch vụ quan tâm')}</option>
+                  {VALID_CONTACT_SERVICES.map(s => <option key={s.id} value={s.label}>{L(`form.options.service.${s.id}`, s.label)}</option>)}
                 </select>
               </div>
               <div className="c-field c-field--full">
-                <label className="c-sr" htmlFor="contact-message">Nhu cầu của bạn (bắt buộc)</label>
-                <textarea id="contact-message" name="message" rows={5} maxLength={5000} placeholder="Lời nhắn * — ví dụ: phòng tập 300 hội viên, cần quản lý gói tập và check-in QR…" value={fields.message} onChange={set('message')} {...invalid('message')} />
+                <label className="c-sr" htmlFor="contact-message">{L('form.labels.message', 'Nhu cầu của bạn (bắt buộc)')}</label>
+                <textarea id="contact-message" name="message" rows={5} maxLength={5000} placeholder={L('form.placeholders.message', 'Lời nhắn * — ví dụ: phòng tập 300 hội viên, cần quản lý gói tập và check-in QR…')} value={fields.message} onChange={set('message')} {...invalid('message')} />
                 {err('message')}
               </div>
 

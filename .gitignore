@@ -17,3 +17,6 @@ work/
 
 # Cấu hình Claude Code cá nhân (quyền chạy lệnh) — không commit
 .claude/settings.local.json
+
+# Danh mục dịch tạm (scripts/i18n-catalog.mjs)
+.i18n/

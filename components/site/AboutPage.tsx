@@ -61,7 +61,7 @@ export default function AboutPage() {
       <section className="s-about-hero">
         <div className="s-container s-split">
           <div className="s-about-hero__copy">
-            <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giới thiệu' }]} />
+            <Crumbs data={data} items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giới thiệu' }]} />
             <p className="s-eyebrow" {...cmsText('pages.ve-danava.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</p>
             <h1 className="s-h1" {...cmsText('pages.ve-danava.title', 'Tiêu đề trang', { rich: true })}>{rich(copy.title, 's-hl')}</h1>
             <p className="s-lead" {...cmsText('pages.ve-danava.lead', 'Câu dẫn', { multiline: true })}>{copy.lead}</p>
@@ -220,7 +220,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <CtaBand cms={{ title: 'pages.ve-danava.ctaTitle', lead: copy.ctaLead ? 'pages.ve-danava.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand data={data} cms={{ title: 'pages.ve-danava.ctaTitle', lead: copy.ctaLead ? 'pages.ve-danava.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }

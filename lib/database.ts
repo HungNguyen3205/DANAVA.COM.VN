@@ -345,9 +345,24 @@ export async function getContent(): Promise<ContentEnvelope> {
 export async function getSiteContent(): Promise<ContentEnvelope> {
   // Trình chỉnh trực tiếp của admin (iframe ?cms=1, đã đăng nhập, có quyền xem nội dung): hiển thị BẢN NHÁP bằng đúng component công khai
   const envelope = (await cmsDraftRequested()) ? await getWorkingContent() : await getContent();
-  // Chữ đã sửa cho các khối dùng chung (lib/request-texts.ts); ngoài React Server Components thì bỏ qua
-  try { const { requestTexts } = await import('./request-texts.ts'); requestTexts().texts = envelope.data.texts; } catch {}
-  return { ...envelope, data: siteView(envelope.data) };
+  // Ngôn ngữ đang xem (/en/, /ja/ — proxy.ts đặt header): bản hiển thị đã áp bản dịch (lib/i18n-server.ts)
+  const loc = await requestLocale();
+  let data = siteView(envelope.data);
+  if (loc !== 'vi') { const { localizeSite } = await import('./i18n-server.ts'); data = localizeSite(data, loc); }
+  // Chữ đã sửa + bản dịch cho các khối dùng chung và seo() (lib/request-texts.ts); ngoài React Server Components thì bỏ qua
+  try { const { requestTexts } = await import('./request-texts.ts'); const store = requestTexts(); store.texts = data.texts; store.view = data.localeView; } catch {}
+  return { ...envelope, data };
+}
+
+/** Ngôn ngữ của yêu cầu hiện tại (header do proxy.ts đặt từ đường dẫn /en/, /ja/). Ngoài yêu cầu web → tiếng Việt. */
+export async function requestLocale(): Promise<'vi' | 'en' | 'ja'> {
+  try {
+    const { headers } = await import('next/headers');
+    const v = (await headers()).get('x-danava-locale');
+    return v === 'en' || v === 'ja' ? v : 'vi';
+  } catch {
+    return 'vi';
+  }
 }
 
 /** Yêu cầu hiện tại đến từ trình chỉnh trực tiếp của người có quyền xem nội dung? Ngoài yêu cầu web (script, test) → không. */

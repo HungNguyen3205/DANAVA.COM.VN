@@ -23,6 +23,8 @@ const DV_ICON: LucideIcon[] = [Megaphone, MonitorSmartphone, CalendarDays, Plane
 import { contactChannels } from '@/lib/contact-channels';
 import { BrandIcon } from './site/BrandIcons';
 import { MobileMenu } from './site/MobileMenu';
+import { LangSwitch } from './site/LangSwitch';
+import { splitLocale } from '@/lib/i18n';
 import { ContactSheet } from './site/ContactDock';
 
 /** Dòng phụ dưới tên cột mega menu (theo thứ tự cột) */
@@ -31,7 +33,7 @@ const COL_SUB = ['Công nghệ & phần mềm', 'Truyền thông & tăng trưở
 /** icon/tone tùy chọn: không có thì lấy theo đường dẫn (HrefIcon) */
 type MenuItemData = { label: string; desc: string; href: string; badge: string; image: string; icon?: LucideIcon; tone?: Tone };
 /** Một mục menu Giải pháp: trang trong website → Link; https → tab mới; không có đường dẫn → chỉ hiển thị. */
-function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
+function MenuItem({ it, onPick, cms }: { it: MenuItemData; onPick?: () => void; cms?: { label?: Record<string, string>; desc?: Record<string, string> } }) {
   const external = it.href.startsWith('https://');
   // Không dùng ảnh (yêu cầu 20/11/2026); mỗi mục có icon nét mảnh theo đường dẫn (yêu cầu 21/11/2026)
   const body = (
@@ -39,11 +41,11 @@ function MenuItem({ it, onPick }: { it: MenuItemData; onPick?: () => void }) {
       {it.icon ? <IconBox icon={it.icon} tone={it.tone} className="s-mega__ico" /> : <HrefIcon href={it.href} className="s-mega__ico" />}
       <span className="s-mega__txt">
         <span className="s-mega__label">
-          {it.label}
+          <span {...cms?.label}>{it.label}</span>
           {it.badge && <span className="s-mega__badge">{it.badge}</span>}
           {external && <ArrowUpRight aria-hidden="true" />}
         </span>
-        {it.desc && <span className="s-mega__sub">{it.desc}</span>}
+        {it.desc && <span className="s-mega__sub" {...cms?.desc}>{it.desc}</span>}
       </span>
     </>
   );
@@ -73,7 +75,8 @@ const ABOUT_COLS: { title: string; sub: string; items: MenuItemData[] }[] = [
 ];
 
 export function Header() {
-  const path = usePathname() || '/';
+  // /en/…, /ja/… → đường dẫn gốc (mục menu đang mở, so khớp liên kết)
+  const path = splitLocale(usePathname() || '/').path;
   const { data } = useSite();
   const [open, setOpen] = useState(false);
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -160,17 +163,17 @@ export function Header() {
                   <div className="s-mega__cols" style={menu.columns.length === 3 ? undefined : { gridTemplateColumns: `repeat(${menu.columns.length}, minmax(0, 1fr))` }}>
                     {menu.columns.map((col, ci) => (
                       <div key={ci} className="s-mega__col">
-                        <p className="s-mega__head"><span className="s-mega__no">{String(ci + 1).padStart(2, '0')}</span><span>{col.title}{COL_SUB[ci] && <small>{COL_SUB[ci]}</small>}</span></p>
+                        <p className="s-mega__head"><span className="s-mega__no">{String(ci + 1).padStart(2, '0')}</span><span><span {...cmsText(`block.menu.columns.${ci}.title`, 'Tên cột menu', { scope: 'global' })}>{col.title}</span>{COL_SUB[ci] && (() => { const x = ct(data, `shell.mega.sub.${ci}`, COL_SUB[ci], 'Dòng phụ cột menu', { scope: 'global' }); return <small {...x.a}>{x.v}</small>; })()}</span></p>
                         <ul>
-                          {col.items.map((it, ii) => <li key={ii}><MenuItem it={it} onPick={() => setMega(false)} /></li>)}
+                          {col.items.map((it, ii) => <li key={ii}><MenuItem it={it} onPick={() => setMega(false)} cms={{ label: cmsText(`block.menu.columns.${ci}.items.${ii}.label`, 'Tên mục menu', { scope: 'global' }), desc: cmsText(`block.menu.columns.${ci}.items.${ii}.desc`, 'Mô tả mục menu', { scope: 'global' }) }} /></li>)}
                         </ul>
                       </div>
                     ))}
                   </div>
                   {menu.footLabel && (
                     <div className="s-mega__foot">
-                      <span className="s-mega__slogan">{menu.footText}</span>
-                      <Link className="s-mega__cta" href={safeHref(menu.footHref) && menu.footHref ? menu.footHref : '/giai-phap/'} onClick={() => setMega(false)}>{menu.footLabel} <ArrowRight aria-hidden="true" /></Link>
+                      <span className="s-mega__slogan" {...cmsText('block.menu.footText', 'Câu chân menu', { scope: 'global' })}>{menu.footText}</span>
+                      <Link className="s-mega__cta" href={safeHref(menu.footHref) && menu.footHref ? menu.footHref : '/giai-phap/'} onClick={() => setMega(false)}><span {...cmsText('block.menu.footLabel', 'Nút chân menu', { scope: 'global' })}>{menu.footLabel}</span> <ArrowRight aria-hidden="true" /></Link>
                     </div>
                   )}
                 </div>
@@ -217,16 +220,16 @@ export function Header() {
                   <div className="s-mega__cols">
                     {ABOUT_COLS.map((col, ci) => (
                       <div key={col.title} className="s-mega__col">
-                        <p className="s-mega__head"><span className="s-mega__no">{String(ci + 1).padStart(2, '0')}</span><span>{col.title}<small>{col.sub}</small></span></p>
+                        <p className="s-mega__head"><span className="s-mega__no">{String(ci + 1).padStart(2, '0')}</span>{(() => { const t = ct(data, `shell.about.cols.${ci}.title`, col.title, 'Tên cột menu', { scope: 'global' }), u = ct(data, `shell.about.cols.${ci}.sub`, col.sub, 'Dòng phụ cột menu', { scope: 'global' }); return <span><span {...t.a}>{t.v}</span><small {...u.a}>{u.v}</small></span>; })()}</p>
                         <ul>
-                          {col.items.map(it => <li key={it.href}><MenuItem it={it} onPick={() => setAbout(false)} /></li>)}
+                          {col.items.map(it => { const k = it.href.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'home'; const l = ct(data, `shell.about.items.${k}.label`, it.label, 'Tên mục menu', { scope: 'global' }), d = ct(data, `shell.about.items.${k}.desc`, it.desc, 'Mô tả mục menu', { scope: 'global' }); return <li key={it.href}><MenuItem it={{ ...it, label: l.v, desc: d.v }} onPick={() => setAbout(false)} cms={{ label: l.a, desc: d.a }} /></li>; })}
                         </ul>
                       </div>
                     ))}
                   </div>
                   <div className="s-mega__foot">
-                    <span className="s-mega__slogan">Cùng bạn phát triển.</span>
-                    <Link className="s-mega__cta" href="/ve-danava/" onClick={() => setAbout(false)}>Tìm hiểu về DANAVA <ArrowRight aria-hidden="true" /></Link>
+                    <span className="s-mega__slogan"><S data={data} k="about.foot" def="Cùng bạn phát triển." label="Câu chân menu" /></span>
+                    <Link className="s-mega__cta" href="/ve-danava/" onClick={() => setAbout(false)}><S data={data} k="about.cta" def="Tìm hiểu về DANAVA" label="Nút chân menu" /> <ArrowRight aria-hidden="true" /></Link>
                   </div>
                 </div>
               </li>
@@ -237,6 +240,7 @@ export function Header() {
           </nav>
 
           <div className="s-header__actions">
+            <LangSwitch />
             <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/#dang-ky-tu-van"><S data={data} k="nav.cta" def="Nhận tư vấn" label="Nút đầu trang" /></Link>
             <button
               type="button"
@@ -377,6 +381,7 @@ export function MobileBar() {
   const path = usePathname() || '/';
   const [sheet, setSheet] = useState(false);
   const closeSheet = useCallback(() => setSheet(false), []);
+  const { data } = useSite();
   useEffect(() => { setSheet(false); }, [path]);
   return (
     <>
@@ -384,10 +389,13 @@ export function MobileBar() {
         {TABS.map(t => {
           const on = t.match(path);
           const Icon = t.icon;
+          // Khóa ổn định theo đường dẫn: home, giai-phap, lien-he, du-an, blogs
+          const id = t.href === '/' ? 'home' : t.href.split('/')[1] || 'tab';
+          const x = ct(data, `shell.tabbar.${id}`, t.label, 'Nhãn thanh tab điện thoại', { scope: 'global' });
           const body = (
             <>
               <span className="s-tabbar__icon"><Icon aria-hidden="true" /></span>
-              <span className="s-tabbar__label">{t.label}</span>
+              <span className="s-tabbar__label" {...x.a}>{x.v}</span>
             </>
           );
           if (t.primary) {

@@ -17,7 +17,7 @@ export default function StaffProfile({ profile }: { profile: StaffFullProfile })
     <main id="main">
       <header className="s-pagehead s-pagehead--soft">
         <div className="s-container">
-          <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: '/doi-ngu/', label: 'Đội ngũ' }, { label: profile.name }]} />
+          <Crumbs data={data} items={[{ href: '/', label: 'Trang chủ' }, { href: '/doi-ngu/', label: 'Đội ngũ' }, { label: profile.name }]} />
           <div className="s-team-hero">
             <StaffAvatar person={person} size="xl" />
             <div className="s-team-hero__text">
@@ -112,7 +112,7 @@ export default function StaffProfile({ profile }: { profile: StaffFullProfile })
         <Link className="s-link" href="/doi-ngu/"><ArrowLeft aria-hidden="true" />Quay lại danh sách Đội ngũ</Link>
       </div>
 
-      <CtaBand title={`Trao đổi cùng ${profile.name.split(' ').slice(-1)[0]} và đội ngũ`} />
+      <CtaBand data={data} title={`Trao đổi cùng ${profile.name.split(' ').slice(-1)[0]} và đội ngũ`} />
     </main>
   );
 }

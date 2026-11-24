@@ -44,7 +44,7 @@ export function ServicesIndex() {
     <main id="main" className="svn">
       <section className="svn-hero" aria-labelledby="svn-title">
         <div className="s-container">
-          <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giải pháp' }]} />
+          <Crumbs data={data} items={[{ href: '/', label: 'Trang chủ' }, { label: 'Giải pháp' }]} />
           <div className="svn-hero__grid">
             <div className="svn-hero__copy">
               <p className="svn-kicker"><Layers aria-hidden="true" /> <span {...cmsText('pages.giai-phap.kicker', 'Dòng chữ nhỏ')}>{copy.kicker}</span></p>
@@ -110,7 +110,7 @@ export function ServicesIndex() {
         </div>
       </section>
 
-      <CtaBand cms={{ title: 'pages.giai-phap.ctaTitle', lead: copy.ctaLead ? 'pages.giai-phap.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
+      <CtaBand data={data} cms={{ title: 'pages.giai-phap.ctaTitle', lead: copy.ctaLead ? 'pages.giai-phap.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/', label: 'Nhận tư vấn' }} />
     </main>
   );
 }
