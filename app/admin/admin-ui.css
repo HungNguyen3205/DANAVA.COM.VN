@@ -554,6 +554,16 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .ax-hero-pv .hb-office__reset.is-moved, .ax-scope .ax-hero-pv .hb-office__reset:hover { color: #f26b1d; }
 .ax-scope .ax-hero-pv .hb-office__reset svg { width: 15px; height: 15px; }
 .ax-scope .ax-hero-pv.is-mobile .ax-hero-pv__media { min-height: 280px; }
+.ax-scope .ax-hero-pv .hb-office__qrbtn { position: absolute; right: 48px; bottom: 8px; z-index: 3; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; font: inherit; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; box-shadow: 0 10px 22px -12px rgba(242, 107, 29, .85); }
+.ax-scope .ax-hero-pv .hb-office__qrbtn svg { width: 15px; height: 15px; }
+.ax-scope .ax-hero-pv .hb-office.is-qr .hb-office__qrbtn { background: #fff; color: #13244f; box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .3); }
+.ax-scope .ax-hero-pv .hb-office.is-qr .hb-office__qrbtn svg { color: #f26b1d; }
+.ax-scope .ax-hero-pv .hb-office.is-qr .hb-office__stage { cursor: pointer; }
+.ax-scope .ax-hero-pv .hb-office.is-qr .hb-office__reset { opacity: 0; pointer-events: none; }
+.ax-scope .ax-hero-pv .hb-office__qrcap { position: absolute; left: 50%; top: 6px; z-index: 3; margin: 0; padding: 5px 12px; max-width: 100%; border-radius: 999px; background: rgba(255, 255, 255, .92); color: #13244f; font-size: 11.5px; font-weight: 700; text-align: center; transform: translateX(-50%); box-shadow: 0 8px 20px -14px rgba(15, 23, 42, .3); width: max-content; }
+.ax-scope .ax-hero-pv .hb-office__qrcap:empty { display: none; }
+.ax-scope .ax-hero-pv .hb-office__qrcap a { color: #0068ff; }
+.ax-scope .ax-hero-pv .s-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .ax-scope .ax-hero-pv.is-mobile { grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-inline: auto; padding: 24px 18px; }
 .ax-scope .ax-hero-pv.is-mobile .ax-hero-pv__title { font-size: 26px; }
 @media (max-width: 1100px) {
