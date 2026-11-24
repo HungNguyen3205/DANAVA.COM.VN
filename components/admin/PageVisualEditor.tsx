@@ -8,6 +8,7 @@ import { Monitor, Smartphone, Tablet } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SiteData } from '@/lib/content';
 import { block, blockDefaults, withBlock } from '@/lib/blocks';
+import { DEFAULT_HOME_HERO, homeHero, type HomeHero } from '@/lib/home-hero';
 import { PAGE_NAMES } from '../adminBlockConfig';
 import type { SitePage } from './websitePages';
 import { ErrorBox, Loading } from './ui';
@@ -21,9 +22,12 @@ export function pageFields(page: SitePage): Field[] {
   const out: Field[] = [];
   for (const t of page.tabs) {
     if (t.kind === 'hero') out.push(
-      { path: 'site.heroTitle', label: 'Tiêu đề H1', group: 'Màn mở đầu', long: false },
-      { path: 'site.headline', label: 'Thông điệp thương hiệu', group: 'Màn mở đầu', long: false },
-      { path: 'site.description', label: 'Mô tả', group: 'Màn mở đầu', long: true });
+      { path: 'hero.kicker', label: 'Nhãn nhỏ phía trên tiêu đề', group: 'Màn mở đầu', long: false },
+      { path: 'hero.line1', label: 'Tiêu đề dòng 1', group: 'Màn mở đầu', long: false },
+      { path: 'hero.line2', label: 'Tiêu đề dòng 2 (cam)', group: 'Màn mở đầu', long: false },
+      { path: 'hero.lead', label: 'Câu dẫn', group: 'Màn mở đầu', long: true },
+      { path: 'hero.primaryLabel', label: 'Nút chính', group: 'Màn mở đầu', long: false },
+      { path: 'hero.secondaryLabel', label: 'Nút phụ', group: 'Màn mở đầu', long: false });
     if (t.kind === 'text' && t.id !== 'cta-san-pham') {
       const defaults = blockDefaults().pages as Record<string, Record<string, string>>;
       for (const key of t.keys) for (const f of Object.keys(defaults[key] || {})) {
@@ -37,11 +41,17 @@ export function pageFields(page: SitePage): Field[] {
 function read(data: SiteData, path: string): string {
   const [kind, a, b] = path.split('.');
   if (kind === 'site') return String((data as Record<string, unknown>)[a] ?? '');
+  if (kind === 'hero') return homeHero(data)[a as keyof HomeHero];
   return String(((block(data, 'pages') as Record<string, Record<string, string>>)[a] || {})[b] ?? '');
 }
 function write(data: SiteData, path: string, value: string): SiteData {
   const [kind, a, b] = path.split('.');
   if (kind === 'site') return { ...data, [a]: value };
+  if (kind === 'hero') {
+    const next: Partial<HomeHero> = { ...(data.homeHero || {}), [a]: value };
+    if (!value.trim() || value === DEFAULT_HOME_HERO[a as keyof HomeHero]) delete next[a as keyof HomeHero];
+    return { ...data, homeHero: Object.keys(next).length ? next : undefined };
+  }
   const pages = block(data, 'pages') as Record<string, Record<string, string>>;
   return withBlock(data, 'pages', { ...pages, [a]: { ...pages[a], [b]: value } });
 }

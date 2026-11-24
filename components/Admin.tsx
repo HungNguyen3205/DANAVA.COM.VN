@@ -33,6 +33,7 @@ import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
 import { PageVisualEditor } from './admin/PageVisualEditor';
 import { ContentPerformance, SeoScreen } from './admin/SeoScreens';
 import { OverviewTasks } from './admin/OverviewTasks';
+import { HomeHeroEditor } from './admin/HomeHeroEditor';
 import { GalleryOrder, MenuEditor, StaffOrder } from './admin/SortEditors';
 import { ask } from './admin/kit';
 import type { PageTab, SitePage } from './admin/websitePages';
@@ -180,43 +181,8 @@ function AdminWorkspace({ section }: { section: string }) {
     );
   };
 
-  const heroEditor = (
-    <div className="admin-two">
-      <section className="admin-panel">
-        <h2>Màn mở đầu</h2>
-        <label>
-          Tiêu đề H1 (định vị: doanh nghiệp làm gì, cho ai)
-          <input maxLength={150} value={draft.heroTitle || ''} onChange={(e) => setDraft({ ...draft, heroTitle: e.target.value })} />
-        </label>
-        <label>
-          Thông điệp thương hiệu
-          <input maxLength={150} value={draft.headline} onChange={(e) => setDraft({ ...draft, headline: e.target.value })} />
-        </label>
-        <label>
-          Mô tả
-          <textarea maxLength={1000} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
-        </label>
-        <div className="field-note">Ảnh nền và chuyển động đã được thiết kế sẵn. Để thay ảnh, cập nhật file trong kho assets của dự án.</div>
-        <h2 className="subheading">Kịch bản cuộn</h2>
-        {['Logo và không gian thương hiệu', 'Màn hình công nghệ kéo ra', 'Người đại diện DANAVA', 'Hệ sinh thái kết nối', 'Lời mời khám phá giải pháp'].map((x, i) => (
-          <p className="timeline-row" key={x}><b>0{i + 1}</b>{x}</p>
-        ))}
-      </section>
-      <section className="admin-panel preview-panel">
-        <span>XEM TRƯỚC NỘI DUNG</span>
-        <div className="mini-hero">
-          <img src="/assets/danava-logo.png" alt="DANAVA" />
-          <h2>{draft.headline}</h2>
-          <p>{draft.description}</p>
-          <small>Cuộn để khám phá ↓</small>
-        </div>
-        <Link className="text-link" target="_blank" href="/">Mở trang chủ sau khi lưu ↗</Link>
-      </section>
-    </div>
-  );
-
   const renderPageTab = (_page: SitePage, t: PageTab) => {
-    if (t.kind === 'hero') return heroEditor;
+    if (t.kind === 'hero') return <HomeHeroEditor draft={draft} setDraft={setDraft} />;
     if (t.kind === 'presentation') return <PresentationEditor value={draft.presentation || defaultPresentation} onChange={(presentation) => setDraft({ ...draft, presentation })} />;
     if (t.kind === 'block' && t.block === 'gallery') return <div className="blk-stack"><GalleryOrder draft={draft} setDraft={setDraft} />{blockPanel('gallery')}</div>;
     if (t.kind === 'block') return blockPanel(t.block);
@@ -225,7 +191,7 @@ function AdminWorkspace({ section }: { section: string }) {
   };
   // So với nội dung gốc (normalizeContent luôn điền sẵn các trường này nên không dùng "có/không có")
   const pageEdited = (page: SitePage) => page.tabs.some(t => {
-    if (t.kind === 'hero') return draft.headline !== BASE.headline || draft.description !== BASE.description || (draft.heroTitle || '') !== (BASE.heroTitle || '');
+    if (t.kind === 'hero') return !!draft.homeHero || draft.headline !== BASE.headline;
     if (t.kind === 'presentation') return JSON.stringify(draft.presentation || defaultPresentation) !== JSON.stringify(defaultPresentation);
     if (t.kind === 'block') return savedBlock(draft, t.block) !== undefined;
     if (t.kind === 'visual') return false;

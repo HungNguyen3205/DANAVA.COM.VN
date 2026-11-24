@@ -497,3 +497,53 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 }
 .ax-scope .ax-tile { margin: 0; min-width: 0; }
 .ax-scope .ax-sortable--grid > .ax-sortable__item { min-width: 0; }
+
+/* Nhãn trạng thái luôn gọn trong viên thuốc, một dòng, chữ căn giữa (ghi đè kiểu .adm .badge cũ) */
+.ax-scope .ax-content .badge {
+  display: inline-flex; flex-direction: row; flex: 0 0 auto; align-items: center; justify-content: center; gap: 6px;
+  width: auto; height: 24px; min-height: 0; padding: 0 10px; border: 0; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1; white-space: nowrap; vertical-align: middle;
+}
+.ax-scope .ax-content .badge::before { flex: none; width: 6px; height: 6px; margin: 0; }
+
+/* Thanh trên cùng: breadcrumb, tiêu đề và tên tài khoản không xuống hàng; thiếu chỗ thì rút gọn "…" */
+.ax-scope .ax-top__title { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.ax-scope .ax-crumbs { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
+.ax-scope .ax-crumbs li { flex: none; }
+.ax-scope .ax-crumbs li:last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ax-scope .ax-top__right { flex: 0 1 auto; min-width: 0; }
+.ax-scope .ax-top__right > * { flex-shrink: 0; }
+.ax-scope .ax-account { min-width: 0; }
+.ax-scope .ax-account__meta { min-width: 0; max-width: 150px; }
+.ax-scope .ax-account__meta b, .ax-scope .ax-account__meta small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ax-scope .ax-save-state, .ax-scope .ax-btn { white-space: nowrap; }
+/* Màn vừa (1100–1440px): ẩn chữ trạng thái lưu để nhường chỗ (thanh lưu và nút vẫn báo trạng thái) */
+@media (max-width: 1440px) { .ax-scope .ax-save-state { display: none; } }
+
+/* Website → Trang chủ → Màn mở đầu: trình sửa + xem trước theo đúng giao diện trang chủ hiện tại */
+.ax-scope .ax-hero-ed { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: var(--s4); align-items: start; }
+.ax-scope .ax-hero-ed > .ax-card { position: sticky; top: calc(var(--ax-top-h) + 16px); }
+.ax-scope .ax-hero-ed label { display: grid; gap: 6px; }
+.ax-scope .ax-hero-ed label > input, .ax-scope .ax-hero-ed label > textarea { width: 100%; min-width: 0; }
+.ax-scope .ax-hero-pv {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 24px; align-items: center; margin-top: var(--s3);
+  padding: 32px 28px; overflow: hidden; border-radius: 16px; color: #13244f;
+  background: radial-gradient(60% 70% at 85% 10%, rgba(255, 179, 71, .45), transparent 60%), radial-gradient(50% 60% at 0% 100%, rgba(242, 107, 29, .14), transparent 60%), linear-gradient(180deg, #fff3e2 0%, #fbf6ee 100%);
+}
+.ax-scope .ax-hero-pv__pill { display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 4px 10px; border-radius: 999px; background: #fff; box-shadow: 0 6px 18px -12px rgba(19, 36, 79, .5); font-size: 11px; font-weight: 800; }
+.ax-scope .ax-hero-pv__pill svg { color: #f26b1d; }
+.ax-scope .ax-hero-pv__title { margin: 12px 0 0; font-size: clamp(24px, 2.6vw, 34px); font-weight: 700; line-height: 1.08; letter-spacing: -.02em; color: #13244f; }
+.ax-scope .ax-hero-pv__title span, .ax-scope .ax-hero-pv__title em { display: block; }
+.ax-scope .ax-hero-pv__title em { font-style: normal; color: #f26b1d; }
+.ax-scope .ax-hero-pv__lead { margin: 12px 0 0; color: #3d4a6b; font-size: 12.5px; line-height: 1.65; }
+.ax-scope .ax-hero-pv__cta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.ax-scope .ax-hero-pv__btn { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 14px; border: 1.5px solid rgba(19, 36, 79, .18); border-radius: 999px; background: #fff; color: #13244f; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.ax-scope .ax-hero-pv__btn.is-primary { border-color: transparent; background: linear-gradient(90deg, #ff8a2a, #f26b1d); color: #fff; box-shadow: 0 10px 22px -12px rgba(242, 107, 29, .9); }
+.ax-scope .ax-hero-pv__media img { display: block; width: 100%; aspect-ratio: 4 / 3.2; object-fit: cover; border-radius: 18px; box-shadow: 0 24px 48px -28px rgba(19, 36, 79, .55); transform: rotate(1.5deg); }
+.ax-scope .ax-hero-pv.is-mobile { grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-inline: auto; padding: 24px 18px; }
+.ax-scope .ax-hero-pv.is-mobile .ax-hero-pv__title { font-size: 26px; }
+@media (max-width: 1100px) {
+  .ax-scope .ax-hero-ed { grid-template-columns: minmax(0, 1fr); }
+  .ax-scope .ax-hero-ed > .ax-card { position: static; }
+}
+@media (max-width: 720px) { .ax-scope .ax-hero-pv { grid-template-columns: minmax(0, 1fr); } }

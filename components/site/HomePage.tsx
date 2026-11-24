@@ -23,6 +23,7 @@ import { CompanyGallery } from './CompanyGallery';
 import { AnnaHome } from './anna/AnnaEntry';
 import { block } from '@/lib/blocks';
 import { ABOUT_DANAVA as A, PROFILE_2026 as P } from '@/lib/about-danava';
+import { homeHero } from '@/lib/home-hero';
 import { markOf } from '@/lib/partner-marks';
 import { contactChannels } from '@/lib/contact-channels';
 
@@ -89,6 +90,7 @@ export default function HomePage({ data }: { data: SiteData }) {
     return { W, pts, line, area, last: pts[pts.length - 1] };
   })();
   const posts = knowledgePosts(data).slice(0, 3);
+  const hero = homeHero(data);
   const social = getApprovedSocialPosts().filter(isPlatformSourced).slice(0, 3);
 
   return (
@@ -101,15 +103,16 @@ export default function HomePage({ data }: { data: SiteData }) {
         <div className="hb-pin">
         <div className="s-container hb-cover__grid">
           <div className="hb-cover__copy">
-            <p className="hb-pill"><Sparkles aria-hidden="true" />DANAVA Solutions </p>
+            {/* Chữ màn mở đầu: admin → Website → Trang → Trang chủ → Màn mở đầu (lib/home-hero.ts) */}
+            <p className="hb-pill"><Sparkles aria-hidden="true" />{hero.kicker} </p>
             <h1 className="hb-title" id="home-title">
-              <span className="hb-line" style={{ ['--l' as string]: 0 }}>Cùng bạn phát triển.</span>
-              <em className="hb-line" style={{ ['--l' as string]: 1 }}>Kiến tạo hệ sinh thái Wellness.</em>
+              <span className="hb-line" style={{ ['--l' as string]: 0 }}>{hero.line1}</span>
+              <em className="hb-line" style={{ ['--l' as string]: 1 }}>{hero.line2}</em>
             </h1>
-            <p className="hb-lead">{P.tagline}: phần mềm quản lý DANAVA Studio, website, truyền thông và sự kiện — một đầu mối cho doanh nghiệp của bạn.</p>
+            <p className="hb-lead">{hero.lead}</p>
             <div className="hb-cta">
-              <Link className="hb-btn hb-btn--primary" href="/lien-he/">Nhận tư vấn <ArrowRight aria-hidden="true" /></Link>
-              <Link className="hb-btn hb-btn--ghost" href="/giai-phap/">Xem giải pháp</Link>
+              <Link className="hb-btn hb-btn--primary" href={hero.primaryHref}>{hero.primaryLabel} <ArrowRight aria-hidden="true" /></Link>
+              {hero.secondaryLabel && <Link className="hb-btn hb-btn--ghost" href={hero.secondaryHref}>{hero.secondaryLabel}</Link>}
             </div>
             {/* Đường hành trình DANAVA 2016 → nay (mốc năm thật, không có trục số) */}
             <figure className="hb-journey">

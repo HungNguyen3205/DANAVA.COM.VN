@@ -3,6 +3,7 @@ import { verifiedProjects } from './verified-projects.ts';
 import { defaultPresentation, type Presentation } from './presentation.ts';
 import { validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
 import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.ts';
+import { HOME_HERO_LIMITS, type HomeHero } from './home-hero.ts';
 
 /*
  * Mô hình nội dung website. Toàn bộ nội dung được lưu thành MỘT bản JSON trong bảng `content`
@@ -242,6 +243,8 @@ export type SiteData = {
   landings?: Landing[];
   /** Chuyển hướng đường dẫn cũ → mới */
   redirects?: Redirect[];
+  /** Màn mở đầu trang chủ (lib/home-hero.ts). Trống = chữ mặc định đang hiển thị. */
+  homeHero?: Partial<HomeHero>;
 };
 
 /**
@@ -453,9 +456,14 @@ function validTestimonial(t: unknown) {
     && (!t.published || (t.permission && (t.quote as string).trim() !== '' && (t.name as string).trim() !== ''));
 }
 
+function validHomeHero(h: unknown) {
+  return object(h) && Object.entries(h).every(([k, x]) => k in HOME_HERO_LIMITS && str(x, HOME_HERO_LIMITS[k as keyof HomeHero]) && (!k.endsWith('Href') || okLink(x)));
+}
+
 export function validateContent(v: unknown): v is SiteData {
   if (!object(v) || v.version !== 1 || !str(v.headline, 150) || !str(v.description, 1000) || !str(v.email, 200) || !str(v.phone, 50)) return false;
   if (!optStr(v.heroTitle, 150)) return false;
+  if (v.homeHero !== undefined && !validHomeHero(v.homeHero)) return false;
   if (v.presentation !== undefined && !validPresentation(v.presentation)) return false;
   if (!validBlocks(v.blocks) || !validExtras(v.extras) || !validCareers(v.careers)) return false;
   if (!Array.isArray(v.staff) || v.staff.length > 100 || !v.staff.every(p => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image))))) return false;

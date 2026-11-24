@@ -1,7 +1,7 @@
 /**
  * Website → Trang: danh mục trang và các phần chỉnh sửa được của từng trang.
  * Mỗi tab trỏ tới nguồn dữ liệu đang dùng (không tạo bản sao):
- *  - hero: tiêu đề/thông điệp trang chủ (SiteData.heroTitle, headline, description)
+ *  - hero: màn mở đầu trang chủ (SiteData.homeHero, lib/home-hero.ts)
  *  - presentation: trình chiếu mở đầu (SiteData.presentation)
  *  - block: một khối trong lib/blocks.ts
  *  - text: chữ đầu trang và dải kêu gọi cuối trang (khối `pages`, theo mã trang)
@@ -25,7 +25,6 @@ export const SITE_PAGES: SitePage[] = [
     id: 'trang-chu', label: 'Trang chủ', path: '/', group: 'Trang chính',
     tabs: [
       { id: 'mo-dau', label: 'Màn mở đầu', kind: 'hero' },
-      { id: 'trinh-chieu', label: 'Trình chiếu', kind: 'presentation' },
       { id: 'anh', label: 'Ảnh doanh nghiệp', kind: 'block', block: 'gallery' },
       text(['mac-dinh'], 'Dải liên hệ mặc định'),
     ],
