@@ -53,10 +53,9 @@ function Redirects({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteDat
       <h2>Chuyển hướng 301</h2>
       <p className="field-note">Khi đổi đường dẫn của bài viết, sản phẩm, dự án hoặc landing page đang công khai, hệ thống tự thêm chuyển hướng từ đường dẫn cũ khi Xuất bản. Có thể thêm tay cho đường dẫn cũ khác. Chuyển hướng có hiệu lực sau khi Xuất bản.</p>
       {editable && (
-        <form className="adm-create-row" onSubmit={add}>
+        <form className="adm-create-row adm-create-row--3" onSubmit={add}>
           <label>Đường dẫn cũ<input name="from" required maxLength={250} placeholder="/duong-dan-cu/" /></label>
           <label>Chuyển tới<input name="to" required maxLength={300} placeholder="/duong-dan-moi/ hoặc https://…" /></label>
-          <span />
           <button className="admin-secondary"><Plus size={15} /> Thêm</button>
           {error && <p className="field-note is-error" role="alert">{error}</p>}
         </form>

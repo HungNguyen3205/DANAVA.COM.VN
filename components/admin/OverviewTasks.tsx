@@ -77,7 +77,7 @@ export function OverviewTasks({ data, leads, draft }: { data: SiteData; leads: A
             : <EmptyState title="Không có việc tồn đọng">Mọi yêu cầu và nội dung đã được xử lý.</EmptyState>}
         </Card>
         <Card title="Lối tắt">
-          <div className="ax-shortcuts">{shortcuts.map(s => <Link key={s.href} href={s.href}><s.icon size={16} />{s.label}</Link>)}</div>
+          <div className="ax-shortcuts">{shortcuts.map(s => <Link key={s.href} href={s.href}><s.icon size={16} /><span>{s.label}</span></Link>)}</div>
         </Card>
       </div>
     </>

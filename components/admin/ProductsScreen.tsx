@@ -343,7 +343,7 @@ export function GroupsScreen({ draft, setDraft }: { draft: SiteData; setDraft: (
             }}>Xóa</button>
           </div>
         ))}
-        <form className="adm-create-row" onSubmit={add}>
+        <form className="adm-create-row adm-create-row--2" onSubmit={add}>
           <label>Nhóm mới<input name="name" maxLength={80} placeholder="vd. Phần mềm vận hành" /></label>
           <button className="admin-secondary"><Plus size={15} /> Thêm nhóm</button>
         </form>

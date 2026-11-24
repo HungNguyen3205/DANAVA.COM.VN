@@ -571,3 +571,64 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
   .ax-scope .ax-hero-ed > .ax-card { position: static; }
 }
 @media (max-width: 720px) { .ax-scope .ax-hero-pv { grid-template-columns: minmax(0, 1fr); } }
+
+/* ==== Rà soát bố cục 11/2026 ==== */
+/* Yêu cầu tư vấn: ô tìm có icon = một khung viền duy nhất, cao bằng ô lọc và nút */
+.ax-scope .adm-input-icon { min-height: 40px; border-color: var(--ax-border-strong); border-radius: 10px; }
+.ax-scope .adm-input-icon:focus-within { border-color: var(--ax-accent); box-shadow: var(--ax-focus); }
+.ax .ax-content .adm-input-icon input:is(:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file])) {
+  min-height: 0; height: 38px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+}
+/* Ngăn kéo chi tiết khi đóng nằm ngoài khung: không tạo thanh cuộn ngang */
+.ax-scope .adm-drawer-wrap { overflow: hidden; }
+.ax-scope .adm-drawer-wrap:not(.is-open) { visibility: hidden; transition: visibility 0s .3s; }
+@media (max-width: 700px) {
+  .ax-scope .adm .adm-toolbar-right, .ax-scope .adm-toolbar-right { flex-wrap: wrap; }
+  .ax-scope .adm-toolbar-right > select { flex: 1 1 100%; }
+  .ax-scope .adm-toolbar-right > .adm-input-icon { flex: 1 1 0; width: auto; }
+}
+/* Tiêu đề trang: đường dẫn cạnh tên trang; màn hẹp cho phép xuống dòng thay vì tràn */
+
+@media (max-width: 900px) { .ax-scope .ax-pagehead__text { min-width: 0; flex-basis: 100%; } .ax-scope .ax-pagehead h2 { flex-wrap: wrap; white-space: normal; row-gap: 4px; } }
+/* Ô nhập trong nhãn thường: luôn nằm dưới chữ nhãn, rộng hết khung (không chen cùng hàng với chữ) */
+.ax .ax-content label:not([class]):has(> :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea)) { display: grid; gap: 6px; align-content: start; }
+.ax .ax-content label:not([class]) > :is(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea) { display: block; width: 100%; min-width: 0; }
+.ax-scope .adm-create-row .adm-kind { align-self: end; align-items: center; min-height: 40px; padding: 0; }
+/* Đầu thẻ: nhóm nút bên phải giữ một hàng, phần chữ co lại */
+.ax-scope .ax-card__head > div:first-child { flex: 1; min-width: 0; }
+.ax-scope .ax-card__actions { flex: none; flex-wrap: nowrap; align-items: center; }
+@media (max-width: 700px) { .ax-scope .ax-card__head { flex-wrap: wrap; } .ax-scope .ax-card__actions { flex-wrap: wrap; } }
+/* Lối tắt: một dòng, chữ dài thì rút gọn */
+.ax-scope .ax-shortcuts { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.ax-scope .ax-shortcuts a { min-width: 0; white-space: nowrap; }
+.ax-scope .ax-shortcuts a > svg { flex: none; }
+.ax-scope .ax-shortcuts a > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* Thanh lưu nổi: chữ trạng thái một dòng (màn rộng), nút không co */
+.ax-scope .ax-savebar { max-width: calc(100vw - 32px); }
+.ax-scope .ax-savebar__dot, .ax-scope .ax-savebar .ax-btn { flex: none; }
+@media (min-width: 701px) { .ax-scope .ax-savebar > span:not(.ax-savebar__dot) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; } }
+/* Hàng tạo nhanh: nút thẳng đáy với ô nhập */
+.ax-scope .adm-create-row > button { margin: 0; align-self: end; min-height: 40px; }
+.ax-scope .adm-create-row--2 { grid-template-columns: minmax(0, 1fr) auto; }
+.ax .ax-content .adm-create-row :is(input:not([type=checkbox]):not([type=radio]), select) { min-height: 40px; }
+/* Danh sách có ảnh nhỏ: ô trống (chưa có ảnh) cùng kích thước với ảnh để chữ thẳng cột */
+.ax-scope .project-admin-row > .adm-thumb { width: 84px; height: 60px; border-radius: 10px; flex: none; }
+/* Bảng cũ (.table-wrap) trong thẻ: thẳng lề với chữ trong thẻ (bỏ lề âm của giao diện cũ) */
+.ax-scope .adm .table-wrap, .ax .ax-content .table-wrap { margin: 0; }
+/* Thẻ số liệu: nhãn dài xuống dòng thì con số vẫn thẳng hàng với các thẻ khác (đặt ở đáy thẻ) */
+.ax-scope .admin-kpis > article { display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+.ax-scope .adm-create-row--3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+/* Biểu mẫu dọc: các ô xếp sát trên, không giãn theo chiều cao thẻ bên cạnh */
+.ax-scope .adm-form { align-content: start; }
+.ax-scope .adm-form > button { justify-self: start; min-width: 160px; }
+/* Hàng nút sao lưu: cùng chiều cao, cùng kiểu nút của admin mới */
+.ax-scope .adm .data-actions > button, .ax .ax-content .data-actions > button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; height: 38px; padding: 0 var(--s4); border-radius: 10px; font-size: 14px; font-weight: 600; line-height: 1; }
+.ax-scope .adm .data-actions > button:not(.danger), .ax .ax-content .data-actions > button:not(.danger) { border: 1px solid var(--ax-border); background: #fff; color: var(--ax-text); }
+.ax-scope .adm .data-actions > button.danger, .ax .ax-content .data-actions > button.danger { border: 1px solid rgba(180, 35, 24, .35); background: #fff; color: var(--ax-danger); }
+/* Đội ngũ: ảnh nhỏ, công tắc Hiển thị và nút ↑/Xóa thẳng hàng với ô Họ tên/Chức danh (không phải với chữ nhãn) */
+@media (min-width: 701px) {
+  .ax-scope .adm .staff-editor > .toggle-label, .ax-scope .adm .staff-editor > .row-actions { align-self: start; display: flex; align-items: center; min-height: 40px; margin: 25px 0 0 !important; }
+  .ax-scope .adm .staff-editor > .staff-avatar { align-self: start; margin-top: 23px; }
+}
+/* Nhãn trong hàng tạo nhanh / biểu mẫu dọc: bỏ lề dưới của giao diện cũ để ô và nút thẳng đáy */
+.ax-scope .adm .adm-create-row > label, .ax-scope .adm .adm-form > label, .ax .ax-content .adm-create-row > label, .ax .ax-content .adm-form > label { margin: 0; }

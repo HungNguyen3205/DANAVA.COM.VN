@@ -48,7 +48,7 @@ export default function AnalyticsDashboard() {
               ['Phiên truy cập', stats.totals.sessions],
               ['Lượt xem trang', stats.totals.pageviews],
               ['Tương tác TB / phiên', `${Math.round(stats.totals.seconds / Math.max(1, stats.totals.sessions))} giây`],
-              ['Hoạt động 90 giây qua', stats.online.n],
+              ['Đang hoạt động (90 giây)', stats.online.n],
             ].map(([label, value]) => (
               <article key={label}>
                 <span>{label}</span>
