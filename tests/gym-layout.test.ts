@@ -1,57 +1,152 @@
-/** Tự động bố trí phòng gym (lib/gym-layout.ts): máy nằm trong phòng, không chồng nhau, đúng khu, tôn trọng ngân sách. */
+/**
+ * Bố trí phòng tập nhiều tầng (lib/gym-layout.ts) + kiểm tra hình học (lib/gym-geometry.ts):
+ * trong ranh giới, không chồng lấn, đủ khoảng trống vận hành, có lối đi từ cửa, không chắn cửa / cầu thang,
+ * ngân sách, máy thiếu giá, khoá máy, 4 kiểu bố trí khác nhau thật sự.
+ */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { autoLayout, LAYOUT_STYLES, type LayoutStyle } from '../lib/gym-layout.ts';
 import { EQUIPMENT_SEEDS } from '../lib/equipment-seeds.ts';
+import { generateOptions, selectEquipment, STRATEGY_ORDER } from '../lib/gym-layout.ts';
+import { validateOption, eqRects, checkEquipment, floorObstacles, rotFor, AXIS_X, AXIS_Z } from '../lib/gym-geometry.ts';
+import { newProject, normalizeProject, layoutHash, uid, type Project, type Strategy } from '../lib/gym-project.ts';
 
 const byId = new Map(EQUIPMENT_SEEDS.map(e => [e.id, e]));
-const foot = (id: string, rot: number) => { const e = byId.get(id)!; const w = e.width / 100, d = e.depth / 100; return rot % 2 ? [d, w] : [w, d]; };
+const errors = (p: Project, i = 0) => validateOption(p, p.options[i], byId).issues.filter(x => x.level === 'error');
 
-for (const [area, style] of [[60, 'pt'], [100, 'balanced'], [200, 'cardio'], [400, 'strength']] as [number, LayoutStyle][]) {
-  test(`bố trí ${area} m² kiểu ${LAYOUT_STYLES[style].label}: trong phòng, không chồng nhau, có đủ khu`, () => {
-    const W = Math.round(Math.sqrt(area * 1.4) * 10) / 10, L = Math.round((area / W) * 10) / 10;
-    const r = autoLayout(EQUIPMENT_SEEDS, { w: W, l: L, style });
-    assert.ok(r.items.length >= 3, `có máy (${r.items.length})`);
-    assert.ok(r.zones.cardio >= 1 && r.zones.strength >= 1 && r.zones.free >= 1, JSON.stringify(r.zones));
-    for (const it of r.items) {
-      const [fw, fd] = foot(it.eqId, it.rot);
-      assert.ok(it.x - fw / 2 >= -W / 2 - 1e-6 && it.x + fw / 2 <= W / 2 + 1e-6 && it.z - fd / 2 >= -L / 2 - 1e-6 && it.z + fd / 2 <= L / 2 + 1e-6, `${it.eqId} ra ngoài phòng`);
+test('rotFor khớp quy ước xoay của three.js cho cả 4 góc', () => {
+  for (let r = 0; r < 4; r++) {
+    assert.equal(rotFor('x', AXIS_X[r][0], AXIS_X[r][1]), r);
+    assert.equal(rotFor('z', AXIS_Z[r][0], AXIS_Z[r][1]), r);
+  }
+});
+
+test('khoảng trống máy chạy bộ: 2 m phía sau theo đúng hướng xoay', () => {
+  const tm = EQUIPMENT_SEEDS.find(e => e.kind === 'treadmill')!;
+  for (let rot = 0; rot < 4; rot++) {
+    const { body, clear } = eqRects(tm, 0, 0, rot);
+    const back = [-AXIS_X[rot][0], -AXIS_X[rot][1]];
+    const ext = back[0] > 0 ? clear.x1 - body.x1 : back[0] < 0 ? body.x0 - clear.x0 : back[1] > 0 ? clear.z1 - body.z1 : body.z0 - clear.z0;
+    assert.ok(Math.abs(ext - 2) < 1e-6, `rot ${rot}: ${ext}`);
+  }
+});
+
+for (const [areas, model] of [[[120], 'gym'], [[60], 'pt'], [[220, 160], 'strength'], [[150, 120, 90], 'boutique'], [[400], 'wellness']] as const) {
+  test(`${areas.length} tầng ${areas.join('/')} m² (${model}): 3 phương án hợp lệ, có lối đi, khác nhau`, () => {
+    const p = newProject({ model, areas: [...areas], budget: 0 });
+    const { options, selection } = generateOptions(p, EQUIPMENT_SEEDS);
+    p.options = options;
+    assert.equal(options.length, 3);
+    assert.equal(new Set(options.map(o => o.strategy)).size, 3);
+    const total = selection.floors.reduce((s, f) => s + f.eqs.length, 0);
+    assert.ok(total >= areas.length * 3, `chọn ${total} máy`);
+    for (let i = 0; i < 3; i++) {
+      const e = errors(p, i);
+      assert.deepEqual(e.map(x => x.msg), [], `phương án ${options[i].letter} (${options[i].strategy})`);
+      assert.ok(options[i].placements.length >= Math.min(total, 2), `${options[i].strategy}: ${options[i].placements.length}/${total}`);
+      for (const pl of options[i].placements) assert.ok(p.floors.some(f => f.id === pl.floorId));
     }
-    for (let i = 0; i < r.items.length; i++) for (let j = i + 1; j < r.items.length; j++) {
-      const a = r.items[i], b = r.items[j], [aw, ad] = foot(a.eqId, a.rot), [bw, bd] = foot(b.eqId, b.rot);
-      assert.ok(!(Math.abs(a.x - b.x) < (aw + bw) / 2 - 1e-6 && Math.abs(a.z - b.z) < (ad + bd) / 2 - 1e-6), `${a.eqId} chồng ${b.eqId}`);
-    }
+    // Các phương án đặt máy ở vị trí khác nhau thật sự
+    const sig = (i: number) => options[i].placements.map(x => `${Math.round(x.x)}:${Math.round(x.z)}`).sort().join('|');
+    assert.notEqual(sig(0), sig(1)); assert.notEqual(sig(1), sig(2));
   });
 }
 
-test('ngân sách: tổng giá máy đã chọn không vượt ngân sách', () => {
-  const r = autoLayout(EQUIPMENT_SEEDS, { w: 12, l: 9, style: 'balanced', budget: 300_000_000 });
-  assert.ok(r.total <= 300_000_000, String(r.total));
-  assert.ok(r.items.length >= 3);
+test('4 kiểu bố trí đều tạo được phương án hợp lệ trên cùng mặt bằng', () => {
+  const p = newProject({ model: 'gym', areas: [180], budget: 0 });
+  const all: Strategy[] = ['perimeter', 'clusters', 'circuit', 'axis'];
+  for (const s of all) {
+    const { options } = generateOptions(p, EQUIPMENT_SEEDS, { strategies: [s] });
+    const q = { ...p, options };
+    assert.deepEqual(errors(q).map(x => x.msg), [], s);
+    assert.ok(options[0].placements.length >= 8, `${s}: ${options[0].placements.length}`);
+  }
+  // Vòng tập có số trạm; Mở trung tâm có khoảng mở; Trục có đèn dọc trục
+  const circuit = generateOptions(p, EQUIPMENT_SEEDS, { strategies: ['circuit'] }).options[0];
+  assert.ok(circuit.placements.every(x => x.station));
+  const peri = generateOptions(p, EQUIPMENT_SEEDS, { strategies: ['perimeter'] }).options[0];
+  assert.ok(peri.furniture.some(f => f.kind === 'turf' || f.kind === 'mat-zone'));
+  const axis = generateOptions(p, EQUIPMENT_SEEDS, { strategies: ['axis'] }).options[0];
+  assert.ok(axis.furniture.filter(f => f.kind === 'linear-light').length >= 2);
 });
 
-test('không chọn 2 máy tạ cùng một bài tập', () => {
-  const r = autoLayout(EQUIPMENT_SEEDS, { w: 20, l: 15, style: 'strength' });
-  const names = r.items.map(i => byId.get(i.eqId)!).filter(e => e.kind === 'stack' || e.kind === 'plate').map(e => e.name);
-  assert.ok(names.length >= 4, names.join(', '));
+test('mặt bằng nhiều vật cố định: không chắn cửa, cột, WC, lối thoát; mọi máy tiếp cận được', () => {
+  const p = newProject({ model: 'gym', areas: [160], budget: 0 });
+  const f = p.floors[0];
+  for (const [x, z] of [[-3, -1], [3, -1], [0, -3]]) f.fixtures.push({ id: uid('fx'), kind: 'column', x, z, w: .5, d: .5, rot: 0 });
+  f.fixtures.push({ id: uid('fx'), kind: 'exit', x: -f.w / 2 + .1, z: 1, w: 1.2, d: .2, rot: 1 });
+  f.fixtures.push({ id: uid('fx'), kind: 'void', x: f.w / 2 - 1.5, z: -f.l / 2 + 1.5, w: 3, d: 3, rot: 0 });
+  const { options } = generateOptions(p, EQUIPMENT_SEEDS);
+  p.options = options;
+  for (let i = 0; i < 3; i++) assert.deepEqual(errors(p, i).map(x => x.msg), [], options[i].strategy);
 });
 
-test('khu không đặt máy (cửa, cầu thang, nhà vệ sinh): máy không nằm trong khu, kể cả lối đi chừa quanh khu', async () => {
-  const { ZONE_KINDS, zoneFoot } = await import('../lib/gym-layout.ts');
-  const W = 12, L = 9;
-  const zones = [
-    { kind: 'door' as const, x: 0, z: L / 2 - .5, w: 1.2, d: 1, rot: 0 },
-    { kind: 'stairs' as const, x: -W / 2 + .6, z: 0, w: 1.2, d: 3, rot: 0 },
-    { kind: 'wc' as const, x: W / 2 - 1, z: -L / 2 + 1, w: 2, d: 2, rot: 0 }
-  ];
-  const r = autoLayout(EQUIPMENT_SEEDS, { w: W, l: L, style: 'balanced', zones });
-  assert.ok(r.items.length >= 5, String(r.items.length));
-  for (const it of r.items) {
-    const [fw, fd] = foot(it.eqId, it.rot);
-    for (const z of zones) {
-      const [zw, zd] = zoneFoot(z), p = ZONE_KINDS[z.kind].pad;
-      const overlap = Math.abs(it.x - z.x) < (fw + zw) / 2 + p - 1e-6 && Math.abs(it.z - z.z) < (fd + zd) / 2 + p - 1e-6;
-      assert.ok(!overlap, `${byId.get(it.eqId)!.name} nằm trong ${ZONE_KINDS[z.kind].label}`);
+test('ngân sách thấp: tổng máy có giá không vượt ngân sách; máy thiếu giá liệt kê riêng', () => {
+  const p = newProject({ model: 'gym', areas: [150], budget: 250_000_000 });
+  const sel = selectEquipment(p, EQUIPMENT_SEEDS);
+  const spent = sel.floors.flatMap(f => f.eqs).reduce((s, e) => s + Number(e.price || 0), 0);
+  assert.ok(spent + sel.flooringReserve <= 250_000_000, String(spent));
+  for (const e of sel.unpriced) assert.equal(e.price, '');
+  assert.ok(sel.floors[0].eqs.length >= 3);
+});
+
+test('khoá máy: tạo lại phương án giữ nguyên máy đã khoá', () => {
+  const p = newProject({ model: 'gym', areas: [140], budget: 0 });
+  p.options = generateOptions(p, EQUIPMENT_SEEDS).options;
+  const keep = structuredClone(p.options[0]);
+  const locked = keep.placements.slice(0, 3);
+  for (const l of locked) l.locked = true;
+  const again = generateOptions(p, EQUIPMENT_SEEDS, { keep, strategies: ['axis', 'clusters', 'circuit'] }).options;
+  for (const o of again) for (const l of locked) assert.ok(o.placements.some(x => x.id === l.id && x.x === l.x && x.z === l.z && x.rot === l.rot), `${o.strategy} giữ ${l.eqId}`);
+});
+
+test('kéo máy vào lối cửa / chồng máy khác → bộ kiểm tra báo lỗi; khớp mọi góc xoay', () => {
+  const p = newProject({ model: 'gym', areas: [120], budget: 0 });
+  p.options = generateOptions(p, EQUIPMENT_SEEDS).options;
+  const o = p.options[0], f = p.floors[0];
+  const door = f.fixtures.find(x => x.kind === 'door')!;
+  const pl = o.placements[0], eq = byId.get(pl.eqId)!;
+  for (let rot = 0; rot < 4; rot++) {
+    const obs = floorObstacles(p, f, o, byId).filter(x => x.id !== pl.id);
+    assert.ok(checkEquipment(eq, door.x, door.z - 1, rot, f, obs), `rot ${rot} trước cửa`);
+    const other = o.placements[1];
+    assert.ok(checkEquipment(eq, other.x, other.z, rot, f, obs), `rot ${rot} chồng máy khác`);
+  }
+});
+
+test('nhiều tầng: tầng trên có lối từ cầu thang; thiếu kết nối tầng bị báo lỗi', () => {
+  const p = newProject({ model: 'gym', areas: [150, 120], budget: 0 });
+  p.options = generateOptions(p, EQUIPMENT_SEEDS).options;
+  assert.deepEqual(errors(p).map(x => x.msg), []);
+  assert.ok(p.options[0].placements.some(x => x.floorId === p.floors[1].id));
+  const v = validateOption(p, p.options[0], byId);
+  assert.ok(v.verify.length >= 1, 'có điều kiện cần xác minh');
+  const q = { ...p, links: [] };
+  assert.ok(validateOption(q, q.options[0], byId).issues.some(x => /chưa khai báo cầu thang/.test(x.msg)));
+});
+
+test('lưu rồi mở lại: chuẩn hoá giữ nguyên phương án và mã bố trí', () => {
+  const p = newProject({ model: 'pt', areas: [90, 70], budget: 400_000_000 });
+  p.options = generateOptions(p, EQUIPMENT_SEEDS).options;
+  const back = normalizeProject(JSON.parse(JSON.stringify(p)), new Set(byId.keys()));
+  assert.ok(typeof back !== 'string');
+  assert.equal(layoutHash(back, back.options[1]), layoutHash(p, p.options[1]));
+  assert.equal(typeof normalizeProject({ floors: [] }), 'string');
+  assert.equal(typeof normalizeProject({ floors: [{ id: 'x' }] }), 'string');
+});
+
+test('thứ tự kiểu theo mô hình: mỗi mô hình 3 kiểu khác nhau', () => {
+  for (const list of Object.values(STRATEGY_ORDER)) assert.equal(new Set(list).size, 3);
+});
+
+test('chi phí từng phương án (thiết bị + thảm sàn có giá) không vượt ngân sách dự án', async () => {
+  const { costOf } = await import('../lib/gym-cost.ts');
+  const { FLOORING } = await import('../lib/equipment-seeds.ts');
+  for (const [areas, budget] of [[[180, 140], 900e6], [[120], 300e6], [[200, 150, 100], 1.5e9]] as const) {
+    const p = newProject({ model: 'gym', areas: [...areas], budget });
+    p.options = generateOptions(p, EQUIPMENT_SEEDS, { flooring: FLOORING }).options;
+    for (const o of p.options) {
+      const c = costOf(p, o, byId, FLOORING);
+      assert.ok(c.priced <= budget, `${areas.join('/')} ${o.strategy}: ${c.priced} > ${budget}`);
     }
   }
 });

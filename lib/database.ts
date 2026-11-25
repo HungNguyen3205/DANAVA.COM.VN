@@ -153,6 +153,27 @@ const MIGRATIONS: Migration[] = [
           ['rev_baseline_' + Number(row.revision), Number(row.revision), 'baseline', row.json, Date.now(), 'system', 'Hệ thống', 'Phiên bản công khai tại thời điểm nâng cấp hệ quản trị']);
       }
     }
+  },
+  {
+    // Phương án thiết kế phòng tập do khách lưu / gửi (phòng lab /bao-gia-setup-phong-gym/, lib/gym-designs.ts)
+    version: 2,
+    name: 'phuong-an-phong-tap',
+    mysql: [
+      `CREATE TABLE IF NOT EXISTS gym_designs (
+        code VARCHAR(16) PRIMARY KEY,
+        token_hash VARCHAR(64) NOT NULL,
+        version INT NOT NULL,
+        json LONGTEXT NOT NULL,
+        preview MEDIUMTEXT NULL,
+        created_at BIGINT NOT NULL,
+        updated_at BIGINT NOT NULL,
+        INDEX gym_designs_updated (updated_at)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
+    ],
+    sqlite: [
+      'CREATE TABLE IF NOT EXISTS gym_designs (code TEXT PRIMARY KEY, token_hash TEXT NOT NULL, version INTEGER NOT NULL, json TEXT NOT NULL, preview TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)',
+      'CREATE INDEX IF NOT EXISTS gym_designs_updated ON gym_designs(updated_at)'
+    ]
   }
 ];
 
