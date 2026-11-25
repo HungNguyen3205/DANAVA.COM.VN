@@ -425,3 +425,72 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
   .gs-moreviews button { flex: 1 1 auto; justify-content: center; }
 }
 @media (max-width: 640px) { .gs .gs-views button span { display: inline; } .gs .gs-views button { padding: 0 9px; font-size: 12px; } }
+
+/* ==========================================================================
+   Bản gọn nhất: một dòng thông tin + phòng 3D lớn; điều khiển nổi trong khung; chi tiết gập; form dạng hộp nổi
+   ========================================================================== */
+.gp-hero { padding: 10px 0 6px; }
+.gp-h1 { font-size: clamp(22px, 2.4vw, 30px); margin-top: 2px; }
+.gp-body { padding-top: 8px; }
+.gs-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; margin-bottom: 10px; }
+.gs-line__facts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 0; color: #5b6478; font-size: 14.5px; }
+.gs-line__facts .gs-sum__badge { width: 32px; height: 32px; border-radius: 10px; font-size: 15px; }
+.gs-line__facts b { color: var(--gs-navy); font-size: 15.5px; }
+.gs-line__facts strong { color: #c2410c; font-size: 15.5px; }
+.gs-line__swap { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px; border: 1px solid var(--gs-line); border-radius: 999px; background: #fff; color: var(--gs-navy); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.gs-line__swap svg { width: 14px; height: 14px; }
+.gs-line__act { display: flex; gap: 8px; }
+.gs-stage { height: min(78vh, 860px); }
+.gs-float { position: absolute; z-index: 4; display: flex; flex-direction: column; gap: 6px; }
+.gs-float--tl { top: 10px; left: 10px; }
+.gs-float--tr { top: 10px; right: 10px; align-items: flex-end; }
+.gs-float--bl { left: 10px; bottom: 12px; }
+.gs-float .gs-floortabs, .gs-float .gs-views { background: rgba(255, 255, 255, .9); box-shadow: 0 10px 22px -16px rgba(19, 36, 79, .6); backdrop-filter: blur(6px); }
+.gs-float .gs-views button { min-width: 40px; justify-content: center; }
+.gs-float .gs-moreviews { flex-direction: column; align-items: stretch; max-width: 220px; background: rgba(255, 255, 255, .96); box-shadow: 0 16px 32px -20px rgba(19, 36, 79, .6); }
+.gs-warnchip { flex-direction: row; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 0; border-radius: 999px; background: #fef2f2; color: #b42318; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px -12px rgba(180, 35, 24, .6); }
+.gs-warnchip svg { width: 15px; height: 15px; }
+.gs-clearbtn { display: none; }
+.gs-more-info { margin-top: 12px; border: 1px solid var(--gs-line); border-radius: 18px; background: #fff; }
+.gs-more-info > summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 14px 18px; cursor: pointer; color: var(--gs-navy); font-size: 15px; font-weight: 800; }
+.gs-more-info > summary small { color: var(--gs-muted); font-size: 12.5px; font-weight: 600; }
+.gs-more-info .gs-below { margin: 0; padding: 0 14px 14px; }
+.gs-more-info .gs-col { border: 0; padding: 6px; }
+.gs-modal { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 16px; background: rgba(13, 24, 54, .45); animation: gs-fade .18s ease; }
+.gs-modal__box { position: relative; width: min(520px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; padding: 22px; border-radius: 22px; background: #fff; box-shadow: 0 30px 80px -24px rgba(11, 19, 43, .55); }
+.gs-modal__box h2 { margin: 0; font-size: 19px; }
+.gs-modal__x { position: absolute; top: 12px; right: 12px; }
+.gs-modal .gp-form { margin: 0; }
+@keyframes gs-fade { from { opacity: 0; } }
+@media (max-width: 1100px) { .gs-stage { height: 64vh; } }
+@media (max-width: 640px) {
+  .gs-line { gap: 8px; }
+  .gs-line__facts { font-size: 13px; gap: 2px 10px; }
+  .gs-line__act { width: 100%; }
+  .gs-line__act > * { flex: 1; }
+  .gs-line .gs-cta { display: none; }
+  .gs-stage { height: 60vh; min-height: 340px; }
+  .gs-float .gs-floortabs button, .gs-float .gs-views button { height: 30px; padding: 0 8px; font-size: 12px; }
+  .gs-modal { place-items: end center; padding: 0; }
+  .gs-modal__box { border-radius: 22px 22px 0 0; padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .gs-modal { animation: none; } }
+
+/* Sản phẩm trong phòng: dải thẻ ảnh gọn */
+.gs-products { margin-top: 12px; }
+.gs-products h2 { display: flex; align-items: baseline; gap: 8px; margin: 0 0 8px; font-size: 16px; }
+.gs-products h2 small { color: var(--gs-muted); font-size: 13px; font-weight: 600; }
+.gs-products ul { display: grid; grid-auto-flow: column; grid-auto-columns: 150px; gap: 10px; margin: 0; padding: 2px 2px 10px; overflow-x: auto; list-style: none; scrollbar-width: thin; }
+.gs-products button { display: grid; gap: 4px; width: 100%; height: 100%; padding: 8px; border: 1px solid var(--gs-line); border-radius: 14px; background: #fff; color: var(--gs-navy); font: inherit; text-align: left; cursor: pointer; transition: border-color .15s, transform .15s; }
+.gs-products button:hover { border-color: #ffd3b5; transform: translateY(-2px); }
+.gs-products__img { position: relative; display: block; aspect-ratio: 1; border-radius: 10px; background: #f6f8fb; overflow: hidden; }
+.gs-products__img img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.gs-products__img i { position: absolute; top: 6px; right: 6px; padding: 1px 7px; border-radius: 999px; background: var(--gs-navy); color: #fff; font-size: 11px; font-style: normal; font-weight: 800; }
+.gs-products b { display: -webkit-box; overflow: hidden; font-size: 12.5px; line-height: 1.3; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.gs-products em { color: #c2410c; font-size: 12.5px; font-style: normal; font-weight: 800; }
+.gs-products em.is-contact { color: var(--gs-muted); }
+.gs-more-info > summary { justify-content: center; font-size: 14px; }
+@media (max-width: 640px) {
+  .gs-products ul { grid-auto-columns: 128px; }
+  .gs-line__facts .gs-line__swap span { display: none; }
+}

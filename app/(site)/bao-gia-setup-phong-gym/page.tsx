@@ -23,9 +23,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
         <section className="gp-hero">
           <div className="s-container">
             <Crumbs data={data} items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/setup-van-hanh-phong-gym/', label: 'Setup phòng gym' }, { label: 'Phòng lab 3D' }]} />
-            <p className="gy-kicker">DANAVA Gym Solutions · Phòng lab 3D</p>
-            <h1 className="gy-h2">Thiết kế phòng tập của bạn</h1>
-            <p className="gy-lead">Nhập nhu cầu, xem phòng tập 3D gợi ý cùng chi phí dự kiến, rồi gửi để DANAVA tư vấn triển khai.</p>
+            <h1 className="gy-h2 gp-h1">Thiết kế phòng tập 3D</h1>
           </div>
         </section>
         <section className="gp-body">
