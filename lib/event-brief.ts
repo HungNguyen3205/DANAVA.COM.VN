@@ -59,3 +59,15 @@ export function eventEstimate(guests: string | undefined, agenda: string[] | und
   const round = (n: number) => Math.round(n / 100_000) * 100_000;
   return { low: round(tier.low * extra), high: round(tier.high * extra) };
 }
+
+/** Phiếu sự kiện rút gọn (8 câu) dùng trong ANNA; bộ đầy đủ EVENT_STEPS vẫn giữ. */
+export const EVENT_QUICK_SECTIONS = ['Sự kiện', 'Quy mô', 'Ngân sách', 'Liên hệ'] as const;
+const EVENT_QUICK_PLAN: [string, number, Partial<Step>?][] = [
+  ['brand', 0, { bot: 'Xin chào! Mình là ANNA, chỉ 8 câu ngắn để báo giá sự kiện thôi nhé. Tên doanh nghiệp hoặc thương hiệu của bạn?' }],
+  ['eventType', 0], ['date', 0], ['guests', 1], ['agenda', 1], ['budget', 2], ['name', 3], ['phone', 3]
+];
+export const EVENT_QUICK_STEPS: Step[] = EVENT_QUICK_PLAN.map(([id, section, over]) => {
+  const s = EVENT_STEPS.find(x => x.id === id);
+  if (!s) throw Error(`Thiếu câu ${id}`);
+  return { ...s, ...over, section };
+});

@@ -9,12 +9,11 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useAnna } from './anna/AnnaProvider';
-import { MayFigure } from './anna/MayFigure';
 import { useSubmitLock } from './useSubmitLock';
 import { useRouter } from 'next/navigation';
 import { ArrowUp, Bot, Check, MessageCircle, Send } from 'lucide-react';
-import { ADVICE, SCALE_TO_TIER, SECTIONS, STEPS, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
-import { EVENT_SECTIONS, EVENT_STEPS, eventEstimate } from '@/lib/event-brief';
+import { ADVICE, QUICK_SECTIONS, QUICK_STEPS, SCALE_TO_TIER, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
+import { EVENT_QUICK_SECTIONS, EVENT_QUICK_STEPS, eventEstimate } from '@/lib/event-brief';
 import { ADDONS, estimate, rangeText } from '@/lib/web-quote';
 import { isValidPhoneNumber } from '@/lib/contact-services';
 
@@ -26,8 +25,8 @@ const TYPING_MS = 450;
 
 const FLOWS = {
   landing: {
-    steps: STEPS,
-    sections: SECTIONS,
+    steps: QUICK_STEPS,
+    sections: QUICK_SECTIONS,
     title: '[Phiếu thiết kế landing page]',
     service: 'Landing page',
     source: 'phieu-landing',
@@ -39,8 +38,8 @@ const FLOWS = {
     }
   },
   events: {
-    steps: EVENT_STEPS,
-    sections: EVENT_SECTIONS,
+    steps: EVENT_QUICK_STEPS,
+    sections: EVENT_QUICK_SECTIONS,
     title: '[Phiếu báo giá tổ chức sự kiện]',
     service: 'Tổ chức sự kiện',
     source: 'phieu-su-kien',
@@ -165,7 +164,7 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   const annaChat: ReactNode = (
     <div className="an-chat qc-anna">
       <div className="an-log" ref={thread} role="log" aria-live="polite" aria-label={cfg.panel}>
-        <p className="qc-anna__tag">{cfg.panel} · khoảng 5 phút</p>
+        <p className="qc-anna__tag">{cfg.panel} · {steps.length} câu, khoảng 2 phút</p>
         {messages.map((m, i) => m.from === 'user'
           ? <p key={i} className="an-msg an-msg--me">{m.text}</p>
           : <div key={i} className="an-msg an-msg--bot"><p>{m.text}</p></div>)}
@@ -213,33 +212,18 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
     </div>
   );
   const answered = messages.filter(m => m.from === 'user').length;
+  const progress = finished ? 'Đã đủ thông tin — xác nhận trong khung ANNA để gửi phiếu.' : answered ? `Đã trả lời ${answered}/${steps.length} câu.` : `${steps.length} câu ngắn, khoảng 2 phút.`;
 
   return (
     <div className={`qc${inAnna ? ' qc--anna' : ''}`}>
       {inAnna && anna.slot && createPortal(annaChat, anna.slot)}
-      {inAnna ? (
-        <section className="qc__start" aria-label={cfg.panel}>
-          <div className="qc__starthead">
-            <span className="qc__may" aria-hidden="true"><MayFigure /></span>
-            <div>
-              <strong>Trả lời cùng ANNA</strong>
-              <span>{finished ? 'Đã đủ thông tin — xác nhận trong khung chat để gửi phiếu.' : answered ? `Đang ở phần ${currentSection + 1}/${cfg.sections.length}: ${cfg.sections[currentSection]} — tiếp tục trong khung chat.` : `${cfg.sections.length} phần ngắn, khoảng 5 phút. ANNA hỏi, bạn chọn hoặc gõ.`}</span>
-            </div>
-          </div>
-          {answered > 0 && (
-            <ol className="qc__answers">
-              {messages.map((m, i) => m.from === 'user' ? <li key={i}><small>{messages[i - 1]?.text}</small><b>{m.text}</b></li> : null)}
-            </ol>
-          )}
-          <button type="button" className="qc__btn qc__open" onClick={openDesign}><MessageCircle aria-hidden="true" />{answered ? 'Tiếp tục với ANNA' : 'Bắt đầu với ANNA'}</button>
-        </section>
-      ) : (
+      {!inAnna && (
       <section className="qc__chat" aria-label={cfg.panel}>
         <div className="qc__head">
           <span className="qc__avatar" aria-hidden="true"><Bot /></span>
           <div>
             <strong>Trợ lý DANAVA</strong>
-            <span>{cfg.panel} · khoảng 5 phút</span>
+            <span>{cfg.panel} · {steps.length} câu, khoảng 2 phút</span>
           </div>
         </div>
 
@@ -334,6 +318,12 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
             </li>
           ))}
         </ol>
+        {inAnna && (
+          <>
+            <p className="qc__progress-note">{progress}</p>
+            <button type="button" className="qc__btn qc__open" onClick={openDesign}><MessageCircle aria-hidden="true" />{finished ? 'Xác nhận trong ANNA' : answered ? 'Tiếp tục với ANNA' : 'Trả lời cùng ANNA'}</button>
+          </>
+        )}
       </aside>
     </div>
   );

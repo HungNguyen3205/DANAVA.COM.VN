@@ -150,3 +150,18 @@ export const SCALE_TO_TIER: Record<string, string> = {
   'Vừa (tối đa 8 mục)': 'l-standard',
   'Đầy đủ, nhiều chức năng': 'l-premium'
 };
+
+/**
+ * Phiếu rút gọn (8 câu) dùng trong ANNA: chỉ những câu cần để báo giá và liên hệ.
+ * Chi tiết còn lại (khách hàng, nội dung, chức năng…) chuyên viên hỏi khi gọi lại. Bộ đầy đủ STEPS vẫn giữ.
+ */
+export const QUICK_SECTIONS = ['Thương hiệu', 'Mục tiêu', 'Quy mô', 'Phong cách', 'Dịch vụ thêm', 'Ngân sách', 'Liên hệ'] as const;
+const QUICK_PLAN: [string, number, Partial<Step>?][] = [
+  ['brand', 0, { bot: 'Xin chào! Mình là ANNA, chỉ 8 câu ngắn thôi nhé. Tên thương hiệu và lĩnh vực của bạn là gì?', hint: 'Ví dụ: Fitzone — phòng tập gym' }],
+  ['goal', 1], ['scale', 2], ['style', 3], ['addons', 4], ['budget', 5], ['name', 6], ['phone', 6]
+];
+export const QUICK_STEPS: Step[] = QUICK_PLAN.map(([id, section, over]) => {
+  const s = STEPS.find(x => x.id === id);
+  if (!s) throw Error(`Thiếu câu ${id}`);
+  return { ...s, ...over, section };
+});

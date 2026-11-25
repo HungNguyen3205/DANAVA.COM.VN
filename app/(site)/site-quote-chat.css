@@ -112,3 +112,9 @@
 @media (min-width: 1024px) { .qc--anna { max-width: min(880px, calc(100vw - 500px)); } }
 @media (min-width: 1024px) and (max-width: 1279px) { .qc--anna { grid-template-columns: 1fr; } .qc--anna .qc__side { position: static; } }
 .wq-title > span:not(.wq-hl) { color: inherit; }
+
+/* Một bé Mây duy nhất: trang chỉ còn bảng tiến độ + giá, ANNA hỏi trong khung chat bên phải */
+.qc--anna { grid-template-columns: minmax(0, 520px); }
+.qc--anna .qc__side { position: static; }
+.qc__progress-note { margin: 18px 0 0; color: #c9d4f5; font-size: 14px; }
+.qc--anna .qc__open { width: 100%; margin-top: 12px; }
