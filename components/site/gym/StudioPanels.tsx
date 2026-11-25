@@ -1,7 +1,7 @@
 'use client';
 /** Các bảng điều khiển của phòng lab thiết kế phòng tập (components/site/gym/GymStudio.tsx). */
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { Archive, Armchair, ArrowDownUp, ArrowUpDown, Ban, GlassWater, Grid3x3, RectangleVertical, Shrub, Sprout, Store, Lightbulb, MessagesSquare, Minus, PanelsTopLeft, QrCode, ShoppingBag, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
+import { Archive, Armchair, RotateCcw, ArrowDownUp, ArrowUpDown, Ban, GlassWater, Grid3x3, RectangleVertical, Shrub, Sprout, Store, Lightbulb, MessagesSquare, Minus, PanelsTopLeft, QrCode, ShoppingBag, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
 import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory, type EquipmentKind } from '@/lib/equipment';
 import { BUSINESS_MODELS, FIXTURE_KINDS, FLOOR_USES, LINK_KINDS, STRATEGIES, fmtArea, newProject, type BusinessModel, type FixtureKind, type Floor, type FurnKind, type InteriorStyle, type LinkKind, type Project, type Reception, type Strategy } from '@/lib/gym-project';
 import { FURNITURE, INTERIOR_STYLES, RECEPTION_SIZES } from '@/lib/gym-decor';
@@ -302,7 +302,7 @@ export function StylePanel({ p, floor, set, addDecor }: { p: Project; floor: Flo
       </div>
       <h3>Tường nhấn {floor.name.toLowerCase()}</h3>
       <div className="gs-swatches" role="radiogroup" aria-label="Màu tường nhấn">
-        <button type="button" className={`gs-swdefault${!floor.accent ? ' is-on' : ''}`} onClick={() => setAccent(undefined)} title="Theo phong cách chung">Mặc định</button>
+        <button type="button" role="radio" aria-checked={!floor.accent} className={`gs-swdefault${!floor.accent ? ' is-on' : ''}`} style={{ background: INTERIOR_STYLES[p.brief.interior].accentWall }} onClick={() => setAccent(undefined)} title="Theo phong cách chung" aria-label="Theo phong cách chung"><RotateCcw aria-hidden="true" /></button>
         {WALL_COLORS.map(c => <button key={c} type="button" role="radio" aria-checked={floor.accent === c} className={floor.accent === c ? 'is-on' : ''} style={{ background: c }} onClick={() => setAccent(c)} aria-label={c} />)}
         <label className="gs-swatch-more" title="Màu khác"><input type="color" value={accent} onChange={e => setAccent(e.target.value)} />+</label>
       </div>

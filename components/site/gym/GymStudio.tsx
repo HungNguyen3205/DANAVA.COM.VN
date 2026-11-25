@@ -258,7 +258,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const notes = option ? attention(project, option, catalog, cost, validation) : [];
   const fixFirst = () => { const i = errors[0]; if (!i) return; setCustom(true); setFloorId(i.floorId); setSel(i.id); };
   const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Lễ tân', <Users key="e" />], ['style', 'Màu sắc', <Palette key="s" />],
-    ...(extras?.assistant || extras?.openAssistant ? [['assistant', 'ANNA', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Vận hành', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
+    ...(extras?.assistant || extras?.openAssistant ? [['assistant', 'ANNA', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim && isAdmin ? [['sim', 'Vận hành', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
 
   return (
     <div className={`gs${custom ? ' is-custom' : ''}`}>

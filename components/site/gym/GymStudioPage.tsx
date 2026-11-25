@@ -18,11 +18,11 @@ export function GymStudioPage(props: { equipment: Equipment[]; flooring: Floorin
   const anna = useAnna();
   const { setDesign } = anna;
   useEffect(() => { if (!anna.enabled) return; setDesign(true); return () => setDesign(false); }, [anna.enabled, setDesign]);
-  const panel = (project: Parameters<typeof AssistantPanel>[0]['project'], commit: Parameters<typeof AssistantPanel>[0]['commit']) =>
-    <AssistantPanel project={project} commit={commit} equipment={props.equipment} flooring={props.flooring} aiEnabled={aiEnabled} />;
+  const panel = (project: Parameters<typeof AssistantPanel>[0]['project'], commit: Parameters<typeof AssistantPanel>[0]['commit'], variant?: 'anna') =>
+    <AssistantPanel project={project} commit={commit} equipment={props.equipment} flooring={props.flooring} aiEnabled={aiEnabled} variant={variant} />;
   return (
     <GymStudio {...rest} extras={anna.enabled ? {
-      assistantPortal: ({ project, commit }) => (anna.slot ? createPortal(<div className="gs gs--anna">{panel(project, commit)}</div>, anna.slot) : null),
+      assistantPortal: ({ project, commit }) => (anna.slot ? createPortal(<div className="gs gs--anna">{panel(project, commit, 'anna')}</div>, anna.slot) : null),
       openAssistant: anna.openDesign,
       sim: ctx => <SimPanel {...ctx} aiEnabled={aiEnabled} />
     } : {

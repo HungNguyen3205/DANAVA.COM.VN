@@ -4,23 +4,24 @@
  * chi phí, số lỗi kiểm tra) → Áp dụng → hoàn tác bằng nút ↶ của phòng lab. Không có AI → chế độ mẫu (đọc từ khoá), ghi rõ.
  */
 import { useMemo, useRef, useState, type FormEvent } from 'react';
-import { Bot, Check, Eye, Send, Sparkles, TriangleAlert, X } from 'lucide-react';
+import { ArrowUp, Bot, Check, Eye, Send, Sparkles, TriangleAlert, X } from 'lucide-react';
 import type { Equipment, Flooring } from '@/lib/equipment';
 import { formatVND } from '@/lib/equipment';
 import { STRATEGIES, type Project } from '@/lib/gym-project';
 import { applyActions, describeAction, ruleBasedActions, summarizeForAI, type AssistantReply } from '@/lib/gym-actions';
 
 type Msg = { role: 'user' | 'model'; text: string; reply?: AssistantReply; mode?: 'ai' | 'sample'; note?: string; preview?: ReturnType<typeof applyActions>; applied?: boolean; dismissed?: boolean };
-const EXAMPLES = [
-  'Tôi có hai tầng, thích đen kết hợp gỗ, lễ tân nhỏ, tầng trên dành cho PT và giữ trung tâm thoáng.',
-  'Giảm chi phí thiết bị khoảng 20%, giữ các máy đã khoá.',
-  'Giữ nguyên máy, chỉ đổi phong cách sang wellness sáng và nhiều cây xanh.',
-  'Đổi màu tầng hai sang xanh rêu, thay quầy lễ tân chữ L.'
+/** [chữ ngắn trên chip, câu đầy đủ gửi đi] */
+const EXAMPLES: [string, string][] = [
+  ['2 tầng, đen + gỗ, tầng trên PT', 'Tôi có hai tầng, thích đen kết hợp gỗ, lễ tân nhỏ, tầng trên dành cho PT và giữ trung tâm thoáng.'],
+  ['Giảm 20% chi phí máy', 'Giảm chi phí thiết bị khoảng 20%, giữ các máy đã khoá.'],
+  ['Chỉ đổi sang phong cách wellness', 'Giữ nguyên máy, chỉ đổi phong cách sang wellness sáng và nhiều cây xanh.'],
+  ['Tầng 2 xanh rêu, quầy chữ L', 'Đổi màu tầng hai sang xanh rêu, thay quầy lễ tân chữ L.']
 ];
 
-export function AssistantPanel({ project, commit, equipment, flooring, aiEnabled }: { project: Project; commit: (p: Project, label: string) => void; equipment: Equipment[]; flooring: Flooring | null; aiEnabled: boolean }) {
+export function AssistantPanel({ project, commit, equipment, flooring, aiEnabled, variant }: { project: Project; commit: (p: Project, label: string) => void; equipment: Equipment[]; flooring: Flooring | null; aiEnabled: boolean; /** 'anna' = nằm trong chatbot bé May, dùng giao diện chat của ANNA */ variant?: 'anna' }) {
   const catalog = useMemo(() => new Map(equipment.map(e => [e.id, e])), [equipment]);
-  const [msgs, setMsgs] = useState<Msg[]>([{ role: 'model', text: aiEnabled ? 'Chào bạn, mình là ANNA. Bạn mô tả phòng tập mong muốn (tầng, phong cách, lễ tân, ngân sách…), mình đề xuất thay đổi để bạn xem trước rồi áp dụng.' : 'Trợ lý AI chưa được bật trên website, mình đang chạy ở CHẾ ĐỘ MẪU: chỉ nhận ra các ý phổ biến bằng từ khoá. Mọi chức năng thiết kế thủ công vẫn hoạt động đầy đủ.', mode: aiEnabled ? 'ai' : 'sample' }]);
+  const [msgs, setMsgs] = useState<Msg[]>([{ role: 'model', text: aiEnabled ? 'Bạn muốn chỉnh phòng tập thế nào? Mô tả ngắn (tầng, phong cách, lễ tân, ngân sách…), mình đề xuất để bạn xem trước rồi áp dụng.' : 'Trợ lý AI chưa được bật trên website, mình đang chạy ở CHẾ ĐỘ MẪU: chỉ nhận ra các ý phổ biến bằng từ khoá. Mọi chức năng thiết kế thủ công vẫn hoạt động đầy đủ.', mode: aiEnabled ? 'ai' : 'sample' }]);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const list = useRef<HTMLDivElement>(null);
@@ -57,6 +58,49 @@ export function AssistantPanel({ project, commit, equipment, flooring, aiEnabled
     setMsgs(s => s.map((x, j) => (j === i ? { ...x, applied: true, preview: fresh } : x)));
   }
 
+  const plan = (m: Msg, i: number) => m.reply && m.reply.actions.length > 0 && !m.dismissed && (
+    <div className="gs-ai__plan">
+      <b><Sparkles aria-hidden="true" /> Đề xuất thay đổi</b>
+      <ul>{m.reply.actions.map((a, k) => <li key={k}>{describeAction(a)}</li>)}</ul>
+      {m.preview && <Diff before={project} after={m.preview} />}
+      {m.preview?.log.some(l => !l.ok) && <ul className="gs-ai__fail">{m.preview.log.filter(l => !l.ok).map((l, k) => <li key={k}>✕ {l.text}</li>)}</ul>}
+      {m.applied ? <p className="gs-ai__done"><Check aria-hidden="true" /> Đã áp dụng — bấm ↶ trong Tùy chỉnh để hoàn tác.</p> : (
+        <div className="gs-row">
+          <button type="button" className="s-btn s-btn--primary" onClick={() => apply(i)}><Check aria-hidden="true" /> Áp dụng</button>
+          <button type="button" className="gs-btn" onClick={() => setMsgs(x => x.map((y, j) => (j === i ? { ...y, dismissed: true } : y)))}><X aria-hidden="true" /> Bỏ qua</button>
+        </div>
+      )}
+    </div>
+  );
+  if (variant === 'anna') return (
+    <div className="an-chat gs-annachat">
+      <div className="an-log" ref={list} role="log" aria-label="Chỉnh phòng tập với ANNA">
+        {msgs.map((m, i) => m.role === 'user'
+          ? <p key={i} className="an-msg an-msg--me">{m.text}</p>
+          : (
+            <div key={i} className="an-msg an-msg--bot">
+              {m.mode === 'sample' && <em className="gs-ai__tag">chế độ mẫu · không dùng AI</em>}
+              <p>{m.text}</p>
+              {m.note && <p className="gs-ai__note"><TriangleAlert aria-hidden="true" /> {m.note}</p>}
+              {m.reply?.questions.map((q, k) => <p key={k} className="gs-ai__q">{q}</p>)}
+              {plan(m, i)}
+            </div>
+          ))}
+        {msgs.length < 3 && !busy && (
+          <ul className="an-suggest" aria-label="Gợi ý">
+            {EXAMPLES.map(([short, full]) => <li key={short}><button type="button" title={full} onClick={() => void ask(undefined, full)}>{short}</button></li>)}
+          </ul>
+        )}
+        {busy && <p className="an-typing" role="status"><i /><i /><i />ANNA đang nghĩ…</p>}
+      </div>
+      <form className="an-form" onSubmit={ask}>
+        <label className="s-sr" htmlFor="an-design-input">Thay đổi bạn muốn</label>
+        <textarea id="an-design-input" rows={1} maxLength={1200} value={text} onChange={e => setText(e.target.value)} placeholder="Mô tả thay đổi bạn muốn…" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); void ask(); } }} />
+        <button type="submit" className="an-send" disabled={busy || text.trim().length < 2} aria-label="Gửi"><ArrowUp aria-hidden="true" /></button>
+      </form>
+      <p className="an-legal">{aiEnabled ? 'Gợi ý bằng Google Gemini, có thể sai. Đừng nhập thông tin cá nhân.' : 'Chế độ mẫu, chạy trên trình duyệt.'}</p>
+    </div>
+  );
   return (
     <div className="gs-panel gs-ai">
       <div className="gs-ai__list" ref={list}>
@@ -84,7 +128,7 @@ export function AssistantPanel({ project, commit, equipment, flooring, aiEnabled
         ))}
         {busy && <p className="gs-ai__busy">ANNA đang nghĩ…</p>}
       </div>
-      {msgs.length < 3 && <div className="gs-ai__ex">{EXAMPLES.map(x => <button key={x} type="button" onClick={() => void ask(undefined, x)}>{x}</button>)}</div>}
+      {msgs.length < 3 && <div className="gs-ai__ex">{EXAMPLES.map(([short, full]) => <button key={short} type="button" title={full} onClick={() => void ask(undefined, full)}>{short}</button>)}</div>}
       <form className="gs-ai__form" onSubmit={ask}>
         <textarea rows={2} maxLength={1200} value={text} onChange={e => setText(e.target.value)} placeholder="Mô tả thay đổi bạn muốn…" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void ask(); } }} />
         <button type="submit" className="gs-icon" disabled={busy || text.trim().length < 2} aria-label="Gửi"><Send /></button>

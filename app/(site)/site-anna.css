@@ -298,3 +298,14 @@
 .an-design > .gs--anna { display: flex; flex: 1; flex-direction: column; min-height: 0; padding: 14px 12px 10px; }
 .an-design .gs-panel { flex: 1; min-height: 0; max-height: none; padding: 0; border: 0; background: transparent; }
 .an-design .gs-ai__list { min-height: 0; }
+
+/* Thẻ "Chỉnh phòng" dùng đúng giao diện chat của ANNA */
+.an-design > .gs--anna { padding: 0; color: inherit; }
+.gs-annachat { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.gs-annachat .an-msg--bot > p { margin: 0; }
+.gs-annachat .an-msg--bot > p + p { margin-top: 6px; }
+.gs-annachat .gs-ai__tag { display: inline-block; margin-bottom: 4px; padding: 1px 8px; border-radius: 999px; background: #fff4e5; color: #9a4a06; font-size: 11px; font-style: normal; font-weight: 800; }
+.gs-annachat .gs-ai__q { font-weight: 700; }
+.gs-annachat .gs-ai__plan { margin-top: 10px; }
+.gs-annachat .an-suggest { margin-top: 10px; }
+.s-app .gs-annachat .an-suggest button { font-size: 13.5px; }

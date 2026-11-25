@@ -669,3 +669,7 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-tiles--decor { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .gs-tiles--decor button { --c: #2f6f5e; }
 .gs-swdefault { flex: none; white-space: nowrap; line-height: 1; }
+/* Ô "theo phong cách chung": tròn như các ô màu, icon ↺ */
+.gs-swdefault { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d5dbe7; color: #fff; }
+.gs-swdefault svg { width: 12px; height: 12px; filter: drop-shadow(0 0 1px rgba(0,0,0,.6)); }
+.gs-swdefault.is-on { box-shadow: 0 0 0 2px var(--gs-orange); }
