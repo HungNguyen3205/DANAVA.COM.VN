@@ -298,3 +298,26 @@
 .s-app .eqp-card__src { display: inline-flex; align-items: center; gap: 4px; color: #8a94a8; font-size: 12.5px; font-weight: 600; text-decoration: none; }
 .eqp-card__src svg { width: 13px; height: 13px; }
 .s-app .eqp-card__src:hover { color: #c2410c; }
+
+/* Phòng lab: tự động bố trí */
+.gp-start__auto { display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; color: #13244f; font-size: 14.5px; font-weight: 700; cursor: pointer; }
+.gp-start__auto input { width: 18px; height: 18px; accent-color: #f26b1d; }
+.gp-start__auto svg { width: 17px; height: 17px; color: #f26b1d; }
+.gp-auto__opts { display: grid; gap: 10px; width: min(560px, 100%); }
+.gp-auto__styles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.gp-auto__styles button { display: grid; gap: 2px; padding: 10px 12px; border: 1.5px solid #e6eaf2; border-radius: 12px; background: #fff; text-align: left; font: inherit; cursor: pointer; transition: border-color .15s, background .15s; }
+.gp-auto__styles button b { color: #13244f; font-size: 14px; }
+.gp-auto__styles button small { color: #8a94a8; font-size: 12px; line-height: 1.35; }
+.gp-auto__styles button.is-on { border-color: #f26b1d; background: #fff7f0; }
+.gp-auto__budget { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: #5b6478; font-size: 13.5px; font-weight: 700; }
+.gp-auto__budget span { display: inline-flex; align-items: center; gap: 6px; }
+.gp-auto__budget input { width: 130px; height: 38px; padding: 0 10px; border: 1px solid #dfe4ee; border-radius: 10px; color: #13244f; font: inherit; font-size: 15px; font-weight: 700; text-align: right; }
+.gp-cost__tools .gp-auto-btn { display: inline-flex; align-items: center; gap: 5px; border-color: #ffd3b5; background: #fff7f0; color: #c2410c; }
+.gp-cost__tools .gp-auto-btn svg { width: 14px; height: 14px; }
+.gp-auto { display: grid; justify-items: start; gap: 12px; margin: 0 0 14px; padding: 14px; border: 1px dashed #ffd3b5; border-radius: 16px; background: #fffaf6; }
+.gp-auto .gp-auto__budget { justify-content: flex-start; }
+.gp-auto .s-btn svg { width: 16px; height: 16px; }
+.gp-auto-note { margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; background: #e3f6ea; color: #137a43; font-size: 13.5px; font-weight: 600; }
+@media (max-width: 640px) { .gp-auto__styles { grid-template-columns: 1fr; } }
+.gp-start { overflow-y: auto; align-content: start; padding-top: clamp(16px, 4vh, 40px); }
+@media (min-height: 760px) { .gp-start { align-content: center; } }

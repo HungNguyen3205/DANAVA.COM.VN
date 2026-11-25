@@ -32,7 +32,7 @@ export function buildModel(THREE: Three, eq: Equipment): Built {
   const W = eq.width / 100, D = eq.depth / 100, H = Math.max(eq.height / 100, 0.05);
   const g = new THREE.Group();
   const mk = (color: number | string, rough = .55, metal = .2) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal });
-  const frame = mk(0x2f3542, .45, .55), pad = mk(0x1c1f26, .8, 0), accent = mk(eq.color, .5, .15), chrome = mk(0xc7ccd6, .3, .8), plate = mk(0x15171c, .6, .1), screen = mk(0x0d1a3d, .3, .1);
+  const frame = mk(0x4a5263, .4, .6), pad = mk(0x1b1e24, .85, 0), accent = mk(eq.color, .5, .15), chrome = mk(0xc7ccd6, .3, .8), plate = mk(0x15171c, .6, .1), screen = mk(0x0d1a3d, .3, .1);
   const mats = [frame, pad, accent, chrome, plate, screen];
   const add = (m: T.Mesh) => { m.castShadow = m.receiveShadow = true; g.add(m); return m; };
   const box = (w: number, h: number, d: number, mat: T.Material, x: number, y: number, z: number, rz = 0, rx = 0) => {
@@ -49,10 +49,20 @@ export function buildModel(THREE: Three, eq: Equipment): Built {
   /** Thanh ngang (trục x hoặc z) */
   const bar = (len: number, r: number, mat: T.Material, x: number, y: number, z: number, axis: 'x' | 'z' = 'x') => disc(r, len, mat, x, y, z, axis === 'x' ? 'x' : 'z');
   const stack = (x: number, z: number, h: number, sw = .32, sd = .22) => {
-    post(.025, h, chrome, x, 0, z - sd / 2 - .03); post(.025, h, chrome, x, 0, z + sd / 2 + .03);
-    box(sw, h * .5, sd, plate, x, h * .3, z);
-    box(sw * .9, .04, sd * .9, accent, x, h * .56, z);
-    box(sw + .08, .06, sd + .1, frame, x, h, z);
+    box(sw + .14, .06, sd + .14, frame, x, .03, z);
+    for (const sz of [-1, 1]) box(.06, h, .06, frame, x, h / 2, z + sz * (sd / 2 + .06));
+    post(.012, h * .9, chrome, x - .05, 0, z); post(.012, h * .9, chrome, x + .05, 0, z);
+    for (let i = 0; i < 9; i++) box(sw, .045, sd, plate, x, .1 + i * .05, z);
+    box(sw * .2, .05, sd * .9, chrome, x, .1 + 9 * .05, z);
+    box(sw + .06, h * .42, .02, accent, x, h * .55, z - sd / 2 - .02);
+    box(sw + .14, .07, sd + .14, frame, x, h, z);
+  };
+  /** Hai thanh chân đế mảnh (thay tấm đế phủ kín) */
+  const rails = (len: number, z1: number, z2: number, x = 0) => { box(len, .06, .08, frame, x, .03, z1); box(len, .06, .08, frame, x, .03, z2); };
+  /** Ghế + tựa (cao ngồi ~0.5 m) */
+  const seat = (x: number, z: number, back: number, recline = .08) => {
+    box(.08, .45, .08, frame, x, .23, z); box(.44, .09, .38, pad, x, .5, z);
+    if (back) box(.09, back, .36, pad, x - .24, .5 + back / 2, z, -recline);
   };
 
   switch (guessKind(eq)) {
@@ -93,25 +103,72 @@ export function buildModel(THREE: Three, eq: Equipment): Built {
       break;
     }
     case 'stack': {
-      box(W, .08, D, frame, 0, .04, 0);
-      stack(-W / 2 + .26, 0, H * .96);
-      box(.12, H * .9, .12, frame, -W / 2 + .62, H * .45, D * .32);
-      box(.42, .1, .36, pad, W * .1, .52, 0);
-      box(.1, .5, .36, pad, -W * .05, .86, 0, -.1);
-      box(W * .45, .06, .06, accent, W * .18, H * .62, D * .3, -.15);
-      box(.18, .18, D * .7, accent, W * .3, .4, 0);
+      // Máy tạ có cục tạ: tháp cục tạ phía sau, dáng ghế / tay đòn theo bài tập (đọc từ tên máy)
+      const n = eq.name.toLowerCase();
+      const tx = -W / 2 + .3;
+      rails(W, -D / 2 + .1, D / 2 - .1);
+      stack(tx, 0, H * .96);
+      const cx = tx + .55;
+      box(.08, H * .55, .08, frame, cx - .15, H * .28, 0);
+      if (/pulldown|pull down|kéo xô|lat |high pull|long pull|row|chèo|chin|dip|assist/.test(n)) {
+        // Kéo xô / chèo: xà cao vươn ra trước, thanh kéo, ghế, đệm giữ đùi
+        box(.08, H * .95, .08, frame, cx, H * .48, 0);
+        box(W * .55, .08, .08, frame, cx + W * .25, H * .95, 0);
+        bar(D * .9, .016, chrome, cx + W * .45, H * .72, 0, 'z');
+        post(.006, H * .2, chrome, cx + W * .45, H * .74, 0);
+        seat(cx + W * .3, 0, 0);
+        bar(D * .5, .06, pad, cx + W * .3, .78, 0, 'z');
+      } else if (/leg press|đạp đùi/.test(n)) {
+        // Đạp đùi: ghế ngả, bàn đạp đứng phía trước
+        box(.55, .09, .42, pad, cx + .1, .45, 0, .2);
+        box(.1, .6, .42, pad, cx - .25, .7, 0, -.9);
+        box(.08, .7, .5, accent, Math.min(W / 2 - .15, cx + .85), .6, 0, .25);
+        box(W * .5, .1, .1, frame, cx + .4, .3, 0);
+      } else if (/leg extension|leg extensi|đá đùi|leg curl|móc đùi|đùi sau/.test(n)) {
+        // Đá / móc đùi: ghế + con lăn đệm chân phía trước
+        seat(cx + .15, 0, .55);
+        box(.06, .35, .06, accent, cx + .5, .4, 0, .3);
+        bar(.4, .06, pad, cx + .55, .25, 0, 'z');
+        bar(.4, .06, pad, cx + .42, .62, 0, 'z');
+      } else if (/fly|rear delt|pec/.test(n)) {
+        // Ép ngực: hai tay đòn mở rộng hai bên
+        seat(cx + .2, 0, .7, 0);
+        for (const sz of [-1, 1]) { box(.06, .06, D * .42, accent, cx + .1, H * .62, sz * D * .26); box(.05, .35, .05, chrome, cx + .1, H * .52, sz * D * .46); }
+      } else if (/abdominal|bụng|torso|rotary|back extension|lưng/.test(n)) {
+        // Bụng / lưng / xoay hông: đệm cong
+        seat(cx + .2, 0, .55, .25);
+        box(.3, .1, .4, pad, cx + .45, .95, 0, .9);
+        box(.06, .4, .06, accent, cx + .4, .75, 0);
+      } else if (/abductor|adductor|hip|mông|glute|kick/.test(n)) {
+        // Dạng / khép chân, mông: ghế + hai đệm chân
+        seat(cx + .2, 0, .6, .3);
+        for (const sz of [-1, 1]) box(.42, .2, .06, accent, cx + .5, .55, sz * .22);
+      } else if (/calf|bắp chân/.test(n)) {
+        // Bắp chân: đệm vai đứng
+        box(.4, .06, .4, accent, cx + .25, .1, 0);
+        box(.08, H * .7, .08, frame, cx + .1, H * .35, 0);
+        for (const sz of [-1, 1]) box(.3, .1, .12, pad, cx + .25, H * .62, sz * .14);
+      } else {
+        // Đẩy ngực / vai, tay trước / sau (mặc định): ghế đứng, hai tay đẩy
+        seat(cx + .2, 0, .7, .05);
+        for (const sz of [-1, 1]) { box(.45, .06, .06, accent, cx + .45, H * .58, sz * .3); box(.06, .14, .06, chrome, cx + .66, H * .52, sz * .3); }
+        box(.08, .1, D * .66, frame, cx + .22, H * .62, 0);
+      }
       break;
     }
     case 'plate': {
-      box(W, .08, D * .9, frame, 0, .04, 0);
-      box(.5, .1, .42, pad, -W * .12, .5, 0); box(.1, .6, .42, pad, -W * .34, .86, 0, -.25);
+      // Máy tạ treo bánh: khung, ghế, tay đòn chéo, bánh tạ hai bên
+      rails(W, -D / 2 + .1, D / 2 - .1);
+      box(.1, .1, D - .2, frame, -W / 2 + .1, .05, 0); box(.1, .1, D - .2, frame, W / 2 - .1, .05, 0);
+      const n = eq.name.toLowerCase();
+      if (/squat|hack|leg press|belt/.test(n)) { box(.6, .09, .45, pad, -W * .1, .55, 0, .5); box(.08, .5, .5, accent, W * .3, .45, 0, .2); }
+      else seat(-W * .15, 0, .65, .2);
       const arm = box(W * .7, .1, .1, accent, W * .08, H * .58, 0, -.25); arm.castShadow = true;
-      for (const s of [-1, 1]) { bar(.3, .025, chrome, W * .38, H * .5, s * D * .38, 'z'); disc(.22, .05, plate, W * .38, H * .5, s * D * .44); disc(.17, .04, plate, W * .38, H * .5, s * D * .49); }
-      box(.1, H * .7, .1, frame, -W * .4, H * .35, D * .35);
+      for (const sz of [-1, 1]) { box(.08, H * .62, .08, frame, -W * .38, H * .31, sz * D * .3); bar(.32, .025, chrome, W * .38, H * .5, sz * D * .36, 'z'); disc(.22, .05, plate, W * .38, H * .5, sz * D * .44); disc(.17, .04, plate, W * .38, H * .5, sz * D * .49); }
       break;
     }
     case 'multi': {
-      box(W, .08, D, frame, 0, .04, 0);
+      rails(W, -D / 2 + .1, D / 2 - .1);
       const n = W > 3.6 ? 4 : W > 2.6 ? 3 : 2;
       for (let i = 0; i < n; i++) stack(-W / 2 + .3 + i * ((W - .6) / Math.max(n - 1, 1)), -D / 2 + .3, H * .95);
       box(W, .1, .12, frame, 0, H, -D / 2 + .3);
@@ -121,7 +178,7 @@ export function buildModel(THREE: Three, eq: Equipment): Built {
       break;
     }
     case 'cable': {
-      box(W, .06, D * .6, frame, 0, .03, 0);
+      rails(W, -D * .25, D * .25);
       const towers = W > 2 ? [-W / 2 + .3, W / 2 - .3] : [0];
       for (const x of towers) { stack(x, 0, H * .96); box(.14, H, .14, frame, x + .25 * Math.sign(x || 1), H / 2, 0); }
       if (towers.length > 1) box(W - .3, .1, .1, accent, 0, H * .96, 0);
@@ -134,7 +191,8 @@ export function buildModel(THREE: Three, eq: Equipment): Built {
       if (guessKind(eq) === 'smith') for (const sx of [-1, 1]) box(.03, H * .9, .03, chrome, sx * (W / 2 - .22), H * .47, 0);
       bar(W + .2, .018, chrome, 0, H * .55, 0);
       for (const sx of [-1, 1]) { disc(.22, .05, plate, sx * (W / 2 + .02), H * .55, 0, 'x'); disc(.17, .04, plate, sx * (W / 2 + .08), H * .55, 0, 'x'); }
-      box(W * .9, .03, D * .9, accent, 0, .015, 0);
+      box(W * .9, .03, D * .9, plate, 0, .015, 0);
+      box(W * .3, .035, D * .9, accent, 0, .018, 0);
       break;
     }
     case 'bench': {

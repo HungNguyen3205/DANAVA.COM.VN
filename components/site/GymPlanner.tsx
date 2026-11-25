@@ -8,10 +8,11 @@
  * Thiết kế lưu trên trình duyệt của khách (localStorage) để tải lại trang không mất.
  */
 import Link from 'next/link';
-import { Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Trash2, TriangleAlert } from 'lucide-react';
+import { Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Sparkles, Trash2, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { EQUIPMENT_CATEGORIES, formatVND, type Equipment, type EquipmentCategory, type Flooring } from '@/lib/equipment';
 import { createEngine, type Engine, type Placed } from './gym-planner-engine';
+import { LAYOUT_STYLES, autoLayout, type LayoutStyle } from '@/lib/gym-layout';
 
 const KEY = 'danava-gym-planner';
 type Saved = { area: number; w: number; l: number; tile: number; items: { eqId: string; x: number; z: number; rot: number }[] };
@@ -31,6 +32,8 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const [cat, setCat] = useState<EquipmentCategory | ''>('');
   const [q, setQ] = useState('');
   const [floorOn, setFloorOn] = useState(true);
+  // Tự động bố trí: kiểu phòng + ngân sách (triệu đồng, trống = không giới hạn)
+  const [auto, setAuto] = useState({ on: true, style: 'balanced' as LayoutStyle, budget: '', open: false, note: '' });
   const [form, setForm] = useState({ open: false, name: '', phone: '', note: '', sending: false, done: '', error: '' });
   const byId = useMemo(() => new Map(equipment.map(e => [e.id, e])), [equipment]);
   const restored = useRef<Saved | null>(null);
@@ -76,6 +79,17 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
     setRoom(r);
     engine.current?.setRoom(r.w, r.l, r.tile);
   }
+  /** Xếp sẵn máy theo kiểu phòng / ngân sách (lib/gym-layout.ts); thay toàn bộ máy đang có */
+  function runAuto(w: number, l: number) {
+    const e = engine.current;
+    if (!e) return;
+    const budget = Number(auto.budget.replace(/[^\d.,]/g, '').replace(',', '.')) * 1e6 || undefined;
+    const r = autoLayout(equipment, { w, l, style: auto.style, budget });
+    e.clear();
+    for (const it of r.items) { const eq = byId.get(it.eqId); if (eq) e.add(eq, it); }
+    e.select(null);
+    setAuto(a => ({ ...a, open: false, note: `Đã bố trí ${r.items.length} máy: ${r.zones.cardio} cardio · ${r.zones.strength} máy tạ · ${r.zones.free} tạ tự do. Kéo để chỉnh, bấm + để thêm.` }));
+  }
   function start(e: FormEvent) {
     e.preventDefault();
     const area = Math.min(2000, Math.max(10, Math.round(Number(areaInput.replace(',', '.')) || 0)));
@@ -85,6 +99,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
     engine.current?.setRoom(w, l, room.tile);
     engine.current?.resetView();
     setStarted(true);
+    if (auto.on) runAuto(w, l);
   }
 
   // Bảng chi phí: gom theo máy
@@ -175,7 +190,9 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
               <p>Nhập diện tích sàn, DANAVA dựng phòng 3D chia ô gạch 40 × 40 cm để bạn bắt đầu bố trí máy.</p>
               <label className="gp-start__input"><input type="number" min={10} max={2000} inputMode="numeric" value={areaInput} onChange={e => setAreaInput(e.target.value)} aria-label="Diện tích (m²)" autoFocus /><span>m²</span></label>
               <div className="gp-start__quick">{[60, 100, 200, 400].map(a => <button key={a} type="button" onClick={() => setAreaInput(String(a))}>{a} m²</button>)}</div>
-              <button type="submit" className="s-btn s-btn--primary s-btn--lg">Dựng phòng 3D</button>
+              <label className="gp-start__auto"><input type="checkbox" checked={auto.on} onChange={e => setAuto(a => ({ ...a, on: e.target.checked }))} /><Sparkles aria-hidden="true" /> Để DANAVA bố trí sẵn máy, tôi chỉ việc chỉnh</label>
+              {auto.on && <AutoOptions auto={auto} setAuto={setAuto} />}
+              <button type="submit" className="s-btn s-btn--primary s-btn--lg">{auto.on ? 'Dựng phòng và bố trí sẵn' : 'Dựng phòng 3D'}</button>
             </form>
           )}
           {started && sel && selEq && (
@@ -197,10 +214,18 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
           <div className="gp-cost__head">
             <h2 id="gp-cost-title">Chi phí thiết bị cho phòng {room.area} m²</h2>
             <div className="gp-cost__tools">
+              <button type="button" className="gp-auto-btn" onClick={() => setAuto(a => ({ ...a, open: !a.open }))}><Sparkles aria-hidden="true" /> Tự động bố trí lại</button>
               <button type="button" onClick={() => engine.current?.resetView()}>Góc nhìn ban đầu</button>
               <button type="button" onClick={() => { engine.current?.clear(); setStarted(false); try { localStorage.removeItem(KEY); } catch {} }}>Làm lại phòng</button>
             </div>
           </div>
+          {auto.open && (
+            <div className="gp-auto">
+              <AutoOptions auto={auto} setAuto={setAuto} />
+              <button type="button" className="s-btn s-btn--primary" onClick={() => runAuto(room.w, room.l)}><Sparkles aria-hidden="true" /> Bố trí (thay máy đang có)</button>
+            </div>
+          )}
+          {auto.note && <p className="gp-auto-note" role="status">{auto.note}</p>}
           {flooring && (
             <label className="gp-floor">
               <input type="checkbox" checked={floorOn} onChange={e => setFloorOn(e.target.checked)} />
@@ -241,6 +266,23 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
           ))}
         </section>
       )}
+    </div>
+  );
+}
+
+type AutoState = { on: boolean; style: LayoutStyle; budget: string; open: boolean; note: string };
+/** Chọn kiểu phòng và ngân sách cho tự động bố trí */
+function AutoOptions({ auto, setAuto }: { auto: AutoState; setAuto: (f: (a: AutoState) => AutoState) => void }) {
+  return (
+    <div className="gp-auto__opts">
+      <div className="gp-auto__styles" role="radiogroup" aria-label="Kiểu phòng tập">
+        {(Object.keys(LAYOUT_STYLES) as LayoutStyle[]).map(k => (
+          <button key={k} type="button" role="radio" aria-checked={auto.style === k} className={auto.style === k ? 'is-on' : ''} onClick={() => setAuto(a => ({ ...a, style: k }))}>
+            <b>{LAYOUT_STYLES[k].label}</b><small>{LAYOUT_STYLES[k].hint}</small>
+          </button>
+        ))}
+      </div>
+      <label className="gp-auto__budget">Ngân sách thiết bị<span><input inputMode="decimal" value={auto.budget} placeholder="không giới hạn" onChange={e => setAuto(a => ({ ...a, budget: e.target.value.replace(/[^\d.,]/g, '').slice(0, 7) }))} /> triệu đồng</span></label>
     </div>
   );
 }
