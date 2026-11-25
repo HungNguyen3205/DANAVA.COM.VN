@@ -1,7 +1,7 @@
 'use client';
 /** Các bảng điều khiển của phòng lab thiết kế phòng tập (components/site/gym/GymStudio.tsx). */
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { ArrowDownUp, ArrowUpDown, Ban, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
+import { Archive, ArrowDownUp, ArrowUpDown, Ban, Lightbulb, MessagesSquare, Minus, PanelsTopLeft, QrCode, ShoppingBag, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
 import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory, type EquipmentKind } from '@/lib/equipment';
 import { BUSINESS_MODELS, FIXTURE_KINDS, FLOOR_USES, LINK_KINDS, STRATEGIES, fmtArea, newProject, type BusinessModel, type FixtureKind, type Floor, type FurnKind, type InteriorStyle, type LinkKind, type Project, type Reception, type Strategy } from '@/lib/gym-project';
 import { FURNITURE, INTERIOR_STYLES, RECEPTION_SIZES } from '@/lib/gym-decor';
@@ -235,38 +235,44 @@ export function EquipmentPanel({ equipment, p, floor, onAdd, onMust, simple }: {
 }
 
 /* ---------- Lễ tân & đón tiếp ---------- */
+const REC_COLORS = ['#13244f', '#1f2937', '#ffffff', '#b07a46', '#f26b1d', '#2f6f5e'];
+const REC_FEATURES: [keyof Pick<Reception, 'wall' | 'lights' | 'storage' | 'kiosk' | 'consult' | 'display'>, LucideIcon, string, string][] = [
+  ['wall', PanelsTopLeft, 'Vách', 'Vách nhận diện'], ['lights', Lightbulb, 'Đèn', 'Đèn hắt quầy / vách'], ['storage', Archive, 'Tủ', 'Tủ lưu trữ sau quầy'],
+  ['kiosk', QrCode, 'Check-in', 'Điểm check-in QR / DANAVA Studio'], ['consult', MessagesSquare, 'Tư vấn', 'Bàn tư vấn (góc riêng)'], ['display', ShoppingBag, 'Trưng bày', 'Kệ trưng bày sản phẩm']
+];
 export function ReceptionPanel({ p, set }: { p: Project; set: (patch: Partial<Reception>) => void }) {
   const r = p.reception;
   return (
-    <div className="gs-panel">
-      <Toggle on={r.enabled} onChange={v => set({ enabled: v })}><b>Bật mô-đun Lễ tân & đón tiếp</b></Toggle>
+    <div className="gs-panel gs-rec">
+      <label className="gs-switch"><span>Lễ tân & đón tiếp</span><input type="checkbox" role="switch" checked={r.enabled} onChange={e => set({ enabled: e.target.checked })} /><i aria-hidden="true" /></label>
       {r.enabled && <>
-        <label className="gs-text"><span>Tầng đặt quầy chính</span><select value={r.floorId} onChange={e => set({ floorId: e.target.value })}>{p.floors.map(f => <option key={f.id} value={f.id}>{f.name}{f.fixtures.some(x => x.kind === 'door' && x.main) ? ' (có cửa chính)' : ''}</option>)}</select></label>
-        <h3>Kiểu quầy</h3>
-        <Seg label="Kiểu quầy" value={r.shape} options={[['straight', 'Thẳng'], ['l', 'Chữ L'], ['compact', 'Nhỏ gọn']]} onChange={v => set({ shape: v })} />
-        <h3>Quy mô sảnh</h3>
-        <Seg label="Quy mô" value={r.size} options={(Object.keys(RECEPTION_SIZES) as ('s' | 'm' | 'l')[]).map(k => [k, `${RECEPTION_SIZES[k].label} · ${RECEPTION_SIZES[k].width}×${RECEPTION_SIZES[k].depth} m`])} onChange={v => set({ size: v })} />
-        <div className="gs-grid2">
-          <label className="gs-text"><span>Màu quầy / vách</span><input type="color" value={r.color} onChange={e => set({ color: e.target.value })} /></label>
-          <label className="gs-text"><span>Vật liệu mặt quầy</span><select value={r.material} onChange={e => set({ material: e.target.value as Reception['material'] })}><option value="wood">Gỗ</option><option value="stone">Đá</option><option value="white">Trắng mờ</option><option value="metal">Kim loại</option></select></label>
+        <div className="gs-recrow"><span>Quầy</span><Seg label="Kiểu quầy" value={r.shape} options={[['straight', 'Thẳng'], ['l', 'Chữ L'], ['compact', 'Nhỏ gọn']]} onChange={v => set({ shape: v })} /></div>
+        <div className="gs-recrow"><span>Sảnh</span><Seg label="Quy mô sảnh" value={r.size} options={(Object.keys(RECEPTION_SIZES) as ('s' | 'm' | 'l')[]).map(k => [k, <span key={k} title={`${RECEPTION_SIZES[k].width} × ${RECEPTION_SIZES[k].depth} m`}>{RECEPTION_SIZES[k].label}</span>])} onChange={v => set({ size: v })} /></div>
+        <div className="gs-recrow"><span>Logo</span><Seg label="Vị trí logo" value={r.logo} options={[['wall', 'Vách'], ['desk', 'Quầy'], ['none', 'Không']]} onChange={v => set({ logo: v })} /></div>
+        <div className="gs-recrow"><span>Màu</span>
+          <div className="gs-swatches" role="radiogroup" aria-label="Màu quầy / vách">
+            {REC_COLORS.map(c => <button key={c} type="button" role="radio" aria-checked={r.color === c} className={r.color === c ? 'is-on' : ''} style={{ background: c }} onClick={() => set({ color: c })} aria-label={c} />)}
+            <label className="gs-swatch-more" title="Màu khác"><input type="color" value={r.color} onChange={e => set({ color: e.target.value })} />+</label>
+          </div>
+          <select className="gs-minisel" value={r.material} onChange={e => set({ material: e.target.value as Reception['material'] })} aria-label="Vật liệu mặt quầy"><option value="wood">Gỗ</option><option value="stone">Đá</option><option value="white">Trắng</option><option value="metal">Kim loại</option></select>
         </div>
-        <h3>Logo</h3>
-        <Seg label="Vị trí logo" value={r.logo} options={[['wall', 'Trên vách'], ['desk', 'Mặt quầy'], ['none', 'Không']]} onChange={v => set({ logo: v })} />
-        <div className="gs-toggles">
-          <Toggle on={r.wall} onChange={v => set({ wall: v })}>Vách nhận diện</Toggle>
-          <Toggle on={r.lights} onChange={v => set({ lights: v })}>Đèn hắt quầy / vách</Toggle>
-          <Toggle on={r.storage} onChange={v => set({ storage: v })}>Tủ lưu trữ sau quầy</Toggle>
-          <Toggle on={r.kiosk} onChange={v => set({ kiosk: v })}>Điểm check-in QR / DANAVA Studio</Toggle>
-          <Toggle on={r.consult} onChange={v => set({ consult: v })}>Bàn tư vấn (góc riêng)</Toggle>
-          <Toggle on={r.display} onChange={v => set({ display: v })}>Kệ trưng bày sản phẩm</Toggle>
+        <div className="gs-tiles gs-tiles--rec">
+          {REC_FEATURES.map(([k, Ic, short, full]) => <button key={k} type="button" role="checkbox" aria-checked={r[k]} className={r[k] ? 'is-on' : ''} title={full} onClick={() => set({ [k]: !r[k] } as Partial<Reception>)}><Ic aria-hidden="true" /><span>{short}</span></button>)}
         </div>
-        <Num label="Ghế chờ" value={r.seats} min={0} max={12} step={1} onChange={v => set({ seats: Math.round(v) })} />
-        <label className="gs-text"><span>Quầy phụ (khi có lý do vận hành: tầng PT riêng, cửa phụ…)</span><select value={r.secondaryFloorId ?? ''} onChange={e => set({ secondaryFloorId: e.target.value || undefined })}><option value="">Không cần</option>{p.floors.filter(f => f.id !== r.floorId).map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select></label>
-        <div className="gs-flows">
-          <p><i className="is-member" /> <b>Hội viên:</b> cửa → check-in nhanh (kiosk) → thay đồ / khu tập</p>
-          <p><i className="is-guest" /> <b>Khách mới:</b> cửa → ghế chờ / bàn tư vấn → tham quan, tập thử</p>
-          <small>Hai luồng tách hai bên sảnh để người chờ tư vấn không đứng chắn người check-in. Sảnh được dành chỗ trước khi xếp máy.</small>
+        <div className="gs-recrow"><span>Ghế chờ</span>
+          <div className="gs-stepper">
+            <button type="button" aria-label="Bớt ghế" disabled={r.seats <= 0} onClick={() => set({ seats: r.seats - 1 })}><Minus /></button>
+            <b>{r.seats}</b>
+            <button type="button" aria-label="Thêm ghế" disabled={r.seats >= 12} onClick={() => set({ seats: r.seats + 1 })}><Plus /></button>
+          </div>
         </div>
+        {p.floors.length > 1 && (
+          <details className="gs-fold">
+            <summary>Nâng cao: tầng đặt quầy, quầy phụ</summary>
+            <label className="gs-text"><span>Tầng đặt quầy chính</span><select value={r.floorId} onChange={e => set({ floorId: e.target.value })}>{p.floors.map(f => <option key={f.id} value={f.id}>{f.name}{f.fixtures.some(x => x.kind === 'door' && x.main) ? ' (cửa chính)' : ''}</option>)}</select></label>
+            <label className="gs-text"><span>Quầy phụ</span><select value={r.secondaryFloorId ?? ''} onChange={e => set({ secondaryFloorId: e.target.value || undefined })}><option value="">Không cần</option>{p.floors.filter(f => f.id !== r.floorId).map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select></label>
+          </details>
+        )}
       </>}
     </div>
   );

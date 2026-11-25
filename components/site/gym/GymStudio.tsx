@@ -136,7 +136,9 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
     if (!project?.reception.enabled) return [];
     const f = project.floors.find(x => x.id === project.reception.floorId);
     const door = f?.fixtures.find(x => x.kind === 'door' && x.main) ?? f?.fixtures.find(x => x.kind === 'door');
-    return f && door && custom && tab === 'eqrec' ? buildReception(project.reception, f, door).flows.map(fl => ({ ...fl, floorId: f.id })) : [];
+    // Luồng đi khách hàng không còn vẽ trong 3D (giao diện tinh gọn); logic tách luồng vẫn dùng khi xếp quầy
+    void buildReception; void f; void door;
+    return [] as { floorId: string; kind: 'member' | 'guest'; pts: [number, number][] }[];
   }, [project, tab, custom, eqSub]);
   useEffect(() => {
     if (!project || !studio.current || !floorId) return;

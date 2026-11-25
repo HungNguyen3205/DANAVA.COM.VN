@@ -620,3 +620,34 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-floorp .gs-fold .gs-grid2 .gs-text { margin: 0; }
 .gs-floorp .gs-fold .gs-note { margin: 10px 12px 0; }
 .gs-floorp .gs-fold .s-btn { width: calc(100% - 24px); margin: 4px 12px 12px; min-height: 40px; font-size: 14px; }
+
+/* Lễ tân: gọn */
+.gs-rec { display: grid; gap: 10px; align-content: start; }
+.gs-switch { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; font-size: 14.5px; font-weight: 800; color: var(--gs-navy); }
+.gs-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.gs-switch i { position: relative; width: 42px; height: 24px; border-radius: 999px; background: #d5dbe7; transition: background .2s; }
+.gs-switch i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, .2); transition: transform .2s; }
+.gs-switch input:checked + i { background: var(--gs-orange); }
+.gs-switch input:checked + i::after { transform: translateX(18px); }
+.gs-switch input:focus-visible + i { outline: 3px solid rgba(242, 107, 29, .35); outline-offset: 2px; }
+.gs-recrow { display: grid; grid-template-columns: 62px minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.gs-recrow > span { color: var(--gs-muted); font-size: 12.5px; font-weight: 700; }
+.gs-recrow .gs-seg { grid-column: 2 / -1; padding: 3px; }
+.gs-recrow .gs-seg button { min-height: 30px; padding: 0 8px; font-size: 12.5px; }
+.gs-swatches { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.gs-swatches button { width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d5dbe7; cursor: pointer; }
+.gs-swatches button.is-on { box-shadow: 0 0 0 2px var(--gs-orange); }
+.gs-swatch-more { position: relative; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #eef2f9; color: var(--gs-muted); font-size: 14px; font-weight: 800; cursor: pointer; }
+.gs-swatch-more input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.gs-minisel { height: 30px; padding: 0 6px; border: 1px solid var(--gs-line); border-radius: 8px; background: #fff; color: var(--gs-navy); font: inherit; font-size: 12.5px; font-weight: 700; }
+.gs-tiles--rec { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+.gs-tiles--rec button { --c: #94a3b8; padding: 7px 0 5px; font-size: 10px; }
+.gs-tiles--rec button.is-on { --c: #f26b1d; border-color: #f6b98c; background: #fff7f0; }
+.gs-tiles--rec button svg { width: 17px; height: 17px; }
+.gs-stepper { display: inline-flex; align-items: center; gap: 4px; padding: 3px; border-radius: 10px; background: #eef2f9; }
+.gs-stepper button { display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 8px; background: #fff; color: var(--gs-navy); cursor: pointer; }
+.gs-stepper button:disabled { opacity: .4; cursor: not-allowed; }
+.gs-stepper button svg { width: 14px; height: 14px; }
+.gs-stepper b { min-width: 22px; text-align: center; font-size: 14px; }
+.gs-rec .gs-fold .gs-text { margin: 8px 12px; }
+@media (max-width: 380px) { .gs-tiles--rec { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
