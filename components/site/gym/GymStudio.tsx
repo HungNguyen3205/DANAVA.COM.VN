@@ -7,7 +7,7 @@
  * Hình học luôn kiểm tra lại bằng lib/gym-geometry.ts sau mỗi thao tác. Không có WebGL → mặt bằng 2D (SVG).
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Box, Building2, Columns3, Copy, Eye, Lock, Map as MapIcon, MessageCircle, Move3d, Palette, Redo2, RotateCw, Ruler, Send, Share2, Shuffle, SlidersHorizontal, Sparkles, Trash2, TriangleAlert, Undo2, Unlock, View, X } from 'lucide-react';
+import { Box, Building2, Columns3, Copy, Eye, Lock, Users, Map as MapIcon, MessageCircle, Move3d, Palette, Redo2, RotateCw, Ruler, Send, Share2, Shuffle, SlidersHorizontal, Sparkles, Trash2, TriangleAlert, Undo2, Unlock, View, X } from 'lucide-react';
 import type { Equipment, Flooring } from '@/lib/equipment';
 import { formatVND } from '@/lib/equipment';
 import { FIXTURE_KINDS, LINK_KINDS, STRATEGIES, activeOption, fmtArea, layoutHash, normalizeProject, optionCode, type FurnKind, type Project, type Strategy } from '@/lib/gym-project';
@@ -44,12 +44,13 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const [floorId, setFloorId] = useState('');
   const [mode, setMode] = useState<ViewMode>('orbit');
   const [sel, setSel] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>('eqrec');
+  const [tab, setTab] = useState<Tab>('plan');
   // Giao diện tinh gọn: chỉnh sửa gom vào "Tùy chỉnh"; mỗi lần mở một mục
   const [custom, setCustom] = useState(false);
   const [planSub, setPlanSub] = useState<'floors' | 'brief'>('floors');
   const [eqSub, setEqSub] = useState<'eq' | 'reception'>('eq');
   const [moreViews, setMoreViews] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => { fetch('/api/admin/session/').then(r => r.json()).then(v => setIsAdmin(!!v?.authenticated)).catch(() => {}); }, []);
   const [compare, setCompare] = useState(false);
@@ -104,8 +105,8 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
       if ((e.target as HTMLElement)?.closest('input,textarea,select')) return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
-      else if ((e.key === 'Delete' || e.key === 'Backspace') && sel && customRef.current) { set(p => E.removeItem(p, sel)); setSel(null); }
-      else if (e.key.toLowerCase() === 'r' && sel && customRef.current) set(p => E.rotateItem(p, sel));
+      else if ((e.key === 'Delete' || e.key === 'Backspace') && sel) { set(p => E.removeItem(p, sel)); setSel(null); }
+      else if (e.key.toLowerCase() === 'r' && sel) set(p => E.rotateItem(p, sel));
     };
     window.addEventListener('keydown', k);
     return () => window.removeEventListener('keydown', k);
@@ -115,7 +116,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const onMove = useRef<(id: string, x: number, z: number) => void>(() => {});
   const customRef = useRef(false); customRef.current = custom;
   // Chưa mở "Tùy chỉnh" thì không cho kéo lệch thiết bị (tránh khách vô tình làm sai phương án)
-  onMove.current = (id, x, z) => { if (!customRef.current) { setNotice('Bấm "Tùy chỉnh" để di chuyển thiết bị'); force(n => n + 1); return; } set(p => E.moveItem(p, id, x, z)); };
+  onMove.current = (id, x, z) => set(p => E.moveItem(p, id, x, z));
   useEffect(() => {
     if (!project || studio.current || gl === 'fail' || !host.current) return;
     let off = false;
@@ -134,7 +135,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
     if (!project?.reception.enabled) return [];
     const f = project.floors.find(x => x.id === project.reception.floorId);
     const door = f?.fixtures.find(x => x.kind === 'door' && x.main) ?? f?.fixtures.find(x => x.kind === 'door');
-    return f && door && custom && tab === 'eqrec' && eqSub === 'reception' ? buildReception(project.reception, f, door).flows.map(fl => ({ ...fl, floorId: f.id })) : [];
+    return f && door && custom && tab === 'eqrec' ? buildReception(project.reception, f, door).flows.map(fl => ({ ...fl, floorId: f.id })) : [];
   }, [project, tab, custom, eqSub]);
   useEffect(() => {
     if (!project || !studio.current || !floorId) return;
@@ -250,28 +251,11 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const products = option ? [...option.placements.reduce((m, pl) => { const eq = catalog.get(pl.eqId); if (!eq) return m; const x = m.get(eq.id) ?? { eq, qty: 0, first: pl }; x.qty++; m.set(eq.id, x); return m; }, new Map<string, { eq: Equipment; qty: number; first: (typeof option.placements)[number] }>()).values()].sort((a, b) => (b.eq.price ? 1 : 0) - (a.eq.price ? 1 : 0)) : [];
   const notes = option ? attention(project, option, catalog, cost, validation) : [];
   const fixFirst = () => { const i = errors[0]; if (!i) return; setCustom(true); setFloorId(i.floorId); setSel(i.id); };
-  const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Thiết bị & lễ tân', <Box key="e" />], ['style', 'Màu sắc, trang trí', <Palette key="s" />],
+  const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Lễ tân & đón tiếp', <Users key="e" />], ['style', 'Màu sắc, trang trí', <Palette key="s" />],
     ...(extras?.assistant ? [['assistant', 'Nhờ ANNA chỉnh', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Xem phòng hoạt động', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
 
   return (
     <div className={`gs${custom ? ' is-custom' : ''}`}>
-      {/* ----- Một dòng: phương án · diện tích · số máy · chi phí + 2 nút ----- */}
-      {option && (
-        <div className="gs-line">
-          <p className="gs-line__facts">
-            <span className="gs-sum__badge" title={STRATEGIES[option.strategy].label}>{option.letter}</span>
-            <span>{fmtArea(totalArea)}{project.floors.length > 1 ? ` · ${project.floors.length} tầng` : ''}</span>
-            <span>{option.placements.length} máy</span>
-            <strong>{shortVND(cost.range[0])} – {shortVND(cost.range[1])}</strong>
-            {project.options.length > 1 && <button type="button" className="gs-line__swap" onClick={nextOption} title="Xem phương án khác"><Shuffle aria-hidden="true" /><span>Phương án khác</span></button>}
-          </p>
-          <div className="gs-line__act">
-            <button type="button" className={`gs-btn gs-btn--lg${custom ? ' is-on' : ''}`} onClick={() => setCustom(c => !c)} aria-expanded={custom}><SlidersHorizontal aria-hidden="true" /> {custom ? 'Xong' : 'Tùy chỉnh'}</button>
-            <button type="button" className="s-btn s-btn--primary gs-cta" onClick={openSend}><Send aria-hidden="true" /> Nhận tư vấn</button>
-          </div>
-        </div>
-      )}
-
       {compare && <Compare project={project} catalog={catalog} flooring={flooring} onPick={i => { commit({ ...project, active: i }); setCompare(false); }} onStrategy={changeStrategy} onClose={() => setCompare(false)} />}
 
       <div className="gs-main">
@@ -280,6 +264,10 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
           <div className="gs-stage">
             {gl !== 'fail' && <div ref={host} className="gs-canvas" />}
             <div className="gs-float gs-float--tl">
+              <div className="gs-chiprow">
+                <button type="button" className={`gs-chipbtn${custom ? ' is-on' : ''}`} onClick={() => setCustom(c => !c)} aria-expanded={custom}><SlidersHorizontal aria-hidden="true" /> {custom ? 'Danh mục máy' : 'Tùy chỉnh'}</button>
+                {project.options.length > 1 && <button type="button" className="gs-chipbtn" onClick={nextOption} title="Xem phương án bố trí khác"><Shuffle aria-hidden="true" /><span>Phương án khác</span></button>}
+              </div>
               {sorted.length > 1 && <div className="gs-floortabs" role="radiogroup" aria-label="Tầng đang xem">
                 {sorted.map(f => <button key={f.id} type="button" role="radio" aria-checked={f.id === floor.id} className={f.id === floor.id ? 'is-on' : ''} onClick={() => { setFloorId(f.id); setSel(null); }}>{f.name}</button>)}
               </div>}
@@ -297,7 +285,13 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
                 </div>
               )}
             </div>
-            {errors.length > 0 && !sel && custom && <button type="button" className="gs-float gs-float--bl gs-warnchip" onClick={fixFirst}><TriangleAlert aria-hidden="true" /> {errors.length} chỗ cần chỉnh</button>}
+            {option && !sel && (
+              <div className="gs-dock">
+                <button type="button" className="gs-dock__cost" onClick={() => setDetailOpen(true)} title="Xem chi phí chi tiết"><small>{option.placements.length} máy · chi phí dự kiến</small><b>{shortVND(cost.range[0])} – {shortVND(cost.range[1])}</b></button>
+                <button type="button" className="s-btn s-btn--primary gs-cta" onClick={openSend}><Send aria-hidden="true" /> Nhận tư vấn</button>
+              </div>
+            )}
+            {errors.length > 0 && !sel && <button type="button" className="gs-float gs-float--bl gs-warnchip" onClick={fixFirst}><TriangleAlert aria-hidden="true" /> {errors.length} chỗ cần chỉnh</button>}
             {gl === 'loading' && <p className="gp-loading">Đang dựng phòng 3D…</p>}
             {gl === 'fail' && (
               <div className="gs-fallback">
@@ -305,14 +299,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
                 <Plan2D project={project} option={option} floor={floor} catalog={catalog} selected={sel} issues={issues} onSelect={setSel} onMove={(id, x, z) => onMove.current(id, x, z)} people={people} showClear={custom} flows={flows} className="gs-plan" />
               </div>
             )}
-            {sel && (selPl || selFu || selFx || selLn) && !custom && (
-              <div className="gs-toolbar gs-toolbar--info" role="status">
-                <b>{selEq?.name ?? (selFu ? (selFu.label === 'logo' ? 'Vách nhận diện' : selFu.label || FURNITURE[selFu.kind].label) : selFx ? (selFx.label || FIXTURE_KINDS[selFx.kind].label) : selLn ? LINK_KINDS[selLn.kind].label : '')}
-                  {selEq && <small>{selEq.price ? formatVND(Number(selEq.price)) : 'Giá: DANAVA báo sau'} · {selEq.width}×{selEq.depth} cm</small>}</b>
-                <button type="button" onClick={() => { setCustom(true); setTab(selFx || selLn ? 'plan' : 'eqrec'); }}><SlidersHorizontal aria-hidden="true" /> Chỉnh</button>
-              </div>
-            )}
-            {sel && (selPl || selFu || selFx || selLn) && custom && (
+            {sel && (selPl || selFu || selFx || selLn) && (
               <div className={`gs-toolbar${selIssues.some(i => i.level === 'error') ? ' is-bad' : ''}`} role="toolbar" aria-label="Vật đang chọn">
                 <b>{selEq?.name ?? (selFu ? (selFu.label === 'logo' ? 'Vách nhận diện' : selFu.label || FURNITURE[selFu.kind].label) : selFx ? (selFx.label || FIXTURE_KINDS[selFx.kind].label) : selLn ? LINK_KINDS[selLn.kind].label : '')}
                   {selEq && <small>{selEq.price ? formatVND(Number(selEq.price)) : 'Chưa có giá'} · {selEq.width}×{selEq.depth} cm{selEq.dimsEstimated ? ' (ước tính)' : ''}</small>}
@@ -331,11 +318,18 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               </div>
             )}
             {notice && <p className="gs-notice" role="status">{notice}</p>}
-            {gl === 'ok' && !sel && custom && <p className="gp-hint">Kéo thiết bị để di chuyển · R xoay · Ctrl+Z hoàn tác</p>}
+
           </div>
         </div>
 
-        {/* ----- Tùy chỉnh: chỉ mở khi khách bấm, mỗi lần một mục ----- */}
+        {/* ----- Cột trái: danh mục máy tập (mặc định) ----- */}
+        {!custom && (
+          <aside className="gs-side gs-cat" aria-label="Danh mục máy tập">
+            <EquipmentPanel equipment={equipment} p={project} floor={floor} onMust={id => set(p => ({ ...p, brief: { ...p.brief, mustHave: p.brief.mustHave.includes(id) ? p.brief.mustHave.filter(x => x !== id) : [...p.brief.mustHave, id] } }))}
+              onAdd={eq => { if (!option) return; const r = E.addEquipment(project, floor.id, eq, catalog); commit(r.project, r.placed ? `Đã thêm ${eq.name}` : `Hết chỗ cho ${eq.name} — đã đặt giữa sàn (tô đỏ), hãy dời máy khác`); setSel(r.id); }} />
+          </aside>
+        )}
+        {/* ----- Tùy chỉnh: thay chỗ danh mục khi khách bấm, mỗi lần một mục ----- */}
         {custom && (
           <aside className="gs-side" aria-label="Tùy chỉnh phương án">
             <div className="gs-side__head">
@@ -343,7 +337,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               <span className="gs-side__tools">
                 <button type="button" className="gs-icon" onClick={undo} disabled={!hist.current.past.length} title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác"><Undo2 /></button>
                 <button type="button" className="gs-icon" onClick={redo} disabled={!hist.current.future.length} title="Làm lại (Ctrl+Y)" aria-label="Làm lại"><Redo2 /></button>
-                <button type="button" className="gs-icon" onClick={() => setCustom(false)} aria-label="Đóng tùy chỉnh"><X /></button>
+                <button type="button" className="gs-icon" onClick={() => setCustom(false)} aria-label="Về danh mục máy" title="Về danh mục máy"><X /></button>
               </span>
             </div>
             <div className="gs-menu" role="tablist">
@@ -362,10 +356,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               }} /> : <BriefPanel p={project} set={fn => set(fn)} equipment={equipment} onRegenerate={() => regenerate(project)} />}
             </>}
             {tab === 'eqrec' && <>
-              <Seg label="Thiết bị và lễ tân" value={eqSub} options={[['eq', 'Thiết bị'], ['reception', 'Lễ tân']]} onChange={setEqSub} />
-              {eqSub === 'eq' ? <EquipmentPanel equipment={equipment} p={project} floor={floor} onMust={id => set(p => ({ ...p, brief: { ...p.brief, mustHave: p.brief.mustHave.includes(id) ? p.brief.mustHave.filter(x => x !== id) : [...p.brief.mustHave, id] } }))}
-                onAdd={eq => { if (!option) return; const r = E.addEquipment(project, floor.id, eq, catalog); commit(r.project, r.placed ? `Đã thêm ${eq.name}` : `Hết chỗ cho ${eq.name} — đã đặt giữa sàn (tô đỏ), hãy dời máy khác`); setSel(r.id); }} />
-                : <ReceptionPanel p={project} set={patch => set(p => E.setReception(p, patch))} />}
+              <ReceptionPanel p={project} set={patch => set(p => E.setReception(p, patch))} />
             </>}
             {tab === 'style' && <StylePanel p={project} floor={floor} set={fn => set(fn)} addDecor={(k: FurnKind) => { const F = FURNITURE[k]; set(p => E.addFurniture(p, floor.id, { kind: k, x: 0, z: 0, rot: 0, w: F.w, d: F.d, group: 'decor' }), `Đã thêm ${F.label.toLowerCase()} — kéo để đặt`); }} />}
             {tab === 'assistant' && extras?.assistant?.({ project, commit, floorId: floor.id })}
@@ -383,28 +374,12 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
         </p>
       )}
 
-      {/* ----- Sản phẩm trong phòng: ảnh, tên, số lượng, giá — bấm để xem vị trí trong 3D ----- */}
-      {option && products.length > 0 && (
-        <section className="gs-products" aria-label="Thiết bị trong phòng">
-          <h2>Thiết bị trong phòng <small>{option.placements.length} máy</small></h2>
-          <ul>
-            {products.map(({ eq, qty, first }) => (
-              <li key={eq.id}>
-                <button type="button" onClick={() => { setFloorId(first.floorId); setSel(first.id); }} title="Xem vị trí trong phòng">
-                  <span className="gs-products__img">{eq.image ? <img src={eq.image} alt="" loading="lazy" /> : null}{qty > 1 && <i>×{qty}</i>}</span>
-                  <b>{eq.name}</b>
-                  <em className={eq.price ? '' : 'is-contact'}>{eq.price ? formatVND(Number(eq.price)) : 'Liên hệ'}</em>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       {/* ----- Phân tích & chi phí chi tiết: ẩn, bấm mới hiện ----- */}
-      {option && (
-        <details className="gs-more-info">
-          <summary>Xem phân tích & chi phí chi tiết</summary>
+      {option && detailOpen && (
+        <div className="gs-modal" role="dialog" aria-modal="true" aria-label="Chi phí và phân tích" onClick={e => { if (e.target === e.currentTarget) setDetailOpen(false); }}>
+        <div className="gs-modal__box gs-modal__box--wide">
+          <button type="button" className="gs-icon gs-modal__x" aria-label="Đóng" onClick={() => setDetailOpen(false)}><X /></button>
+          <h2>Chi phí dự kiến {shortVND(cost.range[0])} – {shortVND(cost.range[1])}</h2>
           <div className="gs-below">
             <div className="gs-col">
               <ul className="gs-points">{points.map((p, i) => <li key={i}>{p}</li>)}</ul>
@@ -431,7 +406,8 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               <p className="gp-note">Giá thiết bị theo bảng giá đối tác thietbigym.vn; nội thất là khoảng tham khảo. Chưa gồm vận chuyển, lắp đặt, thi công, điện.</p>
             </div>
           </div>
-        </details>
+        </div>
+        </div>
       )}
       {option && form.open && (
         <div className="gs-modal" role="dialog" aria-modal="true" aria-label="Nhận tư vấn phương án" onClick={e => { if (e.target === e.currentTarget) setForm(f => ({ ...f, open: false })); }}>

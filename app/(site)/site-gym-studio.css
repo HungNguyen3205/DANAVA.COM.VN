@@ -494,3 +494,35 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
   .gs-products ul { grid-auto-columns: 128px; }
   .gs-line__facts .gs-line__swap span { display: none; }
 }
+
+/* ==========================================================================
+   Hai phần: danh mục máy tập (trái) + phòng 3D (phải); mọi thứ khác nằm trong khung 3D hoặc bấm mới mở
+   ========================================================================== */
+.gs-main, .gs.is-custom .gs-main { grid-template-columns: 340px minmax(0, 1fr); }
+.gs-main > .gs-side { order: -1; max-height: min(82vh, 880px); }
+.gs-cat .gs-panel { padding: 12px; }
+.gs-stage { height: min(82vh, 880px); }
+.gs-float--tl { gap: 8px; }
+.gs-chiprow { display: flex; flex-wrap: wrap; gap: 6px; }
+.gs-chipbtn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--gs-navy); font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 22px -16px rgba(19, 36, 79, .6); backdrop-filter: blur(6px); }
+.gs-chipbtn svg { width: 16px; height: 16px; color: var(--gs-orange); }
+.gs-chipbtn.is-on { background: var(--gs-navy); color: #fff; }
+.gs-chipbtn.is-on svg { color: #ffb066; }
+.gs-dock { position: absolute; left: 50%; bottom: 14px; z-index: 4; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: rgba(255, 255, 255, .95); box-shadow: 0 16px 34px -18px rgba(19, 36, 79, .6); transform: translateX(-50%); backdrop-filter: blur(6px); white-space: nowrap; }
+.gs-dock__cost { display: grid; padding: 0; border: 0; background: none; color: var(--gs-navy); font: inherit; text-align: left; cursor: pointer; }
+.gs-dock__cost small { color: var(--gs-muted); font-size: 11.5px; font-weight: 700; }
+.gs-dock__cost b { color: #c2410c; font-size: 16px; text-decoration: underline dotted rgba(194, 65, 12, .4); text-underline-offset: 3px; }
+.gs-dock .gs-cta { min-height: 42px; }
+.gs-modal__box--wide { width: min(980px, 100%); }
+.gs-modal__box--wide .gs-below { margin-top: 10px; }
+@media (max-width: 1100px) {
+  .gs-main, .gs.is-custom .gs-main { grid-template-columns: 1fr; }
+  .gs-main > .gs-side { order: 1; max-height: none; }
+  .gs-cat .gs-panel { max-height: 520px; }
+}
+@media (max-width: 640px) {
+  .gs-chipbtn span { display: none; }
+  .gs-dock { left: 10px; right: 10px; transform: none; justify-content: space-between; }
+  .gs-dock .gs-cta { display: none; }
+  .gs-stage { height: 62vh; }
+}
