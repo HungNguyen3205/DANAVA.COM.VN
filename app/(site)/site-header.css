@@ -86,8 +86,9 @@
 .s-app .s-header__bar { padding: 0 clamp(20px, 3vw, 48px); }
 @media (max-width: 1080px) { .s-app .s-header__bar { padding: 0 clamp(16px, 4vw, 24px); } }
 
-/* Chân trang: gradient dọc, đậm ở trên, nhạt dần xuống dưới */
-.s-app .s-footer { background: linear-gradient(180deg, #13244f 0%, #1f3a8a 50%, #3d5bd0 100%) !important; }
+/* Chân trang: navy đậm từ trên xuống, sẫm dần về đáy cho chân trang chắc; quầng sáng nhẹ góc phải để không bị phẳng */
+.s-app .s-footer { margin-bottom: 0; background: radial-gradient(55% 90% at 100% 0%, rgba(83, 165, 219, .16), transparent 60%), linear-gradient(180deg, #172b63 0%, #13244f 45%, #0c1838 100%) !important; }
+.s-app .s-footer .s-footer__bottom { border-top-color: rgba(255, 255, 255, .1); }
 
 /* Font thống nhất (Be Vietnam Pro): các nhãn, số và chú thích trước đây nghiêng nay đứng */
 .s-app :is(h1, h2, h3, h4) em,
