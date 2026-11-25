@@ -39,7 +39,7 @@
 .s-app .cta-primary-btn,
 .s-app .solution-cta-main,
 .s-app .s-btn--primary:hover {
-  background: linear-gradient(90deg, #ff8a2a, #f26b1d) !important;
+  background: linear-gradient(180deg, #ffa24a 0%, #f26b1d 100%) !important;
   background-color: #f26b1d !important;
   border-color: transparent !important;
   color: #fff !important;
@@ -141,7 +141,7 @@
 .s-app .hx-btn--sun,
 .s-app .hp-btn--sun,
 .s-app .s-mega__cta {
-  background: linear-gradient(135deg, #ffb27a 0%, #f58a4a 55%, #f26b1d 100%) !important;
+  background: linear-gradient(180deg, #ffa24a 0%, #f7802f 50%, #f26b1d 100%) !important;
   border-radius: 999px !important;
   color: #fff !important;
   box-shadow: 0 16px 30px -18px rgba(242, 107, 29, .65), inset 0 1px 0 rgba(255, 255, 255, .35) !important;
