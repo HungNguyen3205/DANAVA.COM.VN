@@ -103,7 +103,7 @@ export function NotFoundContent() {
         </div>
 
         <p className="not-found-note">
-          Cần hỗ trợ? Hotline <a href="tel:0935917677">0935 91 76 77</a> (Thứ Hai – Thứ Bảy, 08:00 – 18:00) · Email <a href="mailto:support@danava.vn">support@danava.vn</a>
+          Cần hỗ trợ? Hotline <a href="tel:0935917677">0935 91 76 77</a> (Thứ Hai – Thứ Bảy, 08:00 – 18:00, nghỉ trưa 11:30 – 14:00) · Email <a href="mailto:support@danava.vn">support@danava.vn</a>
         </p>
       </div>
     </main>

@@ -19,7 +19,8 @@ import { contactChannels } from '@/lib/contact-channels';
 import { rich } from './rich';
 import { useAnna } from './anna/AnnaProvider';
 import { MayPerch } from './anna/MayPerch';
-import { CuteChat, CuteFacebook, CuteMail, CuteMoon, CutePhone, CuteSun, CuteSupport, CuteYoutube } from './CuteIcons';
+import { parseHours, workState, type WorkState } from '@/lib/work-hours';
+import { CuteChat, CuteFacebook, CuteMail, CuteMoon, CutePhone, CuteSun, CuteSunNap, CuteSupport, CuteYoutube } from './CuteIcons';
 
 type Fields = { name: string; phone: string; email: string; businessType: string; service: string; message: string };
 type Errors = Partial<Record<keyof Fields, string>>;
@@ -32,25 +33,6 @@ const CHIP: Record<string, string> = {
   'danava-studio': 'DANAVA Studio', 'thiet-ke-website': 'Website', 'digital-marketing': 'Marketing & Truyền thông',
   'su-kien-truyen-thong': 'Tổ chức sự kiện', 'media-production': 'Video & hình ảnh', 'du-lich-su-kien': 'Du lịch', 'tu-van-chuyen-doi-so': 'Tư vấn chuyển đổi số'
 };
-
-/**
- * Đang trong giờ làm việc? Đọc chuỗi giờ làm việc trong CMS (vd. "Thứ Hai – Thứ Bảy, 08:00 – 18:00").
- * Chỉ trả lời khi đọc được chắc chắn; ngược lại trả null để không hiển thị trạng thái sai.
- */
-function openNow(hours: string): boolean | null {
-  const t = hours.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
-  if (!t) return null;
-  const DAY: Record<string, number> = { 'chủ nhật': 0, 'thứ hai': 1, 'thứ ba': 2, 'thứ tư': 3, 'thứ năm': 4, 'thứ sáu': 5, 'thứ bảy': 6 };
-  const d = hours.toLowerCase().match(/(thứ hai|thứ ba|thứ tư|thứ năm|thứ sáu|thứ bảy|chủ nhật)\s*[–-]\s*(thứ hai|thứ ba|thứ tư|thứ năm|thứ sáu|thứ bảy|chủ nhật)/);
-  if (!d) return null;
-  const from = DAY[d[1]], to = DAY[d[2]] === 0 ? 7 : DAY[d[2]];
-  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Ho_Chi_Minh', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
-  const wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.find(x => x.type === 'weekday')!.value);
-  const day = wd === 0 ? 7 : wd;
-  const mins = Number(parts.find(x => x.type === 'hour')!.value) * 60 + Number(parts.find(x => x.type === 'minute')!.value);
-  const open = Number(t[1]) * 60 + Number(t[2]), close = Number(t[3]) * 60 + Number(t[4]);
-  return day >= (from === 0 ? 7 : from) && day <= to && mins >= open && mins < close;
-}
 
 function validate(f: Fields): Errors {
   const e: Errors = {};
@@ -82,7 +64,7 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [feedback, setFeedback] = useState('');
   const confirmRef = useRef<HTMLButtonElement>(null);
-  const [isOpen, setIsOpen] = useState<boolean | null>(null);
+  const [state, setState] = useState<WorkState | null>(null);
   const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { zalo } = contactChannels(data);
@@ -98,7 +80,16 @@ export function ContactPage({ initialService }: { initialService: string }) {
   const mail = <span {...cmsText('site.email', 'Email liên hệ', G)}>{email}</span>;
 
   // Trạng thái giờ làm việc tính trên trình duyệt (tránh lệch khi render máy chủ)
-  useEffect(() => { setIsOpen(openNow(co.hours)); }, [co.hours]);
+  const hours = parseHours(co.hours);
+  // Cập nhật mỗi phút (khách để trang mở qua giờ nghỉ trưa / hết giờ)
+  useEffect(() => {
+    const h = parseHours(co.hours);
+    if (!h) { setState(null); return; }
+    const tick = () => setState(workState(h));
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, [co.hours]);
 
   /** Danh thiếp nghiêng theo con trỏ (tắt khi người dùng bật giảm chuyển động — xem CSS). */
   const tilt = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -205,13 +196,22 @@ export function ContactPage({ initialService }: { initialService: string }) {
 
             {/* Giữ chỗ sẵn: giờ làm việc chỉ tính được trên trình duyệt */}
             <div className="c-sky">
-              {isOpen !== null && (
-                <p className={`c-status${isOpen ? ' is-open' : ''}`} role="status">
-                  {isOpen ? <CuteSun /> : <CuteMoon />}
-                  <strong {...(isOpen ? P('status.open', 'Đang trong giờ làm việc', 'Trạng thái: trong giờ') : P('status.closed', 'Ngoài giờ làm việc', 'Trạng thái: ngoài giờ'))} />
-                  {!isOpen && <small {...P('status.closed-note', 'DANAVA gọi lại vào ngày làm việc kế tiếp', 'Ghi chú ngoài giờ')} />}
-                  <span {...cmsText('block.company.hours', 'Giờ làm việc', G)}>{co.hours}</span>
-                </p>
+              {state !== null && hours && (
+                <div className={`c-status c-status--${state}`} role="status">
+                  {state === 'open' ? <CuteSun /> : state === 'lunch' ? <CuteSunNap /> : <CuteMoon />}
+                  <strong {...(state === 'open' ? P('status.open', 'Đang làm việc', 'Trạng thái: trong giờ')
+                    : state === 'lunch' ? P('status.lunch', 'Đang nghỉ trưa', 'Trạng thái: nghỉ trưa')
+                    : P('status.closed', 'Ngoài giờ làm việc', 'Trạng thái: ngoài giờ'))} />
+                  {state === 'lunch' && hours.lunch && <small><span {...P('status.lunch-note', 'Làm việc lại lúc', 'Ghi chú nghỉ trưa')} /> {hours.lunchText!.split(' – ')[1]}</small>}
+                  {state === 'closed' && <small {...P('status.closed-note', 'DANAVA gọi lại vào ngày làm việc kế tiếp', 'Ghi chú ngoài giờ')} />}
+                  {/* Giờ rút gọn: 2 viên thuốc ngắn thay cho một câu dài */}
+                  <ul className="c-hours" aria-label={co.hours}>
+                    <li><b>{hours.days}</b> {hours.time}</li>
+                    {hours.lunchText && <li className={state === 'lunch' ? 'is-now' : ''}><span {...P('status.lunch-label', 'Nghỉ trưa', 'Nhãn giờ nghỉ trưa')} /> {hours.lunchText}</li>}
+                  </ul>
+                  {/* Chuỗi gốc: chỉ hiện trong trình chỉnh sửa để sửa giờ làm việc */}
+                  <span className="c-hours-raw" {...cmsText('block.company.hours', 'Giờ làm việc', G)}>{co.hours}</span>
+                </div>
               )}
             </div>
 

@@ -61,6 +61,24 @@ export function CuteSun({ className }: P) {
   );
 }
 
+/** Mặt trời ngủ trưa (đang nghỉ trưa): mắt nhắm, má hồng, chữ z bay lên */
+export function CuteSunNap({ className }: P) {
+  return (
+    <svg {...base(className)}>
+      <g stroke="#f7c25c" strokeWidth="3" strokeLinecap="round" opacity=".75">
+        <path d="M24 5v4M24 39v4M5 24h4M39 24h4M10.6 10.6l2.8 2.8M34.6 34.6l2.8 2.8M10.6 37.4l2.8-2.8" />
+      </g>
+      <circle cx="24" cy="24" r="10.5" fill="#ffd27a" />
+      <path d="M18.6 23.2c1 .9 2.6.9 3.6 0M25.8 23.2c1 .9 2.6.9 3.6 0" stroke="#7a4a00" strokeWidth="1.7" strokeLinecap="round" fill="none" />
+      <circle cx="18.2" cy="26.6" r="1.5" fill="#ffab91" opacity=".8" />
+      <circle cx="29.8" cy="26.6" r="1.5" fill="#ffab91" opacity=".8" />
+      <path d="M22.6 28.4h2.8" stroke="#7a4a00" strokeWidth="1.6" strokeLinecap="round" />
+      <path className="cute-z cute-z--1" d="M34 6.5h4l-4 4.5h4" stroke="#4a5a99" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path className="cute-z cute-z--2" d="M40 1.5h3l-3 3.4h3" stroke="#4a5a99" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
+
 /** Mặt trăng ngủ (ngoài giờ làm việc) */
 export function CuteMoon({ className }: P) {
   return (

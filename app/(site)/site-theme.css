@@ -790,3 +790,22 @@ body:has(.s-app) { background: var(--s-bg); }
 @media (min-width: 961px) and (max-width: 1180px) {
   .c-contact .c-form__grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ==== Trang Liên hệ: trạng thái giờ làm việc gọn (components/site/ContactPage.tsx) ====
+   Biểu tượng (mặt trời / mặt trời ngủ trưa / mặt trăng) + trạng thái + 2 viên giờ ngắn:
+   [T2 – T7 8:00 – 18:00]  [Nghỉ trưa 11:30 – 14:00]  — viên nghỉ trưa sáng cam khi đang nghỉ. */
+.c-hours { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 6px 0 0; padding: 0; list-style: none; }
+.c-hours li { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 999px; background: #eef2fb; color: #56607a; font-size: 12px; font-weight: 600; line-height: 1.4; white-space: nowrap; }
+.c-hours li b { color: #13244f; font-weight: 800; }
+.c-hero--light .c-status .c-hours span { padding: 0; background: none; color: inherit; font-size: inherit; }
+.c-hours li.is-now { background: #fff1dc; color: #b4531a; }
+.c-status--lunch strong { color: #b4531a; }
+/* Chuỗi giờ gốc: ẩn với khách, hiện trong trình chỉnh sửa (sửa trực tiếp giờ làm việc) */
+.c-hours-raw { display: none !important; }
+html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
+/* Mặt trời ngủ trưa: chữ z bay lên nhẹ */
+@media (prefers-reduced-motion: no-preference) {
+  .cute-z { animation: cute-z 2.6s ease-in-out infinite; }
+  .cute-z--2 { animation-delay: 1.3s; }
+}
+@keyframes cute-z { 0%, 100% { opacity: .25; transform: translateY(2px); } 50% { opacity: 1; transform: translateY(-1.5px); } }

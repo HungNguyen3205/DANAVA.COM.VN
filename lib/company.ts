@@ -11,7 +11,7 @@ export const CONTACT = {
   street: '08 Đặng Vũ Hỷ, An Hải',
   city: 'Đà Nẵng',
   address: '08 Đặng Vũ Hỷ, An Hải, Đà Nẵng',
-  hours: 'Thứ Hai – Thứ Bảy, 08:00 – 18:00',
+  hours: 'Thứ Hai – Thứ Bảy, 08:00 – 18:00 (nghỉ trưa 11:30 – 14:00)',
   mapUrl: 'https://maps.google.com/?q=08+%C4%90%E1%BA%B7ng+V%C5%A9+H%E1%BB%B7,+An+H%E1%BA%A3i,+%C4%90%C3%A0+N%E1%BA%B5ng'
 };
 

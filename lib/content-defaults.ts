@@ -477,6 +477,9 @@ export function normalizeContent(data: SiteData): SiteData {
   }
   return {
     ...data,
+    // Giờ làm việc mặc định cũ (chưa có giờ nghỉ trưa) → giờ mới; giờ do quản trị viên tự sửa thì giữ nguyên
+    ...(data.blocks?.company && (data.blocks.company as { hours?: string }).hours === 'Thứ Hai – Thứ Bảy, 08:00 – 18:00'
+      ? { blocks: { ...data.blocks, company: { ...data.blocks.company, hours: 'Thứ Hai – Thứ Bảy, 08:00 – 18:00 (nghỉ trưa 11:30 – 14:00)' } } } : {}),
     // Khối DANAVA DIGITAL (marketing) đã ngừng — gỡ khỏi dữ liệu trình chiếu đã lưu
     ...(data.presentation ? { presentation: { ...data.presentation, ecosystem: data.presentation.ecosystem.filter(x => x.id !== 'digital') } } : {}),
     heroTitle: data.heroTitle === undefined || OLD_HERO_TITLES.includes(data.heroTitle) ? DEFAULT_HERO_TITLE : data.heroTitle,
