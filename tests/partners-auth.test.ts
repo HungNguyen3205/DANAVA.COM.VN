@@ -22,7 +22,7 @@ test('15 đối tác đồng hành từ danava.vn: đủ, không trùng, có log
   assert.equal(CLIENT_SEEDS.filter(c => c.relation === 'client').length, 2, 'HARIVER, Huế Pilates & Yoga là khách hàng có case study');
   const n = normalizeContent(structuredClone(initial));
   assert.equal(validateContent(n), true);
-  assert.equal(publicPartners(n).filter(c => !c.id.startsWith('mkt-')).length, 15);
+  assert.equal(publicPartners(n).length, 15, 'trang Đối tác giữ nguyên, không gồm khách hàng marketing');
 });
 
 test('32 địa điểm còn lại trên danava.vn/places: đủ thông tin, có nguồn, không vào khối logo', () => {

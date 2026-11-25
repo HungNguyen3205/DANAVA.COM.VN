@@ -109,12 +109,15 @@ export const findShowcase = (data: SiteData, slug: string) => (data.showcase || 
 /* ---------------------------------------------------------- Bằng chứng */
 export const publicClients = (data: SiteData): Client[] =>
   (data.clients || []).filter(c => c.published && c.permission && c.name.trim());
-/** Khách hàng + đối tác đồng hành (không gồm địa điểm danh bạ danava.vn/places) — dùng cho khối logo. */
-export const publicPartners = (data: SiteData): Client[] => publicClients(data).filter(c => c.relation !== 'place');
+/** Khách hàng marketing (id "mkt-…"): chỉ quản lý trong admin và dùng cho khối logo/con số trang chủ,
+ *  KHÔNG hiện trên trang Đối tác, Hệ sinh thái hay dữ liệu ANNA (giữ các trang đó như trước). */
+const isMarketingClient = (c: Client) => c.id.startsWith('mkt-');
+/** Khách hàng + đối tác đồng hành (không gồm địa điểm danh bạ danava.vn/places) — dùng cho trang Đối tác. */
+export const publicPartners = (data: SiteData): Client[] => publicClients(data).filter(c => c.relation !== 'place' && !isMarketingClient(c));
 /** Đối tác/khách hàng đã xác minh hợp tác: khối logo trang chủ và con số "… thương hiệu đã đồng hành" (bỏ trùng theo tên). */
 export const homePartners = (data: SiteData): Client[] => {
   const seen = new Set<string>();
-  return publicPartners(data).filter(c => {
+  return publicClients(data).filter(c => c.relation !== 'place').filter(c => {
     const k = c.name.trim().toLowerCase();
     if (c.onHome === false || seen.has(k)) return false;
     seen.add(k);
@@ -148,7 +151,8 @@ export function publicContent(data: SiteData): SiteData {
     subServices: publishedSubServices(data).map(s => ({ ...s, editorNote: undefined })),
     topics: (data.topics || []).filter(t => t.published || t.id === ARCHIVE_TOPIC),
     // Trình duyệt chỉ cần khối logo: bỏ địa điểm danh bạ và phần mô tả dài
-    clients: publicPartners(data).map(c => ({ ...c, note: '', description: undefined, amenities: undefined, types: undefined })),
+    // Gồm cả khách hàng marketing để trình duyệt đếm đúng "… thương hiệu" (homePartners); các trang danh sách lọc lại bằng publicPartners
+    clients: publicClients(data).filter(c => c.relation !== 'place').map(c =>({ ...c, note: '', description: undefined, amenities: undefined, types: undefined })),
     testimonials: publicTestimonials(data),
     // Chỉ trang /du-an/ (client) cần showcase — chỉ gửi mục website đã xuất bản
     showcase: (data.showcase || []).filter(x => x.published && x.serviceId === 'website'),
