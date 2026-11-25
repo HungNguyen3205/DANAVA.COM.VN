@@ -70,7 +70,7 @@ fi
 step "5/5 Kiem tra qua ten mien that"
 # Lần gọi đầu đánh thức app (Passenger khởi động khi có request).
 ok=1
-for path in / /kien-thuc/ /lien-he/; do
+for path in / /blogs/ /lien-he/; do   # /kien-thuc/ nay chuyen huong 308 sang /blogs/ -> kiem tra thang /blogs/
   code=$(curl -s -o /dev/null -m 60 -w '%{http_code}' "https://$DOMAIN$path")
   printf '%-14s %s\n' "$path" "$code"
   [ "$code" = 200 ] || ok=0
