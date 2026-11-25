@@ -30,7 +30,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
         </section>
         <section className="gp-body">
           <div className="s-container s-container--wide">
-            <GymStudioPage flooring={FLOORING} equipment={publicEquipment(data.equipment).filter(x => x.category !== 'accessory')} addId={typeof add === 'string' ? add.slice(0, 60) : undefined} code={code} />
+            <GymStudioPage flooring={FLOORING} equipment={publicEquipment(data.equipment).filter(x => x.category !== 'accessory')} addId={typeof add === 'string' ? add.slice(0, 60) : undefined} code={code} aiEnabled={!!process.env.GEMINI_API_KEY} />
           </div>
         </section>
       </main>

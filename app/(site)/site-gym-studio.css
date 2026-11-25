@@ -253,3 +253,38 @@
   .gp-hint { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .gs-notice { animation: none; } }
+
+/* ---------- ANNA – trợ lý thiết kế ---------- */
+.gs-ai { display: flex; flex-direction: column; gap: 8px; }
+.gs-ai__list { flex: 1; min-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scrollbar-width: thin; }
+.gs-ai__msg { max-width: 94%; padding: 9px 12px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; }
+.gs-ai__msg p { margin: 0; }
+.gs-ai__msg.is-user { align-self: flex-end; border-bottom-right-radius: 5px; background: linear-gradient(135deg, #2b4294, #13244f); color: #fff; }
+.gs-ai__msg.is-model { align-self: flex-start; border-bottom-left-radius: 5px; background: #f6f8fb; }
+.gs-ai__who { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 3px; color: #c2410c; font-size: 12px; font-weight: 800; }
+.gs-ai__who svg { width: 14px; height: 14px; }
+.gs-ai__who em { padding: 1px 7px; border-radius: 999px; background: #fff4e5; color: #9a4a06; font-size: 10.5px; font-style: normal; }
+.gs-ai__note { margin-top: 5px !important; color: #9a4a06; font-size: 12px; }
+.gs-ai__note svg { width: 13px; height: 13px; vertical-align: -2px; }
+.gs-ai__q { margin-top: 5px !important; font-weight: 700; }
+.gs-ai__plan { margin-top: 8px; padding: 10px; border: 1px solid #ffd3b5; border-radius: 12px; background: #fff; }
+.gs-ai__plan > b { display: flex; align-items: center; gap: 5px; font-size: 12.5px; }
+.gs-ai__plan > b svg { width: 14px; height: 14px; color: var(--gs-orange); }
+.gs-ai__plan ul { margin: 6px 0; padding-left: 18px; font-size: 12.5px; }
+.gs-ai__fail { color: #b42318; list-style: none; padding-left: 0 !important; }
+.gs-ai__diff table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.gs-ai__diff th { padding: 3px 6px 3px 0; color: var(--gs-muted); font-weight: 700; text-align: left; }
+.gs-ai__diff td { padding: 3px 4px; }
+.gs-ai__diff p { margin: 6px 0 !important; font-size: 12px; }
+.gs-ai__diff em { padding: 1px 6px; border-radius: 999px; font-style: normal; font-weight: 800; }
+.gs-ai__diff em.is-bad { background: #fef2f2; color: #b42318; }
+.gs-ai__diff em.is-ok { background: #e3f6ea; color: #137a43; }
+.gs-ai__plan .s-btn { min-height: 36px; padding: 0 14px; font-size: 13px; }
+.gs-ai__done { display: flex; align-items: center; gap: 5px; color: #137a43; font-weight: 700; font-size: 12.5px; }
+.gs-ai__done svg { width: 14px; height: 14px; }
+.gs-ai__busy { margin: 0; color: var(--gs-muted); font-size: 12.5px; font-style: italic; }
+.gs-ai__ex { display: grid; gap: 4px; }
+.gs-ai__ex button { padding: 7px 10px; border: 1px dashed #ffd3b5; border-radius: 10px; background: #fffaf6; color: #9a3412; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
+.gs-ai__form { display: flex; align-items: flex-end; gap: 6px; }
+.gs-ai__form textarea { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #dfe4ee; border-radius: 12px; color: var(--gs-navy); font: inherit; font-size: 13.5px; resize: none; }
+.gs-ai__form .gs-icon { width: 42px; height: 42px; border: 0; background: linear-gradient(180deg, #ffa24a, #f26b1d); color: #fff; }
