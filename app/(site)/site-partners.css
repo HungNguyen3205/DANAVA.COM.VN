@@ -183,3 +183,35 @@
   .pj__perks li { grid-template-columns: 36px 1fr; align-items: center; }
   .pj__btn { width: 100%; justify-content: center; }
 }
+
+/* Lời mời đối tác: gọn trong một màn hình */
+.pj { padding: clamp(24px, 4vw, 48px) 0; }
+.pj .pj__card { gap: clamp(20px, 3vw, 40px); padding: clamp(24px, 3.4vw, 44px) clamp(24px, 4vw, 52px); border-radius: 28px; max-height: none; }
+.pj .pj__kicker { margin-bottom: 10px; padding: 5px 12px; font-size: 12.5px; }
+.pj .pj__title { font-size: clamp(26px, 2.9vw, 40px); line-height: 1.12; }
+.pj .pj__lead { max-width: 600px; margin-top: 10px; font-size: clamp(14.5px, 1.15vw, 16px); line-height: 1.6; }
+.pj .pj__perks { gap: 8px; margin-top: 18px; }
+.pj .pj__perks li { grid-template-columns: 32px minmax(0, 1fr); align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; }
+.pj .pj__perk-icon { width: 32px; height: 32px; border-radius: 10px; }
+.pj .pj__perk-icon svg { width: 16px; height: 16px; }
+.pj .pj__perks b { font-size: 13.5px; line-height: 1.3; }
+.pj .pj__perks small { margin-top: 2px; font-size: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pj .pj__actions { gap: 10px; margin-top: 20px; }
+.pj .pj__btn { min-height: 46px; padding: 0 22px; font-size: 15px; }
+/* Nút phụ trong suốt, viền trắng (thắng kiểu nút chung của website) */
+.s-app .pj a.pj__btn--ghost, .pj a.pj__btn--ghost { border: 1.5px solid rgba(255, 255, 255, .4); background: transparent; color: #fff; }
+.s-app .pj a.pj__btn--ghost:hover, .pj a.pj__btn--ghost:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.s-app .pj a.pj__btn--primary, .pj a.pj__btn--primary { color: #fff; }
+/* Cam kết + bằng chứng: một hàng ngang */
+.pj .pj__assure { margin-top: 10px; font-size: 12.5px; }
+.pj .pj__proof { margin-top: 14px; padding-top: 12px; font-size: 13px; }
+.pj .pj__proof b { font-size: 15px; }
+.pj .pj__faces img { width: 28px; height: 28px; margin-left: -8px; }
+.pj .pj__orbit { width: min(100%, 330px); }
+@media (max-width: 980px) {
+  .pj .pj__orbit { width: min(56%, 230px); }
+}
+@media (max-width: 640px) {
+  .pj .pj__card { padding: 22px 18px 24px; }
+  .pj .pj__btn { width: auto; flex: 1 1 auto; }
+}
