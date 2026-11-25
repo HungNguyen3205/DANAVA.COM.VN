@@ -406,13 +406,14 @@ function AdminWorkspace({ section }: { section: string }) {
           case 'kenh-lien-he': return <ChannelsEditor draft={draft} setDraft={setDraft} />;
           case 'doi-ngu': return <div className="blk-stack"><StaffOrder draft={draft} setDraft={setDraft} />{staffEditor}</div>;
           case 'ho-so-nhan-su': return blockPanel('staff');
-          case 'doi-tac': return <ProofEditor draft={draft} setDraft={setDraft} />;
+          case 'doi-tac': return <ProofEditor draft={draft} setDraft={setDraft} />; // liên kết cũ thuong-hieu/?tab=doi-tac
           case 'so-lieu': return metricsEditor;
           default: return blockPanel('company');
         }
       case 'khach-hang': return <LeadsManager />;
       case 'danh-ba': return <ContactBook />;
       case 'bieu-mau': return <FormsReport />;
+      case 'doi-tac': return <ProofEditor draft={draft} setDraft={setDraft} />;
       case 'thu-vien': return <MediaLibrary />;
       case 'thong-ke': return <AnalyticsDashboard />;
       case 'nguon-khach': return <SourcesReport />;
