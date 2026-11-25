@@ -15,6 +15,12 @@ function publicUrls(data: SiteData): Map<string, string> {
   for (const p of data.projects || []) if (p.published) m.set(`project:${p.id}`, `/du-an/${p.slug}/`);
   for (const x of data.showcase || []) if (x.published && x.caseStudy) m.set(`case:${x.id}`, `/du-an/${x.slug}/`);
   for (const l of data.landings || []) if (l.kind === 'internal' && l.status === 'published') m.set(`landing:${l.id}`, `/lp/${l.slug}/`);
+  // Danh mục bài viết và trang con giải pháp (đổi được đường dẫn ở Nội dung website → Trang website)
+  for (const t of data.topics || []) if (t.published) m.set(`topic:${t.id}`, `/blogs/chu-de/${t.slug}/`);
+  for (const s of data.subServices || []) {
+    const parent = data.services.find(x => x.id === s.parentId);
+    if (s.published && parent && parent.published !== false) m.set(`sub:${s.id}`, `/giai-phap/${parent.slug}/${s.slug}/`);
+  }
   return m;
 }
 
