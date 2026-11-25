@@ -917,3 +917,10 @@ html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
   .s-cta__anna img { position: absolute; left: 0; top: 0; width: 100%; height: 122%; object-fit: cover; object-position: 16% top; filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .5)); }
   .s-cta__halo { top: 2%; left: 0; right: 0; }
 }
+
+/* Điện thoại: ANNA về cỡ cũ (~36% chiều rộng), vẫn nằm sát góc dưới bên trái */
+@media (max-width: 860px) {
+  .s-cta-wrap { --anna-w: clamp(118px, 36vw, 230px); }
+  .s-app .s-cta.s-cta--anna { min-height: calc(var(--anna-w) * 1.04 - 40px); padding-left: calc(var(--anna-w) + 4px); }
+}
+@media (max-width: 380px) { .s-cta-wrap { --anna-w: 112px; } }
