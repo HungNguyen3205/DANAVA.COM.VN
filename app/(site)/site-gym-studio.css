@@ -673,3 +673,15 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-swdefault { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #d5dbe7; color: #fff; }
 .gs-swdefault svg { width: 12px; height: 12px; filter: drop-shadow(0 0 1px rgba(0,0,0,.6)); }
 .gs-swdefault.is-on { box-shadow: 0 0 0 2px var(--gs-orange); }
+
+/* Nối tầng + khoá tầng: một hàng gọn */
+.gs-linkrow { flex-wrap: nowrap; gap: 4px; padding: 4px; border-radius: 12px; background: #eef2f9; }
+.gs-linkrow .gs-chipsel { display: flex; flex: 1; gap: 3px; min-width: 0; }
+.s-app .gs .gs-linkrow .gs-chipsel button { min-height: 28px; padding: 0 9px; border: 0 !important; border-radius: 8px !important; background: #fff !important; color: var(--gs-muted) !important; font-size: 12px; font-weight: 800; box-shadow: none !important; }
+.s-app .gs .gs-linkrow .gs-chipsel button.is-on { background: var(--gs-navy) !important; color: #fff !important; }
+.s-app .gs .gs-linkadd { display: inline-flex; flex: none; align-items: center; gap: 4px; height: 28px; padding: 0 9px; border: 1px solid #f6b98c; border-radius: 8px; background: #fff7f0; color: #c2410c; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.s-app .gs .gs-linkadd svg { width: 14px; height: 14px; }
+.s-app .gs .gs-linkadd:disabled { border-color: transparent; background: #fff; color: #a3acbd; cursor: not-allowed; }
+.s-app .gs .gs-lock { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; padding: 0; border: 0; background: none; color: var(--gs-muted); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.s-app .gs .gs-lock:hover { color: var(--gs-navy); }
+.s-app .gs .gs-lock svg { width: 14px; height: 14px; }

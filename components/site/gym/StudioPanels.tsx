@@ -154,10 +154,10 @@ export function FloorsPanel({ p, floor, setFloorId, act, selectItem }: {
       </div>
       {floor.fixtures.length > 0 && <div className="gs-placed">{floor.fixtures.map(fx => { const [Ic] = FIX_TILE[fx.kind]; return <button key={fx.id} type="button" onClick={() => selectItem(fx.id)} title={`${fx.label || FIXTURE_KINDS[fx.kind].label}${fx.main ? ' (cửa chính)' : ''} · ${fx.w}×${fx.d} m`} style={{ ['--c' as string]: FIXTURE_KINDS[fx.kind].color }}><Ic aria-hidden="true" />{fx.main ? <b>chính</b> : null}</button>; })}</div>}
       {p.floors.length > 1 && <>
-        <h3>Cầu thang / thang máy <small>nối các tầng đã chọn</small></h3>
+        <h3>Nối tầng <small>chọn tầng rồi thêm thang</small></h3>
         <div className="gs-linkrow">
           <div className="gs-chipsel">{sorted.map(f => { const on = linkFloors.includes(f.id); return <button key={f.id} type="button" role="checkbox" aria-checked={on} className={on ? 'is-on' : ''} onClick={() => setLinkFloors(l => on ? l.filter(x => x !== f.id) : [...l, f.id])}>{f.level === 0 ? 'Trệt' : `T${f.level + 1}`}</button>; })}</div>
-          {(Object.keys(LINK_KINDS) as LinkKind[]).map(k => { const Ic = k === 'stairs' ? Footprints : ArrowUpDown; return <button key={k} type="button" className="gs-tilebtn" disabled={linkFloors.length < 2} onClick={() => act.addLink(k, linkFloors)} title={`Thêm ${LINK_KINDS[k].label.toLowerCase()}`}><Ic aria-hidden="true" /><span>{k === 'stairs' ? 'Thang bộ' : 'Thang máy'}</span></button>; })}
+          {(Object.keys(LINK_KINDS) as LinkKind[]).map(k => { const Ic = k === 'stairs' ? Footprints : ArrowUpDown; return <button key={k} type="button" className="gs-linkadd" disabled={linkFloors.length < 2} onClick={() => act.addLink(k, linkFloors)} title={`Thêm ${LINK_KINDS[k].label.toLowerCase()}`}><Ic aria-hidden="true" /><span>{k === 'stairs' ? 'Bộ' : 'Máy'}</span></button>; })}
         </div>
         {p.links.length > 0 && <div className="gs-placed">{p.links.map(l => { const Ic = l.kind === 'stairs' ? Footprints : ArrowUpDown; return <button key={l.id} type="button" onClick={() => selectItem(l.id)} title={`${LINK_KINDS[l.kind].label}: ${l.floors.map(id => p.floors.find(f => f.id === id)?.name).join(' ↔ ')}`} style={{ ['--c' as string]: LINK_KINDS[l.kind].color }}><Ic aria-hidden="true" /></button>; })}</div>}
       </>}
