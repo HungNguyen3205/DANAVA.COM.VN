@@ -226,3 +226,6 @@
   .smx__arrows { grid-column: 1 / -1; justify-content: flex-end; }
   .smx__cicon { width: 44px; height: 44px; }
 }
+
+/* "Xem toàn bộ 42 màn hình": tiêu đề dạng flex bỏ khoảng trắng giữa các phần → dùng gap */
+.st-gallery > summary { gap: .32em; flex-wrap: wrap; }

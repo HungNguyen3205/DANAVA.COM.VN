@@ -7,13 +7,16 @@
 import Link from 'next/link';
 import { LangSwitch } from './LangSwitch';
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, ChevronRight, FolderKanban, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
+import { AppWindow, ArrowRight, ArrowUpRight, Box, BriefcaseBusiness, Calculator, ChevronRight, Dumbbell, FolderKanban, Globe, Home, Info, LayoutGrid, LayoutTemplate, MessageCircle, Network, Newspaper, PartyPopper, Phone, Plane, Ticket, Users, Warehouse, X, type LucideIcon } from 'lucide-react';
 import { MayFigure } from './anna/MayFigure';
 import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
 import { CONTACT, formatPhone } from './catalog';
-import { SERVICE_MENU } from '@/lib/services-menu';
+import { SERVICE_MENU, type ServiceMenuItem } from '@/lib/services-menu';
+
+const SVC_ICON: Record<NonNullable<ServiceMenuItem['icon']>, LucideIcon> = { quote: Calculator, web: Globe, portfolio: LayoutTemplate, event: Ticket, party: PartyPopper, travel: Plane, cube: Box, gym: Warehouse, dumbbell: Dumbbell, app: AppWindow };
+const GROUP_ICON = { landing: Globe, event: PartyPopper, gym: Dumbbell } as const;
 
 import { iconFor } from './icons';
 import { useDialog } from './useDialog';
@@ -121,20 +124,22 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
           ))}
 
           {/* Dịch vụ: mỗi nhóm báo giá một nhóm nhỏ (lib/services-menu.ts) */}
-          {SERVICE_MENU.map(g => (
-            <section key={g.id} className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby={`sm-svc-${g.id}`}>
-              <h2 className="sm__subtitle" id={`sm-svc-${g.id}`}>{g.label}</h2>
-              <ul>
-                {g.items.map(it => (
+          {SERVICE_MENU.map(g => { const GI = GROUP_ICON[g.icon]; return (
+            <section key={g.id} className="sm__group sm__group--more sm__svcgroup" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby={`sm-svc-${g.id}`}>
+              <h2 className="sm__subtitle sm__svchead" id={`sm-svc-${g.id}`}><GI aria-hidden="true" strokeWidth={2} />{g.label}</h2>
+              <ul className="sm__svc">
+                {g.items.map(it => { const Icon = it.icon ? SVC_ICON[it.icon] : ChevronRight; return (
                   <li key={it.id}>
-                    <Link className="sm__row sm__row--page" href={it.href} onClick={onClose} aria-current={current(it.href)}>
-                      <ChevronRight className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{it.label}{it.badge ? <small className="sm__badge"> {it.badge}</small> : null}</span>
+                    <Link className="sm__tile" href={it.href} onClick={onClose} aria-current={current(it.href)} title={it.label}>
+                      <span className="sm__tileicon"><Icon aria-hidden="true" strokeWidth={1.9} /></span>
+                      <span className="sm__tilelabel">{it.short || it.label}</span>
+                      {it.badge ? <small className="sm__tilebadge">{it.badge}</small> : null}
                     </Link>
                   </li>
-                ))}
+                ); })}
               </ul>
             </section>
-          ))}
+          ); })}
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-about">
             <h2 className="sm__subtitle" id="sm-group-about" {...tAbout.a}>{tAbout.v}</h2>

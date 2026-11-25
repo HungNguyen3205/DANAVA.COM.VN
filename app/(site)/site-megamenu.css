@@ -75,3 +75,19 @@
 @media (prefers-reduced-motion: reduce) { .s-app .s-mega.s-svc, .s-app .s-nav__item.is-open .s-mega.s-svc { transform: translate(-50%, 0); } }
 /* Điện thoại: nhãn nhỏ cạnh tên mục */
 .sm__badge { color: #c2410c; font-size: 11px; font-weight: 800; }
+
+/* Menu điện thoại · Dịch vụ: tiêu đề nhóm có icon, mục xếp lưới 2 cột gọn */
+.s-app .sm__svchead { display: flex; align-items: center; gap: 8px; }
+.s-app .sm__svchead svg { width: 16px; height: 16px; color: #f26b1d; }
+.sm__svcgroup { margin-top: 22px; }
+.s-app .sm__svc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 8px 0 0; padding: 0; list-style: none; }
+.s-app .sm__tile { position: relative; display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 10px 10px 10px 10px; border: 1px solid rgba(19, 36, 79, .08); border-radius: 16px; background: rgba(255, 255, 255, .78); color: #13244f; font-size: 14px; font-weight: 700; line-height: 1.25; box-shadow: 0 8px 18px -16px rgba(19, 36, 79, .5); -webkit-tap-highlight-color: transparent; transition: border-color .15s, transform .15s; }
+.s-app .sm__tile:active { transform: scale(.98); border-color: #f6b98c; }
+.s-app .sm__tile[aria-current='page'] { border-color: #f26b1d; background: #fff4ec; color: #b5420b; }
+.s-app .sm__tile:focus-visible { outline: 3px solid #f26b1d; outline-offset: 2px; }
+.sm__tileicon { display: grid; flex: none; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(180deg, #fff3e8, #ffe2cc); color: #e85d1a; }
+.sm__tileicon svg { width: 19px; height: 19px; }
+.sm__tilelabel { min-width: 0; }
+.s-app .sm__tilebadge { position: absolute; top: -7px; right: 8px; padding: 1px 7px; border-radius: 999px; background: linear-gradient(180deg, #ffa24a, #f26b1d); color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .02em; box-shadow: 0 4px 10px -4px rgba(242, 107, 29, .8); }
+@media (max-width: 340px) { .s-app .sm__svc { grid-template-columns: 1fr; } }
+.s-app .sm__svc > li:last-child:nth-child(odd) { grid-column: 1 / -1; }
