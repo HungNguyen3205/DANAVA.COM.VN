@@ -399,3 +399,8 @@
 .s-app .gp-tabs button.is-on i { background: linear-gradient(180deg, #ffa24a, #f26b1d); box-shadow: 0 4px 10px -4px rgba(242, 107, 29, .8); }
 @keyframes gp-pop { from { transform: scale(.6) rotate(-12deg); } }
 @media (prefers-reduced-motion: reduce) { .s-app .gp-tabs button.is-on svg { animation: none; } }
+
+/* Phòng lab: chọn mức chi tiết mô hình (chỉ hiện khi trong phòng có máy có file .glb) */
+.gp-detail { position: absolute; top: 12px; right: 12px; z-index: 3; display: flex; gap: 2px; padding: 4px; border-radius: 12px; background: rgba(255, 255, 255, .88); box-shadow: 0 10px 24px -14px rgba(19, 36, 79, .5); backdrop-filter: blur(6px); }
+.s-app .gp-detail button { height: 30px; padding: 0 12px; border: 0 !important; border-radius: 9px !important; background: transparent !important; color: #5b6478 !important; box-shadow: none !important; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.s-app .gp-detail button.is-on { background: #13244f !important; color: #fff !important; }

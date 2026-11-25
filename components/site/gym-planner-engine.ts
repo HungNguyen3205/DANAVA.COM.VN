@@ -3,6 +3,7 @@
  * Đơn vị: mét. Sàn W × L chia ô gạch `tile` (m). Máy theo kích thước thật (mô hình dựng sẵn theo loại máy, hoặc file .glb),
  * bám ô gạch khi kéo, xoay 90°, tô đỏ khi chồng nhau, ra ngoài phòng hoặc nằm trong "khu không đặt máy"
  * (cửa ra vào, cầu thang, nhà vệ sinh… — ô gạch chéo đỏ trắng, kéo / xoay / đổi kích thước được).
+ * Chế độ "Chi tiết" thay mô hình dựng sẵn bằng file .glb (nén meshopt, mỗi file tải một lần); "Nhẹ" chỉ dùng mô hình dựng sẵn.
  */
 import type * as T from 'three';
 import type { Equipment } from '@/lib/equipment';
@@ -11,7 +12,9 @@ import { ZONE_KINDS, zoneFoot, type Zone, type ZoneKind } from '@/lib/gym-layout
 
 export type Placed = { uid: string; eqId: string; x: number; z: number; rot: number; bad: boolean };
 /** Một vật trên sàn: máy (eq) hoặc khu không đặt máy (zone) */
-type Item = { uid: string; eq?: Equipment; zone?: { kind: ZoneKind; w: number; d: number }; group: T.Group; x: number; z: number; rot: number; bad: boolean; mats: T.MeshStandardMaterial[] };
+type Item = { uid: string; eq?: Equipment; zone?: { kind: ZoneKind; w: number; d: number }; group: T.Group; x: number; z: number; rot: number; bad: boolean; mats: T.MeshStandardMaterial[];
+  /** mô hình dựng sẵn (luôn có với máy) và mô hình .glb đang hiện (chế độ Chi tiết) */
+  built?: { group: T.Group; mats: T.MeshStandardMaterial[] }; glb?: T.Object3D };
 export type PlacedZone = Zone & { uid: string };
 export type Engine = {
   setRoom: (w: number, l: number, tile: number) => void;
@@ -25,13 +28,17 @@ export type Engine = {
   /** Xóa máy (giữ khu không đặt máy nếu keepZones) */
   clear: (keepZones?: boolean) => void;
   resetView: () => void;
+  /** Chi tiết (dùng file .glb nếu có) / Nhẹ (chỉ mô hình dựng sẵn) */
+  setDetail: (on: boolean) => void;
   dispose: () => void;
 };
 
-export async function createEngine(el: HTMLElement, cb: { change: (items: Placed[]) => void; zones: (zones: PlacedZone[]) => void; select: (uid: string | null) => void }): Promise<Engine> {
+export async function createEngine(el: HTMLElement, cb: { change: (items: Placed[]) => void; zones: (zones: PlacedZone[]) => void; select: (uid: string | null) => void }, opts: { detail?: boolean } = {}): Promise<Engine> {
   const THREE = await import('three');
   const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+  const { MeshoptDecoder } = await import('three/examples/jsm/libs/meshopt_decoder.module.js');
+  let detail = opts.detail ?? true;
 
   let W = 10, L = 10, tile = 0.4;
   const items: Item[] = [];
@@ -136,32 +143,52 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
     cb.zones(items.filter(i => i.zone).map(({ uid, zone, x, z, rot }) => ({ uid, kind: zone!.kind, w: zone!.w, d: zone!.d, x, z, rot })));
   }
 
-  const loader = new GLTFLoader();
-  function makeItem(eq: Equipment): Item {
-    // Mô hình dựng sẵn theo loại máy (gym-planner-models.ts); có file .glb thì thay bằng file đó khi tải xong
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  // Mỗi file .glb tải một lần, các máy giống nhau dùng bản sao
+  const glbCache = new Map<string, Promise<T.Object3D | null>>();
+  const loadGlb = (url: string) => {
+    if (!glbCache.has(url)) glbCache.set(url, loader.loadAsync(url).then(g => g.scene, () => null));
+    return glbCache.get(url)!;
+  };
+  /** Thay mô hình dựng sẵn bằng file .glb (co giãn đúng kích thước thật, đáy chạm sàn) */
+  async function showGlb(it: Item) {
+    const eq = it.eq;
+    if (!eq?.model || it.glb) return;
+    const src = await loadGlb(eq.model);
+    if (!src || !detail || it.glb || !items.includes(it)) return;
     const w = eq.width / 100, d = eq.depth / 100, h = Math.max(eq.height / 100, 0.02);
+    const m = src.clone(true);
+    const bb = new THREE.Box3().setFromObject(m), size = bb.getSize(new THREE.Vector3());
+    if (!size.x || !size.y || !size.z) return;
+    m.scale.set(w / size.x, h / size.y, d / size.z);
+    const bb2 = new THREE.Box3().setFromObject(m), c = bb2.getCenter(new THREE.Vector3());
+    m.position.set(-c.x, -bb2.min.y, -c.z);
+    const mats: T.MeshStandardMaterial[] = [];
+    m.traverse(o => { const mesh = o as T.Mesh; if (mesh.isMesh) { mesh.castShadow = mesh.receiveShadow = true; const mm = mesh.material as T.MeshStandardMaterial; if (mm && 'emissive' in mm) { mesh.material = mm.clone(); mats.push(mesh.material as T.MeshStandardMaterial); } } });
+    if (it.built) it.group.remove(it.built.group);
+    it.group.add(m);
+    it.glb = m;
+    it.mats = mats.length ? mats : it.built?.mats || [];
+    check();
+  }
+  function hideGlb(it: Item) {
+    if (!it.glb || !it.built) return;
+    it.group.remove(it.glb); it.glb = undefined;
+    it.group.add(it.built.group); it.mats = it.built.mats;
+  }
+  function setDetail(on: boolean) {
+    detail = on;
+    for (const it of items) if (it.eq?.model) { if (on) void showGlb(it); else hideGlb(it); }
+    check();
+  }
+  function makeItem(eq: Equipment): Item {
+    // Mô hình dựng sẵn theo loại máy (gym-planner-models.ts); chế độ Chi tiết + có file .glb thì thay bằng file đó khi tải xong
     const built = buildModel(THREE, eq);
     const group = new THREE.Group();
-    const box = built.group;
-    group.add(box);
-    const it: Item = { uid: 'i' + ++seq, eq, group, x: 0, z: 0, rot: 0, bad: false, mats: built.mats };
+    group.add(built.group);
+    const it: Item = { uid: 'i' + ++seq, eq, group, x: 0, z: 0, rot: 0, bad: false, mats: built.mats, built: { group: built.group, mats: built.mats } };
     group.userData.uid = it.uid;
-    if (eq.model) {
-      loader.load(eq.model, gltf => {
-        const m = gltf.scene;
-        const bb = new THREE.Box3().setFromObject(m), size = bb.getSize(new THREE.Vector3());
-        if (!size.x || !size.y || !size.z) return;
-        m.scale.set(w / size.x, h / size.y, d / size.z);
-        const bb2 = new THREE.Box3().setFromObject(m), c = bb2.getCenter(new THREE.Vector3());
-        m.position.set(-c.x, -bb2.min.y, -c.z);
-        const mats: T.MeshStandardMaterial[] = [];
-        m.traverse(o => { const mesh = o as T.Mesh; if (mesh.isMesh) { mesh.castShadow = mesh.receiveShadow = true; const mm = mesh.material as T.MeshStandardMaterial; if (mm && 'emissive' in mm) { mesh.material = mm.clone(); mats.push(mesh.material as T.MeshStandardMaterial); } } });
-        group.remove(box);
-        group.add(m);
-        it.mats = mats.length ? mats : it.mats;
-        check();
-      }, undefined, () => { /* lỗi tải mô hình → giữ khối hộp */ });
-    }
+    if (eq.model && detail) queueMicrotask(() => void showGlb(it));
     return it;
   }
   /** Khu không đặt máy: sàn gạch chéo đỏ trắng + viền + nhãn tên nổi */
@@ -292,7 +319,7 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
   buildRoom(); resetView();
   return {
     setRoom(w, l, t) { const first = W === 10 && L === 10 && !items.length; W = w; L = l; tile = t; buildRoom(); if (first) resetView(); },
-    add, addZone, resizeZone, remove, rotate, duplicate, select, clear, resetView,
+    add, addZone, resizeZone, remove, rotate, duplicate, select, clear, resetView, setDetail,
     dispose() {
       cancelAnimationFrame(frame); ro.disconnect(); controls.dispose();
       renderer.domElement.removeEventListener('pointerdown', onDown);

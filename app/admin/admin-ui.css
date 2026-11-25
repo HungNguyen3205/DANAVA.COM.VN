@@ -1194,3 +1194,7 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .eq-file__btns label.ps-libbtn { cursor: pointer; }
 .ax-scope .eq-model { overflow: hidden; padding: 6px 8px; border-radius: 8px; background: #f1f4fa; font-size: 11.5px; white-space: nowrap; text-overflow: ellipsis; }
 @media (max-width: 640px) { .ax-scope .eq-files { grid-template-columns: 1fr; } }
+/* Kết quả nén mô hình .glb (Thiết bị phòng gym) */
+.ax-scope .eq-glb { display: grid; gap: 3px; margin: 0; padding: 7px 10px; border-radius: 8px; background: #e3f6ea; color: #137a43; font-size: 12px; font-weight: 600; }
+.ax-scope .eq-glb.is-warn { background: #fff4e5; color: #9a4a06; }
+.ax-scope .eq-glb span { font-weight: 500; }

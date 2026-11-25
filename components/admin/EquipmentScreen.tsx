@@ -12,13 +12,15 @@ import { LibraryButton, uploadMedia } from '../MediaPicker';
 import { PF, Switch } from '../AdminContentEditors';
 import { matches } from './ui';
 
-async function uploadModel(file: File): Promise<string> {
+type GlbStats = { before: number; after: number; triangles: number; trianglesBefore: number; warnings: string[] };
+const mb = (n: number) => n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+async function uploadModel(file: File): Promise<{ url: string; stats?: GlbStats }> {
   if (file.size > 20 * 1024 * 1024) throw Error('Mô hình 3D tối đa 20 MB.');
   const auth = await fetch('/api/admin/session/').then(r => r.json());
   const r = await fetch('/api/admin/models/', { method: 'POST', headers: { 'Content-Type': 'application/octet-stream', 'x-csrf-token': auth.csrf }, body: file });
   const v = await r.json();
   if (!r.ok) throw Error(v.error || 'Không tải được mô hình 3D.');
-  return v.url;
+  return { url: v.url, stats: v.stats };
 }
 
 function Num({ label, value, onChange, max }: { label: string; value: number; onChange: (v: number) => void; max: number }) {
@@ -31,11 +33,14 @@ function Num({ label, value, onChange, max }: { label: string; value: number; on
 }
 
 function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equipment>) => void; remove: () => void }) {
-  const [busy, setBusy] = useState(''), [err, setErr] = useState('');
+  const [busy, setBusy] = useState(''), [err, setErr] = useState(''), [glb, setGlb] = useState<GlbStats | null>(null);
   const up = (kind: 'image' | 'model') => async (file?: File) => {
     if (!file) return;
     setBusy(kind); setErr('');
-    try { set(kind === 'image' ? { image: await uploadMedia(file) } : { model: await uploadModel(file) }); }
+    try {
+      if (kind === 'image') set({ image: await uploadMedia(file) });
+      else { const m = await uploadModel(file); set({ model: m.url }); setGlb(m.stats || null); }
+    }
     catch (e) { setErr(e instanceof Error ? e.message : 'Lỗi tải tệp'); }
     setBusy('');
   };
@@ -89,9 +94,16 @@ function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equi
               <code className="eq-model">{x.model || `Chưa có, phòng lab dùng mô hình dựng sẵn: ${x.kind ? KIND_LABEL[x.kind] : 'theo tên máy'}`}</code>
               <div className="eq-file__btns">
                 <label className="ps-libbtn">{busy === 'model' ? 'Đang tải…' : '↑ Tải mô hình .glb'}<input type="file" hidden accept=".glb,model/gltf-binary" onChange={e => { void up('model')(e.target.files?.[0]); e.target.value = ''; }} /></label>
-                {x.model && <button type="button" className="pf-delete" onClick={() => set({ model: '' })}>Gỡ</button>}
+                {x.model && <button type="button" className="pf-delete" onClick={() => { set({ model: '' }); setGlb(null); }}>Gỡ</button>}
               </div>
-              <small className="eq-hint">Xuất từ Blender / SketchUp dạng GLB, mặt đáy nằm trên mặt phẳng sàn. Kích thước thật lấy theo ô Rộng/Sâu/Cao.</small>
+              {busy === 'model' && <small className="eq-hint">Đang nén mô hình (có thể mất vài giây)…</small>}
+              {glb && (
+                <p className={`eq-glb${glb.warnings.length ? ' is-warn' : ''}`} role="status">
+                  ✓ Đã nén {mb(glb.before)} → <b>{mb(glb.after)}</b> · {glb.triangles.toLocaleString('vi-VN')} tam giác
+                  {glb.warnings.map(w => <span key={w}>⚠ {w}</span>)}
+                </p>
+              )}
+              <small className="eq-hint">Xuất từ Blender / SketchUp dạng GLB, mặt đáy nằm trên mặt phẳng sàn. Kích thước thật lấy theo ô Rộng/Sâu/Cao. Hệ thống tự nén khi tải lên; nên dưới 60.000 tam giác và dưới 1 MB sau nén.</small>
             </div>
           </div>
           <PF label="Mô tả ngắn" value={x.description} max={500} area wide onChange={description => set({ description })} />

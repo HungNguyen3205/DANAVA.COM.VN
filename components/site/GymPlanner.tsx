@@ -40,6 +40,8 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const [open, setOpen] = useState('');
   const [tab, setTab] = useState<'eq' | 'room' | 'zones'>('room');
   const [floorOn, setFloorOn] = useState(true);
+  // Chi tiết = dùng mô hình 3D thật (.glb) nếu máy có; Nhẹ = mô hình dựng sẵn (máy yếu / tiết kiệm dữ liệu mặc định Nhẹ)
+  const [detail, setDetail] = useState(true);
   // Tự động bố trí: kiểu phòng + ngân sách (triệu đồng, trống = không giới hạn)
   const [auto, setAuto] = useState({ on: true, style: 'balanced' as LayoutStyle, budget: '', open: false, note: '' });
   const [form, setForm] = useState({ open: false, name: '', phone: '', note: '', sending: false, done: '', error: '' });
@@ -50,7 +52,9 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   useEffect(() => {
     let off = false;
     try { const raw = localStorage.getItem(KEY); if (raw) restored.current = JSON.parse(raw) as Saved; } catch {}
-    void createEngine(host.current!, { change: setPlaced, zones: setZones, select: setSel }).then(e => {
+    const d0 = initialDetail();
+    setDetail(d0);
+    void createEngine(host.current!, { change: setPlaced, zones: setZones, select: setSel }, { detail: d0 }).then(e => {
       if (off) { e.dispose(); return; }
       engine.current = e;
       const s = restored.current;
@@ -133,6 +137,12 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const tiles = Math.ceil(room.w / room.tile) * Math.ceil(room.l / room.tile);
   const selEq = sel ? byId.get(placed.find(p => p.uid === sel)?.eqId || '') : undefined;
   const selZone = sel ? zones.find(z => z.uid === sel) : undefined;
+  const hasGlb = placed.some(p => byId.get(p.eqId)?.model);
+  function toggleDetail(on: boolean) {
+    setDetail(on);
+    engine.current?.setDetail(on);
+    try { localStorage.setItem(DETAIL_KEY, on ? '1' : '0'); } catch {}
+  }
   const fold = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase();
   const inCat = equipment.filter(e => !cat || e.category === cat);
   const band = PRICE_BANDS[priceBand];
@@ -285,6 +295,12 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
               <button type="button" className="is-danger" onClick={() => engine.current?.remove(sel)}><Trash2 aria-hidden="true" /> Xóa</button>
             </div>
           )}
+          {started && hasGlb && (
+            <div className="gp-detail" role="group" aria-label="Mức chi tiết mô hình 3D">
+              <button type="button" aria-pressed={detail} className={detail ? 'is-on' : ''} onClick={() => toggleDetail(true)} title="Dùng mô hình 3D thật của máy (tải thêm dữ liệu)">Chi tiết</button>
+              <button type="button" aria-pressed={!detail} className={!detail ? 'is-on' : ''} onClick={() => toggleDetail(false)} title="Mô hình đơn giản, mượt trên máy yếu">Nhẹ</button>
+            </div>
+          )}
           {started && <p className="gp-hint">Kéo máy để di chuyển · kéo nền để xoay góc nhìn · cuộn / chụm 2 ngón để phóng to</p>}
           {started && bad > 0 && <p className="gp-warn"><TriangleAlert aria-hidden="true" /> {bad} máy đang chồng lên nhau, ra ngoài phòng hoặc nằm trong khu không đặt máy (tô đỏ)</p>}
         </div>
@@ -396,4 +412,12 @@ function muscleOf(e: Equipment): Muscle | '' {
   if (e.category !== 'strength') return '';
   if (e.kind === 'rack' || e.kind === 'smith' || e.kind === 'multi' || e.kind === 'cable') return 'rig';
   return (Object.keys(MUSCLES) as Muscle[]).find(m => MUSCLES[m].re.test(e.name)) || 'other';
+}
+
+const DETAIL_KEY = 'danava-gym-detail';
+/** Lần trước khách chọn gì thì giữ; chưa chọn thì máy yếu / bật tiết kiệm dữ liệu → Nhẹ */
+function initialDetail() {
+  try { const v = localStorage.getItem(DETAIL_KEY); if (v) return v === '1'; } catch {}
+  const n = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+  return !(n.connection?.saveData || (n.deviceMemory && n.deviceMemory <= 4) || (n.hardwareConcurrency && n.hardwareConcurrency <= 4));
 }
