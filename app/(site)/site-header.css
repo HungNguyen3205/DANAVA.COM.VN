@@ -148,22 +148,32 @@
 .s-app .s-footer .s-footer__social a.soc--x { background: #000 !important; }
 .s-app .s-footer .s-footer__social a.soc--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%) !important; }
 
-/* Cụm nút liên hệ nhanh bên trái: một khối gọn (thẻ trắng bo tròn), mỗi nút màu thương hiệu */
-.s-app .cd { display: flex !important; flex-direction: column; gap: 8px; padding: 8px; border-radius: 999px; background: rgba(255, 255, 255, .92); box-shadow: 0 18px 40px -20px rgba(19, 36, 79, .55); border: 1px solid rgba(19, 36, 79, .06); }
-.s-app .cd__btn { width: 46px !important; height: 46px !important; border-radius: 50% !important; box-shadow: 0 10px 20px -12px rgba(0, 0, 0, .5) !important; }
-.s-app .cd__btn--zalo { background: #0068ff !important; color: #fff !important; }
-.s-app .cd__btn--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%) !important; color: #fff !important; }
-.s-app .cd__btn--call { background: #f26b1d !important; color: #fff !important; }
+/* Cụm liên hệ nhanh (Zalo, Messenger, Hotline): ba nút tròn màu thương hiệu xếp thành một cột dọc sát mép phải.
+   Máy tính: góc dưới, ngay trên bé Mây (ANNA). Điện thoại: góc trên, ngay dưới thanh header. */
+.s-app .cd { position: fixed; z-index: 84; display: flex; flex-direction: column; align-items: center; gap: 10px; left: auto; }
+.s-app .cd__btn { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; color: #fff; box-shadow: 0 10px 22px -12px rgba(11, 19, 43, .6); transition: transform .2s ease; }
+.s-app .cd__btn--zalo { background: #0068ff; }
+.s-app .cd__btn--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%); }
+.s-app .cd__btn--call { background: #f26b1d; }
 .s-app .cd__btn .br-icon { color: #fff; }
+.s-app .cd__btn > svg { width: 24px; height: 24px; }
+.s-app .cd__btn > .br-icon--zalo { width: 36px; height: 36px; }
 .s-app .cd__btn--zalo .br-icon--zalo text { fill: #0068ff; }
-
-/* Cụm liên hệ nhanh: xếp ngang, nhỏ gọn */
-.s-app .cd { flex-direction: row !important; gap: 6px; padding: 5px; }
-.s-app .cd__btn { width: 38px !important; height: 38px !important; }
-.s-app .cd__btn svg { width: 18px !important; height: 18px !important; }
-.s-app .cd__btn .br-icon { width: 18px !important; height: 18px !important; }
-.s-app .cd__btn .br-icon--zalo { width: 22px !important; height: 22px !important; }
-.s-app .cd { display: none !important; }
+html.is-cine .s-app .cd, html.has-modal .s-app .cd { opacity: 0; visibility: hidden; }
+@media (min-width: 861px) {
+  .s-app .cd { right: max(16px, env(safe-area-inset-right)); bottom: 108px; }
+}
+@media (min-width: 861px) and (max-width: 1367px) {
+  .s-app .cd { right: max(7px, env(safe-area-inset-right)); bottom: 86px; }
+  .s-app .cd__btn { width: 48px; height: 48px; }
+}
+@media (max-width: 860px) {
+  .s-app .cd { z-index: 79; top: calc(var(--s-header-h, 72px) + 12px); bottom: auto; right: max(10px, env(safe-area-inset-right)); gap: 8px; }
+  .s-app .cd__btn { width: 44px; height: 44px; }
+  .s-app .cd__btn > svg { width: 20px; height: 20px; }
+  .s-app .cd__btn > .br-icon--zalo { width: 32px; height: 32px; }
+  .s-app .cd__tip { display: none; }
+}
 /* Hàng liên hệ và mạng xã hội ở chân trang: các nút cùng một hàng */
 .s-app .s-footer__social { flex-wrap: nowrap; }
 .s-app .s-footer__social a.soc--call { background: #f26b1d !important; }

@@ -85,10 +85,10 @@ html.has-modal { overflow: hidden; }
 .sm__call svg { width: 18px; height: 18px; color: #d9540d; }
 .s-app .sm__end p { color: #56607a; font-size: 13.5px; line-height: 1.6; text-align: center; }
 
-/* ---------- Nút liên hệ nổi bên trái (máy tính) ---------- */
+/* ---------- Nút liên hệ nổi: cột dọc mép phải (máy tính: góc dưới; điện thoại: góc trên) ---------- */
 .cd { display: none; }
 @media (min-width: 861px) {
-  .cd { position: fixed; z-index: 84; left: max(16px, env(safe-area-inset-left)); bottom: 26px; display: grid; gap: 10px; }
+  .cd { position: fixed; z-index: 84; right: max(16px, env(safe-area-inset-right)); bottom: 26px; display: grid; gap: 10px; }
   .s-app .cd__btn {
     position: relative; display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; color: #fff;
     box-shadow: 0 10px 22px -12px rgba(11, 19, 43, .6); transition: transform .2s ease;
@@ -102,8 +102,8 @@ html.has-modal { overflow: hidden; }
   .cd__btn--messenger { background: linear-gradient(180deg, #a033ff, #0866ff); }
   .cd__btn--call { background: #d9540d; }
   .cd__tip {
-    position: absolute; left: calc(100% + 10px); top: 50%; padding: 7px 11px; border-radius: 9px; background: #13244f; color: #fff;
-    font-size: 13px; font-weight: 700; line-height: 1.2; white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(-4px, -50%);
+    position: absolute; right: calc(100% + 10px); top: 50%; padding: 7px 11px; border-radius: 9px; background: #13244f; color: #fff;
+    font-size: 13px; font-weight: 700; line-height: 1.2; white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(4px, -50%);
     pointer-events: none; transition: opacity .18s, transform .18s, visibility .18s;
   }
   .cd__btn:hover .cd__tip, .cd__btn:focus-visible .cd__tip { opacity: 1; visibility: visible; transform: translate(0, -50%); }
@@ -112,7 +112,7 @@ html.has-modal { overflow: hidden; }
 }
 /* Màn hẹp: lề trang không đủ chứa nút nổi → nút nhỏ lại và chừa lề cho nội dung */
 @media (min-width: 861px) and (max-width: 1367px) {
-  .cd { left: max(6px, env(safe-area-inset-left)); bottom: 18px; }
+  .cd { right: max(6px, env(safe-area-inset-right)); bottom: 18px; }
   .s-app .cd__btn { width: 46px; height: 46px; }
   .s-app > main .s-container, .s-app > .s-footer > .s-container { padding-left: max(var(--s-gutter), 64px); padding-right: max(var(--s-gutter), 64px); }
   .s-app > main .s-container .s-container { padding-left: 0; padding-right: 0; }

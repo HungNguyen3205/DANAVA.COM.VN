@@ -1,8 +1,9 @@
 'use client';
 /**
  * Liên hệ nhanh.
- * - Máy tính (> 860px): ba nút nổi bên trái — Zalo, Messenger, Hotline.
- * - Điện thoại: không có nút nổi (tránh che nội dung, CTA); nút "Tư vấn" ở thanh dưới mở ContactSheet.
+ * - Ba nút nổi Zalo, Messenger, Hotline xếp thành cột dọc sát mép phải:
+ *   máy tính ở góc dưới (trên bé Mây), điện thoại ở góc trên (dưới header).
+ * - Điện thoại: nút "Tư vấn" ở thanh dưới vẫn mở ContactSheet.
  */
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -29,7 +30,7 @@ export function ContactDock() {
     <aside className="cd" aria-label={txt(data, 'contactdock.aria', 'Liên hệ nhanh')}>
       {zalo && (
         <a className="cd__btn cd__btn--zalo" href={zalo} target="_blank" rel="noopener noreferrer" aria-label={txt(data, 'contactdock.zalo-aria', 'Nhắn Zalo cho DANAVA (mở tab mới)')}>
-          <BrandIcon name="zalo" />{(() => { const x = cd(data, 'dock.zalo', 'Nhắn Zalo', 'Chú thích nút Zalo'); return <span className="cd__tip" aria-hidden="true" {...x.a}>{x.v}</span>; })()}
+          <BrandIcon name="zalo" word />{(() => { const x = cd(data, 'dock.zalo', 'Nhắn Zalo', 'Chú thích nút Zalo'); return <span className="cd__tip" aria-hidden="true" {...x.a}>{x.v}</span>; })()}
         </a>
       )}
       {messenger && (
