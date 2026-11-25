@@ -18,12 +18,11 @@ export function ChannelsEditor({ draft, setDraft }: { draft: SiteData; setDraft:
     <div className="admin-two">
       <section className="admin-panel">
         <h2>Nút liên hệ</h2>
-        <p className="field-note">Máy tính: ba nút nổi bên trái. Điện thoại: nằm trong nút “Tư vấn” ở thanh dưới.</p>
+        <p className="field-note">Cột nút nổi sát mép phải: máy tính ở góc dưới, điện thoại ở góc trên.</p>
         <Text label="Hotline" type="tel" value={draft.phone} max={50} onChange={phone => setDraft({ ...draft, phone })} />
         <Text label="Link Zalo (trống = dùng số Hotline)" value={custom.zalo} max={300} placeholder={`https://zalo.me/${digits}`} onChange={v => setCustom({ zalo: v.trim() })} />
         <Text label="Link Messenger (trống = lấy theo tên Fanpage)" value={custom.messenger} max={300} placeholder={derived || 'https://m.me/ten-fanpage'} onChange={v => setCustom({ messenger: v.trim() })} />
         {!result.messenger && <p className="field-note" role="status">Chưa có link Messenger nên nút này đang ẩn. Fanpage không có tên người dùng thì cần dán link m.me.</p>}
-
         <h2 className="subheading">Mạng xã hội ở chân trang</h2>
         <p className="field-note">Để trống kênh nào thì biểu tượng kênh đó không hiện. Zalo dùng chung link ở trên.</p>
         <Text label="Facebook (https://…)" value={company.facebook} max={300} onChange={v => setCompany({ facebook: v.trim() })} />
@@ -38,6 +37,7 @@ export function ChannelsEditor({ draft, setDraft }: { draft: SiteData; setDraft:
         <p className="field-note">Bấm từng liên kết để chắc chắn mở đúng tài khoản DANAVA trước khi lưu.</p>
         <p><b>Hotline</b><br />{result.tel || 'Đang ẩn'}</p>
         <p><b>Messenger</b><br />{result.messenger ? <a className="text-link" href={result.messenger} target="_blank" rel="noopener noreferrer">{result.messenger}</a> : 'Đang ẩn'}</p>
+        <p><b>Instagram</b><br />{result.instagram ? <a className="text-link" href={result.instagram} target="_blank" rel="noopener noreferrer">{result.instagram}</a> : 'Đang ẩn'}</p>
         {result.socials.map(s => (
           <p key={s.key}><b>{s.name}</b><br /><a className="text-link" href={s.href} target="_blank" rel="noopener noreferrer">{s.href}</a></p>
         ))}

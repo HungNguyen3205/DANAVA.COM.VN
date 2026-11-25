@@ -1,5 +1,5 @@
 /** Biểu tượng kênh liên hệ / mạng xã hội (bộ lucide không có logo thương hiệu). */
-export type BrandKey = 'facebook' | 'messenger' | 'tiktok' | 'youtube' | 'zalo' | 'linkedin' | 'x';
+export type BrandKey = 'facebook' | 'messenger' | 'tiktok' | 'youtube' | 'zalo' | 'linkedin' | 'x' | 'instagram';
 
 const PATHS: Record<Exclude<BrandKey, 'zalo'>, string> = {
   facebook: 'M13.6 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.3H7.4v3.2h2.8V22z',
@@ -7,7 +7,8 @@ const PATHS: Record<Exclude<BrandKey, 'zalo'>, string> = {
   tiktok: 'M16.6 2c.3 2.6 1.8 4.3 4.4 4.5v3.2a7.6 7.6 0 0 1-4.3-1.3v6.8A6.8 6.8 0 1 1 9.8 8.4c.4 0 .7 0 1 .1v3.4a3.4 3.4 0 1 0 2.4 3.3V2z',
   youtube: 'M23 7.2a2.9 2.9 0 0 0-2-2C19.2 4.7 12 4.7 12 4.7s-7.2 0-9 .5a2.9 2.9 0 0 0-2 2C.5 9 .5 12 .5 12s0 3 .5 4.8a2.9 2.9 0 0 0 2 2c1.8.5 9 .5 9 .5s7.2 0 9-.5a2.9 2.9 0 0 0 2-2c.5-1.8.5-4.8.5-4.8s0-3-.5-4.8zM9.7 15.1V8.9l5.4 3.1z',
   linkedin: 'M4.9 3a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2zM3.1 9h3.6v12H3.1zM9 9h3.5v1.6c.5-.9 1.7-1.9 3.5-1.9 3.7 0 4.4 2.4 4.4 5.6V21h-3.7v-5.9c0-1.4 0-3.2-2-3.2s-2.2 1.5-2.2 3.1v6H9z',
-  x: 'M18.9 2h3.4l-7.4 8.5L23.6 22h-6.8l-5.3-7-6.1 7H2l7.9-9L1.5 2h7l4.8 6.4zm-1.2 18h1.9L7.5 3.9h-2z'
+  x: 'M18.9 2h3.4l-7.4 8.5L23.6 22h-6.8l-5.3-7-6.1 7H2l7.9-9L1.5 2h7l4.8 6.4zm-1.2 18h1.9L7.5 3.9h-2z',
+  instagram: 'M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zM7.6 4A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4zM12 7.2a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM17.3 5.4a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z'
 };
 
 export function BrandIcon({ name, word = false }: { name: BrandKey; word?: boolean }) {

@@ -41,6 +41,8 @@ export function contactChannels(data: Pick<SiteData, 'blocks' | 'staff' | 'phone
     zalo,
     /** '' = chưa cấu hình và không suy ra được → không hiện nút */
     messenger: https(custom.messenger) || messengerFromPage(company.facebook),
+    /** Nút Instagram trong cột liên hệ nổi. Gắn cố định: thêm khóa vào khối "contact" sẽ làm dữ liệu đã lưu không qua kiểm tra cấu trúc. */
+    instagram: 'https://www.instagram.com/danavasolutions/',
     /** Chỉ các kênh có liên kết thật */
     socials: (Object.keys(links) as SocialKey[]).filter(key => links[key]).map(key => ({ key, name: SOCIAL_NAMES[key], href: links[key] }))
   };
