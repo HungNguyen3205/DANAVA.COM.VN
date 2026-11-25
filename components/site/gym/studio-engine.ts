@@ -89,7 +89,10 @@ export async function createStudio(el: HTMLElement, cb: Cb, opts: { detail?: boo
     const g = new THREE.Group();
     const c = document.createElement('canvas'); c.width = c.height = 128;
     const x = c.getContext('2d')!;
-    x.fillStyle = st.floor; x.fillRect(0, 0, 128, 128); x.strokeStyle = st.grid; x.lineWidth = 3; x.strokeRect(1.5, 1.5, 125, 125);
+    x.fillStyle = st.floor; x.fillRect(0, 0, 128, 128);
+    // sàn cao su: hạt lấm tấm (phong cách tối), lưới ô mờ
+    if (p.brief.interior !== 'wellness') { let sd = 7; const rnd = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; }; for (let i = 0; i < 160; i++) { x.fillStyle = `rgba(255,255,255,${.05 + rnd() * .12})`; x.fillRect(rnd() * 128, rnd() * 128, 1.5, 1.5); } }
+    x.strokeStyle = st.grid; x.lineWidth = p.brief.interior === 'industrial' ? 1.5 : 3; x.globalAlpha = p.brief.interior === 'industrial' ? .5 : 1; x.strokeRect(1.5, 1.5, 125, 125); x.globalAlpha = 1;
     const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(f.w / .5, f.l / .5); tex.anisotropy = 8; tex.colorSpace = THREE.SRGBColorSpace;
     const slab = new THREE.Mesh(new THREE.BoxGeometry(f.w, .12, f.l), [K.mat('#9ca3af', .9), K.mat('#9ca3af', .9), new THREE.MeshStandardMaterial({ map: tex, roughness: .92 }), K.mat('#6b7280', .9), K.mat('#9ca3af', .9), K.mat('#9ca3af', .9)]);
     slab.position.y = -.06; slab.receiveShadow = true; slab.userData.floorSlab = f.id; g.add(slab);
@@ -99,11 +102,21 @@ export async function createStudio(el: HTMLElement, cb: Cb, opts: { detail?: boo
     const back = K.box(g, f.w + T2 * 2, H, T2, wallM, 0, 0, -f.l / 2 - T2 / 2); walls.push(back);
     const left = K.box(g, T2, H, f.l, accM, -f.w / 2 - T2 / 2, 0, 0); walls.push(left);
     const stripe = K.box(g, f.w, .14, .02, K.mat(p.brand.accent, .5), 0, 1.1, -f.l / 2 + .005, false); walls.push(stripe);
+    if (p.brief.interior === 'industrial') {
+      // trụ tường chia ô + hốc đèn ấm ở tường cuối (tinh thần video tham chiếu)
+      const pil = K.mat('#3a3e45', .85);
+      for (let x0 = -f.w / 2 + 1.3; x0 < f.w / 2 - .5; x0 += 2.6) walls.push(K.box(g, .32, H, .1, pil, x0, 0, -f.l / 2 + .05));
+      for (let z0 = -f.l / 2 + 1.3; z0 < f.l / 2 - .5; z0 += 2.6) walls.push(K.box(g, .1, H, .32, pil, -f.w / 2 + .05, 0, z0));
+      const warm = K.mat('#2a2522', .6, 0, { emissive: '#ffcf8a', emissiveIntensity: .3 });
+      for (let x0 = -f.w / 2 + 2.6; x0 < f.w / 2 - 1.2; x0 += 2.6) walls.push(K.box(g, 1.2, .45, .04, warm, x0, Math.min(H - .7, 2.45), -f.l / 2 + .03, false));
+    }
     K.box(g, f.w + T2 * 2, .12, T2, K.mat('#13244f', .6), 0, 0, f.l / 2 + T2 / 2);
     K.box(g, T2, .12, f.l + T2 * 2, K.mat('#13244f', .6), f.w / 2 + T2 / 2, 0, 0);
     // logo thương hiệu trên tường sau
     const logo = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(f.w * .3, 4), .5), K.textPanel(p.brand.logoText, Math.min(f.w * .3, 4), .5, st.wall, p.brand.accent));
     logo.position.set(f.w * .2, Math.min(H - .5, 2.3), -f.l / 2 + .01); g.add(logo); walls.push(logo);
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(f.w + .3, f.l + .3), K.mat(p.brief.interior === 'wellness' ? '#f4f2ee' : p.brief.interior === 'warm' ? '#3b3632' : '#15171b', .95, 0, { side: THREE.DoubleSide }));
+    ceil.rotation.x = Math.PI / 2; ceil.position.y = H; ceil.userData.ceilingPlane = true; ceil.visible = false; g.add(ceil);
     const overlay = new THREE.Group(); g.add(overlay);
     return { g, walls, overlay };
   }
@@ -247,7 +260,7 @@ export async function createStudio(el: HTMLElement, cb: Cb, opts: { detail?: boo
     }
     for (const pg of people.values()) { const fg = floorGroups.get(pg.floorId); pg.g.visible = !!fg?.g.visible; }
     const close = mode === 'entrance' || mode === 'eye';
-    for (const fg of floorGroups.values()) fg.g.traverse(o => { if ((o as T.Sprite).isSprite) o.visible = !close; if (o.userData.ceiling) o.visible = mode !== 'plan' && mode !== 'stack' && mode !== 'exploded'; });
+    for (const fg of floorGroups.values()) fg.g.traverse(o => { if (o.userData.ceilingPlane) o.visible = close; if ((o as T.Sprite).isSprite) o.visible = !close; if (o.userData.ceiling) o.visible = mode !== 'plan' && mode !== 'stack' && mode !== 'exploded'; });
   }
 
   let lastViewKey = '';

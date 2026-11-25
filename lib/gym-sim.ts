@@ -504,7 +504,7 @@ export class Sim {
     const st = this.stations.find(x => x.zone === 'stretch' && x.floorId === a.floorId && x.users.length < x.cap);
     const exit = () => this.go(a, this.entry.floorId, this.entry.door, `${why} — ra cửa`, () => { a.state = 'gone'; a.reason = 'Đã về'; this.stats.finished++; this.stats.dist.push(a.dist); this.agents.delete(a.id); });
     if (st && a.role !== 'guest' && a.v && !a.v.tasks.some((t, i) => t.zone === 'stretch' && i < a.task)) {
-      this.go(a, st.floorId, { x: st.use.x + (this.r() - .5) * 2, z: st.use.z + (this.r() - .5) * 1.5 }, `${why} — giãn cơ trước khi về`, () => { a.state = 'stretch'; a.reason = 'Giãn cơ'; a.until = this.t + (2 + this.r() * 3) * 60; a.after = exit; });
+      this.go(a, st.floorId, { x: st.use.x + (this.r() - .5) * 2, z: st.use.z + (this.r() - .5) * 1.5 }, `${why} — giãn cơ trước khi về`, () => { a.state = 'stretch'; a.reason = 'Giãn cơ'; a.until = Math.min(this.t + (2 + this.r() * 3) * 60, Math.max(this.t, this.end - 300)); a.after = exit; });
       a.state = 'walk';
     } else { a.state = 'leave'; exit(); }
   }

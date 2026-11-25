@@ -74,7 +74,7 @@ test('mặt bằng nhiều vật cố định: không chắn cửa, cột, WC, l
   const f = p.floors[0];
   for (const [x, z] of [[-3, -1], [3, -1], [0, -3]]) f.fixtures.push({ id: uid('fx'), kind: 'column', x, z, w: .5, d: .5, rot: 0 });
   f.fixtures.push({ id: uid('fx'), kind: 'exit', x: -f.w / 2 + .1, z: 1, w: 1.2, d: .2, rot: 1 });
-  f.fixtures.push({ id: uid('fx'), kind: 'void', x: f.w / 2 - 1.5, z: -f.l / 2 + 1.5, w: 3, d: 3, rot: 0 });
+  f.fixtures.push({ id: uid('fx'), kind: 'void', x: -f.w / 2 + 1.5, z: -f.l / 2 + 1.5, w: 3, d: 3, rot: 0 });
   const { options } = generateOptions(p, EQUIPMENT_SEEDS);
   p.options = options;
   for (let i = 0; i < 3; i++) assert.deepEqual(errors(p, i).map(x => x.msg), [], options[i].strategy);
@@ -149,4 +149,34 @@ test('chi phí từng phương án (thiết bị + thảm sàn có giá) không 
       assert.ok(c.priced <= budget, `${areas.join('/')} ${o.strategy}: ${c.priced} > ${budget}`);
     }
   }
+});
+
+test('tinh thần video tham chiếu: Mở trung tâm có làn chức năng dọc trục dài, khung tạ đầu làn, đèn tuyến tính liền dải; cardio sát mặt tiền kính', () => {
+  const p = newProject({ model: 'strength', areas: [260], budget: 0 });
+  const f = p.floors[0];
+  f.w = 24; f.l = 11;
+  for (const fx of f.fixtures) { if (fx.kind === 'door') fx.z = f.l / 2 - .1; if (fx.kind === 'window' || fx.kind === 'wc' || fx.kind === 'locker') fx.z = Math.sign(fx.z) * (f.l / 2) - Math.sign(fx.z) * (fx.kind === 'window' ? .075 : fx.d / 2 + .1); }
+  const o = generateOptions(p, EQUIPMENT_SEEDS, { strategies: ['perimeter'] }).options[0];
+  const q = { ...p, options: [o] };
+  assert.deepEqual(errors(q).map(x => x.msg), []);
+  const lane = o.furniture.find(x => x.label === 'Làn tập chức năng');
+  assert.ok(lane, 'có làn tập chức năng');
+  assert.ok(lane!.w > lane!.d * 1.8, `làn chạy dọc trục dài (${lane!.w} × ${lane!.d})`);
+  const rack = o.placements.map(x => ({ x, e: byId.get(x.eqId)! })).find(({ x, e }) => (e.kind === 'rack' || e.kind === 'smith') && Math.abs(x.z - lane!.z) < 1.5 && Math.abs(x.x - lane!.x) > lane!.w / 2 - .5);
+  assert.ok(rack, 'khung tạ đứng ở đầu làn');
+  const lights = o.furniture.filter(x => x.kind === 'linear-light');
+  assert.ok(lights.length >= 2 && lights.every(l => l.w >= f.w - 1.5), 'đèn liền dải theo chiều dài phòng');
+  assert.ok(f.fixtures.filter(x => x.kind === 'window').length === 2, 'mặt tiền kính hai bên cửa');
+  const cardio = o.placements.filter(x => ['treadmill', 'bike', 'elliptical', 'rower', 'recumbent'].includes(byId.get(x.eqId)!.kind!));
+  assert.ok(cardio.length && cardio.every(x => x.z > 0), 'cardio dọc mặt tiền kính');
+});
+
+test('đổi kích thước tầng: cửa / cửa sổ giữ đúng bức tường, WC vẫn ở góc sau', async () => {
+  const { updateFloor } = await import('../lib/gym-edit.ts');
+  let p = newProject({ model: 'gym', areas: [240], budget: 0 });
+  p = updateFloor(p, p.floors[0].id, { w: 10, l: 24 });
+  const f = p.floors[0];
+  for (const fx of f.fixtures.filter(x => x.kind === 'door' || x.kind === 'window')) assert.ok(Math.abs(fx.z - (f.l / 2 - fx.d / 2)) < .01, `${fx.kind} vẫn ở mặt tiền (z=${fx.z})`);
+  const wc = f.fixtures.find(x => x.kind === 'wc')!;
+  assert.ok(wc.z < -f.l / 2 + 2 && wc.x > 0, `WC góc sau phải (${wc.x}, ${wc.z})`);
 });

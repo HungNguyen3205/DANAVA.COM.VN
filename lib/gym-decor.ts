@@ -80,11 +80,14 @@ export function buildReception(rc: Reception, floor: Floor, door: { x: number; z
   const [nx, nz] = n;
   const ux = -nz, uz = nx;
   const along = wall === 'left' || wall === 'right' ? floor.l : floor.w;
-  const halfW = Math.min(sz.width, along - .4) / 2;
+  const across = wall === 'left' || wall === 'right' ? floor.w : floor.l;
+  // phòng nhỏ: sảnh không chiếm quá ~20% diện tích tầng
+  const k = Math.min(1, Math.sqrt((floor.w * floor.l * .2) / (sz.width * sz.depth)));
+  const halfW = Math.min(sz.width * Math.max(k, .72), along - .4) / 2;
   const doorU = door.x * ux + door.z * uz;
   const cu = Math.min(Math.max(doorU, -along / 2 + halfW + .1), along / 2 - halfW - .1);
   const wallV = wall === 'left' ? -floor.w / 2 : wall === 'right' ? -floor.w / 2 : -floor.l / 2; // toạ độ v của tường (v tính theo n)
-  const depth = Math.min(sz.depth, (wall === 'left' || wall === 'right' ? floor.w : floor.l) * .45);
+  const depth = Math.min(sz.depth * Math.max(k, .8), across * .45);
   const P = (u: number, v: number): [number, number] => [u * ux + (wallV + v) * nx, u * uz + (wallV + v) * nz];
   const face = rotFacing(-nx, -nz); // quay mặt về phía cửa (về tường)
   const side = doorU - cu >= 0 ? -1 : 1; // quầy đặt ở phía rộng hơn so với cửa
@@ -95,12 +98,17 @@ export function buildReception(rc: Reception, floor: Floor, door: { x: number; z
   };
   const deskKind: FurnKind = rc.shape === 'l' ? 'desk-l' : rc.shape === 'compact' ? 'desk-compact' : 'desk-straight';
   const dk = FURNITURE[deskKind];
-  const deskW = rc.shape === 'compact' ? dk.w : Math.min(dk.w * (rc.size === 'l' ? 1.15 : rc.size === 's' ? .85 : 1), halfW * .95);
-  const deskU = cu + side * (halfW - deskW / 2 - .2);
+  // Hành lang hội viên 1,8 m thẳng từ cửa vào: quầy, tủ, vách nhận diện chỉ nằm phía ngoài hành lang
+  const laneEdge = doorU + side * .9, outer = cu + side * (halfW - .1);
+  const room = Math.max(.8, Math.abs(outer - laneEdge));
+  const deskW = Math.min(rc.shape === 'compact' ? dk.w : Math.min(dk.w * (rc.size === 'l' ? 1.15 : rc.size === 's' ? .85 : 1), halfW * .95), room - .1);
+  const deskU = outer - side * (deskW / 2 + .1);
+  const sideW = (w: number) => Math.min(w, room);
+  const sideU = (w: number) => outer - side * (sideW(w) / 2);
   const deskV = depth - (rc.storage ? 1.75 : 1.2);
   add(deskKind, deskU, deskV + dk.d / 2, face, deskW, dk.d);
-  if (rc.storage) add('back-storage', deskU, depth - .3, face, Math.min(deskW, 2.2));
-  if (rc.wall && rc.logo !== 'none') add('brand-wall', deskU, depth - .08, face, Math.min(deskW + .6, halfW * 1.1), .15, 'logo');
+  if (rc.storage) add('back-storage', sideU(Math.min(deskW, 2.2)), depth - .3, face, sideW(Math.min(deskW, 2.2)));
+  if (rc.wall && rc.logo !== 'none') add('brand-wall', sideU(deskW + .6), depth - .08, face, sideW(deskW + .6), .15, 'logo');
   if (rc.kiosk) add('kiosk', doorU + side * .95, 1.6, face);
   // Ghế chờ + tư vấn: phía đối diện quầy, góc trong
   const guestU = cu - side * (halfW - 1.1);

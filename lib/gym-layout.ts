@@ -16,9 +16,9 @@
  * Thuần hàm, không phụ thuộc trình duyệt (test: tests/gym-layout.test.ts).
  */
 import type { Equipment, EquipmentKind, Flooring } from './equipment.ts';
-import { BUSINESS_MODELS, FLOOR_USES, STRATEGIES, entranceFloor, footOf, uid, type DesignOption, type Floor, type FurnitureItem, type Placement, type Project, type Strategy } from './gym-project.ts';
+import { BUSINESS_MODELS, FIXTURE_KINDS, FLOOR_USES, STRATEGIES, entranceFloor, footOf, uid, type DesignOption, type Floor, type FurnitureItem, type Placement, type Project, type Strategy } from './gym-project.ts';
 import { FURNITURE, INTERIOR_STYLES, buildReception, wallOf } from './gym-decor.ts';
-import { NavGrid, accessCells, checkEquipment, eqRects, entryPoints, flooringM2, floorObstacles, furnRect, grow, inside, kindOf, overlaps, rotFor, usableArea, type Obstacle, type Rect } from './gym-geometry.ts';
+import { NavGrid, accessCells, checkEquipment, eqRects, entryPoints, fixtureRects, flooringM2, floorObstacles, furnRect, grow, inside, kindOf, overlaps, rotFor, usableArea, type Obstacle, type Rect } from './gym-geometry.ts';
 
 /* ---------- Nhóm máy ---------- */
 
@@ -340,6 +340,9 @@ function layoutFloor(project: Project, f: Floor, eqsIn: Equipment[], strategy: S
   const decor: FurnitureItem[] = [];
   const addDecor = (kind: FurnitureItem['kind'], x: number, z: number, rot: number, w?: number, d?: number, label?: string) => decor.push({ id: uid('fu'), kind, floorId: f.id, x: Math.round(x * 100) / 100, z: Math.round(z * 100) / 100, rot, w: w ?? FURNITURE[kind].w, d: d ?? FURNITURE[kind].d, group: 'decor', ...(label ? { label } : {}) });
 
+  // Kiểu Mở trung tâm: giữ một khung tạ để đặt ở đầu làn tập chức năng giữa phòng (tinh thần video tham chiếu)
+  const headRack = strategy === 'perimeter' ? free.find(e => kindOf(e) === 'rack' || kindOf(e) === 'smith') : undefined;
+  if (headRack) free.splice(free.indexOf(headRack), 1);
   if (strategy === 'perimeter') {
     left = P.row(wallRow(f, vw), cardio);
     left = [...left, ...P.row(wallRow(f, mirrorWall, .3), free)];
@@ -380,7 +383,7 @@ function layoutFloor(project: Project, f: Floor, eqsIn: Equipment[], strategy: S
     if (left.length) left = P.row(wallRow(f, wallsPar[0]), left);
     // Đèn tuyến tính dọc trục
     const ax = (axisRect.x0 + axisRect.x1) / 2, az = (axisRect.z0 + axisRect.z1) / 2, alen = horiz ? axisRect.x1 - axisRect.x0 : axisRect.z1 - axisRect.z0;
-    for (let s = -alen / 2 + 1.5; s <= alen / 2 - 1.4; s += 3.2) addDecor('linear-light', horiz ? ax + s : ax, horiz ? az : az + s, horiz ? 0 : 1, 2.6, .08);
+    for (const off of [-.9, .9]) addDecor('linear-light', horiz ? ax : ax + off, horiz ? az + off : az, horiz ? 0 : 1, Math.round((alen - 1) * 100) / 100, .08);
     reasons.push(`Trục lối đi 2,2 m từ cửa vào chạy sâu ${alen.toFixed(1).replace('.', ',')} m; máy hai bên quay về trục, cardio ở cuối trục tạo chiều sâu khi nhìn từ cửa.`);
   } else if (strategy === 'clusters') {
     left = P.row(wallRow(f, vw), cardio);
@@ -458,13 +461,51 @@ function layoutFloor(project: Project, f: Floor, eqsIn: Equipment[], strategy: S
   ];
   if (strategy !== 'axis') {
     const c = growFree(0, 0, f, blockers) ?? growFree(f.w * .2, 0, f, blockers) ?? growFree(-f.w * .2, 0, f, blockers);
-    if (c) {
+    const kind = project.brief.interior === 'wellness' || project.brief.model === 'wellness' ? 'mat-zone' : 'turf';
+    if (c && strategy === 'perimeter') {
+      // Làn tập chức năng chạy dọc chiều dài khoảng mở; khung tạ đứng ở đầu làn phía xa cửa, quay mặt về làn
+      const g = grow(c, -.3);
+      const alongX = g.x1 - g.x0 >= g.z1 - g.z0;
+      const len = alongX ? g.x1 - g.x0 : g.z1 - g.z0, wid = alongX ? g.z1 - g.z0 : g.x1 - g.x0;
+      const e0 = entryPoints(project, f)[0] ?? { x: 0, z: f.l / 2 };
+      const cx = (g.x0 + g.x1) / 2, cz = (g.z0 + g.z1) / 2;
+      const farSign = alongX ? (e0.x <= cx ? 1 : -1) : (e0.z <= cz ? 1 : -1);
+      let lane: Rect | null = null;
+      if (len >= 3 && wid >= 1.6) {
+        const lw = Math.min(2.6, wid);
+        lane = alongX ? { x0: g.x0, x1: g.x1, z0: cz - lw / 2, z1: cz + lw / 2 } : { x0: cx - lw / 2, x1: cx + lw / 2, z0: g.z0, z1: g.z1 };
+      }
+      if (headRack && lane) {
+        const rot = alongX ? rotFor('z', -farSign, 0) : rotFor('z', 0, -farSign);
+        const { clear } = eqRects(headRack, 0, 0, rot);
+        const depthClear = alongX ? clear.x1 - clear.x0 : clear.z1 - clear.z0;
+        let placed = false;
+        for (let s = len / 2 - depthClear / 2; s > -len / 2 + depthClear / 2 + 2 && !placed; s -= .1) {
+          const x = alongX ? cx + farSign * s : cx, z = alongX ? cz : cz + farSign * s;
+          if (P.ok(headRack, Math.round(x * 100) / 100, Math.round(z * 100) / 100, rot)) {
+            P.put(headRack, Math.round(x * 100) / 100, Math.round(z * 100) / 100, rot);
+            const r = eqRects(headRack, Math.round(x * 100) / 100, Math.round(z * 100) / 100, rot).clear;
+            // làn kết thúc trước khoảng trống vận hành của khung tạ
+            if (alongX) { if (farSign > 0) lane.x1 = r.x0 - .05; else lane.x0 = r.x1 + .05; } else { if (farSign > 0) lane.z1 = r.z0 - .05; else lane.z0 = r.z1 + .05; }
+            placed = true;
+            reasons.push(`Khung tạ ${headRack.name} đứng ở đầu làn, nhìn thẳng từ cửa vào — tạo điểm nhấn và chiều sâu.`);
+          }
+        }
+        if (!placed) { const rest = P.row(wallRow(f, mirrorWall, .3), [headRack]); left.push(...rest); }
+      } else if (headRack) { const rest = P.row(wallRow(f, mirrorWall, .3), [headRack]); left.push(...rest); }
+      if (lane) {
+        const w = lane.x1 - lane.x0, d = lane.z1 - lane.z0;
+        if (w * d >= 4) {
+          addDecor(kind, (lane.x0 + lane.x1) / 2, (lane.z0 + lane.z1) / 2, 0, Math.round(w * 100) / 100, Math.round(d * 100) / 100, 'Làn tập chức năng');
+          reasons.push(`Làn tập chức năng ${Math.max(w, d).toFixed(1).replace('.', ',')} × ${Math.min(w, d).toFixed(1).replace('.', ',')} m chạy dọc giữa phòng (kéo sled, bước lunge, tập nhóm nhỏ), thiết bị bám quanh biên.`);
+        }
+      }
+    } else if (c) {
       const g = grow(c, -.3);
       const w = g.x1 - g.x0, d = g.z1 - g.z0;
       if (w >= 1.8 && d >= 1.8 && w * d >= 5) {
-        const kind = project.brief.interior === 'wellness' || project.brief.model === 'wellness' ? 'mat-zone' : 'turf';
-        addDecor(kind, (g.x0 + g.x1) / 2, (g.z0 + g.z1) / 2, 0, w, d, strategy === 'perimeter' ? 'Khoảng mở trung tâm' : 'Khu tập chức năng');
-        reasons.push(`${strategy === 'perimeter' ? 'Khoảng mở trung tâm' : 'Khu tập chức năng'} ${w.toFixed(1).replace('.', ',')} × ${d.toFixed(1).replace('.', ',')} m (thảm${kind === 'turf' ? ' cỏ' : ''}), nằm ngoài khoảng trống vận hành của máy.`);
+        addDecor(kind, (g.x0 + g.x1) / 2, (g.z0 + g.z1) / 2, 0, w, d, 'Khu tập chức năng');
+        reasons.push(`Khu tập chức năng ${w.toFixed(1).replace('.', ',')} × ${d.toFixed(1).replace('.', ',')} m (thảm${kind === 'turf' ? ' cỏ' : ''}), nằm ngoài khoảng trống vận hành của máy.`);
       }
     }
   }
@@ -487,8 +528,29 @@ function layoutFloor(project: Project, f: Floor, eqsIn: Equipment[], strategy: S
   for (const [x, z] of corners) if (plants > 0 && tryDecor('plant', x, z)) plants--;
   const e0 = entryPoints(project, f)[0];
   if (e0) for (const [dx, dz] of [[1.6, 0], [-1.6, 0], [0, 1.6], [0, -1.6], [2.4, .8], [-2.4, .8]]) if (tryDecor('water', e0.x + dx, e0.z + dz)) break;
-  if (strategy !== 'axis') for (let s = -f.w / 2 + 2; s < f.w / 2 - 1; s += 3.4) addDecor('linear-light', s, 0, 1, Math.min(f.l - 1.5, 6), .08);
+  if (strategy !== 'axis') {
+    const long = Math.max(f.w, f.l), short = Math.min(f.w, f.l), n = Math.min(5, Math.max(2, Math.round(short / 3.2)));
+    for (let i = 0; i < n; i++) { const o = -short / 2 + short * (i + .5) / n; addDecor('linear-light', f.w >= f.l ? 0 : o, f.w >= f.l ? o : 0, f.w >= f.l ? 0 : 1, Math.round((long - 1.2) * 100) / 100, .08); }
+  }
 
+  // 6a. Lối vào WC / thay đồ / kho / lối thoát: nếu bị vây, bỏ dần máy mới xếp gần nhất (không đụng máy đã khoá)
+  const needAccess = f.fixtures.filter(x => x.kind === 'wc' || x.kind === 'locker' || x.kind === 'storage' || x.kind === 'exit');
+  for (let guard = 0; guard < 8 && needAccess.length; guard++) {
+    const obs = floorObstacles(project, f, { placements: [...keepPl, ...P.placements], furniture: [...furniture, ...decor] }, byId);
+    const g2 = new NavGrid(f, obs.filter(o => o.blocksWalk).map(o => o.body));
+    const st2 = entryPoints(project, f).map(e => g2.nearest(e.x, e.z)).filter((x): x is [number, number] => !!x);
+    if (!st2.length) break;
+    const d2 = g2.bfs(st2);
+    const blocked = needAccess.find(fx => !accessCells(g2, fixtureRects(fx, f).body).some(([i, j]) => d2[j * g2.nx + i] >= 0));
+    if (!blocked) break;
+    // chỉ bỏ máy thật sự nằm sát lối vào (≤ 2,5 m tính từ mép vật cố định)
+    const fr = fixtureRects(blocked, f).body;
+    const gap = (p2: Placement) => { const b = eqRects(byId.get(p2.eqId)!, p2.x, p2.z, p2.rot).body; return Math.hypot(Math.max(0, fr.x0 - b.x1, b.x0 - fr.x1), Math.max(0, fr.z0 - b.z1, b.z0 - fr.z1)); };
+    const near = [...P.placements].filter(p2 => gap(p2) <= 2.5).sort((a, b) => gap(a) - gap(b))[0];
+    if (!near) break;
+    P.placements = P.placements.filter(x => x !== near);
+    P.dropped.push({ eqId: near.eqId, floorId: f.id, reason: `bỏ để chừa lối vào ${FIXTURE_KINDS[blocked.kind].label.toLowerCase()}` });
+  }
   // 6. Tiếp cận: bỏ máy không có lối đi từ cửa / chiếu nghỉ
   const allObs = floorObstacles(project, f, { placements: [...keepPl, ...P.placements], furniture: [...furniture, ...decor] }, byId);
   const grid = new NavGrid(f, allObs.filter(o => o.blocksWalk).map(o => o.body));

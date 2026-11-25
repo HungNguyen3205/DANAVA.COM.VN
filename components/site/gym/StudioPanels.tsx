@@ -123,8 +123,8 @@ export function FloorsPanel({ p, floor, setFloorId, act, selectItem }: {
       <h3>{floor.name}</h3>
       <label className="gs-text"><span>Tên tầng</span><input value={floor.name} maxLength={40} onChange={e => act.updateFloor(floor.id, { name: e.target.value })} /></label>
       <div className="gs-grid3">
-        <Num label="Dài" unit="m" value={floor.w} min={3} max={80} onChange={v => act.updateFloor(floor.id, { w: v })} />
-        <Num label="Rộng" unit="m" value={floor.l} min={3} max={80} onChange={v => act.updateFloor(floor.id, { l: v })} />
+        <Num label="Ngang (mặt tiền)" unit="m" value={floor.w} min={3} max={80} onChange={v => act.updateFloor(floor.id, { w: v })} />
+        <Num label="Sâu" unit="m" value={floor.l} min={3} max={80} onChange={v => act.updateFloor(floor.id, { l: v })} />
         <Num label="Cao trần" unit="m" value={floor.h} min={2.2} max={8} onChange={v => act.updateFloor(floor.id, { h: v })} />
       </div>
       <p className="gs-area"><b>{fmtArea(total)}</b> tổng · <b>{fmtArea(usable)}</b> còn lại để bố trí <small>(trừ vật cố định, cầu thang + chiếu nghỉ)</small></p>

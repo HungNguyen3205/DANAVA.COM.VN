@@ -22,9 +22,11 @@ export function updateFloor(p0: Project, id: string, patch: Partial<Pick<Floor, 
   if (patch.w !== undefined) patch.w = Math.min(80, Math.max(3, r2(patch.w)));
   if (patch.l !== undefined) patch.l = Math.min(80, Math.max(3, r2(patch.l)));
   if (patch.h !== undefined) patch.h = Math.min(8, Math.max(2.2, r2(patch.h)));
+  // Vật trên tường giữ đúng bức tường cũ; mọi vật cố định co giãn vị trí theo tỉ lệ (góc sau vẫn là góc sau)
+  const old = { w: f.w, l: f.l };
+  const walls = f.fixtures.map(fx => (WALL_KINDS.includes(fx.kind) ? wallOf(old, fx.x, fx.z).wall : undefined));
   Object.assign(f, patch);
-  // giữ vật cố định trong ranh giới mới
-  for (const fx of f.fixtures) clampFixture(f, fx);
+  f.fixtures.forEach((fx, i) => { fx.x = fx.x * f.w / old.w; fx.z = fx.z * f.l / old.l; clampFixture(f, fx, walls[i]); });
   for (const o of p.options) if (o.placements.some(x => x.floorId === id) || o.furniture.some(x => x.floorId === id)) bump(o);
   return touch(p);
 }
@@ -79,10 +81,10 @@ export function removeFloor(p0: Project, id: string) {
 
 const WALL_KINDS: FixtureKind[] = ['door', 'exit', 'window', 'outlet'];
 /** Giữ vật trong tầng; cửa / cửa sổ / ổ điện bám vào tường gần nhất */
-function clampFixture(f: Floor, fx: Fixture) {
+function clampFixture(f: Floor, fx: Fixture, keepWall?: 'front' | 'back' | 'left' | 'right') {
   const [w, d] = footOf(fx.w, fx.d, fx.rot);
   if (WALL_KINDS.includes(fx.kind)) {
-    const { wall } = wallOf(f, fx.x, fx.z);
+    const wall = keepWall ?? wallOf(f, fx.x, fx.z).wall;
     const t = fx.d / 2;
     if (wall === 'front' || wall === 'back') { fx.rot = 0; fx.z = wall === 'front' ? f.l / 2 - t : -f.l / 2 + t; fx.x = Math.min(Math.max(fx.x, -f.w / 2 + fx.w / 2), f.w / 2 - fx.w / 2); }
     else { fx.rot = 1; fx.x = wall === 'right' ? f.w / 2 - t : -f.w / 2 + t; fx.z = Math.min(Math.max(fx.z, -f.l / 2 + fx.w / 2), f.l / 2 - fx.w / 2); }

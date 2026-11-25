@@ -3,7 +3,7 @@
  *
  * Quy ước:
  *  - Đơn vị nội bộ: mét (toạ độ, kích thước), VNĐ số nguyên (tiền). Giao diện tự đổi sang m, cm, m², "1.200.000 ₫".
- *  - Toạ độ một tầng: gốc ở tâm sàn, x ∈ [-w/2, w/2] (chiều dài), z ∈ [-l/2, l/2] (chiều rộng); tường trước là z = +l/2.
+ *  - Toạ độ một tầng: gốc ở tâm sàn, x ∈ [-w/2, w/2] (chiều ngang mặt tiền), z ∈ [-l/2, l/2] (chiều sâu); tường trước (mặt tiền) là z = +l/2.
  *  - rot = số lần xoay 90° quanh trục đứng (0–3), cùng quy ước với three.js (rotation.y = rot·π/2).
  *  - Tầng: level 0 = tầng trệt. "Tổng số tầng" luôn tính cả tầng trệt.
  *  - Mỗi đối tượng có id ổn định (không đổi khi sửa); phương án có mã (ví dụ GYM-7K3PQ2-B) và phiên bản tăng sau mỗi lần sửa,
@@ -30,7 +30,7 @@ export const BUSINESS_MODELS: Record<BusinessModel, { label: string; hint: strin
 /** 2. Cách tổ chức mặt bằng: mỗi kiểu có quy tắc bố trí riêng (lib/gym-layout.ts) */
 export type Strategy = 'perimeter' | 'clusters' | 'circuit' | 'axis';
 export const STRATEGIES: Record<Strategy, { label: string; hint: string; rules: string[] }> = {
-  perimeter: { label: 'Mở trung tâm', hint: 'Máy xếp quanh tường, giữa phòng là khoảng mở cho tập chức năng', rules: ['Thiết bị bám theo tường, quay vào giữa phòng', 'Cardio dọc tường có cửa sổ (hoặc tường đối diện cửa vào)', 'Khung tạ và tạ tự do dọc tường gương', 'Giữ khoảng mở trung tâm cho tập chức năng, không lấn vào để thêm máy'] },
+  perimeter: { label: 'Mở trung tâm', hint: 'Máy xếp quanh biên, giữa phòng là làn tập chức năng chạy dọc, khung tạ ở đầu làn', rules: ['Thiết bị bám theo tường, quay vào giữa phòng', 'Cardio dọc tường kính mặt tiền (hoặc tường đối diện cửa vào), người tập nhìn vào phòng', 'Làn tập chức năng chạy dọc trục dài, khung tạ đứng ở đầu làn tạo chiều sâu', 'Đèn tuyến tính chạy liền suốt chiều dài phòng; không lấn khoảng mở để thêm máy'] },
   clusters: { label: 'Cụm trải nghiệm', hint: 'Gom máy thành cụm theo nhóm cơ, mỗi cụm có khoảng PT riêng', rules: ['Chia sàn thành các cụm, giữa các cụm lối đi 1,2 m', 'Mỗi cụm một nhóm bài: chân – mông, thân trên, tạ tự do', 'Máy trong cụm quay vào nhau, giữa cụm là chỗ huấn luyện viên đứng', 'Cardio tách thành dải riêng sát tường'] },
   circuit: { label: 'Vòng tập', hint: 'Các trạm xếp theo vòng, đánh số theo thứ tự bài tập', rules: ['Một vòng lối đi khép kín chạy quanh phòng', 'Trạm ngoài quay vào vòng, cụm trạm giữa quay ra vòng', 'Trạm đánh số xen kẽ thân trên – thân dưới – cardio', 'Ai cũng tiếp cận trạm kế tiếp mà không cắt ngang người khác'] },
   axis: { label: 'Trục trung tâm', hint: 'Một trục lối đi từ cửa vào chạy sâu vào phòng, các khu hai bên', rules: ['Trục lối đi rộng 2,2 m từ cửa vào tới cuối phòng', 'Máy hai bên trục quay về phía trục', 'Cardio cuối trục, nhìn từ cửa vào thấy chiều sâu', 'Đèn tuyến tính chạy dọc trục để định hướng'] }
@@ -47,9 +47,9 @@ export const FIXTURE_KINDS: Record<FixtureKind, { label: string; w: number; d: n
   exit: { label: 'Lối thoát hiểm', w: 1.2, d: .2, color: '#15803d', pad: 1.2, walk: true, blocks: false },
   window: { label: 'Cửa sổ', w: 2.4, d: .15, color: '#38bdf8', pad: 0, walk: false, blocks: false },
   column: { label: 'Cột', w: .4, d: .4, color: '#475569', pad: .3, walk: false, blocks: true },
-  wc: { label: 'Nhà vệ sinh', w: 2.4, d: 2, color: '#0e7490', pad: .6, walk: false, blocks: true },
-  locker: { label: 'Phòng thay đồ', w: 3, d: 2.5, color: '#7c3aed', pad: .6, walk: false, blocks: true },
-  storage: { label: 'Kho', w: 2, d: 1.5, color: '#92400e', pad: .4, walk: false, blocks: true },
+  wc: { label: 'Nhà vệ sinh', w: 2.4, d: 2, color: '#0e7490', pad: 1, walk: false, blocks: true },
+  locker: { label: 'Phòng thay đồ', w: 3, d: 2.5, color: '#7c3aed', pad: 1, walk: false, blocks: true },
+  storage: { label: 'Kho', w: 2, d: 1.5, color: '#92400e', pad: .9, walk: false, blocks: true },
   void: { label: 'Vùng không sử dụng', w: 2, d: 2, color: '#b42318', pad: 0, walk: false, blocks: true },
   outlet: { label: 'Ổ điện', w: .2, d: .1, color: '#ca8a04', pad: 0, walk: true, blocks: false },
   other: { label: 'Khu khác', w: 1.5, d: 1.5, color: '#64748b', pad: .5, walk: false, blocks: true }
@@ -75,7 +75,7 @@ export const FLOOR_USES: Record<FloorUse, { label: string; mix?: { cardio: numbe
 };
 export type Floor = {
   id: string; name: string; level: number;
-  /** dài (x), rộng (z), cao thông thủy (m) */
+  /** ngang mặt tiền (x), sâu (z), cao thông thủy (m) */
   w: number; l: number; h: number;
   fixtures: Fixture[];
   use: FloorUse;
@@ -210,10 +210,9 @@ export const DEFAULT_RECEPTION = (floorId: string): Reception => ({
   wall: true, lights: true, storage: true, kiosk: true, seats: 3, consult: true, display: false
 });
 
-/** Diện tích → kích thước chữ nhật tỉ lệ ~1,4 : 1 */
+/** Diện tích → chữ nhật mặt tiền hẹp, sâu ~1,4 : 1 (kiểu nhà phố): w = ngang mặt tiền, l = chiều sâu */
 export function dimsOf(area: number) {
-  const l = Math.sqrt(area / 1.4);
-  const w = Math.round(l * 1.4 * 10) / 10;
+  const w = Math.round(Math.sqrt(area / 1.4) * 10) / 10;
   return { w, l: Math.round((area / w) * 10) / 10 };
 }
 
@@ -230,8 +229,13 @@ export function newProject(input: { model: BusinessModel; areas: number[]; budge
   });
   const g = floors[0];
   g.fixtures.push({ id: uid('fx'), kind: 'door', main: true, x: 0, z: g.l / 2 - .1, w: 1.6, d: .2, rot: 0 });
-  g.fixtures.push({ id: uid('fx'), kind: 'wc', x: g.w / 2 - 1.3, z: g.l / 2 - 1.1, w: 2.4, d: 2, rot: 0 });
-  if (areas[0] >= 80) g.fixtures.push({ id: uid('fx'), kind: 'locker', x: g.w / 2 - 1.6, z: g.l / 2 - 3.45, w: 3, d: 2.5, rot: 0 });
+  // Mặt tiền kính hai bên cửa chính (kiểu nhà phố / showroom); chỉnh hoặc xoá trong mục Mặt bằng
+  const gw = Math.min(3.2, g.w / 2 - 1.5);
+  if (gw >= 1) for (const sx of [-1, 1]) g.fixtures.push({ id: uid('fx'), kind: 'window', x: sx * (1.1 + gw / 2), z: g.l / 2 - .075, w: Math.round(gw * 10) / 10, d: .15, rot: 0 });
+  for (const f of floors.slice(1)) f.fixtures.push({ id: uid('fx'), kind: 'window', x: 0, z: f.l / 2 - .075, w: Math.round(Math.min(4, f.w * .4) * 10) / 10, d: .15, rot: 0 });
+  // WC + thay đồ ở cuối phòng (góc sau phải), như bố trí tham chiếu; sảnh và mặt tiền để đón khách
+  g.fixtures.push({ id: uid('fx'), kind: 'wc', x: g.w / 2 - 1.3, z: -g.l / 2 + 1.1, w: 2.4, d: 2, rot: 0 });
+  if (areas[0] >= 80) g.fixtures.push({ id: uid('fx'), kind: 'locker', x: g.w / 2 - 1.6, z: -g.l / 2 + 3.45, w: 3, d: 2.5, rot: 0 });
   const links: Link[] = [];
   if (floors.length > 1) {
     const s = LINK_KINDS.stairs;
