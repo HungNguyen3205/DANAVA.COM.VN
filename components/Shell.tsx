@@ -285,6 +285,7 @@ export function Footer() {
   const { data } = useSite();
   const co = block(data, 'company');
   const services = sortServices(data.services);
+  const footerCols = block(data, 'footer').columns;
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const { socials, instagram } = contactChannels(data);
@@ -320,35 +321,19 @@ export function Footer() {
             )}
           </div>
 
-          <div>
-            <p className="s-footer__title"><S data={data} k="footer.col1" def="Giải pháp" label="Tiêu đề cột" /></p>
-            <ul className="s-footer__list">
-              {services.map(s => <li key={s.id}><Link href={`/giai-phap/${s.slug}/`}><span {...cmsText(`rec.services.${s.id}.title`, 'Tên sản phẩm', { scope: 'record', scopeLabel: `Hồ sơ ${s.title}` })}>{s.title}</span></Link></li>)}
-            </ul>
-          </div>
-
-          <div>
-            <p className="s-footer__title"><S data={data} k="footer.col2" def="Công ty" label="Tiêu đề cột" /></p>
-            <ul className="s-footer__list">
-              <li><Link href="/ve-danava/"><S data={data} k="footer.company.about" def="Về DANAVA" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/doi-ngu/"><S data={data} k="footer.company.team" def="Đội ngũ" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/tuyen-dung/"><S data={data} k="footer.company.careers" def="Tuyển dụng" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/he-sinh-thai/"><S data={data} k="footer.company.ecosystem" def="Hệ sinh thái" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/doi-tac/"><S data={data} k="footer.company.partners" def="Đối tác đồng hành" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/du-an/"><S data={data} k="footer.company.projects" def="Dự án" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/blogs/"><S data={data} k="footer.company.blogs" def="Blogs" label="Liên kết chân trang" /></Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <p className="s-footer__title"><S data={data} k="footer.col3" def="Hỗ trợ" label="Tiêu đề cột" /></p>
-            <ul className="s-footer__list">
-              <li><Link href="/lien-he/"><S data={data} k="footer.support.contact" def="Liên hệ tư vấn" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/chinh-sach-dich-vu/"><S data={data} k="footer.support.service" def="Chính sách dịch vụ" label="Liên kết chân trang" /></Link></li>
-              <li><Link href="/chinh-sach-rieng-tu/"><S data={data} k="footer.support.privacy" def="Chính sách riêng tư" label="Liên kết chân trang" /></Link></li>
-              <li><a href="https://danava.vn/" target="_blank" rel="noopener"><S data={data} k="footer.support.platform" def="Nền tảng danava.vn" label="Liên kết chân trang" /></a></li>
-            </ul>
-          </div>
+          {footerCols.map((col, ci) => (
+            <div key={ci}>
+              <p className="s-footer__title">{col.titleKey ? <S data={data} k={col.titleKey} def={col.title} label="Tiêu đề cột" /> : <span {...cmsText(`block.footer.columns.${ci}.title`, 'Tiêu đề cột', { scope: 'global' })}>{col.title}</span>}</p>
+              <ul className="s-footer__list">
+                {col.auto === 'services' && services.map(s => <li key={s.id}><Link href={`/giai-phap/${s.slug}/`}><span {...cmsText(`rec.services.${s.id}.title`, 'Tên sản phẩm', { scope: 'record', scopeLabel: `Hồ sơ ${s.title}` })}>{s.title}</span></Link></li>)}
+                {col.items.map((it, ii) => {
+                  if (!it.visible) return null;
+                  const label = it.key ? <S data={data} k={it.key} def={it.label} label="Liên kết chân trang" /> : <span {...cmsText(`block.footer.columns.${ci}.items.${ii}.label`, 'Liên kết chân trang', { scope: 'global' })}>{it.label}</span>;
+                  return <li key={ii}>{/^(https?:|mailto:|tel:)/.test(it.href) ? <a href={it.href} {...(/^https?:/.test(it.href) ? { target: '_blank', rel: 'noopener' } : {})}>{label}</a> : <Link href={it.href}>{label}</Link>}</li>;
+                })}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <div className="s-footer__bottom">

@@ -53,6 +53,47 @@ const PAGES = {
 };
 
 /** Menu "Giải pháp" (mega menu 3 cột, chỉ chữ — không hiển thị ảnh). Mục không có đường dẫn chỉ hiển thị (vd. công cụ nội bộ). */
+/**
+ * Menu chân trang (admin → Nội dung website → Menu điều hướng → Footer). Lưu ở SiteData.footer (trường riêng, như careers).
+ * Mục mặc định mang `key` = khóa chữ cũ (txt.footer.*) để giữ bản sửa tại chỗ và bản dịch đã có; sửa tên trong admin thì bỏ key.
+ * Cột `auto: 'services'` tự liệt kê các giải pháp (hồ sơ sản phẩm) trước các mục thêm tay.
+ */
+export type FooterItem = { label: string; href: string; key: string; visible: boolean };
+export type FooterColumn = { title: string; titleKey: string; auto: '' | 'services'; items: FooterItem[] };
+const fItem = (label: string, href: string, key: string): FooterItem => ({ label, href, key, visible: true });
+const FOOTER: { columns: FooterColumn[] } = {
+  columns: [
+    { title: 'Giải pháp', titleKey: 'footer.col1', auto: 'services', items: [] },
+    { title: 'Công ty', titleKey: 'footer.col2', auto: '', items: [
+      fItem('Về DANAVA', '/ve-danava/', 'footer.company.about'), fItem('Đội ngũ', '/doi-ngu/', 'footer.company.team'),
+      fItem('Tuyển dụng', '/tuyen-dung/', 'footer.company.careers'), fItem('Hệ sinh thái', '/he-sinh-thai/', 'footer.company.ecosystem'),
+      fItem('Đối tác đồng hành', '/doi-tac/', 'footer.company.partners'), fItem('Dự án', '/du-an/', 'footer.company.projects'), fItem('Blogs', '/blogs/', 'footer.company.blogs')
+    ] },
+    { title: 'Hỗ trợ', titleKey: 'footer.col3', auto: '', items: [
+      fItem('Liên hệ tư vấn', '/lien-he/', 'footer.support.contact'), fItem('Chính sách dịch vụ', '/chinh-sach-dich-vu/', 'footer.support.service'),
+      fItem('Chính sách riêng tư', '/chinh-sach-rieng-tu/', 'footer.support.privacy'), fItem('Nền tảng danava.vn', 'https://danava.vn/', 'footer.support.platform')
+    ] }
+  ]
+};
+const FOOTER_SAMPLE = { columns: [{ title: '', titleKey: '', auto: '', items: [{ label: '', href: '', key: '', visible: true }] }] };
+const footerHref = (h: string) => safeHref(h) || /^mailto:[^\s"'<>]+$/.test(h) || /^tel:\+?[0-9]{3,20}$/.test(h);
+/** Lỗi dễ hiểu của menu chân trang (rỗng = hợp lệ). */
+export function footerError(v: { columns: FooterColumn[] }): string {
+  if (v.columns.length > 6) return 'Tối đa 6 cột.';
+  for (const c of v.columns) {
+    if (c.title.length > 60) return `Tên cột “${c.title.slice(0, 20)}…” tối đa 60 ký tự.`;
+    if (!['', 'services'].includes(c.auto)) return 'Kiểu cột không hợp lệ.';
+    if (c.titleKey && !/^footer\.[a-z0-9.-]{1,60}$/.test(c.titleKey)) return 'Khóa chữ của cột không hợp lệ.';
+    if (c.items.length > 20) return `Cột “${c.title}” tối đa 20 mục.`;
+    for (const i of c.items) {
+      if (!i.label.trim() || i.label.length > 80) return `Mục trong cột “${c.title}” cần tên (tối đa 80 ký tự).`;
+      if (!footerHref(i.href)) return `Đường dẫn của “${i.label}” phải dạng /trang/, https://…, mailto: hoặc tel:.`;
+      if (i.key && !/^footer\.[a-z0-9.-]{1,60}$/.test(i.key)) return 'Khóa chữ của mục không hợp lệ.';
+    }
+  }
+  return '';
+}
+
 const MENU = {
   columns: [
     {
@@ -197,13 +238,14 @@ export function blockDefaults(staff: Person[] = []) {
     gallery: GALLERY,
     anna: ANNA,
     pricing: PRICING,
-    careers: CAREERS
+    careers: CAREERS,
+    footer: FOOTER
   };
 }
 export type BlockDefaults = ReturnType<typeof blockDefaults>;
 export type BlockKey = keyof BlockDefaults;
 export type ExtraKey = keyof ExtraValues;
-type StoredKey = Exclude<BlockKey, ExtraKey | 'careers'>;
+type StoredKey = Exclude<BlockKey, ExtraKey | 'careers' | 'footer'>;
 export type Blocks = { [K in StoredKey]?: BlockDefaults[K] };
 export type Extras = { [K in ExtraKey]?: BlockDefaults[K] };
 /**
@@ -227,17 +269,19 @@ function fillMissing<T>(value: unknown, def: T): T {
 }
 
 const isExtra = (key: string): key is ExtraKey => (EXTRA_KEYS as string[]).includes(key);
-type BlockSource = Pick<SiteData, 'blocks' | 'staff'> & Partial<Pick<SiteData, 'extras' | 'careers'>>;
+type BlockSource = Pick<SiteData, 'blocks' | 'staff'> & Partial<Pick<SiteData, 'extras' | 'careers' | 'footer'>>;
 
 /** Giá trị quản trị viên đã lưu (undefined = đang dùng mặc định). */
 export function savedBlock(data: BlockSource, key: BlockKey): unknown {
   if (key === 'careers') return data.careers;
+  if (key === 'footer') return data.footer;
   return isExtra(key) ? data.extras?.[key] : data.blocks?.[key as StoredKey];
 }
 
 /** Bản sao dữ liệu với một khối được thay; value = undefined → khôi phục mặc định. */
 export function withBlock(data: SiteData, key: BlockKey, value: unknown): SiteData {
   if (key === 'careers') return { ...data, careers: value as SiteData['careers'] };
+  if (key === 'footer') return { ...data, footer: value as SiteData['footer'] };
   const field = isExtra(key) ? 'extras' : 'blocks';
   const next: Record<string, unknown> = { ...(data[field] || {}) };
   if (value === undefined) delete next[key]; else next[key] = value;
@@ -342,6 +386,7 @@ function templates(): Partial<Record<BlockKey, Tpl>> {
   TPL = {};
   for (const k of [...BLOCK_KEYS, ...EXTRA_KEYS]) TPL[k] = tplOf(k === 'staff' ? [STAFF_SAMPLE] : d[k])!;
   TPL.careers = tplOf(CAREERS_SAMPLE)!;
+  TPL.footer = tplOf(FOOTER_SAMPLE)!;
   return TPL;
 }
 /** Hợp lệ khi: object, chỉ gồm khóa đã biết, mỗi khối đúng cấu trúc mặc định, tổng dung lượng ≤ 600 KB. */
@@ -391,6 +436,15 @@ export function extrasProblem(v: unknown): string {
   const bad = Object.entries(v).find(([k, x]) => isExtra(k) && !fits(x, tpl[k]!));
   if (bad) return `phần "${bad[0]}" có ô sai kiểu dữ liệu hoặc thiếu ô bắt buộc.`;
   return extraError(v as Extras) || 'có ô chưa hợp lệ.';
+}
+export function validFooter(v: unknown): boolean {
+  if (v === undefined) return true;
+  return JSON.stringify(v).length <= 50_000 && fits(v, templates().footer!) && footerError(v as typeof FOOTER) === '';
+}
+export function footerProblem(v: unknown): string {
+  if (v === undefined) return '';
+  if (!fits(v, templates().footer!)) return 'có ô sai kiểu dữ liệu hoặc thiếu ô bắt buộc.';
+  return footerError(v as typeof FOOTER) || 'có ô chưa hợp lệ.';
 }
 export function careersProblem(v: unknown): string {
   if (!isObj(v)) return 'dữ liệu không hợp lệ.';

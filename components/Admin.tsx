@@ -40,7 +40,7 @@ import { SiteTree } from './admin/SiteTree';
 import { EquipmentScreen } from './admin/EquipmentScreen';
 import { OverviewTasks } from './admin/OverviewTasks';
 import { HomeHeroEditor } from './admin/HomeHeroEditor';
-import { GalleryOrder, MenuEditor, StaffOrder } from './admin/SortEditors';
+import { FooterMenuEditor, GalleryOrder, MenuEditor, StaffOrder } from './admin/SortEditors';
 import { ask } from './admin/kit';
 import type { PageTab, SitePage } from './admin/websitePages';
 import { Empty, Loading, useAdminUser, useQueryParam, useTabs } from './admin/ui';
@@ -403,6 +403,7 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'nhom-loai': return <GroupsScreen draft={draft} setDraft={setDraft} />;
       case 'thiet-bi': return <EquipmentScreen draft={draft} setDraft={setDraft} />;
       case 'trang-website': return <SiteTree draft={draft} setDraft={setDraft} />;
+      case 'menu-dieu-huong': return tab === 'dau-trang' ? <MenuEditor draft={draft} setDraft={setDraft} /> : <FooterMenuEditor draft={draft} setDraft={setDraft} />;
       case 'bai-viet': return tab === 'danh-muc' ? <TopicsEditor draft={draft} setDraft={setDraft} /> : <PostsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;
       case 'du-an': return tab === 'portfolio'
         ? <ShowcaseEditor draft={draft} setDraft={setDraft} />

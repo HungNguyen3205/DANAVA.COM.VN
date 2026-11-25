@@ -33,6 +33,8 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
     group: 'Nội dung website',
     items: [
       { slug: 'trang-website', label: 'Trang website', perm: 'content.read', desc: 'Sơ đồ mọi trang theo cấu trúc menu: đường link, trạng thái, sửa nội dung và đổi đường link từng trang.' },
+      { slug: 'menu-dieu-huong', label: 'Menu điều hướng', perm: 'content.read', desc: 'Menu đầu trang (Giải pháp) và các cột liên kết ở chân trang: thêm, bớt, đổi tên, đổi đường dẫn, sắp xếp và ẩn/hiện.',
+        tabs: [{ id: 'chan-trang', label: 'Footer (chân trang)' }, { id: 'dau-trang', label: 'Header (Giải pháp)' }] },
       { slug: 'bai-viet', label: 'Bài viết', perm: 'content.read', desc: 'Bài viết mục Blogs: nội dung, ảnh, danh mục, thẻ, tác giả, sản phẩm liên quan, SEO và trạng thái.',
         tabs: [{ id: 'bai-viet', label: 'Bài viết' }, { id: 'danh-muc', label: 'Danh mục' }] },
       { slug: 'du-an', label: 'Dự án & Portfolio', perm: 'content.read', desc: 'Hồ sơ dự án đã triển khai, website và landing page đã làm cho khách hàng.',

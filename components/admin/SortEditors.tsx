@@ -1,7 +1,7 @@
 'use client';
 /**
  * Trình sắp xếp kéo thả (dnd-kit) cho dữ liệu có thứ tự thật trên website:
- *  - Menu điều hướng: cột và mục trong cột (khối `menu`)
+ *  - Menu điều hướng: cột và mục trong cột (khối `menu`); menu chân trang (SiteData.footer)
  *  - Ảnh doanh nghiệp: thứ tự ảnh, ảnh đầu là ảnh lớn (khối `gallery`)
  *  - Đội ngũ: thứ tự nhân sự trên trang Đội ngũ (SiteData.staff)
  * Thứ tự được lưu qua Lưu nháp / Xuất bản như mọi thay đổi khác; lưu lỗi thì giữ thay đổi để thử lại hoặc Hoàn tác.
@@ -10,7 +10,8 @@ import { ChevronDown, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Person, SiteData } from '@/lib/content';
-import { block, withBlock } from '@/lib/blocks';
+import { block, footerError, withBlock, type FooterColumn, type FooterItem } from '@/lib/blocks';
+import { txt } from '@/lib/site-text';
 import { personPhoto } from '@/lib/media';
 import { Button, Card, DUR, EASE, SortableList, StatusBadge, ask, useListIds } from './kit';
 
@@ -97,6 +98,77 @@ export function MenuEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d:
           <label>Chữ liên kết<input value={menu.footLabel} maxLength={80} onChange={e => set({ ...menu, footLabel: e.target.value })} /></label>
           <label>Đường dẫn<input value={menu.footHref} maxLength={300} onChange={e => set({ ...menu, footHref: e.target.value.trim() })} /></label>
         </div>
+      </Card>
+    </div>
+  );
+}
+
+/* ================================================================ Menu chân trang */
+function FooterColumnEditor({ draft, col, onChange, onRemove, handle }: { draft: SiteData; col: FooterColumn; onChange: (c: FooterColumn) => void; onRemove: () => void; handle: React.ReactNode }) {
+  const ids = useListIds(col.items.length);
+  // Mục mặc định đọc chữ đã sửa tại chỗ (txt.footer.*); sửa ở đây thì bỏ khóa cũ → dùng tên mới
+  const label = (it: FooterItem) => (it.key ? txt(draft, it.key, it.label) : it.label);
+  const setItem = (i: number, patch: Partial<FooterItem>) => onChange({ ...col, items: col.items.map((it, j) => (j === i ? { ...it, ...patch } : it)) });
+  return (
+    <div className="ax-menucol">
+      <div className="ax-menucol__head">
+        {handle}
+        <input aria-label="Tên cột" value={col.titleKey ? txt(draft, col.titleKey, col.title) : col.title} maxLength={60} onChange={e => onChange({ ...col, title: e.target.value, titleKey: '' })} placeholder="Tên cột" />
+        <Button variant="ghost" size="sm" onClick={onRemove} aria-label={`Xóa cột ${col.title}`}><Trash2 size={15} /></Button>
+      </div>
+      <label className="ax-check"><input type="checkbox" checked={col.auto === 'services'} onChange={e => onChange({ ...col, auto: e.target.checked ? 'services' : '' })} /> Tự liệt kê các giải pháp (theo danh sách Sản phẩm & Dịch vụ)</label>
+      <SortableList items={ids.pair(col.items)} getId={p => p.id} getLabel={p => label(p.value) || 'mục'}
+        onReorder={pairs => onChange({ ...col, items: ids.reorder(pairs) })}
+        render={({ id, value: it }, h) => {
+          const i = ids.ids.indexOf(id);
+          return (
+            <div className="ax-row ax-row--stack" style={{ opacity: it.visible ? 1 : 0.55 }}>
+              <div className="ax-row__line">
+                {h}
+                <span className="ax-row__main ax-footrow">
+                  <input aria-label="Tên liên kết" value={label(it)} maxLength={80} placeholder="Tên hiển thị" onChange={e => setItem(i, { label: e.target.value, key: '' })} />
+                  <input aria-label="Đường dẫn" value={it.href} maxLength={300} placeholder="/trang/ hoặc https://…" onChange={e => setItem(i, { href: e.target.value.trim() })} />
+                </span>
+                <Button variant="ghost" size="sm" aria-label={it.visible ? `Ẩn ${label(it)}` : `Hiện ${label(it)}`} onClick={() => setItem(i, { visible: !it.visible })}>{it.visible ? <Eye size={15} /> : <EyeOff size={15} />}</Button>
+                <Button variant="ghost" size="sm" aria-label={`Xóa ${label(it)}`} onClick={async () => {
+                  if (!(await ask(`Xóa “${label(it)}” khỏi chân trang?`, { confirmLabel: 'Xóa mục' }))) return;
+                  ids.remove(i);
+                  onChange({ ...col, items: col.items.filter((_, j) => j !== i) });
+                }}><Trash2 size={15} /></Button>
+              </div>
+            </div>
+          );
+        }} />
+      <Button variant="secondary" size="sm" disabled={col.items.length >= 20} onClick={() => { ids.insert(col.items.length); onChange({ ...col, items: [...col.items, { label: 'Liên kết mới', href: '/', key: '', visible: true }] }); }}><Plus size={15} /> Thêm mục</Button>
+    </div>
+  );
+}
+
+export function FooterMenuEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+  const footer = block(draft, 'footer');
+  const cols = useListIds(footer.columns.length);
+  const set = (next: typeof footer) => setDraft(withBlock(draft, 'footer', next));
+  const problem = footerError(footer);
+  return (
+    <div className="blk-stack">
+      <Card title="Footer (chân trang)" description="Các cột liên kết ở chân trang mọi trang. Kéo tay nắm để đổi thứ tự cột và mục; bấm con mắt để ẩn/hiện; thêm hoặc xóa mục tùy ý. Đường dẫn: /trang-trong-website/, https://…, mailto: hoặc tel:. Thay đổi áp dụng khi Lưu nháp / Xuất bản."
+        actions={<>
+          <Button variant="secondary" size="sm" disabled={footer.columns.length >= 6} onClick={() => { cols.insert(footer.columns.length); set({ ...footer, columns: [...footer.columns, { title: 'Cột mới', titleKey: '', auto: '', items: [] }] }); }}><Plus size={15} /> Thêm cột</Button>
+          <Button variant="ghost" size="sm" onClick={async () => { if (await ask('Khôi phục chân trang mặc định?', { body: 'Thay đổi áp dụng khi lưu.', confirmLabel: 'Khôi phục' })) setDraft(withBlock(draft, 'footer', undefined)); }}>Khôi phục mặc định</Button>
+        </>}>
+        {problem && <p className="ax-error" role="alert">{problem}</p>}
+        <SortableList layout="grid" className="ax-menucols" items={cols.pair(footer.columns)} getId={p => p.id} getLabel={p => p.value.title || 'cột'}
+          onReorder={pairs => set({ ...footer, columns: cols.reorder(pairs) })}
+          render={({ id, value: col }, handle) => {
+            const i = cols.ids.indexOf(id);
+            return <FooterColumnEditor draft={draft} col={col} handle={handle}
+              onChange={c => set({ ...footer, columns: footer.columns.map((x, j) => (j === i ? c : x)) })}
+              onRemove={async () => {
+                if (!(await ask(`Xóa cột “${col.title}” và ${col.items.length} mục trong cột?`, { confirmLabel: 'Xóa cột' }))) return;
+                cols.remove(i);
+                set({ ...footer, columns: footer.columns.filter((_, j) => j !== i) });
+              }} />;
+          }} />
       </Card>
     </div>
   );

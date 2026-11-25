@@ -1,7 +1,7 @@
 import { legacyCatalog } from './legacy-catalog.ts';
 import { verifiedProjects } from './verified-projects.ts';
 import { defaultPresentation, type Presentation } from './presentation.ts';
-import { blocksError, careersProblem, extrasProblem, validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
+import { blocksError, careersProblem, extrasProblem, footerProblem, validBlocks, validCareers, validExtras, validFooter, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
 import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.ts';
 import { HOME_HERO_LIMITS, type HomeHero } from './home-hero.ts';
 import { validTextStyles, type TextStyles } from './text-styles.ts';
@@ -251,6 +251,8 @@ export type SiteData = {
   extras?: Extras;
   /** Trang Tuyển dụng (lib/careers.ts) */
   careers?: BlockDefaults['careers'];
+  /** Menu chân trang (lib/blocks.ts → FOOTER) */
+  footer?: BlockDefaults['footer'];
   /** Nhóm sản phẩm (phân loại, lọc) */
   productGroups?: ProductGroup[];
   /** Landing page nội bộ và liên kết landing page bên ngoài */
@@ -515,7 +517,7 @@ export function validateContent(v: unknown): v is SiteData {
   if (v.i18n !== undefined && !validTranslations(v.i18n)) return false;
   if (v.localeView !== undefined) return false; // dữ liệu hiển thị theo ngôn ngữ, không bao giờ được lưu
   if (v.presentation !== undefined && !validPresentation(v.presentation)) return false;
-  if (!validBlocks(v.blocks) || !validExtras(v.extras) || !validCareers(v.careers)) return false;
+  if (!validBlocks(v.blocks) || !validExtras(v.extras) || !validCareers(v.careers) || !validFooter(v.footer)) return false;
   if (!Array.isArray(v.staff) || v.staff.length > 100 || !v.staff.every(p => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image))))) return false;
   if (v.projects !== undefined && (!Array.isArray(v.projects) || v.projects.length > 500 || !v.projects.every(validProject) || !uniqueBy(v.projects as Project[], p => p.slug) || !uniqueBy(v.projects as Project[], p => p.id))) return false;
   if (!Array.isArray(v.posts) || v.posts.length > 500 || !v.posts.every(validPost)) return false;
@@ -654,6 +656,7 @@ export function contentError(v: unknown): string | null {
   if (!validBlocks(v.blocks)) return `Nội dung khối trang: ${blocksError(v.blocks)}`;
   if (!validExtras(v.extras)) return `Cấu hình trang: ${extrasProblem(v.extras)}`;
   if (!validCareers(v.careers)) return `Tuyển dụng: ${careersProblem(v.careers)}`;
+  if (!validFooter(v.footer)) return `Menu chân trang: ${footerProblem(v.footer)}`;
 
   if (v.pageSeo !== undefined && !validPageSeo(v.pageSeo)) {
     if (!object(v.pageSeo)) return 'Cài đặt website → SEO từng trang: dữ liệu không hợp lệ.';

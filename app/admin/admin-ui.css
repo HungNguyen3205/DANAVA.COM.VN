@@ -1209,3 +1209,10 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .eq-glbprev__rep dt { color: var(--ax-muted, #6b7489); font-size: 11px; font-weight: 700; }
 .ax-scope .eq-glbprev__rep dd { margin: 0; font-size: 12.5px; font-weight: 700; }
 .ax-scope .eq-glbprev__rep p { grid-column: 1 / -1; }
+
+/* Menu chân trang: tên + đường dẫn trên một dòng */
+.ax-footrow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.ax-footrow input { min-width: 0; height: 32px; padding: 0 8px; border: 1px solid #dfe4ee; border-radius: 8px; font: inherit; font-size: 13px; }
+.ax-footrow input:first-child { font-weight: 700; }
+.ax-check { display: flex; align-items: center; gap: 6px; margin: 4px 0 8px; font-size: 12.5px; color: #4b5670; }
+.ax-error { margin: 0 0 10px; padding: 8px 12px; border-radius: 10px; background: #fef2f2; color: #b42318; font-size: 13px; }

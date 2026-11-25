@@ -78,6 +78,11 @@ export const BLOCK_META: Record<BlockKey, { title: string; desc: string; config:
       long: ['overview', 'mission']
     }
   },
+  footer: {
+    title: 'Menu chân trang',
+    desc: 'Các cột và liên kết ở chân trang website. Cột "Giải pháp" tự liệt kê các giải pháp; có thể thêm mục riêng.',
+    config: { hidden: ['key', 'titleKey', 'auto'], labels: { ...COMMON, columns: 'Các cột', items: 'Liên kết', label: 'Tên', href: 'Đường dẫn', visible: 'Hiển thị' } }
+  },
   menu: {
     title: 'Menu Giải pháp',
     desc: 'Các cột trong menu "Giải pháp" trên đầu trang (máy tính) và trong menu điện thoại — chỉ chữ, không có ảnh. Mục để trống đường dẫn chỉ hiển thị, không bấm được (vd. công cụ nội bộ). Đường dẫn: /trang-trong-website/ hoặc https://…',
