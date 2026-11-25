@@ -1,7 +1,7 @@
 'use client';
 /** Các bảng điều khiển của phòng lab thiết kế phòng tập (components/site/gym/GymStudio.tsx). */
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { Archive, ArrowDownUp, ArrowUpDown, Ban, Lightbulb, MessagesSquare, Minus, PanelsTopLeft, QrCode, ShoppingBag, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
+import { Archive, Armchair, ArrowDownUp, ArrowUpDown, Ban, GlassWater, Grid3x3, RectangleVertical, Shrub, Sprout, Store, Lightbulb, MessagesSquare, Minus, PanelsTopLeft, QrCode, ShoppingBag, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
 import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory, type EquipmentKind } from '@/lib/equipment';
 import { BUSINESS_MODELS, FIXTURE_KINDS, FLOOR_USES, LINK_KINDS, STRATEGIES, fmtArea, newProject, type BusinessModel, type FixtureKind, type Floor, type FurnKind, type InteriorStyle, type LinkKind, type Project, type Reception, type Strategy } from '@/lib/gym-project';
 import { FURNITURE, INTERIOR_STYLES, RECEPTION_SIZES } from '@/lib/gym-decor';
@@ -280,30 +280,36 @@ export function ReceptionPanel({ p, set }: { p: Project; set: (patch: Partial<Re
 
 /* ---------- Phong cách & trang trí ---------- */
 const DECOR: FurnKind[] = ['plant', 'mirror', 'linear-light', 'mat-zone', 'turf', 'rest-bench', 'water', 'display'];
+const DECOR_TILE: Partial<Record<FurnKind, [LucideIcon, string]>> = { plant: [Sprout, 'Cây'], mirror: [RectangleVertical, 'Gương'], 'linear-light': [Lightbulb, 'Đèn'], 'mat-zone': [Grid3x3, 'Thảm'], turf: [Shrub, 'Cỏ'], 'rest-bench': [Armchair, 'Ghế nghỉ'], water: [GlassWater, 'Nước'], display: [Store, 'Kệ'] };
+const WALL_COLORS = ['#2f3237', '#b98b5e', '#cfe3d4', '#2f6f5e', '#3a4a6b', '#9f2b2b'];
 export function StylePanel({ p, floor, set, addDecor }: { p: Project; floor: Floor; set: (fn: (p: Project) => Project) => void; addDecor: (k: FurnKind) => void }) {
+  const accent = floor.accent || INTERIOR_STYLES[p.brief.interior].accentWall;
+  const setAccent = (v: string | undefined) => set(q => ({ ...q, floors: q.floors.map(f => (f.id === floor.id ? { ...f, accent: v } : f)) }));
   return (
-    <div className="gs-panel">
-      <h3>Phong cách nội thất <small>dùng chung toàn công trình</small></h3>
-      <div className="gs-cards gs-cards--style">
-        {(Object.keys(INTERIOR_STYLES) as InteriorStyle[]).map(k => { const s = INTERIOR_STYLES[k]; return (
-          <button key={k} type="button" role="radio" aria-checked={p.brief.interior === k} className={p.brief.interior === k ? 'is-on' : ''} onClick={() => set(q => ({ ...q, brief: { ...q.brief, interior: k } }))}>
-            <span className="gs-swatch">{[s.floor, s.wall, s.accentWall, s.wood, s.turf].map(c => <i key={c} style={{ background: c }} />)}</span>
-            <b>{s.label}</b><small>{s.hint}</small>
+    <div className="gs-panel gs-stylep">
+      <h3>Phong cách</h3>
+      <div className="gs-styles" role="radiogroup" aria-label="Phong cách nội thất">
+        {(Object.keys(INTERIOR_STYLES) as InteriorStyle[]).map(k => { const st = INTERIOR_STYLES[k]; return (
+          <button key={k} type="button" role="radio" aria-checked={p.brief.interior === k} className={p.brief.interior === k ? 'is-on' : ''} title={st.hint} onClick={() => set(q => ({ ...q, brief: { ...q.brief, interior: k } }))}>
+            <span className="gs-swatch">{[st.floor, st.wall, st.accentWall, st.wood].map(c => <i key={c} style={{ background: c }} />)}</span>
+            <b>{st.label}</b>
           </button>); })}
       </div>
       <h3>Thương hiệu</h3>
-      <div className="gs-grid2">
-        <label className="gs-text"><span>Chữ logo</span><input maxLength={24} value={p.brand.logoText} onChange={e => { const v = e.target.value; set(q => ({ ...q, brand: { ...q.brand, logoText: v } })); }} /></label>
-        <label className="gs-text"><span>Màu nhấn</span><input type="color" value={p.brand.accent} onChange={e => { const v = e.target.value; set(q => ({ ...q, brand: { ...q.brand, accent: v } })); }} /></label>
+      <div className="gs-brandrow">
+        <input className="gs-logoinput" maxLength={24} value={p.brand.logoText} placeholder="Chữ logo" aria-label="Chữ logo" onChange={e => { const v = e.target.value; set(q => ({ ...q, brand: { ...q.brand, logoText: v } })); }} />
+        <label className="gs-colorbtn" title="Màu nhấn thương hiệu" style={{ background: p.brand.accent }}><input type="color" value={p.brand.accent} onChange={e => { const v = e.target.value; set(q => ({ ...q, brand: { ...q.brand, accent: v } })); }} /></label>
       </div>
-      <h3>Điểm nhấn riêng {floor.name.toLowerCase()}</h3>
-      <div className="gs-row">
-        <label className="gs-text"><span>Màu tường nhấn</span><input type="color" value={floor.accent || INTERIOR_STYLES[p.brief.interior].accentWall} onChange={e => { const v = e.target.value; set(q => ({ ...q, floors: q.floors.map(f => (f.id === floor.id ? { ...f, accent: v } : f)) })); }} /></label>
-        {floor.accent && <button type="button" className="gs-btn" onClick={() => set(q => ({ ...q, floors: q.floors.map(f => (f.id === floor.id ? { ...f, accent: undefined } : f)) }))}>Theo phong cách chung</button>}
+      <h3>Tường nhấn {floor.name.toLowerCase()}</h3>
+      <div className="gs-swatches" role="radiogroup" aria-label="Màu tường nhấn">
+        <button type="button" className={`gs-swdefault${!floor.accent ? ' is-on' : ''}`} onClick={() => setAccent(undefined)} title="Theo phong cách chung">Mặc định</button>
+        {WALL_COLORS.map(c => <button key={c} type="button" role="radio" aria-checked={floor.accent === c} className={floor.accent === c ? 'is-on' : ''} style={{ background: c }} onClick={() => setAccent(c)} aria-label={c} />)}
+        <label className="gs-swatch-more" title="Màu khác"><input type="color" value={accent} onChange={e => setAccent(e.target.value)} />+</label>
       </div>
-      <h3>Thêm trang trí vào {floor.name.toLowerCase()}</h3>
-      <div className="gs-addgrid">{DECOR.map(k => <button key={k} type="button" onClick={() => addDecor(k)}><Plus aria-hidden="true" />{FURNITURE[k].label}</button>)}</div>
-      <p className="gs-note">Phong cách tối vẫn giữ máy, biển chỉ dẫn và lối đi đủ sáng (đèn tuyến tính, sàn có vạch).</p>
+      <h3>Thêm trang trí <small>bấm để thêm, kéo để đặt</small></h3>
+      <div className="gs-tiles gs-tiles--decor">
+        {DECOR.map(k => { const t = DECOR_TILE[k]; if (!t) return null; const [Ic, short] = t; return <button key={k} type="button" onClick={() => addDecor(k)} title={`Thêm ${FURNITURE[k].label.toLowerCase()}`}><Ic aria-hidden="true" /><span>{short}</span></button>; })}
+      </div>
     </div>
   );
 }

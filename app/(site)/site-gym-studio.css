@@ -651,3 +651,20 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-stepper b { min-width: 22px; text-align: center; font-size: 14px; }
 .gs-rec .gs-fold .gs-text { margin: 8px 12px; }
 @media (max-width: 380px) { .gs-tiles--rec { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Màu sắc, trang trí: gọn */
+.gs-stylep h3 { margin: 12px 0 6px; }
+.gs-stylep h3:first-child { margin-top: 0; }
+.gs-styles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.gs-styles button { display: grid; gap: 5px; padding: 7px; border: 1.5px solid var(--gs-line); border-radius: 12px; background: #fff; color: var(--gs-navy); font: inherit; font-size: 12.5px; text-align: left; cursor: pointer; }
+.gs-styles button.is-on { border-color: var(--gs-orange); background: #fff7f0; }
+.gs-styles .gs-swatch { margin: 0; }
+.gs-styles .gs-swatch i { flex: 1; width: auto; height: 16px; }
+.gs-brandrow { display: flex; gap: 6px; }
+.gs-logoinput { flex: 1; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid #dfe4ee; border-radius: 10px; color: var(--gs-navy); font: inherit; font-size: 14px; font-weight: 800; letter-spacing: .04em; }
+.gs-colorbtn { position: relative; flex: none; width: 36px; height: 36px; border-radius: 10px; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .6), 0 0 0 1px #dfe4ee; cursor: pointer; }
+.gs-colorbtn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.gs-swdefault { height: 24px; padding: 0 8px; border: 1px solid var(--gs-line); border-radius: 999px; background: #fff; color: var(--gs-muted); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; }
+.gs-swdefault.is-on { border-color: var(--gs-orange); color: #c2410c; }
+.gs-tiles--decor { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.gs-tiles--decor button { --c: #2f6f5e; }
