@@ -215,3 +215,31 @@
   .pj .pj__card { padding: 22px 18px 24px; }
   .pj .pj__btn { width: auto; flex: 1 1 auto; }
 }
+
+/* Lời mời đối tác (v3): thẻ lợi ích hiện đủ, quỹ đạo bay bổng */
+.pj .pj__perks small { display: block; -webkit-line-clamp: unset; overflow: visible; }
+.pj .pj__perks b { white-space: nowrap; }
+.pj .pj__perks li { padding: 11px 12px; }
+
+/* Cả vòng logo xoay chậm quanh DANAVA, từng logo vẫn đứng thẳng; rê chuột vào thì dừng */
+@property --spin { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+.pj .pj__node { transform: rotate(calc(var(--a) + var(--spin))) translateY(-42cqw) rotate(calc(-1 * (var(--a) + var(--spin)))); transition: scale .25s ease; }
+.pj .pj__node:hover { scale: 1.12; }
+/* Sóng sáng lan ra từ tâm */
+.pj__wave { position: absolute; inset: 0; width: 30%; height: 30%; margin: auto; border: 2px solid rgba(255, 176, 102, .55); border-radius: 50%; opacity: 0; pointer-events: none; }
+/* Đốm sao lấp lánh */
+.pj__star { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px 2px rgba(255, 214, 170, .9); opacity: .25; pointer-events: none; }
+.pj__star:nth-of-type(2n) { width: 4px; height: 4px; }
+.pj .pj__core { box-shadow: 0 0 0 10px rgba(255, 255, 255, .08), 0 0 0 22px rgba(255, 176, 102, .07), 0 0 80px rgba(242, 107, 29, .6); }
+@media (prefers-reduced-motion: no-preference) {
+  .pj .pj__orbit { animation: pj-orbit 48s linear infinite; }
+  .pj .pj__orbit:hover { animation-play-state: paused; }
+  .pj__wave { animation: pj-wave 3.6s ease-out infinite; }
+  .pj__wave--2 { animation-delay: 1.8s; }
+  .pj__star { animation: pj-twinkle 2.8s ease-in-out infinite; animation-delay: var(--d, 0s); }
+  .pj .pj__core { animation: pj-breathe 4s ease-in-out infinite; }
+}
+@keyframes pj-orbit { to { --spin: 360deg; } }
+@keyframes pj-wave { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(2.7); } }
+@keyframes pj-twinkle { 0%, 100% { opacity: .15; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.2); } }
+@keyframes pj-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }

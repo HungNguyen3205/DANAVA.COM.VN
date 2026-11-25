@@ -165,9 +165,9 @@ function JoinBand({ data, partners, cities, places }: { data: SiteData; partners
   const titleCms = { 'data-cms': 'pages.doi-tac.ctaTitle', 'data-cms-label': 'Lời mời đối tác: tiêu đề', 'data-cms-rich': '' };
   const lead = t('lead', 'Mang cơ sở của bạn lên nền tảng danava.vn, vận hành gọn bằng DANAVA Studio và lớn lên cùng cộng đồng wellness. DANAVA đi cùng bạn từ ngày đầu.', 'Câu dẫn', { multiline: true });
   const perks = [
-    { icon: <Store aria-hidden="true" />, title: t('perk.1.title', 'Khách tìm thấy bạn', 'Lợi ích 1: tiêu đề'), text: t('perk.1.text', 'Trang riêng trên danava.vn: dịch vụ, giờ mở cửa, đặt lịch.', 'Lợi ích 1: mô tả') },
-    { icon: <CalendarCheck aria-hidden="true" />, title: t('perk.2.title', 'Vận hành nhẹ tênh', 'Lợi ích 2: tiêu đề'), text: t('perk.2.text', 'Lịch lớp, hội viên, thanh toán trên DANAVA Studio.', 'Lợi ích 2: mô tả') },
-    { icon: <Megaphone aria-hidden="true" />, title: t('perk.3.title', 'Cùng nhau lan toả', 'Lợi ích 3: tiêu đề'), text: t('perk.3.text', 'Sự kiện, workshop và truyền thông chung với cộng đồng.', 'Lợi ích 3: mô tả') }
+    { icon: <Store aria-hidden="true" />, title: t('perk.1.title', 'Được tìm thấy', 'Lợi ích 1: tiêu đề'), text: t('perk.1.text', 'Trang riêng trên danava.vn', 'Lợi ích 1: mô tả') },
+    { icon: <CalendarCheck aria-hidden="true" />, title: t('perk.2.title', 'Vận hành gọn', 'Lợi ích 2: tiêu đề'), text: t('perk.2.text', 'Lịch, hội viên, thanh toán', 'Lợi ích 2: mô tả') },
+    { icon: <Megaphone aria-hidden="true" />, title: t('perk.3.title', 'Cùng lan toả', 'Lợi ích 3: tiêu đề'), text: t('perk.3.text', 'Sự kiện & truyền thông chung', 'Lợi ích 3: mô tả') }
   ];
   const primary = t('cta.primary', 'Trở thành đối tác', 'Nút chính');
   const secondary = t('cta.secondary', 'Xem hệ sinh thái', 'Nút phụ');
@@ -213,6 +213,11 @@ function JoinBand({ data, partners, cities, places }: { data: SiteData; partners
           <div className="pj__orbit" aria-hidden="true">
             <span className="pj__ring pj__ring--1" />
             <span className="pj__ring pj__ring--2" />
+            <span className="pj__wave" />
+            <span className="pj__wave pj__wave--2" />
+            {[[12, 18, 0], [86, 14, 1.2], [92, 62, .6], [8, 74, 1.8], [50, 4, 2.4], [70, 92, .9], [26, 94, 1.5]].map(([x, y, d], i) => (
+              <span key={i} className="pj__star" style={{ left: `${x}%`, top: `${y}%`, ['--d' as string]: `${d}s` }} />
+            ))}
             <span className="pj__core"><img src="/assets/danava-mark.png" alt="" /></span>
             {orbit.map((p, i) => <span key={p.id} className="pj__node" style={{ ['--a' as string]: `${(360 / (orbit.length + 1)) * i}deg`, ['--d' as string]: `${i * .35}s` }}><img src={p.logo} alt="" loading="lazy" /></span>)}
             <span className="pj__node pj__node--you" style={{ ['--a' as string]: `${(360 / (orbit.length + 1)) * orbit.length}deg` }}><b>Bạn?</b></span>
