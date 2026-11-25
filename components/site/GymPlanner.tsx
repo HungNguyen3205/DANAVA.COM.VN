@@ -8,9 +8,9 @@
  * Thiết kế lưu trên trình duyệt của khách (localStorage) để tải lại trang không mất.
  */
 import Link from 'next/link';
-import { Ban, Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Sparkles, Trash2, TriangleAlert } from 'lucide-react';
+import { ArrowDownUp, Ban, Boxes, ChevronDown, Copy, ExternalLink, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Sparkles, Trash2, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { EQUIPMENT_CATEGORIES, formatVND, type Equipment, type EquipmentCategory, type Flooring } from '@/lib/equipment';
+import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory, type Flooring } from '@/lib/equipment';
 import { createEngine, type Engine, type Placed, type PlacedZone } from './gym-planner-engine';
 import { LAYOUT_STYLES, ZONE_KINDS, autoLayout, type LayoutStyle, type ZoneKind } from '@/lib/gym-layout';
 
@@ -32,6 +32,13 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const [sel, setSel] = useState<string | null>(null);
   const [cat, setCat] = useState<EquipmentCategory | ''>('');
   const [q, setQ] = useState('');
+  // Bộ lọc danh sách máy: nhóm cơ (máy sức mạnh), mức giá, sắp xếp; hiện dần từng trang
+  const [muscle, setMuscle] = useState<Muscle | ''>('');
+  const [priceBand, setPriceBand] = useState(0);
+  const [sort, setSort] = useState<'' | 'asc' | 'desc'>('');
+  const [limit, setLimit] = useState(PAGE);
+  const [open, setOpen] = useState('');
+  const [tab, setTab] = useState<'eq' | 'room' | 'zones'>('room');
   const [floorOn, setFloorOn] = useState(true);
   // Tự động bố trí: kiểu phòng + ngân sách (triệu đồng, trống = không giới hạn)
   const [auto, setAuto] = useState({ on: true, style: 'balanced' as LayoutStyle, budget: '', open: false, note: '' });
@@ -53,6 +60,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
         for (const z of s.zones || []) if (z.kind in ZONE_KINDS) e.addZone(z.kind, z);
         for (const it of s.items || []) { const eq = byId.get(it.eqId); if (eq) e.add(eq, it); }
         setStarted(true);
+        setTab('eq');
       }
       setReady(true);
     });
@@ -104,6 +112,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
     engine.current?.setRoom(w, l, room.tile);
     engine.current?.resetView();
     setStarted(true);
+    setTab('eq');
     // Cửa ra vào mặc định ở giữa tường trước (kéo / xoay / xóa được), để bố trí chừa lối vào
     if (!zonesRef.current.some(z => z.kind === 'door')) engine.current?.addZone('door', { x: 0, z: l / 2 - ZONE_KINDS.door.d / 2, rot: 0 });
     if (auto.on) runAuto(w, l);
@@ -125,7 +134,14 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const selEq = sel ? byId.get(placed.find(p => p.uid === sel)?.eqId || '') : undefined;
   const selZone = sel ? zones.find(z => z.uid === sel) : undefined;
   const fold = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase();
-  const shown = equipment.filter(e => (!cat || e.category === cat) && (!q.trim() || fold(`${e.name} ${e.sku || ''}`).includes(fold(q.trim()))));
+  const inCat = equipment.filter(e => !cat || e.category === cat);
+  const band = PRICE_BANDS[priceBand];
+  const shown = inCat.filter(e => (!muscle || muscleOf(e) === muscle) && band.ok(Number(e.price) || 0) && (!q.trim() || fold(`${e.name} ${e.sku || ''}`).includes(fold(q.trim()))));
+  if (sort) shown.sort((a, b) => ((Number(a.price) || (sort === 'asc' ? Infinity : -1)) - (Number(b.price) || (sort === 'asc' ? Infinity : -1))) * (sort === 'asc' ? 1 : -1));
+  const muscleCount = (m: Muscle) => inCat.filter(e => muscleOf(e) === m).length;
+  const qtyIn = (id: string) => placed.filter(p => p.eqId === id).length;
+  const filtered = !!(cat || muscle || priceBand || q.trim());
+  const resetFilters = () => { setCat(''); setMuscle(''); setPriceBand(0); setQ(''); setLimit(PAGE); };
 
   async function send(e: FormEvent) {
     e.preventDefault();
@@ -152,7 +168,12 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
       <div className="gp-layout">
         {/* ----- Bảng điều khiển ----- */}
         <aside className="gp-side" aria-label="Thiết lập phòng và thiết bị">
-          <section className="gp-box">
+          <div className="gp-tabs" role="tablist" aria-label="Bảng điều khiển">
+            <button type="button" role="tab" aria-selected={tab === 'eq'} className={tab === 'eq' ? 'is-on' : ''} onClick={() => setTab('eq')}><Boxes aria-hidden="true" /> Thiết bị{placed.length ? <i>{placed.length}</i> : null}</button>
+            <button type="button" role="tab" aria-selected={tab === 'room'} className={tab === 'room' ? 'is-on' : ''} onClick={() => setTab('room')}><Ruler aria-hidden="true" /> Phòng</button>
+            <button type="button" role="tab" aria-selected={tab === 'zones'} className={tab === 'zones' ? 'is-on' : ''} onClick={() => setTab('zones')}><Ban aria-hidden="true" /> Khu cấm{zones.length ? <i>{zones.length}</i> : null}</button>
+          </div>
+          {tab === 'room' && <section className="gp-box">
             <h2><Ruler aria-hidden="true" /> Phòng tập</h2>
             <div className="gp-room">
               <label>Dài (m)<input type="number" min={2} max={80} step={0.1} value={room.w} onChange={e => applyRoom({ w: Math.min(80, Math.max(2, Number(e.target.value) || 2)) })} /></label>
@@ -163,9 +184,9 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
               <span><Grid3x3 aria-hidden="true" /> Ô gạch <b>{Math.round(room.tile * 100)} × {Math.round(room.tile * 100)} cm</b></span>
               <input type="range" min={30} max={100} step={5} value={Math.round(room.tile * 100)} onChange={e => applyRoom({ tile: Number(e.target.value) / 100 })} />
             </label>
-          </section>
+          </section>}
 
-          <section className="gp-box gp-zones">
+          {tab === 'zones' && <section className="gp-box gp-zones">
             <h2><Ban aria-hidden="true" /> Khu không đặt máy <small>{zones.length ? `${zones.length} khu` : 'cửa, cầu thang…'}</small></h2>
             <div className="gp-zones__btns">
               {(Object.keys(ZONE_KINDS) as ZoneKind[]).map(k => (
@@ -173,29 +194,62 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
               ))}
             </div>
             <p className="gp-zones__hint">Đánh dấu chỗ không được đặt máy. Máy đặt vào sẽ bị tô đỏ; “Tự động bố trí” tự né và chừa lối đi.</p>
-          </section>
+          </section>}
 
-          <section className="gp-box gp-box--list">
-            <h2><Boxes aria-hidden="true" /> Thiết bị <small>bấm + để thêm vào phòng</small></h2>
-            <div className="gp-search"><Search aria-hidden="true" /><input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={`Tìm trong ${equipment.length} máy (tên, mã)…`} aria-label="Tìm máy" /></div>
+          {tab === 'eq' && <section className="gp-box gp-box--list">
+            <div className="gp-search"><Search aria-hidden="true" /><input type="search" value={q} onChange={e => { setQ(e.target.value); setLimit(PAGE); }} placeholder={`Tìm trong ${equipment.length} máy (tên, mã)…`} aria-label="Tìm máy" /></div>
             <div className="gp-cats" role="tablist" aria-label="Nhóm máy">
-              <button type="button" role="tab" aria-selected={!cat} className={!cat ? 'is-on' : ''} onClick={() => setCat('')}>Tất cả</button>
+              <button type="button" role="tab" aria-selected={!cat} className={!cat ? 'is-on' : ''} onClick={() => { setCat(''); setMuscle(''); setLimit(PAGE); }}>Tất cả</button>
               {(Object.keys(EQUIPMENT_CATEGORIES) as EquipmentCategory[]).filter(c => equipment.some(e => e.category === c)).map(c => (
-                <button key={c} type="button" role="tab" aria-selected={cat === c} className={cat === c ? 'is-on' : ''} onClick={() => setCat(c)}>{EQUIPMENT_CATEGORIES[c]}</button>
+                <button key={c} type="button" role="tab" aria-selected={cat === c} className={cat === c ? 'is-on' : ''} onClick={() => { setCat(c); setMuscle(''); setLimit(PAGE); }}>{SHORT_CAT[c] || EQUIPMENT_CATEGORIES[c]}<small>{equipment.filter(e => e.category === c).length}</small></button>
               ))}
             </div>
+            {cat === 'strength' && (
+              <div className="gp-muscles" aria-label="Nhóm cơ">
+                {(Object.keys(MUSCLES) as Muscle[]).filter(m => muscleCount(m)).map(m => (
+                  <button key={m} type="button" aria-pressed={muscle === m} className={muscle === m ? 'is-on' : ''} onClick={() => { setMuscle(muscle === m ? '' : m); setLimit(PAGE); }}>{MUSCLES[m].label} <small>{muscleCount(m)}</small></button>
+                ))}
+              </div>
+            )}
+            <div className="gp-filterbar">
+              <label className="gp-select" aria-label="Mức giá"><span hidden>Mức giá</span>
+                <select value={priceBand} onChange={e => { setPriceBand(Number(e.target.value)); setLimit(PAGE); }}>{PRICE_BANDS.map((p, i) => <option key={p.label} value={i}>{p.label}</option>)}</select><ChevronDown aria-hidden="true" />
+              </label>
+              <button type="button" className={`gp-sort${sort ? ' is-on' : ''}`} onClick={() => setSort(sort === '' ? 'asc' : sort === 'asc' ? 'desc' : '')} title="Sắp xếp theo giá"><ArrowDownUp aria-hidden="true" />{sort === 'asc' ? 'Giá thấp' : sort === 'desc' ? 'Giá cao' : 'Sắp xếp'}</button>
+            </div>
+            <p className="gp-count"><b>{shown.length}</b> máy{filtered && <button type="button" onClick={resetFilters}>Xóa lọc</button>}{!started && <span>· dựng phòng để thêm máy</span>}</p>
             <ul className="gp-eq">
-              {shown.map(e => (
-                <li key={e.id}>
-                  <span className="gp-eq__sw" style={{ background: e.color }}>{e.image ? <img src={e.image} alt="" loading="lazy" /> : null}</span>
-                  <span className="gp-eq__txt"><b title={e.name}>{e.name}</b><small>{e.width}×{e.depth} cm{e.dimsEstimated ? ' (ước tính)' : ''} · {e.price ? formatVND(Number(e.price)) : 'Liên hệ'}</small></span>
-                  <button type="button" className="gp-eq__add" disabled={!started} onClick={() => engine.current?.add(e)} aria-label={`Thêm ${e.name} vào phòng`}><Plus aria-hidden="true" /></button>
-                </li>
-              ))}
-              {shown.length === 0 && <li className="gp-eq__none">Không có máy nào khớp.</li>}
+              {shown.slice(0, limit).map(e => {
+                const n = qtyIn(e.id);
+                return (
+                  <li key={e.id} className={open === e.id ? 'is-open' : ''}>
+                    <button type="button" className="gp-eq__row" onClick={() => setOpen(open === e.id ? '' : e.id)} aria-expanded={open === e.id}>
+                      <span className="gp-eq__sw" style={{ background: e.color }}>{e.image ? <img src={e.image} alt="" loading="lazy" /> : null}</span>
+                      <span className="gp-eq__txt">
+                        <b title={e.name}>{e.name}</b>
+                        <span><em className={e.price ? '' : 'is-contact'}>{e.price ? formatVND(Number(e.price)) : 'Liên hệ'}</em>{n ? <i>Trong phòng ×{n}</i> : null}</span>
+                      </span>
+                    </button>
+                    <button type="button" className="gp-eq__add" disabled={!started} onClick={() => engine.current?.add(e)} aria-label={`Thêm ${e.name} vào phòng`} title={started ? 'Thêm vào phòng' : 'Dựng phòng trước'}><Plus aria-hidden="true" /></button>
+                    {open === e.id && (
+                      <div className="gp-eq__more">
+                        {e.image && <img src={e.image} alt={e.name} loading="lazy" />}
+                        <dl>
+                          {e.sku && <><dt>Mã</dt><dd>{e.sku}</dd></>}
+                          {e.kind && <><dt>Loại</dt><dd>{KIND_LABEL[e.kind]}</dd></>}
+                          <dt>Kích thước</dt><dd>{e.width} × {e.depth} × {e.height} cm{e.dimsEstimated ? ' (ước tính)' : ''}</dd>
+                        </dl>
+                        {e.source && <a href={e.source} target="_blank" rel="noopener">Xem chi tiết <ExternalLink aria-hidden="true" /></a>}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+              {shown.length > limit && <li className="gp-eq__moreBtn"><button type="button" onClick={() => setLimit(l => l + PAGE)}>Xem thêm {Math.min(PAGE, shown.length - limit)} máy</button></li>}
+              {shown.length === 0 && <li className="gp-eq__none">Không có máy nào khớp. {filtered && <button type="button" onClick={resetFilters}>Xóa bộ lọc</button>}</li>}
             </ul>
             <p className="gp-src">Danh mục, giá và hình ảnh: đối tác <a href="https://thietbigym.vn/" target="_blank" rel="noopener">thietbigym.vn</a></p>
-          </section>
+          </section>}
         </aside>
 
         {/* ----- Phòng 3D ----- */}
@@ -313,4 +367,33 @@ function AutoOptions({ auto, setAuto }: { auto: AutoState; setAuto: (f: (a: Auto
       <label className="gp-auto__budget">Ngân sách thiết bị<span><input inputMode="decimal" value={auto.budget} placeholder="không giới hạn" onChange={e => setAuto(a => ({ ...a, budget: e.target.value.replace(/[^\d.,]/g, '').slice(0, 7) }))} /> triệu đồng</span></label>
     </div>
   );
+}
+
+const PAGE = 30;
+const SHORT_CAT: Partial<Record<EquipmentCategory, string>> = { strength: 'Máy sức mạnh' };
+/** Mức giá (VNĐ); máy "Liên hệ" (giá 0) chỉ hiện ở "Mọi mức giá" */
+const PRICE_BANDS: { label: string; ok: (p: number) => boolean }[] = [
+  { label: 'Mọi mức giá', ok: () => true },
+  { label: 'Dưới 20 triệu', ok: p => p > 0 && p < 20e6 },
+  { label: '20 – 50 triệu', ok: p => p >= 20e6 && p < 50e6 },
+  { label: '50 – 100 triệu', ok: p => p >= 50e6 && p < 100e6 },
+  { label: 'Trên 100 triệu', ok: p => p >= 100e6 },
+  { label: 'Đã có giá', ok: p => p > 0 }
+];
+/** Nhóm cơ cho máy sức mạnh, đoán theo tên máy (thứ tự = ưu tiên) */
+const MUSCLES = {
+  legs: { label: 'Chân · mông', re: /leg|squat|hack|glute|hip|calf|abduct|adduct|lunge|pendulum|kick|nordic|đùi|mông|chân|bắp/i },
+  chest: { label: 'Ngực', re: /chest|fly|pec|bench press|dip|ngực/i },
+  back: { label: 'Lưng · xô', re: /\blat\b|pulldown|pull down|row|pull|back|hyper|chèo|lưng|xô/i },
+  shoulder: { label: 'Vai', re: /shoulder|lateral|delt|raise|vertical press|vai/i },
+  arms: { label: 'Tay', re: /bicep|tricep|\barm|curl|tay/i },
+  core: { label: 'Bụng', re: /abdom|\bab\b|crunch|torso|rotary|core|sit-?up|bụng/i },
+  rig: { label: 'Giàn · khung đa năng', re: /rack|smith|multi|station|cage|functional|trainer|cable|jammer/i },
+  other: { label: 'Khác', re: /$^/ }
+} as const;
+type Muscle = keyof typeof MUSCLES;
+function muscleOf(e: Equipment): Muscle | '' {
+  if (e.category !== 'strength') return '';
+  if (e.kind === 'rack' || e.kind === 'smith' || e.kind === 'multi' || e.kind === 'cable') return 'rig';
+  return (Object.keys(MUSCLES) as Muscle[]).find(m => MUSCLES[m].re.test(e.name)) || 'other';
 }
