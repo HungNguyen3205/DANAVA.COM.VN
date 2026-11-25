@@ -181,7 +181,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
           <img src={dark ? '/assets/danava-logo-light.png' : '/assets/danava-logo-trim.png'} alt="DANAVA Solutions" width={554} height={135} className="lg-logo" />
           <p className="lg-hello">{state === 'setup' ? 'Chưa sẵn sàng' : hello}</p>
           <h1 id="lg-title">{state === 'setup' ? 'Thiết lập quản trị' : <>Đăng nhập <em>quản trị</em></>}</h1>
-          <p className="lg-sub">{state === 'setup' ? 'Máy chủ chưa có mật khẩu quản trị.' : 'Dùng tài khoản được cấp. Chủ website để trống tên đăng nhập.'}</p>
+          <p className="lg-sub">{state === 'setup' ? 'Máy chủ chưa có mật khẩu quản trị.' : 'Đăng nhập bằng tài khoản được cấp để bắt đầu '}</p>
 
           {error && (
             <div role="alert" className="lg-error">
@@ -202,14 +202,14 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
           ) : (
             <form onSubmit={login} className="lg-form">
               <label className="lg-field">
-                <span className="lg-label">Tên đăng nhập <small>không bắt buộc</small></span>
+                <span className="lg-label">Tên đăng nhập <small>(*)</small></span>
                 <span className="lg-input">
                   <UserRound size={18} aria-hidden="true" />
                   <input name="username" type="text" autoComplete="username" maxLength={32} autoCapitalize="none" spellCheck={false} placeholder="vd. trang.cskh" />
                 </span>
               </label>
               <label className="lg-field">
-                <span className="lg-label">Mật khẩu</span>
+                <span className="lg-label">Mật khẩu <small>(*)</small></span>
                 <span className="lg-input">
                   <LockKeyhole size={18} aria-hidden="true" />
                   <input
@@ -239,7 +239,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
             </form>
           )}
 
-          <p className="lg-foot">Chỉ dành cho đội ngũ DANAVA và tài khoản được cấp quyền.</p>
+          <p className="lg-foot">Chỉ dành cho đội ngũ DANAVA Solutions.</p>
         </section>
       </main>
     </div>
