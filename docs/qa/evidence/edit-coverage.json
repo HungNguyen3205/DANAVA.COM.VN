@@ -1,124 +1,27 @@
 {
  "/": {
-  "total": 202,
+  "total": 332,
   "missing": 5,
   "samples": [
-   "A › Đến nội dung chính",
+   "s-header › VI",
    "hb-sec › TD Land",
    "hb-sec › Nội bộ",
    "hb-sec › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
    "hb-sec › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn"
   ]
  },
- "/ve-danava/": {
-  "total": 119,
+ "/bao-gia-setup-phong-gym/": {
+  "total": 180,
   "missing": 1,
   "samples": [
-   "A › Đến nội dung chính"
-  ]
- },
- "/giai-phap/": {
-  "total": 108,
-  "missing": 6,
-  "samples": [
-   "A › Đến nội dung chính",
-   "svn-sec › Website doanh nghiệp, cá nhân, bán hàng và…",
-   "svn-sec › Landing page giới thiệu dịch vụ và chiến…",
-   "svn-sec › Lễ ra mắt sản phẩm, họp báo, triển lãm, lễ…",
-   "svn-sec › Thiết kế, thi công booth, backdrop, đạo cụ…",
-   "svn-sec › Thiết bị âm thanh, ánh sáng, màn hình LED…"
-  ]
- },
- "/giai-phap/danava-studio/": {
-  "total": 267,
-  "missing": 3,
-  "samples": [
-   "A › Đến nội dung chính",
-   "st-app › ycv.danava.vn",
-   "s-section › Bước 1: Bấm vào Phím tắt Bước 2: Bấm vào Dấu +Bước 3: Bấm vào Icon Web"
-  ]
- },
- "/giai-phap/thiet-ke-website/": {
-  "total": 198,
-  "missing": 15,
-  "samples": [
-   "A › Đến nội dung chính",
-   "s-section › Website thương hiệu",
-   "s-section › Nền tảng & ứng dụng",
-   "s-section › Landing page",
-   "s-section › hudisofa.com",
-   "s-section › danavago.com",
-   "s-section › danava.vn",
-   "s-section › glg.danava.com.vn",
-   "s-section › wellosophy.danava.com.vn",
-   "s-section › letanthanh.com",
-   "s-section › workspace.danava.com.vn",
-   "s-section › hello.danava.vn",
-   "s-section › Báo giá dựa trên số lượng trang, tính năng đặc thù (đặt lịch, bán gói,",
-   "s-section › Đăng ký tên miền là một trong những bước đầu tiên quan trọng mà các we",
-   "s-section › Tên miền đại diện cho thương hiệu của công ty có sự kết nối qua lại. N"
-  ]
- },
- "/dich-vu/": {
-  "total": 76,
-  "missing": 1,
-  "samples": [
-   "A › Đến nội dung chính"
-  ]
- },
- "/dich-vu/truyen-thong/": {
-  "total": 89,
-  "missing": 3,
-  "samples": [
-   "A › Đến nội dung chính",
-   "s-section › Giải pháp DANAVA",
-   "s-section › Báo giá theo phạm vi kênh và số lượng nội dung mỗi tháng."
-  ]
- },
- "/he-sinh-thai/": {
-  "total": 290,
-  "missing": 24,
-  "samples": [
-   "A › Đến nội dung chính",
-   "hx-live › danava.vn",
-   "hx-live › studio.danava.vn",
-   "hx-live › hello.danava.vn",
-   "hx-live › edu-yoga.danava.vn",
-   "hx-live › danavago.com",
-   "hx-live › ycv.danava.vn",
-   "hx-live › hariver.danava.vn",
-   "hx-live › hue.danava.vn",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Huế",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Hồ Chí Minh",
-   "hx-sec › Hồ Chí Minh",
-   "hx-sec › Cà Mau",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Hà Nội",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Đà Nẵng",
-   "hx-sec › Đồng Tháp"
-  ]
- },
- "/du-an/": {
-  "total": 133,
-  "missing": 3,
-  "samples": [
-   "A › Đến nội dung chính",
-   "hb-sec › Sun Group",
-   "hb-sec › TD Land"
+   "s-header › VI"
   ]
  },
  "/blogs/": {
-  "total": 148,
+  "total": 278,
   "missing": 43,
   "samples": [
-   "A › Đến nội dung chính",
+   "s-header › VI",
    "bl-feature › Cảm ơn [team tumy] các câu lạc bộ yoga đã đồng hành – chuỗi sự kiện cổ",
    "bl-feature › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
    "bl-feature › Chuỗi sự kiện cổng năng lượng 05/05 lần đầu tiên tại đà nẵng",
@@ -163,11 +66,175 @@
    "bl-sec › Kinh nghiệm lái xe giúp ô tô luôn bền đẹp"
   ]
  },
+ "/blogs/2-yoga-workshop-yoga-tri-lieu-co-vai-gay-voi-chu-de-cot-song-la-cuoc-song/": {
+  "total": 224,
+  "missing": 18,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › #2 Yoga workshop “yoga trị liệu cổ vai gáy” với chủ đề: cột sống là cu",
+   "s-article-toc__desktop › \"YOGA CLUB VIETNAM ĐỒNG HÀNH CÙNG CHUYÊN GIA\" KẾT NỐI - ĐỒNG HÀNH - CH",
+   "s-article-toc__desktop › MỌI THẮC MẮC LIÊN HỆ",
+   "P › YOGA WORKSHOP \"YOGA TRỊ LIỆU CỔ VAI GÁY\" VỚI CHỦ ĐỀ: CỘT SỐNG LÀ CUỘC ",
+   "P › Kết thúc Workshop \"Cột sống là cuộc sống\" vừa qua là buổi chia sẻ vô c",
+   "P › Đến với buổi buổi Workshop ngày 16/12 vừa rồi, Thầy ĐẶNG NGỌC THÔNG đã",
+   "P › Thay mặt cho Yoga Club Việt Nam cùng những học viên tham gia buổi Work",
+   "P › Hy vọng rằng trong tương lai gần, chương trình Yoga Club Vietnam đồng ",
+   "H3 › \"YOGA CLUB VIETNAM ĐỒNG HÀNH CÙNG CHUYÊN GIA\" KẾT NỐI - ĐỒNG HÀNH - CH",
+   "P › Chương trình hướng đến cộng đồng yêu Yoga Việt",
+   "LI › Đơn vị đồng hành: Yoga Club Vietnam",
+   "LI › Đơn vị tổ chức: DANAVA",
+   "LI › Đơn vị Truyền thông: DANAVA SOLUTIONS",
+   "H3 › MỌI THẮC MẮC LIÊN HỆ",
+   "LI › Trưởng ban tổ chức: Mr Thành - 0935 91 7677",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
+   "s-section › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn"
+  ]
+ },
+ "/blogs/3-yoga-workshop-tam-quan-trong-cua-the-luc-trong-tap-luyen-yoga/": {
+  "total": 223,
+  "missing": 19,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › #3 Yoga workshop “tầm quan trọng của thể lực trong tập luyện yoga”",
+   "P › Ngày 30/12/2023 DANAVA tổ chức thành công chương trình WORKSHOP \"TẦM Q",
+   "P › Chương trình có sự góp mặt của:",
+   "LI › Cô Hoàng Quyên - Huấn luyện viên Yoga nâng cao",
+   "LI › Ông LÊ TẤN THÀNH - Giám đốc DANAVA, Sáng lập Yoga Club Vietnam",
+   "LI › Cùng với nhiều học viên, HLV Yoga tại Đà Nẵng Chương trình Yoga Club V",
+   "P › Kết thúc Workshop \"TẦM QUAN TRỌNG CỦA THỂ LỰC TRONG TẬP LUYỆN YOGA\" vừ",
+   "P › Đến với buổi buổi Workshop ngày 30/12 vừa rồi, CÔ HOÀNG QUYÊN đã dành ",
+   "P › Thay mặt cho Yoga Club Việt Nam cùng những học viên tham gia buổi Work",
+   "P › Hy vọng rằng trong tương lai gần, chương trình Yoga Club Vietnam đồng ",
+   "P › Thay mặt BTC xin gửi lời cảm ơn chân thành nhất tới Quý học viên, đội ",
+   "LI › Đơn vị đồng hành: Yoga Club Vietnam",
+   "LI › Đơn vị tổ chức: DANAVA",
+   "LI › Đơn vị Truyền thông: DANAVA SOLUTIONS",
+   "H3 › MỌI THẮC MẮC LIÊN HỆ",
+   "LI › Trưởng ban tổ chức: Mr Thành - 093 591 76 77",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
+   "s-section › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn"
+  ]
+ },
+ "/blogs/5-quy-tac-ung-xu-niyama-cua-yoga/": {
+  "total": 221,
+  "missing": 21,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › 5 quy tắc ứng xử (Niyama) của Yoga",
+   "P › Hai bước đầu tiên là thực hành Yama và Niyama, hay các nguyên tắc đạo ",
+   "P › Trong Yama và Niyama chúng ta có những thái độ tích cực đối với xung q",
+   "P › Nhánh thứ 2 trong 8 nhánh yoga của Patanjali là 5 quy tắc ứng xử Niyam",
+   "P › Saucha (thanh lọc) là nguyên tắc đầu tiên trong 5 Niyamas của Patanjal",
+   "P › Tập luyện các tư thế yoga, hít thở và thiền sẽ làm thanh sạch cơ thể v",
+   "P › Santosha (sự bằng lòng) là không ham mê những cái chúng ta không có cũ",
+   "P › Thật dễ dàng để tâm trí bị phỉnh lừa để chúng ta nghĩ rằng ta sẽ hạnh ",
+   "P › Thực tập sự hài lòng giải phóng chúng ta khỏi những đau khổ không cần ",
+   "P › Tapas (sự khổ luyện) là muốn nói đến sự luyện tập kiên trì của người t",
+   "P › Về cơ bản, Tapas là khi bạn cố gắng làm bất cứ điều gì có ích, tích cự",
+   "P › Tapas thay đổi và làm thanh sạch chúng ta cũng như làm thức tỉnh và gi",
+   "P › Svadhyaya (tự học, tự luyện) là khả năng thấy được bản chất thiêng liê",
+   "P › Cuộc sống cho ta vô số cơ hội để ta liên tục học hỏi; những khuyết điể",
+   "P › Ishvara pranidhana (sự cống hiến) là sự tận tụy, cống hiến, không mong",
+   "P › Patanjali dạy rằng để đạt đến đích của yoga chúng ta phải hòa tan bản ",
+   "P › Hai trong tám nhánh yoga của Patanjali, Yama và Niyama cho người thực ",
+   "P › Soạn dịch: Thúy Lê",
+   "s-section › – Khi bạn tụng OMMMM, bạn cảm thấy thế nào?– Bạn có cảm thấy một sự kì",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q"
+  ]
+ },
+ "/blogs/cac-buoc-tu-ve-sinh-he-thong-cam-bien-abs-o-to-tai-nha/": {
+  "total": 203,
+  "missing": 27,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Các bước tự vệ sinh hệ thống cảm biến ABS ô tô tại nhà",
+   "s-article-toc__desktop › Đầu tiên, bạn cần chuẩn bị những dụng cụ cần thiết sau:",
+   "s-article-toc__desktop › Bước 1: Tháo bánh xe",
+   "s-article-toc__desktop › Bước 2: Tháo cảm biến tốc độ bánh xe",
+   "s-article-toc__desktop › Bước 3: Vệ sinh cảm biến",
+   "s-article-toc__desktop › Bước 4: Lắp lại cảm biến",
+   "P › Cảm biến tốc độ ABS (Anti-lock Brake System) là hệ thống chống bó cứng",
+   "P › Thông thường cảm biến tốc độ hay bị bám bụi hoặc bị gỉ sét sau một thờ",
+   "H2 › Đầu tiên, bạn cần chuẩn bị những dụng cụ cần thiết sau:",
+   "P › – Kích thủy lực và đội kê xe",
+   "P › – Cần xiết lực, tuýp mở bánh xe, lục giác và cờ lê phù hợp",
+   "P › – Khăn lau, dung dịch tẩy rửa",
+   "H2 › Bước 1: Tháo bánh xe",
+   "P › Nới lỏng các tắc kê bánh xe trước khi nâng bánh xe lên khỏi mặt đất (đ",
+   "P › Bước tiếp theo là tháo bánh xe ra để nhìn thấy cảm biến tốc độ. Với ha",
+   "H2 › Bước 2: Tháo cảm biến tốc độ bánh xe",
+   "P › Bạn cần xác định vị trí cảm biến ABS tại các bánh xe. Cảm biến ABS thư",
+   "P › Để tháo cảm biến ABS, bạn cần tháo một bu lông định vị dây cáp cảm biế",
+   "P › Ba bu lông này thường là loại 10 ly, bạn cần chú ý để tháo 3 bu lông n",
+   "P › Lưu ý: Không được phép kéo dây cảm biến vì thao tác này có thể làm hỏn",
+   "H2 › Bước 3: Vệ sinh cảm biến",
+   "P › Sau khi bạn tháo rời cảm biến, bạn cần lấy khăn để lau sạch cảm biến.",
+   "P › Lưu ý: Hạn chế sử dụng nước và hóa chất tẩy rửa để vệ sinh cảm biến, t",
+   "H2 › Bước 4: Lắp lại cảm biến",
+   "P › Sau khi cảm biến ABS đã được vệ sinh sạch sẽ, bạn cần lắp cảm biến về ",
+   "P › Sau đó gắn bánh xe lại như bình thường. Bạn cũng đừng quá lo lắng khi "
+  ]
+ },
+ "/blogs/cac-loai-nuoc-rua-kinh-o-to-tot-nhat-hien-nay/": {
+  "total": 202,
+  "missing": 26,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Các loại nước rửa kính ô tô tốt nhất hiện nay",
+   "s-article-toc__desktop › Trước khi chọn mua nước rửa kính bạn cần lưu ý những điều sau:",
+   "s-article-toc__desktop › Các loại nước rửa kính giúp xế yêu luôn sáng bóng:",
+   "s-article-toc__desktop › Nước rửa kính xe oto Nano Ruki",
+   "s-article-toc__desktop › Nước rửa kính ô tô Car 3M",
+   "s-article-toc__desktop › Nước rửa kính Sonax",
+   "s-article-toc__desktop › Nước rửa kính Focar Screen Wash",
+   "s-article-toc__desktop › Nước rửa kính ô tô Ekokemika XGLASS",
+   "P › Nước rửa kính ô tô là loại nước được dự trữ sẵn trong xe, dùng để rửa ",
+   "P › Để kính lái ô tô được bền và sử dụng an toàn, bạn không nên bỏ qua các",
+   "H2 › Trước khi chọn mua nước rửa kính bạn cần lưu ý những điều sau:",
+   "LI › Lựa chọn nước rửa kính ô tô có chất hoạt động bề mặt chống ố mốc và là",
+   "LI › Ưu tiên lựa chọn những loại nước rửa có độ pH trung tính đảm bảo các p",
+   "LI › Nếu chọn nước rửa kính gốc nước, bạn cần ưu tiên sử dụng nước lọc RO t",
+   "H2 › Các loại nước rửa kính giúp xế yêu luôn sáng bóng:",
+   "H2 › Nước rửa kính xe oto Nano Ruki",
+   "P › Nước rửa kính Nano Ruki là dòng sản phẩm được sản xuất theo công nghệ ",
+   "H2 › Nước rửa kính ô tô Car 3M",
+   "P › Nước rửa kính đã được pha chế sẵn theo một tỷ lệ thích hợp nhất, khi m",
+   "H2 › Nước rửa kính Sonax",
+   "P › Sonax Xtreme Clear View 1:100 cũng là dòng sản phẩm đến từ Cộng Hòa Li",
+   "H2 › Nước rửa kính Focar Screen Wash",
+   "P › Nước rửa kính ô tô Focar Screen Wash hỗ trợ làm sạch bề mặt kính ô tô,",
+   "H2 › Nước rửa kính ô tô Ekokemika XGLASS",
+   "P › Nước rửa kính ô tô Ekokemika Xglass sẽ phá vỡ bụi bẩn, xác côn trùng,m"
+  ]
+ },
+ "/blogs/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-nang/": {
+  "total": 223,
+  "missing": 17,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Cảm ơn [team tumy] các câu lạc bộ yoga đã đồng hành – chuỗi sự kiện cổ",
+   "s-article-toc__desktop › CHUỖI SỰ KIỆN CỔNG NĂNG LƯỢNG 05/05 LẦN ĐẦU TIÊN TẠI ĐÀ NẴNG",
+   "s-article-toc__desktop › CHUỖI SỰ KIỆN CỔNG NĂNG LƯỢNG 05/05 LẦN ĐẦU TIÊN TẠI ĐÀ NẴNG",
+   "s-article-toc__desktop › MỌI THẮC MẮC LIÊN HỆ",
+   "H3 › CHUỖI SỰ KIỆN CỔNG NĂNG LƯỢNG 05/05 LẦN ĐẦU TIÊN TẠI ĐÀ NẴNG",
+   "P › Kết thúc chuỗi \"Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024\" vừa q",
+   "P › Đến với chuỗi Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024, Team Tu",
+   "P › Cảm ơn Team Tumy, Ayurveda Yoga Rừng Hương, các Câu lạc bộ Yoga và nhữ",
+   "P › Hy vọng trong tương lai gần Danava cùng Team Tumy sẽ đưa Sự Kiện Sound",
+   "H3 › CHUỖI SỰ KIỆN CỔNG NĂNG LƯỢNG 05/05 LẦN ĐẦU TIÊN TẠI ĐÀ NẴNG",
+   "LI › Đơn vị tổ chức: DANAVA & TEAM TUMY",
+   "LI › Đơn vị Truyền thông: DANAVA",
+   "H3 › MỌI THẮC MẮC LIÊN HỆ",
+   "LI › Trưởng ban tổ chức: Mr Thành – 0935 91 76 77",
+   "s-section › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn",
+   "s-section › Ngày 30/12/2023 DANAVA tổ chức thành công chương trình WORKSHOP “TẦM Q"
+  ]
+ },
  "/blogs/cong-nang-luong/": {
-  "total": 157,
+  "total": 287,
   "missing": 82,
   "samples": [
-   "A › Đến nội dung chính",
+   "s-header › VI",
    "s-article-head › Chuỗi sự kiện cổng năng lượng 05/05 lần đầu tiên tại đà nẵng",
    "s-article-toc__desktop › BẠN ĐÃ BAO GIỜ ĐỌC “BẢN HƯỚNG DẪN SỬ DỤNG CON NGƯỜI” CỦA CHÍNH MÌNH CH",
    "s-article-toc__desktop › 1. HUMAN DESIGN khám phá bạn là ai?",
@@ -251,145 +318,603 @@
    "s-section › Ngày 30/12/2023 DANAVA tổ chức thành công chương trình WORKSHOP “TẦM Q"
   ]
  },
- "/lien-he/": {
-  "total": 131,
-  "missing": 6,
+ "/blogs/dau-hieu-nhan-biet-bau-tro-luc-phanh-bi-hu-hong/": {
+  "total": 192,
+  "missing": 16,
   "samples": [
-   "A › Đến nội dung chính",
-   "c-hero › Cùng bạn phát triển.",
-   "c-hero › (mở tab mới)",
-   "c-hero › (mở tab mới)",
-   "c-hero › (mở tab mới)",
-   "c-hero › Cùng bạn phát triển."
+   "s-header › VI",
+   "s-article-head › Dấu hiệu nhận biết bầu trợ lực phanh bị hư hỏng",
+   "s-article-toc__desktop › Pedal phanh cứng, nặng",
+   "s-article-toc__desktop › Bàn đạp phanh cao hơn bình thường",
+   "s-article-toc__desktop › Quãng đường phanh dài hơn",
+   "s-article-toc__desktop › Tốc độ động cơ không đều",
+   "P › Bầu trợ lực phanh thuộc hệ thống phanh trên xe ô tô, được lắp ở vị trí",
+   "P › Sau một thời gian sử dụng, bầu trợ lực phanh có thể bị hư hỏng. Dưới đ",
+   "H2 › Pedal phanh cứng, nặng",
+   "P › Thông thường bàn đạp sẽ nhẹ và không cứng, đó là lúc bầu trợ lực phanh",
+   "H2 › Bàn đạp phanh cao hơn bình thường",
+   "P › Cùng với cảm giác cứng khi đạp phanh thì tài xế còn có thể thấy bàn đạ",
+   "H2 › Quãng đường phanh dài hơn",
+   "P › Cũng vì bầu trợ lực phanh hư hỏng nên lực phanh tác dụng lên các má ph",
+   "H2 › Tốc độ động cơ không đều",
+   "P › Bầu trợ lực phanh có một màng cao su không cho không khí đi vào buồng "
   ]
  },
- "/doi-ngu/": {
-  "total": 83,
-  "missing": 6,
+ "/blogs/gia-dat-nen-o-dau-tang-manh-nhat/": {
+  "total": 190,
+  "missing": 16,
   "samples": [
-   "A › Đến nội dung chính",
-   "s-section › Kiến trúc hệ thống phần mềm · Phần mềm quản lý Studio · Chuyển đổi số ",
-   "s-section › Tư vấn giải pháp chuyển đổi · Đào tạo nhân sự quầy lễ tân · Chăm sóc &",
-   "s-section › Truyền thông sự kiện · Nội dung & hình ảnh thương hiệu · Kết nối cộng ",
-   "s-section › UI/UX Design đa nền tảng · Trải nghiệm Mobile & Dashboard · Nhận diện ",
-   "s-section › Quản lý dự án triển khai · Tích hợp phần cứng & QR Scan · Kiểm thử quy"
+   "s-header › VI",
+   "s-article-head › Giá đất nền ở đâu tăng mạnh nhất?",
+   "P › Cơn sốt đất lan rộng khắp nơi khiến giá nhà đất tăng nóng trong những ",
+   "P › Thực tế, nhiều địa phương đang diễn ra cơn sốt đất mạnh sau 1 thập kỷ.",
+   "P › Tại khu vực phía Nam có thể kể đến như ở phía Đông Tp.HCM (Tp Thủ Đức)",
+   "P › Miền Trung Đà Nẵng, Quảng Nam và Tp Huế cũng đang có thị trường bất độ",
+   "P › Đặc biệt là miền Bắc đang diễn ra cơn sốt đất mạnh mẽ ở hầu hết các tỉ",
+   "P › Lý giải nguyên nhân diễn ra cơn sốt đất khắp nơi, nhiều chuyên gia nhậ",
+   "P › Bên cạnh các thị trường truyền thống, tại nhiều thị trường mới có thôn",
+   "P › Một số khu vực phía Bắc có lượng quan tâm của các nhà đầu tư tăng vọt ",
+   "P › Đối với miền Trung, mức độ quan tâm của các tỉnh lân cận Đà Nẵng cũng ",
+   "P › Ở phía Nam, Cần Giờ là nơi có độ nóng hơn cả do kỳ vọng lên thành phố,",
+   "P › Tỷ lệ tăng rao bán đất nền cũng tăng ở Cần Giờ (23%), Nhà Bè (16%), Bi",
+   "P › Thị trường BĐS quý I sôi động nhờ lực đẩy cộng hưởng từ nhiều yếu tố, ",
+   "P › Nhật Minh",
+   "P › Theo Nhịp sống kinh tế"
   ]
  },
- "/doi-tac/": {
-  "total": 607,
-  "missing": 96,
+ "/blogs/htd-smart-carplay-ai-box-la-gi/": {
+  "total": 214,
+  "missing": 38,
   "samples": [
-   "A › Đến nội dung chính",
-   "pt-cities › Đà Nẵng",
-   "pt-cities › TP. Hồ Chí Minh",
-   "pt-cities › Huế",
-   "pt-cities › Cà Mau",
-   "pt-cities › Hà Nội",
-   "pt-cities › Đồng Tháp",
-   "pt-city › Đà Nẵng",
-   "pt-city › Trang thiết bị hiện đại, Huấn luyện viên chuyên nghiệp, Đa dạng khu vự",
-   "pt-city › Phòng tập máy lạnh, Máy tập hiện đại, HLV hỗ trợ, Phòng thay đồ, Bãi đ",
-   "pt-city › Yoga Cộng Đồng, Đào tạo Huấn luyện viên Yoga, Cơ sở vật chất hiện đại,",
-   "pt-city › Trang thiết bị tập luyện hiện đại, Huấn luyện viên cá nhân chuyên nghi",
-   "pt-city › Hồ bơi trong nhà hiện đại, Huấn luyện viên chuyên nghiệp, Phòng tắm & ",
-   "pt-city › Thiết bị tập hiện đại, Phòng tập máy lạnh, Phòng tắm nước nóng, Khăn t",
-   "pt-city › Phòng tập rộng thoáng, Giáo viên chứng chỉ quốc tế, Thảm & dụng cụ miễ",
-   "pt-city › Đào tạo Huấn luyện viên Yoga chuyên nghiệp, Đào tạo chuyên đề & nâng c",
-   "pt-city › Yoga Cơ Bản, Yoga Trị Liệu, Đào Tạo HLV 200H–500H, PT Yoga 1-1, Yoga V",
-   "pt-city › TP. Hồ Chí Minh",
-   "pt-city › Tăng sức mạnh & độ dẻo, Săn chắc vóc dáng, Cải thiện tư thế, Giảm căng",
-   "pt-city › Làm ấm bụng, Điều hòa hơi thở, Thư giãn sâu, Hara Voice, Healing vùng ",
-   "pt-city › Huế",
-   "pt-city › Nước uống miễn phí, Khăn tập miễn phí, Máy Reformer hiện đại, Máy Cadi",
-   "pt-city › Cà Mau",
-   "pt-city › Giáo viên Ấn Độ chuyên môn cao, Hướng dẫn tận tâm, Tăng sức mạnh, dẻo ",
-   "pt-city › Hà Nội",
-   "pt-city › Đào tạo HLV Yoga, Chứng chỉ uy tín, Giảng viên chuyên môn cao, Kết nối",
-   "pt-city › Đồng Tháp",
-   "pt-city › Lớp học Yoga, HLV tận tâm, Đặt Lịch online, Gói tập linh hoạt, Cộng đồ",
-   "pd › Fitness",
-   "pd › Gym & Fitness",
-   "pd › Pilates",
-   "pd › Spa & Wellness",
-   "pd › Yoga",
-   "pd › · Đà Nẵng",
-   "pd › ORIGIN YOGA là không gian thực hành Yoga cổ điển tại Đà Nẵng, nơi tư t",
-   "pd › · Đà Nẵng",
-   "pd › AURA YOGA – nơi bạn trở về với chính mình. Chuyển động • Thở sâu • Cảm",
-   "pd › · Cà Mau",
-   "pd › · Đà Nẵng",
-   "pd › Tổ hợp Gym, Boxing, Yoga, Dance, GroupX, Pilates, Swimming tại Đà Nẵng",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › ELITE PREMIUM PILATES – CHĂM SÓC VÓC DÁNG, NÂNG TẦM TRẢI NGHIỆM Elite ",
-   "pd › · Thanh Hóa",
-   "pd › Học viện Feeling Yoga là một trong những trung tâm yoga hàng đầu tại V",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Học viện Đào tạo HLV Yoga SY chuyên đào tạo giáo viên Yoga theo chuẩn ",
-   "pd › · Đà Nẵng",
-   "pd › Hương Sen Yoga-tìm về chính mình ở một “bản thể” an lành và phúc lạc…N",
-   "pd › · Đà Nẵng",
-   "pd › Kiến Gym Âu Cơ là một trong những phòng tập thể hình uy tín tại Đà Nẵn",
-   "pd › · Đà Nẵng",
-   "pd › Kiến Gym là phòng tập hiện đại với không gian rộng rãi, trang thiết bị",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Hệ thống phòng Gym 9 cơ sở : https://kingkonglagym.vn/phong-tap/",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › La pilates Vietnam là studio Pilates đến từ Nhật Bản. Trong buổi tập 1",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Chăm sóc da khoa học.Dược mỹ phẩm Châu Âu 0372.139.539",
-   "pd › · Hà Nội",
-   "pd › MASA ONE HYROX CLUB là trung tâm thể hình và chăm sóc sức khỏe theo ph",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Hành trình nghĩ dưỡng mang lại sự thanh khiết trong tâm hồn, hành trìn",
-   "pd › · Hà Nội",
-   "pd › Nhà sáng lập Joy (Yến Thị Trần) là chuyên gia trong lĩnh vực sức khỏe ",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Khách hàng hài lòng là thành công của chúng tôi Với đội ngũ kỹ thuật v",
-   "pd › · Đà Nẵng",
-   "pd › No Limits Fitness & Yoga Hệ thống phòng tập tại Đà Nẵng dành cho khách",
-   "pd › · Đà Nẵng",
-   "pd › Núi Đỏ Wellness & Recovery hướng đến không gian chăm sóc sức khỏe, thư",
-   "pd › · Đà Nẵng",
-   "pd › Oneness Retreat Da Nang is at Oneness Retreat Da Nang.",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Pilates với phương pháp độc quyền giáo trình PMP@ Certificate Pilates ",
-   "pd › · Đà Nẵng",
-   "pd › TRUNG TÂM RAJA Yoga & Therapy Đà Nẵng là nơi kết nối những người yêu Y",
-   "pd › · Hải Phòng",
-   "pd › SQUARE FITNESS mang đến trải nghiệm tập luyện đa dạng với Gym, Yoga, P",
-   "pd › · Đà Nẵng",
-   "pd › SUPER GYM – Nâng tầm sức khỏe của bạn 💪 SUPER GYM mang đến không gian",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Bài kiểm tra InBody test - Thước đo chỉ số cơ thể",
-   "pd › · Cà Mau",
-   "pd › crossfit, aerobic, yoga, dance and strength exercise",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › Thuần Mộc Spa thư giãn trị liệu- Tinh hoa y học phương Đông-Chăm sóc s",
-   "pd › · Đồng Tháp",
-   "pd › TiGi Yoga là không gian dành cho những ai mong muốn rèn luyện sức khỏe",
-   "pd › · Đà Nẵng",
-   "pd › 🏋️ TRÍ GYM YOGA – KHÔNG GIAN LUYỆN TẬP HIỆN ĐẠI & CHUYÊN NGHIỆP Trí G",
-   "pd › · TP. Hồ Chí Minh",
-   "pd › 𝐕𝐞𝐫𝐝𝐞𝐃𝐞𝐫𝐦 𝐒𝐩𝐚 & 𝐁𝐞𝐚𝐮𝐭𝐞́",
-   "pd › · Đà Nẵng",
-   "pd › Yoga An Nhiên là không gian kết nối những người yêu Yoga, nơi cùng nha",
-   "pd › · Hà Nội",
-   "pd › Học Viện Yoga Sống Khỏe với 30 chi nhánh trên toàn quốc, là thành viên"
+   "s-header › VI",
+   "s-article-head › HTD Smart CarPlay AI Box là gì?",
+   "s-article-toc__desktop › Những tính năng của HTD Smart CarPlay AI Box",
+   "s-article-toc__desktop › TƯƠNG THÍCH VỚI NHIỀU THƯƠNG HIỆU XE HƠI",
+   "s-article-toc__desktop › ƯU ĐIỂM",
+   "s-article-toc__desktop › NHƯỢC ĐIỂM",
+   "s-article-toc__desktop › HƯỚNG DẪN SỬ DỤNG HTD SMART CARPLAY AI BOX D10",
+   "s-article-toc__desktop › HƯỚNG DẪN SỬ DỤNG HTD SMART CARPLAY AI BOX D11",
+   "P › HTD Smart CarPlay AI Box là một thiết bị nhỏ gọn để biến màn hình zin ",
+   "P › https://youtu.be/mGeLwBGokF8",
+   "H2 › Những tính năng của HTD Smart CarPlay AI Box",
+   "LI › Sử dụng trên màn hình cảm ứng (nếu màn hình nguyên bản có hỗ trợ)",
+   "LI › Bản quyền Vietmap vĩnh viễn",
+   "LI › Điều khiển bằng giọng nói thông minh độc quyền do HTD phát triển",
+   "LI › Hỗ trợ núm điều khiển ban đầu của xe hơi",
+   "LI › Sử dụng hàng ngàn ứng dụng trên Google Play",
+   "LI › Hỗ trợ điều khiển bằng giọng nói.",
+   "LI › Kết nối WIFI, 4G",
+   "LI › Xem Youtube, Netflix, Spotify,…",
+   "LI › Dễ dàng cài đặt, không cần độ, không cần thợ, cắm là chạy",
+   "LI › Hỗ trợ trình chiếu không dây từ điện thoại",
+   "LI › Xem video chất lượng 4k",
+   "H2 › TƯƠNG THÍCH VỚI NHIỀU THƯƠNG HIỆU XE HƠI",
+   "P › Carplay Android Box AI tương thích với xe đã tích hợp sẵn Apple Carpla",
+   "P › Volkswagen, Volvo, Peugeot, Citroen, Cadillac, Buick, Chevrolet, Nissa",
+   "H3 › ƯU ĐIỂM",
+   "LI › Lắp đặt dễ dàng tại nhà.",
+   "LI › Không cần thay màn hình.",
+   "LI › Nhỏ gọn, thẩm mỹ.",
+   "LI › Giá cả phải chăng.",
+   "H3 › NHƯỢC ĐIỂM",
+   "LI › Hiện tại chỉ sử dụng được trên các dòng xe có chức năng CarPlay",
+   "H3 › HƯỚNG DẪN SỬ DỤNG HTD SMART CARPLAY AI BOX D10",
+   "P › https://youtu.be/kfSDnp21qp8",
+   "H3 › HƯỚNG DẪN SỬ DỤNG HTD SMART CARPLAY AI BOX D11",
+   "P › https://youtu.be/kJu4YdU6X6Q",
+   "P › Bạn có thể đặt mua sản phẩm tại đây (dùng mã \"CARIS\" để được giảm ngay",
+   "P › Nguồn: HTD"
   ]
  },
- "/tuyen-dung/": {
-  "total": 119,
-  "missing": 2,
+ "/blogs/huong-dan-xem-bao-cao-tren-dien-thoai-phan-mem-danava-simple-system-quan-ly-yoga-online-don-gian-nhat/": {
+  "total": 221,
+  "missing": 34,
   "samples": [
-   "A › Đến nội dung chính",
-   "td-sec › Tại DANAVA, chúng tôi tin rằng chuyển đổi số không chỉ là công nghệ — "
+   "s-header › VI",
+   "s-article-head › Hướng dẫn xem báo cáo trên điện thoại – Phần mềm Danava Simple System ",
+   "s-article-toc__desktop › Bước 1: Bấm vào Phím tắt",
+   "s-article-toc__desktop › Bước 2: Bấm vào Dấu +",
+   "s-article-toc__desktop › Bước 3: Bấm vào Icon Web",
+   "s-article-toc__desktop › Bước 4: Bấm vào Thêm tác vụ",
+   "s-article-toc__desktop › Bước 5: Bấm vào Hiển thị trang web",
+   "s-article-toc__desktop › Bước 4: Thêm đương dẫn website (trang admim) phanmem.danava.co.vn",
+   "s-article-toc__desktop › Bước 7: Bấm vào Tiếp (tiếp tục)",
+   "s-article-toc__desktop › Bước 8: Thêm tên (clb), doanh nghiệm của bạn (Tên bạn muốn hiển thị)",
+   "s-article-toc__desktop › Bước 9: Bấm Xong",
+   "s-article-toc__desktop › Bước 10: Bấm vào Chi tiết",
+   "s-article-toc__desktop › Bước 11: Bâm Thêm vào MH chính",
+   "s-article-toc__desktop › Bước 12: Hoàn thành (xem báo cáo qua Icon phím tắt)",
+   "s-article-toc__desktop › DANAVA SIMPLE SYSTEM - PHẦN MỀM QUẢN LÝ YOGA ONLINE ĐƠN GIẢN NHẤT",
+   "H2 › Bước 1: Bấm vào Phím tắt",
+   "H2 › Bước 2: Bấm vào Dấu +",
+   "H2 › Bước 3: Bấm vào Icon Web",
+   "H2 › Bước 4: Bấm vào Thêm tác vụ",
+   "H2 › Bước 5: Bấm vào Hiển thị trang web",
+   "H2 › Bước 4: Thêm đương dẫn website (trang admim) phanmem.danava.co.vn",
+   "H2 › Bước 7: Bấm vào Tiếp (tiếp tục)",
+   "H2 › Bước 8: Thêm tên (clb), doanh nghiệm của bạn (Tên bạn muốn hiển thị)",
+   "H2 › Bước 9: Bấm Xong",
+   "H2 › Bước 10: Bấm vào Chi tiết",
+   "H2 › Bước 11: Bâm Thêm vào MH chính",
+   "H2 › Bước 12: Hoàn thành (xem báo cáo qua Icon phím tắt)",
+   "P › Chúc các bạn có trải nghiệm tốt khi dùng phần mềm của DANAVA",
+   "P › ======",
+   "H3 › DANAVA SIMPLE SYSTEM - PHẦN MỀM QUẢN LÝ YOGA ONLINE ĐƠN GIẢN NHẤT",
+   "P › Đăng ký ngay: https://danava.com.vn/phan-mem",
+   "P › Về phần mềm: https://hethong.danava.com.vn",
+   "P › Về DANAVA: https://danava.com.vn",
+   "P › Hotline/Zalo: 0935 91 7677"
+  ]
+ },
+ "/blogs/kham-pha-4-nhat-cua-sieu-show-trieu-do-man-nhan-du-khach-den-phu-quoc/": {
+  "total": 236,
+  "missing": 34,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Khám phá 4 nhất của siêu show triệu đô mãn nhãn du khách đến Phú Quốc",
+   "s-article-toc__desktop › Thế giới đã quen thuộc và yêu mến những công viên giải trí hàng đầu, n",
+   "s-article-toc__desktop › Sân khấu qui mô lớn Nhất",
+   "s-article-toc__desktop › Hội tụ nhiều kỹ xảo kỳ ảo Nhất",
+   "s-article-toc__desktop › Số lượng diễn viên, nhân sự giải trí đông nhất",
+   "s-article-toc__desktop › Kinh phí đầu tư lớn nhất Việt Nam",
+   "H3 › Thế giới đã quen thuộc và yêu mến những công viên giải trí hàng đầu, n",
+   "P › Trong đó, đạo diễn thực cảnh tên tuổi Việt Tú với nhiều tâm huyết đối ",
+   "P › Hãy khám phá 4 cái Nhất của những siêu show diễn triệu đô mà chắc chắn",
+   "H2 › Sân khấu qui mô lớn Nhất",
+   "P › Được thiết kế và dàn dựng trên những sân khấu khổng lồ, “Tinh hoa Việt",
+   "P › Trong khi đó, “Sắc màu Venice” lại sở hữu hàng trăm mét vuông sân khấu",
+   "P › Đến với “Once show”, du khách lại lạc vào sân khấu nhạc nước mang đậm ",
+   "H2 › Hội tụ nhiều kỹ xảo kỳ ảo Nhất",
+   "P › Hệ thống công nghệ trình diễn hiện đại tại các siêu show này được xếp ",
+   "P › Xuyên suốt 4 chương “Tinh hoa Việt Nam”, quần thể kiến trúc đặc biệt t",
+   "P › Một trong những cảnh đặc biệt ấn tượng nhất của “Tinh hoa Việt Nam” ch",
+   "P › Chưa dừng lại ở đó, dưới bàn tay biến hóa của bậc thầy thực cảnh Việt ",
+   "P › Trong khi đó, vở diễn “Sắc màu Venice” lại ấn tượng với mô hình quạt P",
+   "P › Màn trình diễn nhạc nước thực cảnh “Once Show” sẽ là sự kết hợp tài tì",
+   "H2 › Số lượng diễn viên, nhân sự giải trí đông nhất",
+   "P › Với qui mô và độ hoành tráng siêu khủng, chi phí nhân sự dành riêng ch",
+   "P › Để duy trì hoạt động của 2 show diễn kéo dài từ ngày sang đêm, từ kinh",
+   "P › Trong khi đó, Once Show” là màn thực cảnh đầu tiên tại Việt Nam được t",
+   "H2 › Kinh phí đầu tư lớn nhất Việt Nam",
+   "P › Với tổng vốn đầu tư lên đến 26 triệu USD, đây là chuỗi trình diễn nghệ",
+   "P › Riêng hệ thống máy chiếu của Tinh hoa Việt Nam đã có trị giá hơn 2 tri",
+   "P › “Sắc màu Venice” lại lập kỷ lục vở diễn thực cảnh trên mặt nước có diễ",
+   "P › Riêng show \"Once\" sẽ trình làng tại quảng trường Phượng Hoàng lửa của ",
+   "P › Chính thức trình diễn tại Phú Quốc United Center từ tháng 4/2021 sau t",
+   "P › Nguồn: 24h.com.vn",
+   "s-section › Lễ hội pháo hoa quốc tế Đà Nẵng (DIFF) từ lâu đã được xem là “thương h",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q"
+  ]
+ },
+ "/blogs/kinh-nghiem-lai-xe-an-toan-duoi-troi-mua-bao/": {
+  "total": 195,
+  "missing": 19,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Kinh nghiệm lái xe an toàn dưới trời mưa bão",
+   "s-article-toc__desktop › Đi chậm, không nên phanh gấp",
+   "s-article-toc__desktop › Điều chỉnh nhiệt độ máy lạnh",
+   "s-article-toc__desktop › Đỗ xe vào lề nếu tầm quan sát bị hạn chế",
+   "s-article-toc__desktop › Luôn bật đèn",
+   "s-article-toc__desktop › Luôn giữ sự tập trung",
+   "P › Việc lái xe dưới trời mưa bão luôn là thách thức của tài xế bởi tầm nh",
+   "P › Vì vậy để đảm bảo an toàn cho bản thân và những người xung quanh. Bạn ",
+   "H2 › Đi chậm, không nên phanh gấp",
+   "P › Khi trời mưa, mặt đường trơn trượt tầm nhìn sẽ hạn chế. Bạn cần giảm c",
+   "H2 › Điều chỉnh nhiệt độ máy lạnh",
+   "P › Khi trời mưa thì nhiệt độ không khí bên ngoài hạ thấp, nước mưa và gió",
+   "H2 › Đỗ xe vào lề nếu tầm quan sát bị hạn chế",
+   "P › Tiếp tục cầm lái di chuyển khi trời mưa quá to sẽ rất nguy hiểm, vì lú",
+   "H2 › Luôn bật đèn",
+   "P › Khi trời mưa to tầm nhìn của các tài xế đều bị hạn chế. Việc bật đèn p",
+   "H2 › Luôn giữ sự tập trung",
+   "P › Không chỉ mùa mưa mà người lái xe cần giữ sự tập trung ở mọi thời điểm"
+  ]
+ },
+ "/blogs/kinh-nghiem-lai-xe-giup-o-to-luon-ben-dep/": {
+  "total": 196,
+  "missing": 20,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Kinh nghiệm lái xe giúp ô tô luôn bền đẹp",
+   "s-article-toc__desktop › 1. Chú ý áp suất lốp xe",
+   "s-article-toc__desktop › 2. Hạn chế tăng tốc, phanh gấp đột ngột",
+   "s-article-toc__desktop › 3. Không để xe gần hết nhiên liệu mới đổ",
+   "s-article-toc__desktop › 4. Không chở quá tải",
+   "s-article-toc__desktop › 5. Kiểm tra, chăm sóc và bảo dưỡng xe thường xuyên",
+   "P › Ô tô có bền đẹp hay không không chỉ dựa và chất lượng từ phía nhà sản ",
+   "P › Dưới đây là những kinh nghiệm lái xe giúp xế yêu của bạn luôn bền đẹp ",
+   "H2 › 1. Chú ý áp suất lốp xe",
+   "P › Lốp xe không nên quá non hơi hoặc căng hơi. Vì nó sẽ làm giảm khả năng",
+   "P › Bên cạnh việc kiểm tra áp suất lốp, bạn cũng cần đảo lốp cũng như thay",
+   "H2 › 2. Hạn chế tăng tốc, phanh gấp đột ngột",
+   "P › Khi lái xe nếu bạn thường xuyên tăng tốc hoặc đột ngột phanh gấp sẽ ản",
+   "H2 › 3. Không để xe gần hết nhiên liệu mới đổ",
+   "P › Hầu hết các loại xe ô tô đều có một máy bơm nhiên liệu bên trong và đư",
+   "H2 › 4. Không chở quá tải",
+   "P › Việc xe ô tô chở một lượng tải trọng lớn trong thời gian dài sẽ kéo th",
+   "H2 › 5. Kiểm tra, chăm sóc và bảo dưỡng xe thường xuyên",
+   "P › Thường xuyên kiểm tra xe ô tô sẽ giúp bạn sớm phát hiện ra các vấn đề "
+  ]
+ },
+ "/blogs/lam-kinh-doanh-ban-khong-the-bo-qqua-11-kenh-youtube-nay/": {
+  "total": 214,
+  "missing": 38,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Làm kinh doanh, bạn không thể bỏ qua 11 kênh youtube này",
+   "s-article-toc__desktop › LÀM KINH DOANH, BẠN KHÔNG THỂ BỎ QUA 11 KÊNH YOUTUBE NÀY",
+   "s-article-toc__desktop › 1. TED Talks: https://www.youtube.com/user/TEDxTalks",
+   "s-article-toc__desktop › 2. Gary Vaynerchuk:https://www.youtube.com/user/GaryVaynerchuk",
+   "s-article-toc__desktop › 3. Marie Forleo: https://www.youtube.com/user/marieforleo",
+   "s-article-toc__desktop › 4. Brian Tracy: https://www.youtube.com/user/BrianTracySpeaker",
+   "s-article-toc__desktop › 5. Robin Sharma: https://www.youtube.com/user/sharmaleadership",
+   "s-article-toc__desktop › 6. Dan Martell:https://www.youtube.com/user/danvmartell",
+   "s-article-toc__desktop › 7. Derek Halpern:https://www.youtube.com/user/SocialTriggers",
+   "s-article-toc__desktop › 8. Sunny Lenarduzzi: https://www.youtube.com/user/SunnyLenarduzzi",
+   "s-article-toc__desktop › 9. Roberto Blake:https://www.youtube.com/user/robertoblake2",
+   "s-article-toc__desktop › 10. Brendon Burchard:https://www.youtube.com/user/BrendonBurchard",
+   "s-article-toc__desktop › 11. Tony Robbins:https://www.youtube.com/user/TonyRobbinsLive",
+   "H3 › LÀM KINH DOANH, BẠN KHÔNG THỂ BỎ QUA 11 KÊNH YOUTUBE NÀY",
+   "H2 › 1. TED Talks: https://www.youtube.com/user/TEDxTalks",
+   "P › https://www.youtube.com/embed/o8NPllzkFhE",
+   "H2 › 2. Gary Vaynerchuk:https://www.youtube.com/user/GaryVaynerchuk",
+   "P › https://www.youtube.com/embed/YaP1O3O5O4Y",
+   "H2 › 3. Marie Forleo: https://www.youtube.com/user/marieforleo",
+   "P › https://www.youtube.com/embed/YB9Ugx-fzcY",
+   "H2 › 4. Brian Tracy: https://www.youtube.com/user/BrianTracySpeaker",
+   "P › https://www.youtube.com/embed/dmO6cQa_D8Q",
+   "H2 › 5. Robin Sharma: https://www.youtube.com/user/sharmaleadership",
+   "P › https://www.youtube.com/embed/clP2yVxKZV4",
+   "H2 › 6. Dan Martell:https://www.youtube.com/user/danvmartell",
+   "P › https://www.youtube.com/embed/AheD18FEFjU",
+   "H2 › 7. Derek Halpern:https://www.youtube.com/user/SocialTriggers",
+   "P › https://youtu.be/JtrZhrleWKc",
+   "H2 › 8. Sunny Lenarduzzi: https://www.youtube.com/user/SunnyLenarduzzi",
+   "P › https://www.youtube.com/embed/dVg4lQL8TG0",
+   "H2 › 9. Roberto Blake:https://www.youtube.com/user/robertoblake2",
+   "P › https://www.youtube.com/embed/4POgXi7KRM8",
+   "H2 › 10. Brendon Burchard:https://www.youtube.com/user/BrendonBurchard",
+   "P › https://www.youtube.com/embed/8Au0XRuhHaE",
+   "H2 › 11. Tony Robbins:https://www.youtube.com/user/TonyRobbinsLive",
+   "P › https://www.youtube.com/embed/3XL4aXCgxd0",
+   "P › Chúc các bạn thành công!"
+  ]
+ },
+ "/blogs/le-hoi-phao-hoa-quoc-te-da-nang-nam-2023-co-gi-moi/": {
+  "total": 226,
+  "missing": 26,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Lễ hội pháo hoa quốc tế Đà Nẵng năm 2023 có gì mới?",
+   "P › Lễ hội pháo hoa quốc tế Đà Nẵng (DIFF) từ lâu đã được xem là “thương h",
+   "P › Màn trình diễn pháo hoa tại lễ hội pháo hoa quốc tế Đà Nẵng (DIFF) 201",
+   "P › Đơn vị tham gia tổ chức phải có ý tưởng mới lạ, độc đáo",
+   "P › Để chuẩn bị cho sự kiện lớn này, mới đây, UBND thành phố đã ban hành K",
+   "P › DIFF 2023 dự kiến có 8 đội tham gia (gồm đội chủ nhà Đà Nẵng - Việt Na",
+   "P › Bên cạnh các đội sẽ tham gia thi đấu, yêu cầu về quy mô sân khấu các c",
+   "P › ​​​​​​​Ngoài ra, tiêu chí lựa chọn các đơn vị tham gia tổ chức phải ch",
+   "P › Theo tính toán, dự kiến kinh phí thực hiện các nhiệm vụ sự kiện DIFF 2",
+   "P › Lễ hội pháo hoa quốc tế Đà Nẵng được tổ chức trở lại sẽ góp phần thu h",
+   "P › Điểm nhấn thu hút du khách",
+   "P › Hơn ai hết, những người hoạt động trong ngành dịch vụ, du lịch rất mon",
+   "P › “Tuy nhiên, nếu được, thành phố và đơn vị tổ chức cần tính toán lại th",
+   "P › Đồng quan điểm, Chủ tịch Hiệp hội Du lịch Đà Nẵng Cao Trí Dũng chia sẻ",
+   "P › Như mọi năm, thời gian diễn ra lễ hội pháo hoa đúng mùa đông khách nội",
+   "P › Trong khi đó, ở góc độ các cơ sở kinh doanh dịch vụ lưu trú, ông Phan ",
+   "P › Việc tổ chức trở lại lễ hội này cũng là dịp để quảng bá hoạt động du l",
+   "P › Phó Giám đốc Sở Du lịch Nguyễn Xuân Bình cũng cho rằng việc tổ chức lạ",
+   "P › Theo ông Hà Vỹ, Phó Giám đốc Sở Văn hóa và Thể thao, DIFF là sự kiện c",
+   "P › Do đó, với kỳ vọng nối tiếp những thành công của các lần tổ chức trước",
+   "P › Người dân háo hức",
+   "P › Khi nghe thông tin thành phố sẽ tổ chức lại Lễ hội pháo hoa quốc tế Đà",
+   "P › Trích: Báo Đà Nẵng",
+   "s-section › Thế giới đã quen thuộc và yêu mến những công viên giải trí hàng đầu, n",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q"
+  ]
+ },
+ "/blogs/lo-trinh-phap-ly-de-trien-khai-mot-bat-dong-san-du-an/": {
+  "total": 250,
+  "missing": 74,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Lộ trình pháp lý để triển khai một bất động sản dự án",
+   "s-article-toc__desktop › Quá trình hình thành Dự án bất động sản",
+   "s-article-toc__desktop › Danh mục các mốc pháp lý của Dự án Bất động sản",
+   "s-article-toc__desktop › CÔNG NHẬN CHỦ ĐẦU TƯ – ĐĂNG KÝ ĐẦU TƯ",
+   "s-article-toc__desktop › Vậy thủ tục này sẽ là:",
+   "P › Với một dự án Bất động sản được thực hiện bởi các pháp nhân thì pháp l",
+   "P › Vậy thì phải làm sao khi mua Bất động sản mà pháp lý lại chưa đầy đủ? ",
+   "LI › Pháp lý liên quan đến đất.",
+   "LI › Liên quan đến công trình trên đất.",
+   "LI › Liên quan đến Pháp nhân, hay là doanh nghiệp chủ đầu tư.",
+   "P › Như vậy, có xuất hiện thêm một đối tượng khác là Chủ đầu tư. Trong phá",
+   "H2 › Quá trình hình thành Dự án bất động sản",
+   "P › Khác với người dân sở hữu nhà riêng lẻ, Dự án chỉ xuất hiện sau năm 19",
+   "P › Vậy thì câu hỏi đặt ra là làm thế nào để Doanh nghiệp được làm Dự án, ",
+   "H2 › Danh mục các mốc pháp lý của Dự án Bất động sản",
+   "P › Theo thống kê, để hoàn chỉnh pháp lý của một Dự án bất động sản thì cầ",
+   "LI › Công nhận chủ đầu tư",
+   "LI › Đăng ký đầu tư Dự án",
+   "LI › Đền bù – giải tỏa – tái định cư",
+   "LI › Giấy chứng nhận đăng ký doanh nghiệp lần gần nhất",
+   "LI › Nhiệm vụ quy hoạch",
+   "LI › Chứng chỉ quy hoạch (giấy phép quy hoạch)",
+   "LI › Hê duyệt Quy hoạch tỉ lệ 1/500",
+   "LI › Thỏa thuận Tổng mặt bằng & Phương án kiến trúc",
+   "LI › Điều chỉnh quy hoạch",
+   "LI › Công bố quy hoạch",
+   "LI › Chấp thuận đầu tư",
+   "LI › Phê duyệt Dự án đầu tư",
+   "LI › Ký quỹ",
+   "LI › Chuyển mục đích sử dụng đất",
+   "LI › Giao đất",
+   "LI › Cấp giấy chứng nhận quyền sử dụng đất cho Chủ đầu tư",
+   "LI › Cấp giấy chứng nhận quyền sử dụng đất cho người mua.",
+   "LI › Chuyển nhượng Dự án",
+   "LI › Thỏa thuận đấu nối hạ tầng",
+   "LI › Xin phép san lấp",
+   "LI › Xin phép xây dựng hạ tầng",
+   "LI › Nghiệm thu hạ tầng theo tiến dộ Dự án",
+   "LI › Thẩm duyệt thiết kế cơ sở",
+   "LI › Thẩm duyệt Thiết kế Thi công",
+   "LI › Xin phép xây dựng",
+   "LI › Thông báo khởi công",
+   "LI › Nghiệm thu móng",
+   "LI › Thông báo huy động vốn (xác nhận đủ điều kiện bán hàng)",
+   "LI › Giải chấp ngân hàng (nếu có thế chấp)",
+   "LI › Đăng ký hợp đồng mẫu",
+   "LI › Lắp đặt và nghiệm thu PCCC",
+   "LI › Nghiệm thu & Bàn giao công trình từ nhà thầu xây dựng cho Chủ đầu tư",
+   "LI › Hoàn công",
+   "LI › Bàn giao nhà cho người mua",
+   "LI › Cấp số nhà",
+   "LI › Cấp giấy chứng nhận quyền sử dụng đất và Quyền sở hữu nhà ở",
+   "P › Đây là danh sách sơ bộ, có một số bước có thể không phải làm, có một s",
+   "P › Thế nên, gần như không có Dự án nào Hoàn chỉnh pháp lý ngay từ ban đầu",
+   "H3 › CÔNG NHẬN CHỦ ĐẦU TƯ – ĐĂNG KÝ ĐẦU TƯ",
+   "P › Quay lại câu hỏi: Làm thế nào để Doanh nghiệp được làm Dự án và Khi xu",
+   "P › Công nhận Chủ đầu tư là bước đầu tiên xác định đối tượng được làm Chủ ",
+   "P › Ví von một chút, Ví cô gái như là Dự án, và Chủ đầu tư như là Chàng tr",
+   "P › Cô gái đã sẵn sàng có chồng, thì Phú ông sẽ có nhiều cách, hoặc là thô",
+   "P › Phú ông có thể cũng làm theo cách là nhắm đến một gia đình môn đăng hộ",
+   "P › Lại có thêm trường hợp, Dự án không phải là con gái Phú ông, mà là con",
+   "P › Mà trong thực tế, Phú ông làm gì có nhiều con gái, mà gia nhân, những ",
+   "LI › Xét về bản thân cô gái (Gọi là xét về đất): Cô gái có đồng ý với mày c",
+   "LI › Xét về tình trạng và khả năng của cô gái (Gọi là xét quy hoạch): Mày m",
+   "LI › Xét về năng lực chàng trai: Mày đủ tuổi lấy vợ chưa, được phép lấy vợ ",
+   "P › Trong thực tế, thì khi xét mấy cái này, Chàng trai là người như thế nà",
+   "H3 › Vậy thủ tục này sẽ là:",
+   "P › – Nếu Phú ông kén rể: Thông báo công khai kêu gọi nhà đầu tư, hoặc thô",
+   "P › – Phú ông đóng vai người quản lý: Các doanh nghiệp nộp công văn và hồ ",
+   "P › Bình thường, các bước này sẽ diễn ra trong khoảng 2-3 tháng.",
+   "P › (*) Bản vẽ đính kèm: Liên quan đến Đất đai thì liên quan đến vị trí, b",
+   "P › Cũng với thủ tục tương tự, nếu Chủ đầu tư có yếu tố nước ngoài thì phả",
+   "P › Nguồn: Facebook – Review bất động sản"
+  ]
+ },
+ "/blogs/luu-y-cho-nhung-nguoi-moi-lai-xe-o-to/": {
+  "total": 196,
+  "missing": 20,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Lưu ý cho những người mới lái xe ô tô",
+   "s-article-toc__desktop › Ghi nhớ biển báo",
+   "s-article-toc__desktop › Làm quen với thao tác trên xe",
+   "s-article-toc__desktop › Kỹ năng quan sát gương chiếu hậu",
+   "s-article-toc__desktop › Giữ khoảng cách an toàn",
+   "s-article-toc__desktop › Giữ đều ga",
+   "P › Việc tự tay điều khiển chiếc xe ô tô là điều không hề dễ dàng đối với ",
+   "P › Sau đây là một số lưu ý giúp người mới lái xe làm chủ tay lái tự tin đ",
+   "H2 › Ghi nhớ biển báo",
+   "P › Hãy chắc chắn trước khi cầm lái ô tô, bạn đã học thuộc toàn bộ biển bá",
+   "H2 › Làm quen với thao tác trên xe",
+   "P › Trước khi lăn bánh, bạn phải làm quen với các vị trí trên xe. Thực hàn",
+   "P › Đừng quên cài dây an toàn trước khi khởi động xe. Nếu bạn không cài dâ",
+   "H2 › Kỹ năng quan sát gương chiếu hậu",
+   "P › Khi mới lái xe, có thể bạn quá chú ý tới phía trước mà quên không quan",
+   "H2 › Giữ khoảng cách an toàn",
+   "P › Hãy tập luyện cách đọc khoảng cách bằng việc tìm đến một đoạn đường vắ",
+   "H2 › Giữ đều ga",
+   "P › Khi mới lái xe bạn không nên lái ở tốc độ cao. Đơn giản lúc này bạn ch"
+  ]
+ },
+ "/blogs/moi-yogi-se-la-mot-hat-mam-cua-yeu-thuong/": {
+  "total": 239,
+  "missing": 37,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › 5 lợi ích của việc tụng âm OM",
+   "s-article-toc__desktop › OM LÀ GÌ?",
+   "s-article-toc__desktop › A-U-MMM",
+   "s-article-toc__desktop › @@IMG1@@",
+   "s-article-toc__desktop › 5 LỢI ÍCH CỦA VIỆC TỤNG ÂM OM",
+   "s-article-toc__desktop › 1. OM Giúp Bạn Kết Nối Với Bản Thể Thực Sự Của Mình.",
+   "s-article-toc__desktop › 2. OM Làm Dịu Tâm Trí.",
+   "s-article-toc__desktop › 3. OM Đưa Bạn Vào Bên Trong Cơ Thể Mình.",
+   "s-article-toc__desktop › 4. OM Kết Nối Bạn Với Mọi Người.",
+   "s-article-toc__desktop › 5. OM Biểu Thị Sự Bắt Đầu Và Kết Thúc Buổi Thực Hành.",
+   "P › – Khi bạn tụng OMMMM, bạn cảm thấy thế nào?",
+   "P › – Bạn có cảm thấy một sự kìm hãm? … Sự điềm tĩnh? ….",
+   "P › – Tụng thêm 10 lần nữa … Bây giờ thì sao?",
+   "P › Mọi vật trong vũ trụ là sự dao động của năng lượng. Cơ thể bạn, thực v",
+   "P › Đến đây chúng ta sẽ xem xét ý nghĩa của Om và tại sao nó thường được t",
+   "H2 › OM LÀ GÌ?",
+   "P › Ý nghĩa của Om khó nắm bắt và giải thích. Nó là một câu thần chú với b",
+   "P › Như Swami Vivekananda giải thích, “Om đại diện cho toàn bộ hiện tượng ",
+   "H2 › A-U-MMM",
+   "P › Khi bạn tụng Om, bạn đang tụng những âm thanh mà chúng là căn nguyên c",
+   "P › Ba âm thanh này cũng được cho là đại diện cho ba trạng thái của ý thức",
+   "H3 › @@IMG1@@",
+   "H2 › 5 LỢI ÍCH CỦA VIỆC TỤNG ÂM OM",
+   "H2 › 1. OM Giúp Bạn Kết Nối Với Bản Thể Thực Sự Của Mình.",
+   "P › Khi bạn tụng Om, bạn kích hoạt tất cả những điều sâu thẳm nhất đang ở ",
+   "H2 › 2. OM Làm Dịu Tâm Trí.",
+   "P › Thậm chí bỏ qua bất kỳ ngụ ý tôn giáo hay triết học nào, thì việc tụng",
+   "H2 › 3. OM Đưa Bạn Vào Bên Trong Cơ Thể Mình.",
+   "P › Khi bạn tụng âm A-U-M, những rung động vang dội qua ngực rồi đến cổ họ",
+   "H2 › 4. OM Kết Nối Bạn Với Mọi Người.",
+   "P › Khi Om được tụng trong một lớp Yoga, cảm giác về tình ban và tính cộng",
+   "H2 › 5. OM Biểu Thị Sự Bắt Đầu Và Kết Thúc Buổi Thực Hành.",
+   "P › Cuộc sống của chúng ta có xu hướng bận rộn, hỗn độn và thường xuyên că",
+   "P › Nguồn: yogapedia.com l Theo: Thang Mlod l Ảnh minh họa từ internet",
+   "s-section › Hai bước đầu tiên là thực hành Yama và Niyama, hay các nguyên tắc đạo ",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q"
+  ]
+ },
+ "/blogs/nen-lam-gi-truoc-khi-khoi-dong-o-to-de-dam-bao-an-toan/": {
+  "total": 197,
+  "missing": 21,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Nên làm gì trước khi khởi động ô tô để đảm bảo an toàn?",
+   "s-article-toc__desktop › Kiểm tra lốp xe ô tô",
+   "s-article-toc__desktop › Kiểm tra hệ thống phanh ô tô",
+   "s-article-toc__desktop › Điều chỉnh tư thế ngồi lái",
+   "s-article-toc__desktop › Quan sát bảng đồng hồ hiển thị ô tô",
+   "P › Để đảm bảo an toàn khi lái xe ô tô, bạn không những cần nắm rõ các quy",
+   "P › Có nhiều quy tắc tưởng chừng vô cùng dễ dàng và đơn giản nhưng không p",
+   "H2 › Kiểm tra lốp xe ô tô",
+   "P › Các tài xế chỉ mất chưa đến một phút để đi vòng quanh quan sát toàn bộ",
+   "H2 › Kiểm tra hệ thống phanh ô tô",
+   "P › Hệ thống phanh luôn là một bộ phận rất quan trọng, đảm bảo cho ô tô vậ",
+   "P › Nếu chân phanh cứng lại hoặc đứng yên thì hệ thống trợ lực phanh còn h",
+   "H2 › Điều chỉnh tư thế ngồi lái",
+   "P › Việc điều chỉnh tư thế ngồi đúng sẽ làm giảm áp lực ở lưng và giúp ngư",
+   "P › Sau đó là đến điều chỉnh góc lưng ghế, khi cố gắng duỗi thẳng chân, tà",
+   "P › Cuối cùng là tìm vị trí phù hợp giữa tài xế và vô lăng. Khoảng cách đú",
+   "H2 › Quan sát bảng đồng hồ hiển thị ô tô",
+   "P › Nếu đèn báo trên bảng hiển thị sáng, chủ xe nên tranh thủ dành thời gi",
+   "P › Với thiết bị khám xe thông minh Micas, bạn có thể tự mình khám xe mọi ",
+   "P › Hi vọng những thông tin trên đây sẽ giúp các bác tài có thêm nhiều kiế"
+  ]
+ },
+ "/blogs/nhung-dieu-can-biet-ve-ten-mien-domain/": {
+  "total": 215,
+  "missing": 21,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Những điều cần biết về tên miền (Domain)",
+   "s-article-toc__desktop › NHỮNG ĐIỀU CẦN BIẾT VỀ TÊN MIỀN",
+   "s-article-toc__desktop › 2. Một số đặc điểm tên miền",
+   "H3 › NHỮNG ĐIỀU CẦN BIẾT VỀ TÊN MIỀN",
+   "P › Tên miền đại diện cho thương hiệu của công ty có sự kết nối qua lại. N",
+   "LI › Tên miền các nước",
+   "P › Tên miền các nước được hiểu là tên miền riêng của từng vùng lãnh thổ h",
+   "P › Ví dụ Việt Nam sẽ có phần đuôi là VN trong tên miền, hoặc ở Anh sẽ là ",
+   "H2 › 2. Một số đặc điểm tên miền",
+   "P › Tên miền gồm 2 thành phần: phần tên và phần đuôi (mở rộng)",
+   "LI › Tên miền đã bao gồm phần đuôi hay gọi là phần mở rộng như .net, .com,.",
+   "LI › Những ký tự được phép sử dụng sẽ là các chữ cái từ a đến z, các số từ ",
+   "LI › Tên miền không nhất thiết phải bắt đầu bằng https:// https:// hay www",
+   "LI › Ngoài ra một vài phần của tên miền sẽ phải thực hiện đúng theo những h",
+   "LI › Tên miền muốn đăng ký hợp lệ phải là những tên chưa được đăng ký bởi b",
+   "LI › Tên miền phải đảm bảo cấu trúc, phân rõ thành lĩnh vực hoạt động chính",
+   "LI › Lưu ý không xuất hiện những cụm từ xâm phạm đến lợi ích, chủ quyền, an",
+   "LI › Không đặt tên miền bừa bãi, cợt nhả, nghiêm túc và rõ ràng.",
+   "LI › Trước khi tên miền hết hạn thì bạn nên chủ động nộp phí để duy trì; Tr",
+   "s-section › Đăng ký tên miền là một trong những bước đầu tiên quan trọng mà các we"
+  ]
+ },
+ "/blogs/nhung-loi-xe-yeu-thuong-gap-khi-bi-duoi-nuoc/": {
+  "total": 191,
+  "missing": 15,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Những lỗi xế yêu thường gặp khi bị đuối nước",
+   "s-article-toc__desktop › Thủy kích",
+   "s-article-toc__desktop › Hư hỏng hệ thống nhiên liệu",
+   "s-article-toc__desktop › Hư hỏng hệ thống điện",
+   "P › Vào những ngày mưa, lái xe qua khu vực ngập nước luôn khiến người lái ",
+   "H2 › Thủy kích",
+   "P › Thủy kích là hiện tượng xe bị nước tràn vào đường hút gió của máy, làm",
+   "P › Hậu quả của của thủy kích thường vô cùng nghiêm trọng. Chi phí phục hồ",
+   "H2 › Hư hỏng hệ thống nhiên liệu",
+   "P › Khi bình nhiên liệu bị nước lọt vào, ô tô có thể xuất hiện hiện tượng ",
+   "H2 › Hư hỏng hệ thống điện",
+   "P › Khi ô tô bị ngập nước sẽ dễ xảy ra nguy cơ bị chập điện. Hệ thống điện",
+   "P › Vậy nên, các bác tài nhớ lái xe cẩn thận và tránh những đoạn đường ngậ",
+   "P › Nếu không may ô tô của bạn bị ngập nước, hãy nhanh chóng gọi cứu hộ để"
+  ]
+ },
+ "/blogs/tam-quan-trong-cua-viec-dang-ky-ten-mien-cho-doanh-nghiep-2/": {
+  "total": 204,
+  "missing": 12,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › Tầm quan trọng của việc đăng ký tên miền cho doanh nghiệp",
+   "P › Đăng ký tên miền là một trong những bước đầu tiên quan trọng mà các we",
+   "P › Đăng ký tên miền giúp tăng khả tiếp cận khách hàng tiềm năng, thúc đẩy",
+   "P › Tên miền là sự nhận dạng vị trí của một máy tính trên mạng Internet nó",
+   "P › Bảo vệ thương hiệu",
+   "P › Hiện nay, các doanh nghiệp nước ngoài rất chú trọng đăng ký sử dụng tê",
+   "P › Tại Việt Nam, các công ty đa quốc gia như Google, Facebook, Samsung… đ",
+   "P › Hầu như các cá nhân, doanh nghiệp chưa nhận thức hết tầm quan trọng củ",
+   "P › Tuy nhiên các điều này là không chính xác. Việc đăng ký, sử dụng tên m",
+   "P › Để tránh xảy ra những tranh chấp quyền sử dụng tên miền hoặc tránh để ",
+   "s-section › Tên miền đại diện cho thương hiệu của công ty có sự kết nối qua lại. N"
+  ]
+ },
+ "/blogs/thien-tra/": {
+  "total": 223,
+  "missing": 17,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › DANAVA workshop “thiền trà” với chủ đề “vội”",
+   "s-article-toc__desktop › [ LỜI CẢM ƠN TỚI \"AN YÊN\", WORKSHOP \"THIỀN TRÀ\" VỚI CHỦ ĐỀ \"VỘI\" ]",
+   "s-article-toc__desktop › WORKSHOP \"THIỀN TRÀ\" VỚI CHỦ ĐỀ \"VỘI\"",
+   "s-article-toc__desktop › MỌI THẮC MẮC LIÊN HỆ",
+   "H3 › [ LỜI CẢM ƠN TỚI \"AN YÊN\", WORKSHOP \"THIỀN TRÀ\" VỚI CHỦ ĐỀ \"VỘI\" ]",
+   "P › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ \"VỘI\" là nhiều cảm xúc lắng đọn",
+   "P › Buổi Workshop bắt đầu bằng những cơn mưa giữa tiết trời đông lạnh nhưn",
+   "P › Thay mặt cho DANAVA - BTC chương trình xin gửi lời cảm ơn chân thành n",
+   "P › Hy vọng rằng trong tương lai gần, chúng ta sẽ có thêm nhiều buổi Works",
+   "H3 › WORKSHOP \"THIỀN TRÀ\" VỚI CHỦ ĐỀ \"VỘI\"",
+   "LI › Đơn vị tổ chức: DANAVA",
+   "LI › Đơn vị Truyền thông: DANAVA SOLUTIONS",
+   "H3 › MỌI THẮC MẮC LIÊN HỆ",
+   "LI › Trưởng ban tổ chức: Mr Thành - 0935 91 76 77",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
+   "s-section › Ngày 30/12/2023 DANAVA tổ chức thành công chương trình WORKSHOP “TẦM Q"
+  ]
+ },
+ "/blogs/yoga-workshop-nhung-nguy-co-tiem-tang-trong-luyen-tap-yoga/": {
+  "total": 225,
+  "missing": 19,
+  "samples": [
+   "s-header › VI",
+   "s-article-head › #1 Yoga workshop “những nguy cơ tiềm tàng trong luyện tập yoga”",
+   "s-article-toc__desktop › [ WORKSHOP YOGA - NHỮNG CHỦ ĐỀ CHỈ CÓ TẠI DANAVA ]",
+   "s-article-toc__desktop › \"YOGA CLUB VIETNAM ĐỒNG HÀNH CÙNG CHUYÊN GIA\" KẾT NỐI - ĐỒNG HÀNH - CH",
+   "H3 › [ WORKSHOP YOGA - NHỮNG CHỦ ĐỀ CHỈ CÓ TẠI DANAVA ]",
+   "P › Ngày 02/12/2023 DANAVA tổ chức thành công chương trình WORKSHOP \"NHỮNG",
+   "P › Chương trình có sự góp mặt của:",
+   "P › • Ths. PHAN TRỌNG ĐỒNG - Trưởng Ban Điều hành Hội Trọng tài Yoga quốc ",
+   "P › • Ông LÊ TẤN THÀNH - Giám đốc DANAVA, Sáng lập Yoga Club Vietnam",
+   "P › • Cùng với hơn 40 học viên đến từ nhiều tỉnh thành trên cả nước",
+   "P › Chương trình Yoga Club Vietnam đồng hành cùng Chuyên gia là chương trì",
+   "P › Thay mặt BTC xin gửi lời cảm ơn chân thành nhất tới Quý học viên, đội ",
+   "H3 › \"YOGA CLUB VIETNAM ĐỒNG HÀNH CÙNG CHUYÊN GIA\" KẾT NỐI - ĐỒNG HÀNH - CH",
+   "P › Chương trình hướng đến cộng đồng yêu Yoga Việt",
+   "LI › Đơn vị đồng hành: Yoga Club Vietnam",
+   "LI › Đơn vị tổ chức: CÔNG TY TNHH TM DV & DL DANAVA",
+   "LI › Đơn vị Truyền thông: DANAVA SOLUTIONS",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
+   "s-section › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn"
+  ]
+ },
+ "/chinh-sach-dich-vu/": {
+  "total": 367,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
   ]
  },
  "/chinh-sach-rieng-tu/": {
-  "total": 172,
+  "total": 300,
   "missing": 66,
   "samples": [
-   "A › Đến nội dung chính",
+   "s-header › VI",
    "P › Chính sách này áp dụng cho toàn bộ khách truy cập, đối tác và khách hà",
    "STRONG › DANAVA Solutions",
    "P › tại tên miền",
@@ -457,11 +982,289 @@
    "P › Nếu bạn có thắc mắc hoặc muốn yêu cầu xóa, chỉnh sửa thông tin cá nhân"
   ]
  },
- "/chinh-sach-dich-vu/": {
-  "total": 239,
+ "/dich-vu/": {
+  "total": 206,
   "missing": 1,
   "samples": [
-   "A › Đến nội dung chính"
+   "s-header › VI"
+  ]
+ },
+ "/dich-vu/du-lich-trai-nghiem/": {
+  "total": 219,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/dich-vu/landing-page/": {
+  "total": 190,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/dich-vu/to-chuc-su-kien/": {
+  "total": 219,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/dich-vu/truyen-thong/": {
+  "total": 219,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/doi-ngu/": {
+  "total": 223,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/doi-ngu/avinash/": {
+  "total": 221,
+  "missing": 2,
+  "samples": [
+   "s-header › VI",
+   "s-section › Saini"
+  ]
+ },
+ "/doi-ngu/nam/": {
+  "total": 216,
+  "missing": 2,
+  "samples": [
+   "s-header › VI",
+   "s-section › Nam"
+  ]
+ },
+ "/doi-ngu/thanh/": {
+  "total": 220,
+  "missing": 2,
+  "samples": [
+   "s-header › VI",
+   "s-section › Thành"
+  ]
+ },
+ "/doi-ngu/thong/": {
+  "total": 219,
+  "missing": 2,
+  "samples": [
+   "s-header › VI",
+   "s-section › Thông"
+  ]
+ },
+ "/doi-ngu/trang/": {
+  "total": 219,
+  "missing": 2,
+  "samples": [
+   "s-header › VI",
+   "s-section › Trang"
+  ]
+ },
+ "/doi-tac/": {
+  "total": 821,
+  "missing": 20,
+  "samples": [
+   "s-header › VI",
+   "pd › ORIGIN YOGA là không gian thực hành Yoga cổ điển tại Đà Nẵng, nơi tư t",
+   "pd › AURA YOGA – nơi bạn trở về với chính mình. Chuyển động • Thở sâu • Cảm",
+   "pd › ELITE PREMIUM PILATES – CHĂM SÓC VÓC DÁNG, NÂNG TẦM TRẢI NGHIỆM Elite ",
+   "pd › Học viện Đào tạo HLV Yoga SY chuyên đào tạo giáo viên Yoga theo chuẩn ",
+   "pd › Kiến Gym Âu Cơ là một trong những phòng tập thể hình uy tín tại Đà Nẵn",
+   "pd › Kiến Gym là phòng tập hiện đại với không gian rộng rãi, trang thiết bị",
+   "pd › La pilates Vietnam là studio Pilates đến từ Nhật Bản. Trong buổi tập 1",
+   "pd › MASA ONE HYROX CLUB là trung tâm thể hình và chăm sóc sức khỏe theo ph",
+   "pd › Nhà sáng lập Joy (Yến Thị Trần) là chuyên gia trong lĩnh vực sức khỏe ",
+   "pd › Khách hàng hài lòng là thành công của chúng tôi Với đội ngũ kỹ thuật v",
+   "pd › No Limits Fitness & Yoga Hệ thống phòng tập tại Đà Nẵng dành cho khách",
+   "pd › Núi Đỏ Wellness & Recovery hướng đến không gian chăm sóc sức khỏe, thư",
+   "pd › TRUNG TÂM RAJA Yoga & Therapy Đà Nẵng là nơi kết nối những người yêu Y",
+   "pd › SQUARE FITNESS mang đến trải nghiệm tập luyện đa dạng với Gym, Yoga, P",
+   "pd › SUPER GYM – Nâng tầm sức khỏe của bạn 💪 SUPER GYM mang đến không gian",
+   "pd › TiGi Yoga là không gian dành cho những ai mong muốn rèn luyện sức khỏe",
+   "pd › 🏋️ TRÍ GYM YOGA – KHÔNG GIAN LUYỆN TẬP HIỆN ĐẠI & CHUYÊN NGHIỆP Trí G",
+   "pd › Yoga An Nhiên là không gian kết nối những người yêu Yoga, nơi cùng nha",
+   "pd › Học Viện Yoga Sống Khỏe với 30 chi nhánh trên toàn quốc, là thành viên"
+  ]
+ },
+ "/du-an/": {
+  "total": 263,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/du-an/hariver-gym-danava-studio/": {
+  "total": 221,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/du-an/hue-pilates-yoga-danava-studio/": {
+  "total": 221,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/du-an/vinhomes-hai-van-bay-website/": {
+  "total": 223,
+  "missing": 3,
+  "samples": [
+   "s-header › VI",
+   "cs-hero › vinhomeshaivanbaydanang.vn",
+   "s-section › vinhomeshaivanbaydanang.vn"
+  ]
+ },
+ "/giai-phap/": {
+  "total": 238,
+  "missing": 6,
+  "samples": [
+   "s-header › VI",
+   "svn-sec › Website doanh nghiệp, cá nhân, bán hàng và…",
+   "svn-sec › Landing page giới thiệu dịch vụ và chiến…",
+   "svn-sec › Lễ ra mắt sản phẩm, họp báo, triển lãm, lễ…",
+   "svn-sec › Thiết kế, thi công booth, backdrop, đạo cụ…",
+   "svn-sec › Thiết bị âm thanh, ánh sáng, màn hình LED…"
+  ]
+ },
+ "/giai-phap/cong-dong/": {
+  "total": 227,
+  "missing": 3,
+  "samples": [
+   "s-header › VI",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
+   "s-section › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn"
+  ]
+ },
+ "/giai-phap/danava-go/": {
+  "total": 311,
+  "missing": 7,
+  "samples": [
+   "s-header › VI",
+   "pgo-hero › DANAVA GO",
+   "pgo-hero › Boarding pass",
+   "pgo-sec › Cửa Ông Limousine",
+   "pgo-sec › ~2",
+   "pgo-sec › 600.000đ",
+   "pgo-sec › 600.000đ"
+  ]
+ },
+ "/giai-phap/danava-studio/": {
+  "total": 397,
+  "missing": 3,
+  "samples": [
+   "s-header › VI",
+   "st-app › ycv.danava.vn",
+   "s-section › Bước 1: Bấm vào Phím tắt Bước 2: Bấm vào Dấu +Bước 3: Bấm vào Icon Web"
+  ]
+ },
+ "/giai-phap/danava-work/": {
+  "total": 226,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/giai-phap/digital-marketing/": {
+  "total": 350,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/giai-phap/du-lich-su-kien/": {
+  "total": 279,
+  "missing": 4,
+  "samples": [
+   "s-header › VI",
+   "s-section › danavago.com",
+   "s-section › Kết thúc chuỗi “Sự kiện Soundbath Live Concert Đà Nẵng 5/5/2024” vừa q",
+   "s-section › Kết thúc Workshop THIỀN TRÀ VỚI CHỦ ĐỀ “VỘI” là nhiều cảm xúc lắng đọn"
+  ]
+ },
+ "/giai-phap/hello-danava/": {
+  "total": 356,
+  "missing": 10,
+  "samples": [
+   "s-header › VI",
+   "phl-sec › Miễn phí",
+   "phl-sec › 5.000.000 ₫",
+   "phl-sec › ≈ 416.667 ₫/tháng",
+   "phl-sec › 10.000.000 ₫",
+   "phl-sec › ≈ 833.333 ₫/tháng",
+   "phl-sec › 20.000.000 ₫",
+   "phl-sec › ≈ 1.666.667 ₫/tháng",
+   "phl-sec › 500.000 ₫",
+   "phl-sec › 3.000.000 ₫"
+  ]
+ },
+ "/giai-phap/su-kien-truyen-thong/": {
+  "total": 275,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/giai-phap/thiet-ke-website/": {
+  "total": 328,
+  "missing": 11,
+  "samples": [
+   "s-header › VI",
+   "s-section › hudisofa.com",
+   "s-section › danavago.com",
+   "s-section › danava.vn",
+   "s-section › glg.danava.com.vn",
+   "s-section › wellosophy.danava.com.vn",
+   "s-section › letanthanh.com",
+   "s-section › workspace.danava.com.vn",
+   "s-section › hello.danava.vn",
+   "s-section › Đăng ký tên miền là một trong những bước đầu tiên quan trọng mà các we",
+   "s-section › Tên miền đại diện cho thương hiệu của công ty có sự kết nối qua lại. N"
+  ]
+ },
+ "/he-sinh-thai/": {
+  "total": 418,
+  "missing": 9,
+  "samples": [
+   "s-header › VI",
+   "hx-live › danava.vn",
+   "hx-live › studio.danava.vn",
+   "hx-live › hello.danava.vn",
+   "hx-live › edu-yoga.danava.vn",
+   "hx-live › danavago.com",
+   "hx-live › ycv.danava.vn",
+   "hx-live › hariver.danava.vn",
+   "hx-live › hue.danava.vn"
+  ]
+ },
+ "/lien-he/": {
+  "total": 261,
+  "missing": 5,
+  "samples": [
+   "s-header › VI",
+   "c-hero › (mở tab mới)",
+   "c-hero › (mở tab mới)",
+   "c-hero › (mở tab mới)",
+   "c-hero › T2 – T7"
+  ]
+ },
+ "/tuyen-dung/": {
+  "total": 247,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
+  ]
+ },
+ "/ve-danava/": {
+  "total": 249,
+  "missing": 1,
+  "samples": [
+   "s-header › VI"
   ]
  }
 }

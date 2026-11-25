@@ -9,6 +9,8 @@ import { MUSCLES, muscleOf, type Muscle } from '@/lib/gym-layout';
 import { usableArea } from '@/lib/gym-geometry';
 import type { ProjectCost } from '@/lib/gym-cost';
 import { shortVND } from '@/lib/gym-cost';
+import { useSite } from '../../SiteStore';
+import { ct } from '../cms';
 
 /* ---------- Ô nhập nhỏ ---------- */
 export function Num({ label, value, onChange, min, max, step = .1, unit, wide }: { label: string; value: number; onChange: (v: number) => void; min: number; max: number; step?: number; unit?: string; wide?: boolean }) {
@@ -36,6 +38,11 @@ export function StartWizard({ onCreate, aiNote }: { onCreate: (p: Project) => vo
   const [areas, setAreas] = useState<number[]>([150, 120, 100, 100, 100]);
   const [budget, setBudget] = useState('');
   const [noBudget, setNoBudget] = useState(true);
+  const { data } = useSite();
+  /** Chữ màn hình bắt đầu sửa được trong trình biên tập (khóa gymlab.start.*). */
+  const t = (k: string, def: string, label: string) => ct(data, `gymlab.start.${k}`, def, label);
+  const T = (k: string, def: string, label: string) => { const x = t(k, def, label); return <span {...x.a}>{x.v}</span>; };
+  const h = t('title', 'Phòng tập của bạn rộng bao nhiêu?', 'Câu hỏi diện tích'), lm = t('models.legend', 'Loại phòng tập', 'Nhãn loại phòng tập'), lb = t('budget.legend', 'Ngân sách dự kiến', 'Nhãn ngân sách');
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const b = noBudget ? 0 : Number(budget.replace(/[^\d.,]/g, '').replace(',', '.')) * 1e6 || 0;
@@ -43,26 +50,26 @@ export function StartWizard({ onCreate, aiNote }: { onCreate: (p: Project) => vo
   };
   return (
     <form className="gs-start" onSubmit={submit}>
-      <h2>Phòng tập của bạn rộng bao nhiêu?</h2>
+      <h2 {...h.a}>{h.v}</h2>
       <div className="gs-start__areas">
         {Array.from({ length: n }, (_, i) => <Num key={i} label={n > 1 ? (i === 0 ? 'Tầng trệt' : `Tầng ${i + 1}`) : 'Diện tích'} value={areas[i]} min={20} max={2000} step={5} unit="m²" onChange={v => setAreas(a => a.map((x, j) => (j === i ? v : x)))} />)}
       </div>
-      <button type="submit" className="s-btn s-btn--primary s-btn--lg gs-start__go"><Sparkles aria-hidden="true" /> Xem phòng tập gợi ý</button>
-      <details className="gs-start__opts"><summary>Thêm lựa chọn: loại phòng, số tầng, ngân sách</summary>
-      <fieldset><legend>Loại phòng tập</legend>
+      <button type="submit" className="s-btn s-btn--primary s-btn--lg gs-start__go"><Sparkles aria-hidden="true" /> {T('go', 'Xem phòng tập gợi ý', 'Nút xem phòng tập')}</button>
+      <details className="gs-start__opts"><summary>{T('more', 'Thêm lựa chọn: loại phòng, số tầng, ngân sách', 'Mở thêm lựa chọn')}</summary>
+      <fieldset><legend {...lm.a}>{lm.v}</legend>
         <div className="gs-cards gs-cards--start">
           {(Object.keys(BUSINESS_MODELS) as BusinessModel[]).map(k => (
-            <button key={k} type="button" role="radio" aria-checked={model === k} className={model === k ? 'is-on' : ''} onClick={() => setModel(k)}><b>{BUSINESS_MODELS[k].label}</b></button>
+            <button key={k} type="button" role="radio" aria-checked={model === k} className={model === k ? 'is-on' : ''} onClick={() => setModel(k)}>{(() => { const x = t(`models.${k}`, BUSINESS_MODELS[k].label, 'Tên loại phòng tập'); return <b {...x.a}>{x.v}</b>; })()}</button>
           ))}
         </div>
       </fieldset>
-      <fieldset><legend>Số tầng <small>(tính cả tầng trệt)</small></legend>
+      <fieldset><legend>{T('floors.legend', 'Số tầng', 'Nhãn số tầng')} {(() => { const x = t('floors.hint', '(tính cả tầng trệt)', 'Ghi chú số tầng'); return <small {...x.a}>{x.v}</small>; })()}</legend>
         <Seg label="Số tầng" value={String(n)} options={[1, 2, 3, 4, 5].map(i => [String(i), `${i}`] as [string, string])} onChange={v => setN(Number(v))} />
       </fieldset>
-      <fieldset><legend>Ngân sách dự kiến</legend>
+      <fieldset><legend {...lb.a}>{lb.v}</legend>
         <div className="gs-budgetrow">
-          <button type="button" role="radio" aria-checked={noBudget} className={`gs-chip${noBudget ? ' is-on' : ''}`} onClick={() => setNoBudget(true)}>Chưa xác định</button>
-          <label className={`gs-budget${noBudget ? ' is-dim' : ''}`}><input inputMode="decimal" value={budget} placeholder="vd 800" onFocus={() => setNoBudget(false)} onChange={e => { setBudget(e.target.value.replace(/[^\d.,]/g, '').slice(0, 8)); setNoBudget(false); }} aria-label="Ngân sách (triệu đồng)" /> triệu đồng</label>
+          <button type="button" role="radio" aria-checked={noBudget} className={`gs-chip${noBudget ? ' is-on' : ''}`} onClick={() => setNoBudget(true)}>{T('budget.none', 'Chưa xác định', 'Chưa có ngân sách')}</button>
+          <label className={`gs-budget${noBudget ? ' is-dim' : ''}`}><input inputMode="decimal" value={budget} placeholder="vd 800" onFocus={() => setNoBudget(false)} onChange={e => { setBudget(e.target.value.replace(/[^\d.,]/g, '').slice(0, 8)); setNoBudget(false); }} aria-label="Ngân sách (triệu đồng)" /> {T('budget.unit', 'triệu đồng', 'Đơn vị ngân sách')}</label>
         </div>
       </fieldset>
       </details>

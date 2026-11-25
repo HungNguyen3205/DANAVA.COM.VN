@@ -15,12 +15,13 @@ export type TourRole = { id: string; label: string; lead: string; device: 'deskt
 /** Khóa chữ sửa được của một ảnh màn hình (dùng chung giữa tham quan, bảng phân hệ, dải app): studio.shots.<tên tệp> */
 export const shotKey = (src: string) => `studio.shots.${(src.split('/').pop() || '').replace(/\.[a-z]+$/i, '').toLowerCase().replace(/[^a-z0-9-]/g, '-')}`;
 
-export function StudioTour({ roles: base }: { roles: TourRole[] }) {
+/** ns: tiền tố khóa chữ riêng từng sản phẩm (Studio giữ 'studio' để không mất bản sửa / bản dịch đã có) */
+export function StudioTour({ roles: base, ns = 'studio' }: { roles: TourRole[]; ns?: string }) {
   const { data } = useSite();
   // Chữ sửa được (lib/site-text.ts): tên vai trò, câu dẫn và tiêu đề / mô tả từng màn hình
   const roles = base.map((r, i) => {
-    const label = ct(data, `studio.tour.${i}.label`, r.label, 'Tên vai trò');
-    const lead = ct(data, `studio.tour.${i}.lead`, r.lead, 'Câu dẫn vai trò', { multiline: true });
+    const label = ct(data, `${ns}.tour.${i}.label`, r.label, 'Tên vai trò');
+    const lead = ct(data, `${ns}.tour.${i}.lead`, r.lead, 'Câu dẫn vai trò', { multiline: true });
     const shots = r.shots.map(s => {
       const t = ct(data, `${shotKey(s.src)}.title`, s.title, 'Tên màn hình');
       const x = ct(data, `${shotKey(s.src)}.text`, s.text, 'Mô tả màn hình', { multiline: true });

@@ -66,7 +66,12 @@ export function ProblemsSection({ title, problems, lead, rec }: { title: ReactNo
   );
 }
 
-export function ScopeSection({ eyebrow = 'Giải pháp DANAVA', title, items, rec }: { eyebrow?: ReactNode; title: ReactNode; items: string[]; rec?: RecSrc }) {
+/** Nhãn nhỏ "Giải pháp DANAVA" dùng chung nhiều trang dịch vụ → một khóa toàn website (shared.kicker.danava). */
+export function DanavaKicker() {
+  return <S k="kicker.danava" def="Giải pháp DANAVA" label="Nhãn nhỏ" />;
+}
+
+export function ScopeSection({ eyebrow = <DanavaKicker />, title, items, rec }: { eyebrow?: ReactNode; title: ReactNode; items: string[]; rec?: RecSrc }) {
   if (!items.length) return null;
   return (
     <section className="s-section s-section--brand" aria-labelledby="svc-includes">
@@ -83,20 +88,25 @@ export function ScopeSection({ eyebrow = 'Giải pháp DANAVA', title, items, re
   );
 }
 
-export function FeatureGrid({ id, eyebrow, title, lead, features, soft, rec }: { id: string; eyebrow: ReactNode; title: ReactNode; lead?: ReactNode; features: Feature[]; soft?: boolean; rec?: RecSrc }) {
+/** feat = chữ của từng tính năng khi nội dung nằm trong mã (khóa txt) thay vì hồ sơ (rec). */
+type FeatText = (i: number, field: 'title' | 'text', def: string) => { v: string; a: Record<string, string> };
+export function FeatureGrid({ id, eyebrow, title, lead, features, soft, rec, feat }: { id: string; eyebrow: ReactNode; title: ReactNode; lead?: ReactNode; features: Feature[]; soft?: boolean; rec?: RecSrc; feat?: FeatText }) {
   if (!features.length) return null;
   return (
     <section id={id} className={`s-section${soft ? ' s-section--soft' : ''}`} aria-labelledby={`${id}-title`}>
       <div className="s-container">
         <SectionHeading eyebrow={eyebrow} title={<span id={`${id}-title`}><TT v={title} k="features.title" /></span>} lead={lead} />
         <div className={`s-grid s-tiles ${features.length % 3 === 0 ? 's-grid--3' : 's-grid--2'}`}>
-          {features.map((f, i) => (
-            <div key={f.title} className="s-card s-card--pad s-svc-feature">
-              <span className="s-svc-feature__num">{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="s-h4" {...R(rec, `features.${i}.title`, 'Tên tính năng')}>{f.title}</h3>
-              <p className="s-text" {...R(rec, `features.${i}.text`, 'Mô tả tính năng', true)}>{f.text}</p>
-            </div>
-          ))}
+          {features.map((f, i) => {
+            const ft = feat?.(i, 'title', f.title), fx = feat?.(i, 'text', f.text);
+            return (
+              <div key={f.title} className="s-card s-card--pad s-svc-feature">
+                <span className="s-svc-feature__num">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="s-h4" {...(ft ? ft.a : R(rec, `features.${i}.title`, 'Tên tính năng'))}>{ft ? ft.v : f.title}</h3>
+                <p className="s-text" {...(fx ? fx.a : R(rec, `features.${i}.text`, 'Mô tả tính năng', true))}>{fx ? fx.v : f.text}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -123,7 +133,8 @@ export function ProcessSection({ steps, title = 'Rõ ràng ở mỗi bước', r
   );
 }
 
-export function PricingSection({ pricing, productUrl, productLabel, contactHref }: { pricing: string; productUrl?: string; productLabel?: string; contactHref: string }) {
+/** cms = thuộc tính vùng chỉnh của câu báo giá (rec.services.<id>.pricing hoặc khóa txt khi nội dung nằm trong mã). */
+export function PricingSection({ pricing, productUrl, productLabel, contactHref, cms }: { pricing: string; productUrl?: string; productLabel?: string; contactHref: string; cms?: Record<string, string> }) {
   if (!pricing.trim()) return null;
   return (
     <section className="s-section s-section--tight" aria-labelledby="svc-pricing">
@@ -133,7 +144,7 @@ export function PricingSection({ pricing, productUrl, productLabel, contactHref 
           <div>
             <p className="s-eyebrow"><S k="pricing.eyebrow" def="Chi phí" label="Nhãn nhỏ" /></p>
             <h2 className="s-h3" id="svc-pricing"><S k="pricing.title" def="Cách xác định báo giá" label="Tiêu đề" /></h2>
-            <p className="s-text">{pricing}</p>
+            <p className="s-text" {...cms}>{pricing}</p>
           </div>
           <div className="u-pricing__actions">
             {productUrl && (
@@ -183,7 +194,7 @@ export function ProjectTile({ p }: { p: Project }) {
       <div className="s-card__body">
         <p className="s-card__tag" {...cmsText(`rec.projects.${p.id}.client`, 'Khách hàng (hồ sơ dự án)', { scope: 'record', scopeLabel: 'Hồ sơ dự án' })}>{p.client}</p>
         <h3 className="s-card__title"><Link className="s-card__cover" href={projectHref(p)}><span {...cmsText(`rec.projects.${p.id}.title`, 'Tên dự án', { scope: 'record', scopeLabel: 'Hồ sơ dự án' })}>{p.title}</span></Link></h3>
-        <p className="s-card__text">{excerpt(p.summary, 160)}</p>
+        <p className="s-card__text" {...(excerpt(p.summary, 160) === p.summary ? cmsText(`rec.projects.${p.id}.summary`, 'Tóm tắt dự án', { multiline: true, scope: 'record', scopeLabel: 'Hồ sơ dự án' }) : {})}>{excerpt(p.summary, 160)}</p>
         <div className="s-card__foot">
           <span className="s-link"><S k="project.more" def="Xem case study" label="Chữ liên kết" /></span>
           <span className="s-card__arrow" aria-hidden="true"><ArrowRight /></span>

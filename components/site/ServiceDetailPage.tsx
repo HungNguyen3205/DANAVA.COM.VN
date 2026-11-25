@@ -5,6 +5,7 @@
  * Nội dung lấy từ CMS (data.services) + khối trình bày trong service-content.ts.
  */
 import Link from 'next/link';
+import { txt } from '@/lib/site-text';
 import { Phone, ArrowRight } from 'lucide-react';
 import type { Service, SiteData } from '@/lib/content';
 import { postsForService, projectsForService, publishedSubServices, sortServices, subServiceHref } from '@/lib/site-queries';
@@ -39,7 +40,29 @@ export function ServiceDetailPage({ service, data, section }: { service: Service
   return <StandardServicePage service={service} data={data} section={section} />;
 }
 
-function StandardServicePage({ service, data, section }: { service: Service; data: SiteData; section?: ServiceSection }) {
+/**
+ * Dịch vụ khai báo trong mã (lib/dich-vu.ts, mã dv-*) không có hồ sơ trong data.services → vùng chữ lưu vào kho chữ
+ * txt.product.<mã>.<trường> (ghi được, dịch được) thay vì rec.services.* (không có bản ghi → không lưu được).
+ * Chữ hiển thị đọc lại từ kho chữ (bản sửa / bản dịch), mặc định là chữ trong mã.
+ */
+const OVERLAY_FIELDS = ['title', 'heroLead', 'description', 'items', 'features', 'process', 'faqs', 'problems', 'audience'] as const;
+function overlayCodeService(data: SiteData, service: Service): Service {
+  const walk = (v: unknown, key: string): unknown => {
+    if (typeof v === 'string') return txt(data, key, v);
+    if (Array.isArray(v)) return v.map((x, i) => walk(x, `${key}.${i}`));
+    if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, typeof x === 'string' || Array.isArray(x) || (x && typeof x === 'object') ? walk(x, `${key}.${k}`) : x]));
+    return v;
+  };
+  const out = { ...service } as Record<string, unknown>;
+  for (const f of OVERLAY_FIELDS) if (out[f] !== undefined) out[f] = walk(out[f], `product.${service.id}.${f}`);
+  return out as unknown as Service;
+}
+
+function StandardServicePage({ service: raw, data, section }: { service: Service; data: SiteData; section?: ServiceSection }) {
+  const inData = data.services.some(s => s.id === raw.id);
+  const service = inData ? raw : overlayCodeService(data, raw);
+  /** Gốc khóa vùng chữ của hồ sơ: bản ghi CMS hoặc kho chữ (dịch vụ trong mã) */
+  const recBase = inData ? `rec.services.${service.id}` : `txt.product.${service.id}`;
   const m = serviceMeta(service);
   const d = SERVICE_DETAILS[service.id];
   const phone = data.phone || CONTACT.phone;
@@ -49,7 +72,7 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
   const own = /^[a-z0-9][a-z0-9-]{0,60}$/.test(service.id);
   const tOwn = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => (own ? t(`${service.id}.${k}`, def, label, opts) : { v: def, a: {} });
   const scopeLabel = `Hồ sơ ${service.title}`;
-  const rec = (field: string, label: string, multiline = false) => cmsText(`rec.services.${service.id}.${field}`, label, { scope: 'record', scopeLabel, ...(multiline ? { multiline: true } : {}) });
+  const rec = (field: string, label: string, multiline = false) => cmsText(`${recBase}.${field}`, label, { scope: inData ? 'record' : 'global', scopeLabel, ...(multiline ? { multiline: true } : {}) });
   const ctaT = tOwn('cta', service.id === 'studio' ? 'Đăng ký demo' : d?.primaryCta || 'Nhận tư vấn', 'Nút liên hệ chính');
   const cta = ctaT.v;
   const kicker = tOwn('kicker', m.kicker, 'Nhãn nhóm sản phẩm');
@@ -65,6 +88,8 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
   const subMore = t('subs.more', 'Xem chi tiết', 'Chữ liên kết xem chi tiết');
   const ctaTitle = t('cta.title', 'Trao đổi về', 'Dải cuối trang: tiêu đề (trước tên sản phẩm)');
   const ctaLead = t('cta.lead', 'Để lại thông tin, chuyên viên DANAVA liên hệ lại để tìm hiểu nhu cầu và đề xuất phạm vi phù hợp.', 'Dải cuối trang: câu dẫn', { multiline: true });
+  // Câu báo giá: hồ sơ trong CMS (data.services) → rec.services.<id>.pricing; dịch vụ khai báo trong mã (lib/dich-vu.ts) → khóa product.<id>.pricing
+  const pricing = inData ? { v: service.pricing || '', a: rec('pricing', 'Cách xác định báo giá', true) } : tOwn('pricing', service.pricing || '', 'Cách xác định báo giá', { multiline: true });
   const image = service.cover || service.image || m.image;
   const projects = projectsForService(data, service.id).slice(0, 3);
   const posts = postsForService(data, service.id, 3);
@@ -78,8 +103,8 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
             <div className="s-svc-hero__copy">
               <Crumbs items={[{ href: '/', label: 'Trang chủ' }, { href: section?.base ?? '/giai-phap/', label: section?.label ?? 'Giải pháp' }, { label: service.title }]} />
               <p className="s-eyebrow" {...kicker.a}>{kicker.v}</p>
-              <h1 className="s-h1" {...cmsText(`rec.services.${service.id}.title`, 'Tên sản phẩm', { scope: 'record', scopeLabel: `Hồ sơ ${service.title}` })}>{service.title}</h1>
-              <p className="s-lead" {...cmsText(`rec.services.${service.id}.${service.heroLead ? 'heroLead' : 'description'}`, 'Câu dẫn sản phẩm', { multiline: true, scope: 'record', scopeLabel: `Hồ sơ ${service.title}` })}>{service.heroLead || service.description}</p>
+              <h1 className="s-h1" {...rec('title', 'Tên sản phẩm')}>{service.title}</h1>
+              <p className="s-lead" {...rec(service.heroLead ? 'heroLead' : 'description', 'Câu dẫn sản phẩm', true)}>{service.heroLead || service.description}</p>
               {!!service.audience?.length && (
                 <ul className="s-svc-audience" aria-label="Phù hợp với">
                   {service.audience.map((a, i) => <li key={a} className="s-badge s-badge--neutral" {...rec(`audience.${i}`, 'Đối tượng phù hợp')}>{a}</li>)}
@@ -108,13 +133,13 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
       <ProblemsSection
         title={`Khi nào nên dùng ${service.title}?`}
         problems={service.problems || []}
-        rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }}
+        rec={{ base: recBase, label: `Hồ sơ ${service.title}` }}
       />
 
-      <ScopeSection title={service.description} items={service.items} rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
+      <ScopeSection title={service.description} items={service.items} rec={{ base: recBase, label: `Hồ sơ ${service.title}` }} />
 
       {/* Tính năng nhập trong hồ sơ sản phẩm (admin → Giải pháp → Nội dung) */}
-      <FeatureGrid id="tinh-nang" eyebrow="Tính năng" title={`Tính năng của ${service.title}`} features={service.features || []} soft rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
+      <FeatureGrid id="tinh-nang" eyebrow="Tính năng" title={`Tính năng của ${service.title}`} features={service.features || []} soft rec={{ base: recBase, label: `Hồ sơ ${service.title}` }} />
 
       {/* DANAVA Studio: ảnh giao diện thật */}
       {service.id === 'studio' && (
@@ -141,11 +166,17 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
         </section>
       )}
 
-      {d?.blocks.map((b, bi) => (
-        <FeatureGrid key={b.id} id={b.id} eyebrow={b.eyebrow} title={b.title} lead={b.lead} features={b.features} soft={bi % 2 === 0} />
-      ))}
+      {d?.blocks.map((b, bi) => {
+        // Khối trình bày trong mã (service-content.ts) → khóa product.<mã sản phẩm>.blocks.<khối>.*
+        const bk = (k: string, def: string, label: string, multiline = false) => tOwn(`blocks.${b.id}.${k}`, def, label, { multiline });
+        const be = bk('eyebrow', b.eyebrow, 'Dòng chữ nhỏ khối'), bt = bk('title', b.title, 'Tiêu đề khối'), bl = b.lead ? bk('lead', b.lead, 'Câu dẫn khối', true) : undefined;
+        return (
+          <FeatureGrid key={b.id} id={b.id} eyebrow={<span {...be.a}>{be.v}</span>} title={<span {...bt.a}>{bt.v}</span>} lead={bl && <span {...bl.a}>{bl.v}</span>} features={b.features} soft={bi % 2 === 0}
+            feat={(i, field, def) => bk(`features.${i}.${field}`, def, field === 'title' ? 'Tên tính năng' : 'Mô tả tính năng', field === 'text')} />
+        );
+      })}
 
-      <ProcessSection steps={service.process || []} rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
+      <ProcessSection steps={service.process || []} rec={{ base: recBase, label: `Hồ sơ ${service.title}` }} />
 
       {d?.promises && (
         <section className="s-section s-section--brand" aria-labelledby="svc-promises">
@@ -168,7 +199,7 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
 
       <PackagesSection title={`Bảng giá ${service.title}`} packages={service.packages || []} contactHref={contactHref} />
 
-      <PricingSection pricing={service.pricing || ''} productUrl={service.productUrl} productLabel={service.productLabel} contactHref={contactHref} />
+      <PricingSection pricing={pricing.v} productUrl={service.productUrl} productLabel={service.productLabel} contactHref={contactHref} cms={pricing.a} />
 
       <RelatedProjects projects={projects} title={`Dự án ${service.title} đã triển khai`} />
 
@@ -189,7 +220,7 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
         </section>
       )}
 
-      <FaqSection faqs={service.faqs || []} contactHref={contactHref} rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
+      <FaqSection faqs={service.faqs || []} contactHref={contactHref} rec={{ base: recBase, label: `Hồ sơ ${service.title}` }} />
 
       <RelatedPosts posts={posts} data={data} title={`Bài viết về ${service.title}`} />
 

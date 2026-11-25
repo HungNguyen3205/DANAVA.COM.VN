@@ -8,7 +8,7 @@ import type { Service, SiteData, SubService } from '@/lib/content';
 import { postsForService, projectsForService, publishedSubServices, subServiceHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, serviceMeta } from './catalog';
 import { Crumbs, CtaBand } from './ui';
-import { FaqSection, FeatureGrid, PricingSection, ProblemsSection, ProcessSection, RelatedPosts, RelatedProjects, ServiceLinks } from './blocks';
+import { DanavaKicker, FaqSection, FeatureGrid, PricingSection, ProblemsSection, ProcessSection, RelatedPosts, RelatedProjects, ServiceLinks } from './blocks';
 import { contactHrefFor } from './ServiceDetailPage';
 import { cmsText, ct } from './cms';
 
@@ -67,9 +67,10 @@ export function SubServicePage({ parent, sub, data, preview }: { parent: Service
       </section>
 
       <ProblemsSection title="Vấn đề thường gặp" problems={sub.problems} rec={{ base: `rec.subServices.${sub.id}`, label: `Hồ sơ ${sub.title}` }} />
-      <FeatureGrid id="tinh-nang" eyebrow="Giải pháp DANAVA" title={`${sub.title}: phạm vi chính`} features={sub.features} soft rec={{ base: `rec.subServices.${sub.id}`, label: `Hồ sơ ${sub.title}` }} />
+      <FeatureGrid id="tinh-nang" eyebrow={<DanavaKicker />} title={`${sub.title}: phạm vi chính`} features={sub.features} soft rec={{ base: `rec.subServices.${sub.id}`, label: `Hồ sơ ${sub.title}` }} />
       <ProcessSection steps={sub.process} rec={{ base: `rec.subServices.${sub.id}`, label: `Hồ sơ ${sub.title}` }} />
-      <PricingSection pricing={sub.pricing || parent.pricing || ''} productUrl={parent.productUrl} productLabel={parent.productLabel} contactHref={contactHref} />
+      <PricingSection pricing={sub.pricing || parent.pricing || ''} productUrl={parent.productUrl} productLabel={parent.productLabel} contactHref={contactHref}
+        cms={sub.pricing ? subRec('pricing', 'Cách xác định báo giá', true) : data.services.some(s => s.id === parent.id) ? cmsText(`rec.services.${parent.id}.pricing`, 'Cách xác định báo giá', { multiline: true, scope: 'record', scopeLabel: `Hồ sơ ${parent.title}` }) : undefined} />
       <RelatedProjects projects={projects} />
       <FaqSection faqs={sub.faqs} contactHref={contactHref} rec={{ base: `rec.subServices.${sub.id}`, label: `Hồ sơ ${sub.title}` }} />
       <RelatedPosts posts={posts} data={data} />

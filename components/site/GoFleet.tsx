@@ -3,13 +3,18 @@
  * "Chọn cách bạn tận hưởng": 3 nút chuyển dòng xe (Giường nằm · Limousine · Cabin VIP).
  * Dữ liệu, ảnh và câu chữ lấy từ trang chủ DANAVA GO (dự án DatVeXeONL, VehicleExperience).
  * Bấm nút hoặc dùng phím ←/→ để đổi xe; trên điện thoại có thể vuốt ảnh.
+ * Chữ sửa trực tiếp được: khóa fleet.<mã xe>.* và fleet.note / fleet.seats / fleet.floors.
  */
 import { useRef, useState } from 'react';
 import { Armchair, Check, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { useSite } from '../SiteStore';
+import { ct } from './cms';
 
 export type GoVehicle = { id: string; label: string; name: string; word: string; text: string; seats: number; floors: number; perks: string[]; image: string; width: number; height: number };
 
 export function GoFleet({ fleet, note }: { fleet: GoVehicle[]; note: string }) {
+  const { data } = useSite();
+  const P = (k: string, def: string, label: string, opts: { multiline?: boolean } = {}) => { const x = ct(data, `fleet.${k}`, def, label, opts); return { ...x.a, children: x.v }; };
   const [i, setI] = useState(fleet.length - 1);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const touch = useRef<number | null>(null);
@@ -27,18 +32,18 @@ export function GoFleet({ fleet, note }: { fleet: GoVehicle[]; note: string }) {
             aria-selected={k === i} tabIndex={k === i ? 0 : -1} className={k === i ? 'is-on' : undefined}
             onClick={() => go(k)}
             onKeyDown={e => { if (e.key === 'ArrowRight') { e.preventDefault(); go(k + 1, true); } else if (e.key === 'ArrowLeft') { e.preventDefault(); go(k - 1, true); } }}>
-            <Armchair aria-hidden="true" />{x.label}
+            <Armchair aria-hidden="true" /><span {...P(`${x.id}.label`, x.label, 'Tên dòng xe')} />
           </button>
         ))}
       </div>
       <div className="pgo-seat__grid" id="pgo-fleet-panel" role="tabpanel" aria-labelledby={`pgo-tab-${v.id}`}>
         <div className="pgo-cabin" key={'t' + v.id}>
-          <p className="pgo-cabin__tag">{v.label}</p>
-          <h3>{v.name}</h3>
-          <p>{v.text}</p>
-          <p className="pgo-cabin__specs"><Users aria-hidden="true" />{v.seats} chỗ · {v.floors} tầng</p>
-          <ul>{v.perks.map(p => <li key={p}><Check aria-hidden="true" />{p}</li>)}</ul>
-          <small>{note}</small>
+          <p className="pgo-cabin__tag" {...P(`${v.id}.label`, v.label, 'Tên dòng xe')} />
+          <h3 {...P(`${v.id}.name`, v.name, 'Tên xe')} />
+          <p {...P(`${v.id}.text`, v.text, 'Mô tả xe', { multiline: true })} />
+          <p className="pgo-cabin__specs"><Users aria-hidden="true" /><span>{v.seats} <span {...P('seats', 'chỗ', 'Đơn vị số chỗ')} /> · {v.floors} <span {...P('floors', 'tầng', 'Đơn vị số tầng')} /></span></p>
+          <ul>{v.perks.map((p, j) => <li key={p}><Check aria-hidden="true" /><span {...P(`${v.id}.perks.${j}`, p, 'Tiện ích trên xe')} /></li>)}</ul>
+          <small {...P('note', note, 'Ghi chú tiện ích')} />
         </div>
         <figure className="pgo-seat__img"
           onTouchStart={e => { touch.current = e.touches[0].clientX; }}

@@ -95,7 +95,7 @@ export default function TeamPage() {
                         <Link className="s-card__cover" href={`/doi-ngu/${p.id}/`}><span {...cmsText(`rec.staff.${p.id}.name`, 'Họ tên', STAFF)}>{p.name}</span></Link>
                       </h2>
                       <p className="s-team-card__role" {...cmsText(`rec.staff.${p.id}.role`, 'Chức vụ', STAFF)}>{p.role}</p>
-                      <p className="s-card__text">{detail.expertise.slice(0, 3).join(' · ')}</p>
+                      <p className="s-card__text">{detail.expertise.slice(0, 3).map((x, i) => <span key={i}>{i > 0 && ' · '}<span {...(bi >= 0 ? cmsText(`block.staff.${bi}.expertise.${i}`, 'Chuyên môn') : {})}>{x}</span></span>)}</p>
                     </div>
                     <div className="s-card__foot">
                       <span className="s-link" {...cardCta.a}>{cardCta.v}</span>

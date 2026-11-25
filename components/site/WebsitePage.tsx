@@ -131,7 +131,7 @@ export function WebsitePage({ service, data }: { service: Service; data: SiteDat
       </section>
 
       <ProcessSection steps={service.process || []} rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
-      <PricingSection pricing={service.pricing || ''} productUrl={service.productUrl} productLabel={service.productLabel} contactHref={contactHref} />
+      <PricingSection pricing={service.pricing || ''} productUrl={service.productUrl} productLabel={service.productLabel} contactHref={contactHref} cms={rec('pricing', 'Cách xác định báo giá', true)} />
       {subs.length > 0 && (
         <section className="s-section s-section--line" aria-labelledby="wb-subs">
           <div className="s-container">

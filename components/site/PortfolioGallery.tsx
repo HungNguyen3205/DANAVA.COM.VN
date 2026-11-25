@@ -28,7 +28,7 @@ export function PortfolioGallery({ items, label = 'Lọc sản phẩm theo loạ
           <button type="button" aria-pressed={!cat} onClick={() => setCat('')}><b style={{ fontWeight: 'inherit' }} {...all.a}>{all.v}</b> <span>{items.length}</span></button>
           {categories.map(c => (
             <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}>
-              {c} <span>{items.filter(i => i.category === c).length}</span>
+              <CatLabel data={data} c={c} /> <span>{items.filter(i => i.category === c).length}</span>
             </button>
           ))}
         </div>
@@ -65,4 +65,12 @@ export function PortfolioGallery({ items, label = 'Lọc sản phẩm theo loạ
       </ul>
     </div>
   );
+}
+
+/** Tên nhóm lọc (trường category của hồ sơ, dùng chung nhiều hồ sơ) → chữ hiển thị sửa/dịch được theo từng tên nhóm (portfolio.cat.k<mã>). Bộ lọc vẫn so theo giá trị gốc. */
+function CatLabel({ data, c }: { data: Parameters<typeof ct>[0]; c: string }) {
+  let h = 0; for (const ch of c) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const x = ct(data, `portfolio.cat.k${h.toString(36)}`, c, 'Tên nhóm lọc', { scope: 'global' });
+  // <b> giữ kiểu chữ của nút: span trong nút là số đếm (.pf__filters button span)
+  return <b style={{ fontWeight: 'inherit' }} {...x.a}>{x.v}</b>;
 }

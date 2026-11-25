@@ -29,7 +29,7 @@ export function ProjectCard({ p }: { p: Project }) {
       <div className="s-card__body">
         <p className="s-card__tag" {...recP(p.id, 'category', 'Loại dự án')}>{p.category}</p>
         <h3 className="s-card__title"><Link className="s-card__cover" href={`/du-an/${p.slug}/`}><span {...recP(p.id, 'title', 'Tên dự án')}>{p.title}</span></Link></h3>
-        <p className="s-card__text">{excerpt(p.summary, 160)}</p>
+        <p className="s-card__text" {...(excerpt(p.summary, 160) === p.summary ? recP(p.id, 'summary', 'Tóm tắt dự án', { multiline: true }) : {})}>{excerpt(p.summary, 160)}</p>
         <div className="s-card__foot">
           <span className="s-muted s-small" {...recP(p.id, 'client', 'Khách hàng')}>{p.client}</span>
           <span className="s-card__arrow" aria-hidden="true"><ArrowRight /></span>

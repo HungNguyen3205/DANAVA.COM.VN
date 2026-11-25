@@ -328,7 +328,7 @@ export function MarketingPage({ service, data }: { service: Service; data: SiteD
       <RelatedPosts posts={posts} data={data} title="Bài viết về Marketing & Truyền thông" soft />
       {(service.pricing?.trim() || !!service.faqs?.length) && (
         <div className="mk-help">
-          <PricingSection pricing={service.pricing || ''} contactHref={contactHref} />
+          <PricingSection pricing={service.pricing || ''} contactHref={contactHref} cms={recAttr(`services.${service.id}.pricing`, 'Cách xác định báo giá', `Hồ sơ ${service.title}`, true)} />
           <FaqSection faqs={service.faqs || []} contactHref={contactHref} rec={{ base: `rec.services.${service.id}`, label: svc }} />
         </div>
       )}

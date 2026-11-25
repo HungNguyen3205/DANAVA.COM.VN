@@ -28,6 +28,9 @@ const short = (u: EcosystemUnit) => u.name.replace(' · Sự kiện & Truyền t
 type Opts = { rich?: boolean; multiline?: boolean };
 /** Trường trong khối CMS "ecosystem" (block.ecosystem.<đường dẫn>, lib/cms-paths.ts). */
 const B = (path: string, label: string, opts: Opts = {}) => cmsText(`block.ecosystem.${path}`, label, opts);
+const anchor = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+/** Tên tỉnh/thành: chữ dùng chung toàn website (shared.city.<mã>, như trang Đối tác) → sửa / dịch một lần. */
+const cityText = (data: SiteData, city: string) => (anchor(city) ? ct(data, `shared.city.${anchor(city)}`, city, 'Tên tỉnh/thành (dùng chung)', { scope: 'global' }) : { v: city, a: {} });
 
 /** Vị trí đơn vị trên chòm sao: sản phẩm số ở vòng trong, còn lại ở vòng ngoài (đơn vị %). */
 function orbit(units: EcosystemUnit[]) {
@@ -306,7 +309,7 @@ export function EcosystemPage({ data }: { data: SiteData }) {
                       <h3><Link className="hx-pcard__link" href={href}><span {...rec(c.id, 'name', 'Tên đối tác')}>{c.name}</span></Link></h3>
                       <p className="hx-pcard__meta">
                         {c.role && <span className="hx-pcard__role" {...rec(c.id, 'role', 'Lĩnh vực')}>{c.role}</span>}
-                        {c.city && <span>{c.city.replace(/^Thừa Thiên /, '')}</span>}
+                        {c.city && (() => { const ci = cityText(data, c.city.replace(/^Thừa Thiên /, '')); return <span {...ci.a}>{ci.v}</span>; })()}
                       </p>
                       {c.verified && <p className="hx-pcard__ok"><BadgeCheck aria-hidden="true" /><span {...T.pOk.a}>{T.pOk.v}</span><span className="s-sr"> trên danava.vn</span></p>}
                     </div>

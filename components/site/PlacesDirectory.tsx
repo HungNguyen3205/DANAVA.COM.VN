@@ -13,13 +13,20 @@ export type PlaceCard = {
   logo: string; cover: string; url: string; verified: boolean; about: string; amenities: string[];
   /** role lấy đúng từ hồ sơ (không phải chữ mặc định) → sửa được */
   hasRole?: boolean;
+  /** about là toàn bộ mô tả (không bị cắt) → sửa được như trường description của hồ sơ */
+  aboutWhole?: boolean;
 };
+
+const anchor = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
 
 export function PlacesDirectory({ places }: { places: PlaceCard[] }) {
   const { data } = useSite();
   const t = (k: string, def: string, label: string) => ct(data, `partners.places.dir.${k}`, def, label);
   const rec = (p: PlaceCard, field: string, label: string) => cmsText(`rec.clients.${p.id}.${field}`, label, { scope: 'record', scopeLabel: `Hồ sơ ${p.name}` });
   const all = t('all', 'Tất cả', 'Bộ lọc: tất cả'), unit = t('unit', 'địa điểm', 'Đơn vị đếm'), ver = t('verified', 'DANAVA Verified', 'Nhãn xác minh'), link = t('link', 'Xem trên danava.vn', 'Chữ liên kết');
+  // Tên tỉnh/thành dùng chung toàn website (shared.city.<mã>); tên loại hình trên bộ lọc (gộp nhiều hồ sơ) là chữ cố định riêng
+  const cityT = (c: string) => (anchor(c) ? ct(data, `shared.city.${anchor(c)}`, c, 'Tên tỉnh/thành (dùng chung)', { scope: 'global' }) : { v: c, a: {} });
+  const roleT = (r: string) => (anchor(r) ? ct(data, `partners.places.dir.role.${anchor(r)}`, r, 'Bộ lọc: tên loại hình') : { v: r, a: {} });
   const [role, setRole] = useState('');
   const [city, setCity] = useState('');
   const roles = useMemo(() => Array.from(new Set(places.map(p => p.role))).sort((a, b) => a.localeCompare(b, 'vi')), [places]);
@@ -32,7 +39,7 @@ export function PlacesDirectory({ places }: { places: PlaceCard[] }) {
         <div className="pd-chips" role="radiogroup" aria-label="Loại hình">
           {['', ...roles].map(r => (
             <button key={r || 'all'} type="button" role="radio" aria-checked={role === r} className={role === r ? 'is-on' : ''} onClick={() => setRole(r)}>
-              {r || <b style={{ fontWeight: 'inherit' }} {...all.a}>{all.v}</b>} <span>{places.filter(p => !r || p.role === r).length}</span>
+              {r ? (() => { const x = roleT(r); return <b style={{ fontWeight: 'inherit' }} {...x.a}>{x.v}</b>; })() : <b style={{ fontWeight: 'inherit' }} {...all.a}>{all.v}</b>} <span>{places.filter(p => !r || p.role === r).length}</span>
             </button>
           ))}
         </div>
@@ -56,11 +63,11 @@ export function PlacesDirectory({ places }: { places: PlaceCard[] }) {
               <div className="pd-card__head">
                 {p.logo && <img className="pd-card__logo" src={p.logo} alt="" width={56} height={56} loading="lazy" />}
                 <div>
-                  <p className="pd-card__role"><span {...(p.hasRole ? rec(p, 'role', 'Lĩnh vực') : {})}>{p.role}</span>{p.city ? ` · ${p.city}` : ''}</p>
+                  <p className="pd-card__role"><span {...(p.hasRole ? rec(p, 'role', 'Lĩnh vực') : {})}>{p.role}</span>{p.city ? (() => { const x = cityT(p.city); return <> · <span {...x.a}>{x.v}</span></>; })() : ''}</p>
                   <h3 className="pd-card__name" {...rec(p, 'name', 'Tên địa điểm')}>{p.name}</h3>
                 </div>
               </div>
-              {p.about && <p className="pd-card__about">{p.about}</p>}
+              {p.about && <p className="pd-card__about" {...(p.aboutWhole ? cmsText(`rec.clients.${p.id}.description`, 'Giới thiệu', { multiline: true, scope: 'record', scopeLabel: `Hồ sơ ${p.name}` }) : {})}>{p.about}</p>}
               <ul className="pd-card__meta">
                 {p.address && <li><MapPin aria-hidden="true" /><span {...rec(p, 'address', 'Địa chỉ')}>{p.address}</span></li>}
                 {p.hours && <li><Clock aria-hidden="true" /><span {...rec(p, 'hours', 'Giờ mở cửa')}>{p.hours}</span></li>}

@@ -12,10 +12,14 @@ import { isValidPhoneNumber } from '@/lib/contact-services';
 import { CONTACT } from '@/components/site/catalog';
 import { MayFigure } from '@/components/site/anna/MayFigure';
 import type { Service } from '@/lib/content';
+import { useSite } from '../SiteStore';
+import { ct } from './cms';
+import { rich } from './rich';
 
 const NEEDS = ['Chiến dịch quảng cáo cần trang đích', 'Sản phẩm hoặc dịch vụ mới cần ra mắt', 'Dự án bất động sản, sự kiện, khóa học', 'Khác / chưa rõ'];
 
 const STEPS = [
+  // k = khóa chữ sửa được landing.steps.<k>.*
   { no: '01', title: 'Bạn kể nhu cầu', text: 'Để lại vài thông tin ngắn ở form bên cạnh.' },
   { no: '02', title: 'Mây ghi lại', text: 'Mây chuyển yêu cầu đến đội ngũ DANAVA.' },
   { no: '03', title: 'DANAVA báo giá', text: 'Chuyên viên liên hệ và đề xuất phạm vi, giá tham khảo.' }
@@ -33,9 +37,17 @@ export function LandingLeadPage({ service }: { service: Service }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
   const [error, setError] = useState('');
   const [typing, setTyping] = useState(false);
+  const { data } = useSite();
+  /** Chữ cố định sửa được trong trình biên tập (khóa landing.*). */
+  const t = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => ct(data, `landing.${k}`, def, label, opts);
+  const T = (k: string, def: string, label: string, opts: { multiline?: boolean } = {}) => { const x = t(k, def, label, opts); return <span {...x.a}>{x.v}</span>; };
+  const kicker = t('kicker', 'Thiết kế landing page', 'Dòng chữ nhỏ');
+  const title = t('title', 'Một trang đích *chốt khách* trong vài giây đầu', 'Tiêu đề chính', { rich: true });
+  const lead = t('lead', service.heroLead || service.description, 'Câu dẫn', { multiline: true });
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) => setForm(f => ({ ...f, [key]: e.target.value }));
 
   const mood: Mood = status === 'done' ? 'sent' : typing ? 'listening' : 'hello';
+  const line = t(`may.${mood}`, LINES[mood], 'Lời Mây nói', { multiline: true });
 
   const lock = useSubmitLock();
   const submit = async (event: FormEvent) => {
@@ -74,37 +86,40 @@ export function LandingLeadPage({ service }: { service: Service }) {
       <section className="lp-hero">
         <div className={`s-container lp-grid${typing ? " is-typing" : ""}`}>
           <div className="lp-copy">
-            <p className="lp-kicker">Thiết kế landing page</p>
-            <h1 className="lp-title">Một trang đích <span>chốt khách</span> trong vài giây đầu</h1>
-            <p className="lp-lead">{service.heroLead || service.description}</p>
+            <p className="lp-kicker" {...kicker.a}>{kicker.v}</p>
+            <h1 className="lp-title" {...title.a}>{rich(title.v, 'lp-em')}</h1>
+            <p className="lp-lead" {...lead.a}>{lead.v}</p>
 
             <div className="lp-mayspeak" aria-live="polite">
               <span className="lp-may" aria-hidden="true"><MayFigure /></span>
-              <p className="lp-bubble">{LINES[mood]}</p>
+              <p className="lp-bubble" {...line.a}>{line.v}</p>
             </div>
 
             <ol className="lp-steps" aria-label="Quy trình">
-              {STEPS.map(s => (
-                <li key={s.no}>
-                  <span className="lp-steps__no">{s.no}</span>
-                  <strong>{s.title}</strong>
-                  <small>{s.text}</small>
-                </li>
-              ))}
+              {STEPS.map((s, i) => {
+                const st = t(`steps.${i}.title`, s.title, 'Tên bước'), sx = t(`steps.${i}.text`, s.text, 'Mô tả bước', { multiline: true });
+                return (
+                  <li key={s.no}>
+                    <span className="lp-steps__no">{s.no}</span>
+                    <strong {...st.a}>{st.v}</strong>
+                    <small {...sx.a}>{sx.v}</small>
+                  </li>
+                );
+              })}
             </ol>
 
             <ul className="lp-points">
-              {service.items.slice(0, 4).map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}
+              {service.items.slice(0, 4).map((item, i) => <li key={item}><Check aria-hidden="true" />{T(`points.${i}`, item, 'Hạng mục')}</li>)}
             </ul>
-            <p className="lp-alt"><MessageCircle aria-hidden="true" /> Muốn báo giá chi tiết theo nhu cầu? <Link href="/bao-gia-web/">Trò chuyện với Mây để nhận báo giá tham khảo <ArrowRight aria-hidden="true" /></Link></p>
+            <p className="lp-alt"><MessageCircle aria-hidden="true" /> {T('alt.text', 'Muốn báo giá chi tiết theo nhu cầu?', 'Câu gợi ý báo giá')} <Link href="/bao-gia-web/">{T('alt.link', 'Trò chuyện với Mây để nhận báo giá tham khảo', 'Chữ liên kết báo giá')} <ArrowRight aria-hidden="true" /></Link></p>
           </div>
 
           <div className={`lp-card${typing ? ' is-typing' : ''}`} id="nhan-tu-van">
             {status === 'done' ? (
               <div className="lp-done" role="status">
                 <span className="lp-done__ico" aria-hidden="true"><Check /></span>
-                <h2>Cảm ơn bạn! Đã nhận yêu cầu.</h2>
-                <p>Chuyên viên DANAVA sẽ liên hệ để tư vấn và báo giá. Cần gấp? Gọi <a href={`tel:${CONTACT.phone}`}>{CONTACT.phoneDisplay}</a>.</p>
+                <h2>{T('done.title', 'Cảm ơn bạn! Đã nhận yêu cầu.', 'Đã gửi: tiêu đề')}</h2>
+                <p>{T('done.text', 'Chuyên viên DANAVA sẽ liên hệ để tư vấn và báo giá. Cần gấp? Gọi', 'Đã gửi: lời nhắn (trước số điện thoại)')} <a href={`tel:${CONTACT.phone}`}>{CONTACT.phoneDisplay}</a>.</p>
               </div>
             ) : (
               <form
@@ -114,25 +129,24 @@ export function LandingLeadPage({ service }: { service: Service }) {
                 onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setTyping(false); }}
                 noValidate
               >
-                <h2>Nhận tư vấn landing page</h2>
-                <p className="lp-form__sub">Để lại thông tin, chúng tôi sẽ liên hệ trong thời gian sớm nhất.</p>
+                {(() => { const h = t('form.title', 'Nhận tư vấn landing page', 'Tiêu đề form'), sub = t('form.sub', 'Để lại thông tin, chúng tôi sẽ liên hệ trong thời gian sớm nhất.', 'Câu dẫn form', { multiline: true }); return <><h2 {...h.a}>{h.v}</h2><p className="lp-form__sub" {...sub.a}>{sub.v}</p></>; })()}
                 <div className="s-honeypot" aria-hidden="true">
                   <label htmlFor="lp-trap">Website</label>
                   <input id="lp-trap" name="website_trap" tabIndex={-1} autoComplete="off" value={form.trap} onChange={set('trap')} />
                 </div>
-                <label className="lp-field"><span>Họ và tên *</span><input autoComplete="name" value={form.name} onChange={set('name')} maxLength={150} /></label>
-                <label className="lp-field"><span>Số điện thoại / Zalo *</span><input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={set('phone')} maxLength={25} /></label>
-                <label className="lp-field"><span>Email</span><input type="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={200} /></label>
-                <label className="lp-field"><span>Lĩnh vực hoạt động</span><input value={form.business} onChange={set('business')} maxLength={150} placeholder="Ví dụ: phòng tập yoga" /></label>
-                <label className="lp-field"><span>Nhu cầu của bạn</span>
+                <label className="lp-field">{T('form.name', 'Họ và tên *', 'Nhãn ô nhập')}<input autoComplete="name" value={form.name} onChange={set('name')} maxLength={150} /></label>
+                <label className="lp-field">{T('form.phone', 'Số điện thoại / Zalo *', 'Nhãn ô nhập')}<input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={set('phone')} maxLength={25} /></label>
+                <label className="lp-field">{T('form.email', 'Email', 'Nhãn ô nhập')}<input type="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={200} /></label>
+                <label className="lp-field">{T('form.business', 'Lĩnh vực hoạt động', 'Nhãn ô nhập')}<input value={form.business} onChange={set('business')} maxLength={150} placeholder="Ví dụ: phòng tập yoga" /></label>
+                <label className="lp-field">{T('form.need', 'Nhu cầu của bạn', 'Nhãn ô nhập')}
                   <select value={form.need} onChange={set('need')}>{NEEDS.map(n => <option key={n}>{n}</option>)}</select>
                 </label>
-                <label className="lp-field"><span>Ghi chú</span><textarea rows={3} value={form.note} onChange={set('note')} maxLength={2000} /></label>
+                <label className="lp-field">{T('form.note', 'Ghi chú', 'Nhãn ô nhập')}<textarea rows={3} value={form.note} onChange={set('note')} maxLength={2000} /></label>
                 {error && <p className="lp-error" role="alert">{error}</p>}
                 <button type="submit" className="lp-btn" disabled={status === 'sending'}>
-                  {status === 'sending' ? 'Đang gửi…' : <>Gửi cho Mây <Send aria-hidden="true" /></>}
+                  {status === 'sending' ? T('form.sending', 'Đang gửi…', 'Nút gửi: đang gửi') : <>{T('form.submit', 'Gửi cho Mây', 'Nút gửi')} <Send aria-hidden="true" /></>}
                 </button>
-                <p className="lp-note">Thông tin chỉ dùng để liên hệ tư vấn. Gọi trực tiếp: {CONTACT.phoneDisplay}</p>
+                <p className="lp-note">{T('form.note', 'Thông tin chỉ dùng để liên hệ tư vấn. Gọi trực tiếp:', 'Ghi chú cuối form (trước số điện thoại)')} {CONTACT.phoneDisplay}</p>
               </form>
             )}
           </div>

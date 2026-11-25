@@ -17,6 +17,11 @@ const cityOf = (c: Client) => (c.city || 'Khác').replace(/^Thừa Thiên /, '')
 const REC = { scope: 'record', scopeLabel: 'Hồ sơ đối tác' } as const;
 const rec = (c: Client, field: string, label: string, opts: { multiline?: boolean } = {}) => cmsText(`rec.clients.${c.id}.${field}`, label, { ...REC, ...opts });
 const anchor = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+/** Tên tỉnh/thành: chữ dùng chung toàn website (shared.city.<mã>) → sửa / dịch một lần cho mọi trang. */
+const cityText = (data: SiteData, city: string) => {
+  const k = anchor(city).slice(0, 60);
+  return k ? ct(data, `shared.city.${k}`, city, 'Tên tỉnh/thành (dùng chung)', { scope: 'global' }) : { v: city, a: {} };
+};
 
 export function PartnersPage({ data }: { data: SiteData }) {
   const copy = pageCopy(data, 'doi-tac');
@@ -27,7 +32,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
   const short = (t = '') => (t.length > 170 ? t.slice(0, t.lastIndexOf(' ', 165)) + '…' : t);
   const cards: PlaceCard[] = places.map(c => ({
     id: c.id, name: c.name, role: c.role || 'Wellness', city: cityOf(c) === 'Khác' ? '' : cityOf(c), address: c.address || '', hours: c.hours || '',
-    logo: c.logo, cover: c.cover || '', url: c.url, verified: !!c.verified, about: short(c.description), amenities: (c.amenities || []).slice(0, 3), hasRole: !!c.role
+    logo: c.logo, cover: c.cover || '', url: c.url, verified: !!c.verified, about: short(c.description), aboutWhole: short(c.description) === (c.description || ''), amenities: (c.amenities || []).slice(0, 3), hasRole: !!c.role
   }));
   const projects = publishedProjects(data);
   const cities = Array.from(new Set(partners.map(cityOf))).sort((a, b) =>
@@ -76,7 +81,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
             {partners.map(c => <li key={c.id}><a href={`#${c.id}`} title={c.name}>{c.logo ? <img src={c.logo} alt={c.name} width={360} height={240} loading="lazy" /> : <span {...rec(c, 'name', 'Tên đối tác')}>{c.name}</span>}</a></li>)}
           </ul>
           <nav className="pt-cities" aria-label="Theo tỉnh/thành">
-            {cities.map(city => <a key={city} href={`#tp-${anchor(city)}`}>{city} <span>{partners.filter(p => cityOf(p) === city).length}</span></a>)}
+            {cities.map(city => { const ci = cityText(data, city); return <a key={city} href={`#tp-${anchor(city)}`}><b style={{ fontWeight: 'inherit' }} {...ci.a}>{ci.v}</b> <span>{partners.filter(p => cityOf(p) === city).length}</span></a>; })}
             {/* .pt-cities a span là ô đếm số → chữ dùng <b> giữ nguyên độ đậm */}
             {places.length > 0 && <a href="#dia-diem" className="is-alt"><b style={{ fontWeight: 'inherit' }} {...navPlaces.a}>{navPlaces.v}</b> <span>{places.length}</span></a>}
           </nav>
@@ -87,7 +92,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
       {cities.map(city => (
         <section key={city} id={`tp-${anchor(city)}`} className="pt-city" aria-labelledby={`tp-${anchor(city)}-title`}>
           <div className="s-container">
-            <h2 className="pt-city__title" id={`tp-${anchor(city)}-title`}><MapPin aria-hidden="true" />{city}</h2>
+            <h2 className="pt-city__title" id={`tp-${anchor(city)}-title`}><MapPin aria-hidden="true" />{(() => { const ci = cityText(data, city); return <span {...ci.a}>{ci.v}</span>; })()}</h2>
             <ul className="pt-grid">
               {partners.filter(p => cityOf(p) === city).map(c => {
                 const project = projects.find(p => p.id === c.projectId);
@@ -101,7 +106,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
                       {!project && c.verified && <span className="pt-card__badge pt-card__badge--v"><BadgeCheck aria-hidden="true" /> <span {...badgeVerified.a}>{badgeVerified.v}</span></span>}
                     </div>
                     <div className="pt-card__body">
-                      <p className="pt-card__role" {...(c.role ? rec(c, 'role', 'Lĩnh vực') : {})}>{c.role || (c.types || []).join(' · ')}</p>
+                      <p className="pt-card__role" {...(c.role ? rec(c, 'role', 'Lĩnh vực') : {})}>{c.role || (c.types || []).map((x, i) => <span key={i}>{i > 0 && ' · '}<span {...rec(c, `types.${i}`, 'Loại hình')}>{x}</span></span>)}</p>
                       <h3 className="pt-card__name" {...rec(c, 'name', 'Tên đối tác')}>{c.name}</h3>
                       {c.fullName && c.fullName.toLowerCase() !== c.name.toLowerCase() && <p className="pt-card__full" {...rec(c, 'fullName', 'Tên đầy đủ')}>{c.fullName}</p>}
                       <ul className="pt-card__meta">
@@ -118,7 +123,7 @@ export function PartnersPage({ data }: { data: SiteData }) {
                         <details className="pt-card__about">
                           <summary><span {...aboutSummary.a}>{aboutSummary.v}</span> <ChevronDown aria-hidden="true" /></summary>
                           <p {...rec(c, 'description', 'Giới thiệu đối tác', { multiline: true })}>{c.description}</p>
-                          {amen.length > 5 && <p className="pt-card__all"><strong {...amenLabel.a}>{amenLabel.v}</strong> {amen.join(', ')}.</p>}
+                          {amen.length > 5 && <p className="pt-card__all"><strong {...amenLabel.a}>{amenLabel.v}</strong> {amen.map((a, i) => <span key={i}>{i > 0 && ', '}<span {...rec(c, `amenities.${i}`, 'Dịch vụ / tiện ích')}>{a}</span></span>)}.</p>}
                           <p className="pt-card__src" {...cardSource.a}>{cardSource.v}</p>
                         </details>
                       )}
@@ -174,6 +179,7 @@ function JoinBand({ data, partners, cities, places }: { data: SiteData; partners
   const assure = t('assure', 'Tư vấn miễn phí · Phản hồi trong 1 ngày làm việc', 'Cam kết dưới nút');
   const proofA = t('proof.before', 'Đang có', 'Dòng bằng chứng (trước số)');
   const proofB = t('proof.after', 'cơ sở cùng đồng hành', 'Dòng bằng chứng (sau số)');
+  const proofC = t('proof.cities', 'tỉnh/thành', 'Dòng bằng chứng (sau số tỉnh/thành)');
   // Mọi đối tác có logo: vòng trong ~1/3 (tối đa 6), vòng ngoài phần còn lại (tối đa 16) + ô "Bạn?"
   const logos = partners.filter(p => p.logo);
   const innerCount = Math.min(6, Math.ceil(logos.length / 3));
@@ -207,7 +213,7 @@ function JoinBand({ data, partners, cities, places }: { data: SiteData; partners
             {logos.length > 0 && (
               <div className="pj__proof">
                 <span className="pj__faces" aria-hidden="true">{logos.slice(0, 5).map(p => <img key={p.id} src={p.logo} alt="" loading="lazy" />)}</span>
-                <span><span {...proofA.a}>{proofA.v}</span> <b>{total}+</b> <span {...proofB.a}>{proofB.v}</span>{cities > 0 ? ` · ${cities} tỉnh/thành` : ''}</span>
+                <span><span {...proofA.a}>{proofA.v}</span> <b>{total}+</b> <span {...proofB.a}>{proofB.v}</span>{cities > 0 ? <> · {cities} <span {...proofC.a}>{proofC.v}</span></> : ''}</span>
               </div>
             )}
           </div>

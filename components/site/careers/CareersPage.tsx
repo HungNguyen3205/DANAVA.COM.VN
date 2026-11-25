@@ -178,7 +178,12 @@ export function CareersPage({ data }: { data: SiteData }) {
               <div className="td-envelope" data-reveal>
                 <div className="td-paper">
                   <img className="td-paper__stamp" src={founder.image} alt={founder.name} loading="lazy" decoding="async" />
-                  <blockquote>{careers.letter.split('\n').filter(x => x.trim()).map((x, i) => <p key={i}>{x}</p>)}</blockquote>
+                  {(() => {
+                    // Lời nhắn (block.careers.letter): một đoạn → vùng chỉnh trên đoạn đó; nhiều đoạn → trên cả khung trích
+                    const paras = careers.letter.split('\n').filter(x => x.trim());
+                    const ed = cmsText('block.careers.letter', 'Lời nhắn', { multiline: true });
+                    return <blockquote {...(paras.length > 1 ? ed : {})}>{paras.map((x, i) => <p key={i} {...(paras.length === 1 ? ed : {})}>{x}</p>)}</blockquote>;
+                  })()}
                   <p className="td-paper__sign">{(() => { const a = t('mail.sign-name', founder.name, 'Tên người ký'), b = t('mail.sign-title', founder.title, 'Chức danh người ký'); return <><b {...a.a}>{a.v}</b><span {...b.a}>{b.v}</span></>; })()}</p>
                 </div>
               </div>

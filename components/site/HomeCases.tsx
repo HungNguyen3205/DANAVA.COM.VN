@@ -43,7 +43,7 @@ export function HomeCases({ items, limit = 6, ui }: { items: HomeCase[]; limit?:
           <li key={c.id}>
             <Link href={c.href} className="hb-case">
               <span className="hb-case__media">
-                {c.image ? <img src={c.image} alt="" loading="lazy" decoding="async" width={800} height={560} /> : <span className="hb-case__ph">{c.client}</span>}
+                {c.image ? <img src={c.image} alt="" loading="lazy" decoding="async" width={800} height={560} /> : <span className="hb-case__ph" {...c.cms?.client}>{c.client}</span>}
                 <span className="hb-case__tag" {...c.cms?.tag}>{c.tag}</span>
               </span>
               <span className="hb-case__body">
