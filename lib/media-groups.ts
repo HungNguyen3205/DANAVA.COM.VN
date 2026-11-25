@@ -13,6 +13,7 @@ export const MEDIA_GROUPS: MediaGroup[] = [
   { id: 'brand-kit', section: 'Thương hiệu', label: 'Bộ nhận diện', prefix: '/assets/brand/', hint: 'Ảnh nhận diện thương hiệu' },
   { id: 'bct', section: 'Thương hiệu', label: 'Chứng nhận', prefix: '/assets/bct/', hint: 'Logo đã thông báo Bộ Công Thương' },
   { id: 'profile', section: 'Thương hiệu', label: 'Hồ sơ năng lực', prefix: '/assets/profile/', hint: 'Ảnh hồ sơ năng lực 2026: sân khấu, sự kiện, đội ngũ' },
+  { id: 'anna', section: 'Thương hiệu', label: 'Trợ lý ANNA', prefix: '/assets/anna/', hint: 'Hình ANNA (đã tách nền) dùng ở dải cuối trang' },
   { id: 'about', section: 'Thương hiệu', label: 'Giới thiệu & văn phòng', prefix: '/assets/about/', hint: 'Trang Về DANAVA, ảnh văn phòng, nhà sáng lập' },
 
   { id: 'products-work', section: 'Sản phẩm', label: 'DANAVA Work', prefix: '/assets/products/danava-work/', hint: 'Ảnh màn hình DANAVA Work' },

@@ -127,7 +127,15 @@ export function CtaBand({
   return (
     <section className="s-section s-section--tight" aria-label="Liên hệ tư vấn" data-cms-block="Dải cuối trang">
       <div className="s-container">
-        <div className="s-cta">
+        {/* ANNA đứng cạnh dải, nổi lên khỏi mép trên (ảnh tách nền: public/assets/anna/anna-present.webp) */}
+        <div className="s-cta-wrap">
+        <figure className="s-cta__anna" aria-hidden="true">
+          <span className="s-cta__halo" />
+          <span className="s-cta__spark s-cta__spark--1" /><span className="s-cta__spark s-cta__spark--2" /><span className="s-cta__spark s-cta__spark--3" />
+          <img src="/assets/anna/anna-present.webp" alt="" width={820} height={857} loading="lazy" decoding="async" />
+        </figure>
+        {(() => { const b = ct(data, 'shared.cta.anna-bubble', 'Mình là ANNA, sẵn sàng tư vấn cho bạn!', 'Dải cuối trang: lời chào ANNA', { scope: 'global' }); return <p className="s-cta__bubble"><span {...b.a}>{b.v}</span></p>; })()}
+        <div className="s-cta s-cta--anna">
           <div>
             <h2 className="s-h2" {...(cms?.title ? { 'data-cms': cms.title, 'data-cms-label': 'Dải cuối trang: tiêu đề', 'data-cms-rich': '', ...(cms.titleDefault ? { 'data-cms-default': cms.titleDefault } : {}) } : {})}>{title}</h2>
             {lead && <p className="s-lead" {...(cms?.lead ? { 'data-cms': cms.lead, 'data-cms-label': cms.lead.startsWith('pages.mac-dinh.') ? 'Dải cuối trang: câu dẫn (dùng chung)' : 'Dải cuối trang: câu dẫn', 'data-cms-multiline': '', ...(cms.leadDefault ? { 'data-cms-default': cms.leadDefault } : {}) } : {})}>{lead}</p>}
@@ -136,6 +144,7 @@ export function CtaBand({
             <Link className="s-btn s-btn--light s-btn--lg" href={primary.href}><SharedLabel data={data} group="cta" href={primary.href} label={primary.label} what="Dải cuối trang: nút chính" /></Link>
             {secondary && <Link className="s-btn s-btn--outline-light s-btn--lg" href={secondary.href}><SharedLabel data={data} group="cta" href={secondary.href} label={secondary.label} what="Dải cuối trang: nút phụ" /></Link>}
           </div>
+        </div>
         </div>
       </div>
     </section>

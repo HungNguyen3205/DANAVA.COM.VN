@@ -816,3 +816,49 @@ html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
   .cute-z--2 { animation-delay: 1.3s; }
 }
 @keyframes cute-z { 0%, 100% { opacity: .25; transform: translateY(2px); } 50% { opacity: 1; transform: translateY(-1.5px); } }
+
+/* ==== Dải cuối trang (CtaBand, components/site/ui.tsx): ANNA đứng cạnh, nổi lên khỏi mép trên ====
+   Khung .s-cta vẫn cắt vầng sáng bên trong (overflow hidden); ANNA nằm ở lớp bọc .s-cta-wrap nên vượt ra ngoài được. */
+.s-cta-wrap { position: relative; --anna-h: clamp(290px, 27vw, 370px); --anna-w: calc(var(--anna-h) * .957); margin-top: clamp(40px, 6vw, 80px); }
+.s-app .s-cta.s-cta--anna { min-height: calc(var(--anna-h) - 70px); padding-left: calc(var(--anna-w) + clamp(8px, 2vw, 28px)); }
+.s-cta__anna { position: absolute; z-index: 2; left: clamp(4px, 1.5vw, 24px); bottom: 0; width: var(--anna-w); height: var(--anna-h); margin: 0; pointer-events: none; }
+.s-cta__anna img {
+  position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; object-position: bottom;
+  /* viền sáng mỏng: áo navy không chìm vào nền navy của dải */
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .55)) drop-shadow(0 0 18px rgba(120, 160, 255, .35)) drop-shadow(0 24px 30px rgba(5, 12, 35, .45));
+}
+.s-cta__halo { position: absolute; left: 8%; right: 8%; top: 14%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(242, 107, 29, .55) 0%, rgba(83, 165, 219, .3) 45%, transparent 70%); filter: blur(6px); }
+.s-cta__spark { position: absolute; z-index: 2; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px 3px rgba(255, 214, 170, .95); opacity: .3; }
+.s-cta__spark--1 { left: 4%; top: 22%; }
+.s-cta__spark--2 { right: 2%; top: 8%; width: 6px; height: 6px; }
+.s-cta__spark--3 { right: -6%; top: 46%; width: 5px; height: 5px; }
+/* Bong bóng thoại cạnh đầu ANNA */
+.s-cta__bubble {
+  position: absolute; z-index: 3; left: calc(clamp(4px, 1.5vw, 24px) + var(--anna-w) * .62); top: calc(-1 * (var(--anna-h) - (var(--anna-h) - 70px)) - 6px);
+  max-width: 260px; margin: 0; padding: 10px 16px; border-radius: 18px 18px 18px 4px; background: #fff; color: #13244f;
+  font-size: 14px; font-weight: 700; line-height: 1.35; box-shadow: 0 16px 30px -14px rgba(13, 26, 61, .55);
+}
+.s-cta__bubble::before { content: '👋'; margin-right: 6px; }
+@media (prefers-reduced-motion: no-preference) {
+  .s-cta__anna img { animation: cta-anna-float 5s ease-in-out infinite; }
+  .s-cta__halo { animation: cta-anna-glow 5s ease-in-out infinite; }
+  .s-cta__spark { animation: cta-anna-twinkle 2.6s ease-in-out infinite; }
+  .s-cta__spark--2 { animation-delay: .9s; }
+  .s-cta__spark--3 { animation-delay: 1.7s; }
+  .s-cta__bubble { animation: cta-anna-pop .7s cubic-bezier(.2, 1.4, .4, 1) .3s both, cta-anna-bob 4s ease-in-out 1s infinite; }
+}
+@keyframes cta-anna-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes cta-anna-glow { 0%, 100% { opacity: .75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+@keyframes cta-anna-twinkle { 0%, 100% { opacity: .2; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.2); } }
+@keyframes cta-anna-pop { from { opacity: 0; transform: translateY(10px) scale(.85); } to { opacity: 1; transform: none; } }
+@keyframes cta-anna-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+
+/* Máy tính bảng / điện thoại: ANNA đứng giữa phía trên dải, nội dung bên dưới */
+@media (max-width: 860px) {
+  .s-cta-wrap { --anna-h: 230px; margin-top: 150px; }
+  .s-app .s-cta.s-cta--anna { min-height: 0; padding-left: 22px; padding-top: 96px; text-align: center; }
+  .s-app .s-cta.s-cta--anna .s-row { justify-content: center; }
+  .s-cta__anna { left: 50%; bottom: auto; top: -140px; transform: translateX(-50%); }
+  .s-cta__bubble { left: calc(50% + 24px); top: -168px; max-width: 200px; font-size: 13px; }
+  @media (prefers-reduced-motion: no-preference) { .s-cta__bubble { animation: cta-anna-pop .7s cubic-bezier(.2, 1.4, .4, 1) .3s both; } }
+}
