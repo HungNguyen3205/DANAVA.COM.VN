@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/start.mjs",
-    "build": "next build && node scripts/prepare-standalone.mjs",
+    "build": "node scripts/asset-catalog.mjs && next build && node scripts/prepare-standalone.mjs",
+    "assets:catalog": "node scripts/asset-catalog.mjs",
     "check": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "dev:next": "node scripts/dev.mjs",

@@ -54,7 +54,7 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
   },
   {
     group: 'Tài nguyên',
-    items: [{ slug: 'thu-vien', label: 'Thư viện', perm: 'media.read', desc: 'Ảnh tải lên: hệ thống tự xóa thông tin EXIF, thu nhỏ và nén sang WebP.' }],
+    items: [{ slug: 'thu-vien', label: 'Thư viện ảnh', perm: 'media.read', desc: 'Mọi ảnh trên website, chia nhóm theo khu vực. Ảnh tải lên tự xóa EXIF, thu nhỏ và nén WebP.' }],
   },
   {
     group: 'Báo cáo',

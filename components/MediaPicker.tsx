@@ -1,57 +1,35 @@
 'use client';
-import { useRef, useState, useEffect } from 'react';
-type Media = { url: string; bytes: number; name: string };
-/** Tải một ảnh lên thư viện (≤ 6 MB). Trả về đường dẫn ảnh; lỗi thì ném Error có câu báo tiếng Việt. */
-export async function uploadMedia(file: File): Promise<string> {
-  if (file.size > 6 * 1024 * 1024) throw Error('Ảnh tối đa 6 MB.');
-  const auth = await fetch('/api/admin/session/').then((r) => r.json());
-  const r = await fetch('/api/admin/media/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/octet-stream', 'x-csrf-token': auth.csrf },
-    body: file,
-  });
-  const v = await r.json();
-  if (!r.ok) throw Error(v.error || 'Không thể tải ảnh.');
-  return v.url;
-}
+/**
+ * Ô chọn ảnh dùng chung trong admin: đường dẫn ảnh + xem trước + "Chọn từ thư viện" (mọi ảnh của website, chia nhóm) + "Tải ảnh mới".
+ * MediaLibrary: màn Tài nguyên → Thư viện (components/admin/MediaBrowser.tsx).
+ */
+import { useEffect, useRef, useState } from 'react';
+import { MediaBrowser } from './admin/MediaBrowser';
+import { uploadMedia } from './upload-media';
+import type { SiteData } from '@/lib/content';
+export { uploadMedia } from './upload-media';
 
-export default function MediaPicker({
-  value,
-  onChange,
-  label = 'Ảnh',
-}: {
-  value: string;
-  onChange: (url: string) => void;
-  label?: string;
-}) {
-  const input = useRef<HTMLInputElement>(null),
-    [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState('');
+export default function MediaPicker({ value, onChange, label = 'Ảnh' }: { value: string; onChange: (url: string) => void; label?: string }) {
+  const input = useRef<HTMLInputElement>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [busy, setBusy] = useState(false), [notice, setNotice] = useState(''), [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const d = dialog.current;
+    if (!d) return;
+    if (open && !d.open) d.showModal();
+    if (!open && d.open) d.close();
+  }, [open]);
+
   async function upload(file?: File) {
     if (!file) return;
-    if (file.size > 6 * 1024 * 1024) {
-      setNotice('Ảnh tối đa 6 MB.');
-      return;
-    }
-    setBusy(true);
-    setNotice('');
-    try {
-      const auth = await fetch('/api/admin/session/').then((r) => r.json());
-      const r = await fetch('/api/admin/media/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/octet-stream', 'x-csrf-token': auth.csrf },
-        body: file,
-      });
-      const v = await r.json();
-      if (!r.ok) throw Error(v.error || 'Không thể tải ảnh.');
-      onChange(v.url);
-      setNotice('Đã tải ảnh. Bấm Lưu thay đổi để áp dụng vào nội dung.');
-    } catch (e) {
-      setNotice(e instanceof Error ? e.message : 'Lỗi tải ảnh');
-    }
+    setBusy(true); setNotice('');
+    try { onChange(await uploadMedia(file)); setNotice('Đã tải ảnh. Bấm Lưu thay đổi để áp dụng vào nội dung.'); }
+    catch (e) { setNotice(e instanceof Error ? e.message : 'Lỗi tải ảnh'); }
     setBusy(false);
     if (input.current) input.current.value = '';
   }
+
   return (
     <div className="media-picker">
       <label>
@@ -59,68 +37,35 @@ export default function MediaPicker({
         <input value={value} placeholder="/assets/..." onChange={(e) => onChange(e.target.value)} />
       </label>
       {value && <img className="media-picker-preview" src={value} alt="Xem trước ảnh đã chọn" />}
-      <button type="button" className="admin-secondary" disabled={busy} onClick={() => input.current?.click()}>
-        {busy ? 'Đang xử lý…' : '↑ Tải ảnh mới'}
-      </button>
-      <input
-        ref={input}
-        hidden
-        type="file"
-        accept="image/png,image/jpeg,image/webp"
-        onChange={(e) => upload(e.target.files?.[0])}
-      />
-      {notice && (
-        <p className="field-note" role="status">
-          {notice}
-        </p>
-      )}
+      <div className="media-picker-actions">
+        <button type="button" className="admin-secondary" onClick={() => setOpen(true)}>▦ Chọn từ thư viện</button>
+        <button type="button" className="admin-secondary" disabled={busy} onClick={() => input.current?.click()}>{busy ? 'Đang xử lý…' : '↑ Tải ảnh mới'}</button>
+        {value && <button type="button" className="admin-secondary" onClick={() => onChange('')}>Gỡ ảnh</button>}
+      </div>
+      <input ref={input} hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={(e) => upload(e.target.files?.[0])} />
+      {notice && <p className="field-note" role="status">{notice}</p>}
+
+      <dialog ref={dialog} className="mb-dialog ax-scope" aria-label="Chọn ảnh từ thư viện" onClose={() => setOpen(false)} onClick={e => { if (e.target === e.currentTarget) setOpen(false); }}>
+        <div className="mb-dialog__head">
+          <b>Chọn ảnh từ thư viện</b>
+          <button type="button" onClick={() => setOpen(false)} aria-label="Đóng">✕</button>
+        </div>
+        {open && <MediaBrowser mode="pick" value={value} onPick={url => { onChange(url); setOpen(false); }} />}
+      </dialog>
     </div>
   );
 }
-export function MediaLibrary() {
-  const [items, setItems] = useState<Media[]>([]),
-    [notice, setNotice] = useState(''),
-    [newImage, setNewImage] = useState('');
-  useEffect(() => {
-    fetch('/api/admin/media/', { cache: 'no-store' })
-      .then((r) => {
-        if (!r.ok) throw Error('Không tải được kho ảnh');
-        return r.json();
-      })
-      .then((v) => setItems(v.items))
-      .catch((e) => setNotice(e.message));
-  }, [newImage]);
+
+/** Tài nguyên → Thư viện: mọi ảnh của website (có sẵn + tải lên), chia nhóm, xem ảnh đang được nội dung nào dùng. */
+export function MediaLibrary({ data }: { data?: SiteData }) {
   return (
-    <section className="admin-panel">
-      <h2>Thư viện hình ảnh</h2>
-      <p>
-        Ảnh được lưu trên máy chủ. Sao chép đường dẫn để dùng cho blog, nhân sự, dự án hoặc trình chiếu. Chỉ tải hình
-        ảnh bạn muốn công khai.
+    <section className="admin-panel mb-page">
+      <h2>Thư viện ảnh</h2>
+      <p className="field-note">
+        Toàn bộ ảnh trên website: ảnh có sẵn (chia theo khu vực: Thương hiệu, Sản phẩm, Dự án, Đối tác, Bài viết…) và ảnh tải lên từ admin.
+        Bấm một ảnh để xem chi tiết, chép đường dẫn và biết nội dung nào đang dùng. Ảnh tải lên tự nén WebP và xóa thông tin EXIF.
       </p>
-      <MediaPicker value={newImage} onChange={setNewImage} label="Tải ảnh vào thư viện" />
-      {notice && <p role="status">{notice}</p>}
-      <div className="media-library-grid">
-        {items.map((item) => (
-          <article key={item.url}>
-            <img src={item.url} alt="Ảnh trong thư viện DANAVA" />
-            <small>{Math.round(item.bytes / 1024)} KB</small>
-            <input aria-label="Đường dẫn ảnh" readOnly value={item.url} />
-            <button
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(item.url);
-                  setNotice('Đã sao chép đường dẫn ảnh.');
-                } catch {
-                  setNotice('Chọn và sao chép đường dẫn trong ô ảnh.');
-                }
-              }}
-            >
-              Sao chép đường dẫn
-            </button>
-          </article>
-        ))}
-      </div>
-      {!items.length && <p className="empty-state">Kho ảnh tải lên đang trống.</p>}
+      <MediaBrowser mode="manage" data={data} />
     </section>
   );
 }

@@ -417,7 +417,7 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'bieu-mau': return <FormsReport />;
       case 'doi-tac': return <ProofEditor draft={draft} setDraft={setDraft} part="clients" />;
       case 'nhan-xet': return <ProofEditor draft={draft} setDraft={setDraft} part="testimonials" />;
-      case 'thu-vien': return <MediaLibrary />;
+      case 'thu-vien': return <MediaLibrary data={draft} />;
       case 'thong-ke': return <AnalyticsDashboard />;
       case 'nguon-khach': return <SourcesReport />;
       case 'hieu-qua': return <ContentPerformance draft={draft} />;
