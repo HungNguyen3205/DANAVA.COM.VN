@@ -4,7 +4,7 @@ export default function Analytics(){const{data}=useSite();const t=(k:string,d:st
   const h=t('title','Mời bạn một miếng cookie nhé?'),
     x=t('body','DANAVA dùng cookie để hiểu bạn thích xem gì và làm web tốt hơn. Không ghi nội dung bạn nhập.'),
     m=t('policy','Chính sách bảo mật'),
-    n=t('essential','Chỉ cần thiết'),
+    n=t('essential','Bỏ qua'),
     y=t('accept','Đồng ý');
   return (
     <aside className="consent-banner" aria-label="Tùy chọn cookie">
