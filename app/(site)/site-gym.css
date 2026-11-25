@@ -275,3 +275,7 @@
 /* Hai nút hero cùng một hàng, cùng chiều cao */
 .gy-hero__actions { align-items: center; }
 .gy-hero__actions .s-btn--lg, .s-app .gy-hero__actions .gy-btn-3d { min-height: 52px; padding: 0 22px; font-size: 15px; }
+
+/* Dải phòng lab: tách các bước và nút "Vào setup phòng tập của bạn" */
+.s-app .gy-lab .gy-lab__steps { margin: 22px 0 28px; }
+.s-app .gy-lab__card .gy-lab__steps + .s-btn { margin-top: 4px; }
