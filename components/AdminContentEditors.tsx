@@ -8,6 +8,7 @@ import { useState } from 'react';
 import MediaPicker from './MediaPicker';
 import { ask } from './admin/kit';
 import { CLIENT_SEEDS } from '@/lib/content-defaults';
+import { homePartners } from '@/lib/site-queries';
 import type { Client, Faq, Feature, Service, ShowcaseItem, SiteData, SubService, Testimonial, Topic } from '@/lib/content';
 
 const uid = () => globalThis.crypto.randomUUID();
@@ -233,19 +234,23 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
   const setT = (id: string, patch: Partial<Testimonial>) => setDraft({ ...draft, testimonials: tests.map(t => (t.id === id ? { ...t, ...patch } : t)) });
   // Danh sách dài (khách hàng + 15 đối tác + địa điểm danava.vn): tìm và lọc theo loại quan hệ
   const [q, setQ] = useState('');
-  const [rel, setRel] = useState<'all' | 'client' | 'partner' | 'place' | 'hidden'>('all');
+  const [rel, setRel] = useState<'all' | 'client' | 'partner' | 'place' | 'pending' | 'hidden'>('all');
   const relOf = (c: Client) => c.relation || 'client';
   const REL_LABEL = { client: 'Khách hàng', partner: 'Đối tác đồng hành', place: 'Địa điểm danava.vn' } as const;
   const isShown = (c: Client) => c.published && c.permission;
+  /** Chờ xác minh: khách hàng/đối tác chưa bật “Đã xác minh hợp tác” → chưa lên trang chủ, chưa được đếm */
+  const isPending = (c: Client) => relOf(c) !== 'place' && c.onHome === false;
+  const homeCount = homePartners(draft).length;
   const tabs = [
     { id: 'all', label: 'Tất cả', n: clients.length },
     { id: 'client', label: 'Khách hàng', n: clients.filter(c => relOf(c) === 'client').length },
     { id: 'partner', label: 'Đối tác', n: clients.filter(c => relOf(c) === 'partner').length },
     { id: 'place', label: 'Địa điểm', n: clients.filter(c => relOf(c) === 'place').length },
+    { id: 'pending', label: 'Chờ xác minh', n: clients.filter(isPending).length },
     { id: 'hidden', label: 'Đang ẩn', n: clients.filter(c => !isShown(c)).length }
   ] as const;
   const needle = q.trim().toLowerCase();
-  const shownClients = clients.filter(c => (rel === 'all' || (rel === 'hidden' ? !isShown(c) : relOf(c) === rel))
+  const shownClients = clients.filter(c => (rel === 'all' || (rel === 'hidden' ? !isShown(c) : rel === 'pending' ? isPending(c) : relOf(c) === rel))
     && (!needle || [c.name, c.fullName, c.city, c.role].some(v => (v || '').toLowerCase().includes(needle))));
   const projectSelect = (value: string, onChange: (v: string) => void) => (
     <label>
@@ -262,9 +267,10 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
       <section className="admin-panel">
         <div className="panel-heading">
           <h2>Khách hàng & đối tác đồng hành</h2>
-          <button type="button" className="admin-secondary" onClick={() => { setQ(''); setRel('all'); setDraft({ ...draft, clients: [{ id: uid(), name: '', logo: '', url: '', projectId: '', role: '', relation: 'client', permission: false, published: false, note: '' }, ...clients] }); }}>+ Thêm</button>
+          <button type="button" className="admin-secondary" onClick={() => { setQ(''); setRel('all'); setDraft({ ...draft, clients: [{ id: uid(), name: '', logo: '', url: '', projectId: '', role: '', relation: 'client', onHome: false, permission: false, published: false, note: '' }, ...clients] }); }}>+ Thêm</button>
         </div>
-        <p className="field-note">Chỉ hiển thị trên trang chủ khi đã bật <b>Có quyền hiển thị</b> và <b>Xuất bản</b>. Ghi nguồn xác nhận quyền vào ghi chú.</p>
+        <p className="adm-home-count" role="status">Trang chủ đang hiện <b>{homeCount}</b> thương hiệu đã đồng hành</p>
+        <p className="field-note">Một khách hàng/đối tác lên khối logo trang chủ và được cộng vào con số trên khi bật đủ <b>Đã xác minh hợp tác</b>, <b>Có quyền hiển thị</b> và <b>Xuất bản</b>. Mục mới thêm nằm ở tab <b>Chờ xác minh</b>. Ghi nguồn xác nhận vào ghi chú.</p>
         <button
           type="button"
           className="admin-secondary"
@@ -299,6 +305,7 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
                 <small>{[REL_LABEL[relOf(c)], c.role, c.city].filter(Boolean).join(' · ')}</small>
               </span>
               {c.verified && <span className="adm-pill adm-pill--blue">Verified</span>}
+              {isPending(c) && <span className="adm-pill adm-pill--muted">Chờ xác minh</span>}
               <span className={`adm-pill ${isShown(c) ? 'adm-pill--green' : 'adm-pill--muted'}`}>{isShown(c) ? 'Đang hiển thị' : 'Đang ẩn'}</span>
             </summary>
             <Text label="Tên khách hàng" value={c.name} max={150} onChange={name => setC(c.id, { name })} />
@@ -320,6 +327,7 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
                 <option value="place">Địa điểm trên danava.vn/places</option>
               </select>
             </label>
+            {relOf(c) !== 'place' && <Toggle label="Đã xác minh hợp tác (hiện ở khối logo trang chủ, được cộng vào con số “thương hiệu đã đồng hành”)" checked={c.onHome !== false} onChange={onHome => setC(c.id, { onHome })} />}
             <Toggle label="Có huy hiệu DANAVA Verified" checked={!!c.verified} onChange={verified => setC(c.id, { verified })} />
             {projectSelect(c.projectId, projectId => setC(c.id, { projectId }))}
             <Text label="Ghi chú nguồn / quyền sử dụng (nội bộ)" value={c.note} area max={1000} onChange={note => setC(c.id, { note })} />

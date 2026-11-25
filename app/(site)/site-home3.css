@@ -763,7 +763,8 @@
     box-shadow: 0 14px 26px -14px rgba(19, 36, 79, .75); font-size: 12px; font-weight: 700; line-height: 1.25; white-space: nowrap;
     max-width: calc(100% - 112px);   /* chừa chỗ cho con dấu bên phải */
   }
-  .hb-cover__3d .hb-float--a .hb-float__place { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  /* tên văn phòng dài: xuống dòng thay vì bị cắt "…" */
+  .hb-cover__3d .hb-float--a .hb-float__place { min-width: 0; white-space: normal; }
   .hb-cover__3d .hb-float--a svg {
     grid-row: span 2; box-sizing: border-box; width: 26px; height: 26px; padding: 5px; border-radius: 50%;
     background: #f26b1d; color: #fff;

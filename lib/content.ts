@@ -195,6 +195,9 @@ export type Client = {
   relation?: 'client' | 'partner' | 'place';
   /** Có huy hiệu DANAVA Verified trên danava.vn */
   verified?: boolean;
+  /** Đã xác minh hợp tác → hiện ở khối logo trang chủ và được đếm ("… thương hiệu đã đồng hành").
+   *  undefined = có (dữ liệu trước khi có cờ này); mục mới thêm trong quản trị mặc định false (chờ xác minh). */
+  onHome?: boolean;
   /** Thông tin công khai của đối tác (theo trang của họ trên danava.vn) */
   fullName?: string;
   description?: string;
@@ -455,6 +458,7 @@ function validClient(c: unknown) {
   return object(c) && str(c.id, 100) && str(c.name, 150) && safeImage(c.logo) && httpsURL(c.url) && str(c.projectId, 100)
     && optStr(c.role, 80) && (c.relation === undefined || c.relation === 'client' || c.relation === 'partner' || c.relation === 'place')
     && (c.verified === undefined || typeof c.verified === 'boolean')
+    && (c.onHome === undefined || typeof c.onHome === 'boolean')
     && optStr(c.fullName, 200) && optStr(c.description, 2000) && optStr(c.address, 300) && optStr(c.city, 100) && optStr(c.hours, 200)
     && optStrList(c.types, 12, 120) && optStrList(c.amenities, 20, 150) && (c.cover === undefined || safeImage(c.cover))
     && typeof c.permission === 'boolean' && typeof c.published === 'boolean' && str(c.note, 1000)

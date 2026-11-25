@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { ArrowDown, ArrowRight, ArrowUpRight, AtSign, Globe, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
 import { getApprovedSocialPosts, isPlatformSourced } from '@/lib/social-feed';
-import { knowledgePosts, publicPartners, publicTestimonials, publishedProjects, projectHref } from '@/lib/site-queries';
+import { knowledgePosts, homePartners, publicTestimonials, publishedProjects, projectHref } from '@/lib/site-queries';
 import { CONTACT, formatPhone, formatDate } from './catalog';
 import { PostTile, Testimonials } from './blocks';
 import { HomeCases, type HomeCase } from './HomeCases';
@@ -51,7 +51,7 @@ export default function HomePage({ data }: { data: SiteData }) {
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
   const co = block(data, 'company');
-  const partners = publicPartners(data);
+  const partners = homePartners(data);
   const testimonials = publicTestimonials(data);
   const allProjects = publishedProjects(data);
   // Dự án tiêu biểu: case study đã xuất bản (nổi bật trước) + dự án marketing có ảnh thật
@@ -69,22 +69,14 @@ export default function HomePage({ data }: { data: SiteData }) {
       };
     })
   ];
-  // Toàn bộ khách hàng & đối tác: đối tác trên nền tảng + khách hàng marketing (bỏ trùng theo tên)
-  const logos = (() => {
-    const out: { key: string; name: string; role: string; logo?: string; fill?: boolean; href: string }[] = [];
-    const seen = new Set<string>();
-    for (const c of partners) {
-      const k = c.name.trim().toLowerCase(); if (seen.has(k)) continue; seen.add(k);
-      const project = allProjects.find(p => p.id === c.projectId);
-      const mk = c.logo ? markOf(c.logo) : null;
-      out.push({ key: 'c-' + c.id, name: c.name, role: project ? 'Case study' : (c.role || 'Đối tác'), logo: mk?.src, fill: mk?.fill, href: project ? projectHref(project) : `/doi-tac/#${c.id}` });
-    }
-    for (const m of MARKETING_ENGAGEMENTS) {
-      const k = m.client.trim().toLowerCase(); if (seen.has(k)) continue; seen.add(k);
-      out.push({ key: 'm-' + m.id, name: m.client, role: m.throughPartner ? 'Truyền thông qua đối tác' : 'Marketing & truyền thông', logo: m.logo, href: '/giai-phap/digital-marketing/#du-an-marketing' });
-    }
-    return out;
-  })();
+  // Khối logo + con số "… thương hiệu đã đồng hành": chỉ khách hàng & đối tác ĐÃ XÁC MINH hợp tác (Quản trị → Đối tác & nhận xét).
+  // Thêm và xác minh một mục → con số tự tăng.
+  const logos = partners.map(c => {
+    const project = allProjects.find(p => p.id === c.projectId);
+    const mk = c.logo ? markOf(c.logo) : null;
+    const href = project ? projectHref(project) : c.id.startsWith('mkt-') ? '/giai-phap/digital-marketing/#du-an-marketing' : `/doi-tac/#${c.id}`;
+    return { key: 'c-' + c.id, name: c.name, role: project ? 'Case study' : (c.role || 'Đối tác'), logo: mk?.src, fill: mk?.fill, href };
+  });
   // Giữ vị trí gốc trong menu để sửa đúng mục (block.menu.columns.0.items.<i>)
   const products = (block(data, 'menu').columns[0]?.items ?? []).map((it, at) => ({ ...it, at })).filter(it => it.href);
   // Đường hành trình 2016 → 2026: 2016 theo chủ sở hữu (21/11/2026), 2016 theo đăng ký doanh nghiệp, 2021–2026 theo MILESTONES (trang Về chúng tôi)

@@ -111,6 +111,16 @@ export const publicClients = (data: SiteData): Client[] =>
   (data.clients || []).filter(c => c.published && c.permission && c.name.trim());
 /** Khách hàng + đối tác đồng hành (không gồm địa điểm danh bạ danava.vn/places) — dùng cho khối logo. */
 export const publicPartners = (data: SiteData): Client[] => publicClients(data).filter(c => c.relation !== 'place');
+/** Đối tác/khách hàng đã xác minh hợp tác: khối logo trang chủ và con số "… thương hiệu đã đồng hành" (bỏ trùng theo tên). */
+export const homePartners = (data: SiteData): Client[] => {
+  const seen = new Set<string>();
+  return publicPartners(data).filter(c => {
+    const k = c.name.trim().toLowerCase();
+    if (c.onHome === false || seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+};
 /** Địa điểm công khai trên danava.vn/places (ngoài khối đối tác đồng hành). */
 export const publicPlaces = (data: SiteData): Client[] => publicClients(data).filter(c => c.relation === 'place');
 

@@ -854,3 +854,7 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .lv-translate:hover:not(:disabled) { background: #ffe6d4; }
 .ax-scope .lv-seg--lang button { gap: 6px; }
 .ax-scope .lv-flag { display: block; flex: none; width: 18px; height: 12px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(17, 26, 51, .14); }
+
+/* Quản trị → Đối tác & nhận xét: số thương hiệu đang hiện ở trang chủ (đã xác minh hợp tác) */
+.ax-scope .adm-home-count { display: inline-flex; align-items: baseline; gap: 6px; margin: 4px 0 6px; padding: 8px 14px; border-radius: 12px; background: #fff4e8; color: #8a3a0a; font-size: 13.5px; font-weight: 600; }
+.ax-scope .adm-home-count b { color: #f26b1d; font-size: 20px; font-weight: 800; line-height: 1; }

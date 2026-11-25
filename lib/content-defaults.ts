@@ -8,6 +8,7 @@
  */
 import { initial, RETIRED_SERVICES, type Client, type Feature, type Faq, type Project, type Service, type SiteData, type SubService, type Topic } from './content.ts';
 import { HUDI_WEBSITE_SHOWCASE, SHOWCASE_SEEDS } from './showcase-seeds.ts';
+import { MARKETING_ENGAGEMENTS } from './marketing-portfolio.ts';
 
 /* ------------------------------------------------------------------ Dịch vụ */
 type ServiceSeed = Pick<Service, 'heroLead' | 'audience' | 'problems' | 'process' | 'faqs' | 'pricing' | 'productUrl' | 'productLabel'>;
@@ -375,7 +376,7 @@ const PARTNER_PREFIX = 'danava-partner-';
 /** Dữ liệu đã lưu chưa từng nhận đợt đối tác này và cũng chưa có đối tác nào loại này */
 const needsPartnerSeed = (data: SiteData) => !!data.clients?.length && !(data.seeded || []).includes(PARTNER_SEED) && !data.clients.some(c => c.id.startsWith(PARTNER_PREFIX));
 
-export const CLIENT_SEEDS: Client[] = [
+const BASE_CLIENT_SEEDS: Client[] = [
   { id: 'hariver', name: 'HARIVER Gym & Fitness Center', logo: '/assets/partners/hariver-gym-fitness.webp', url: 'https://danava.vn/places/hariver-gym-fitnes-center', projectId: 'hariver-studio', role: 'Gym & Fitness', relation: 'client', verified: true, permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hariver-gym-fitness-center. Logo theo khối Đối tác đồng hành trên danava.vn.', fullName: 'HARIVER GYM & FITNESS CENTER', description: 'Phòng tập hỗ trợ sức khoẻ cho cộng đồng thông qua câu lạc bộ Gym tốt nhất khu vực Hoà Khánh.', address: '214 Phạm Như Xương, P. Hoà Khánh, TP. Đà Nẵng', city: 'Đà Nẵng', hours: 'Thứ 2 - Thứ 7 (5:00 - 20:00)', types: ['Gym'], amenities: ['Trang thiết bị hiện đại', 'Huấn luyện viên chuyên nghiệp', 'Đa dạng khu vực tập luyện', 'Không gian rộng rãi', 'Phòng tắm & tủ khóa tiện nghi', 'Bãi đỗ xe rộng rãi', 'an toàn'], cover: '/assets/partners/covers/hariver-gym-fitness-center.webp' },
   { id: 'hue-pilates', name: 'Huế Pilates & Yoga', logo: '/assets/partners/hue-pilates-yoga.webp', url: 'https://danava.vn/places/hue-pilates-yoga', projectId: 'hue-studio', role: 'Pilates & Yoga', relation: 'client', verified: true, permission: true, published: true, note: 'Tên khách hàng đã công bố trong case study https://danava.vn/blog/case-hue-pilates-yoga. Logo theo khối Đối tác đồng hành trên danava.vn.', fullName: 'Huế Pilates & Yoga', description: 'Huế Pilates & Yoga là không gian luyện tập chuyên nghiệp, nơi kết hợp hài hòa giữa Yoga và Pilates nhằm nâng cao sức khỏe thể chất, cân bằng tinh thần và cải thiện chất lượng cuộc sống. Với đội ngũ huấn luyện viên tận tâm cùng các chương trình tập luyện phù hợp cho mọi độ tuổi, Huế Pilates & Yoga mang đến môi trường tập luyện thân thiện, giúp học viên tăng cường sức mạnh cơ thể, cải thiện vóc dáng, giảm căng thẳng và xây dựng lối sống khỏe mạnh mỗi ngày.', address: '38 Nguyễn Khuyến, Phường Thuận Hoá, Tp. Huế', city: 'Thừa Thiên Huế', hours: 'Thứ 2 - Chủ Nhật (05h00 - 20h00)', types: ['Pilates'], amenities: ['Nước uống miễn phí', 'Khăn tập miễn phí', 'Máy Reformer hiện đại', 'Máy Cadillac chuyên nghiệp', 'Wunda Chair cao cấp', 'Ladder Barrel hỗ trợ tập luyện hiệu quả'], cover: '/assets/partners/covers/hue-pilates-yoga.webp' },
   { id: 'danava-partner-7', name: 'VF Gym', logo: '/assets/partners/vf-gym.webp', url: 'https://danava.vn/places/vf-gym', projectId: '', role: 'Gym & Fitness', relation: 'partner', verified: true, permission: true, published: true, note: 'Đối tác đồng hành công bố trên https://danava.vn/ (khối “Đối tác đồng hành”, lấy ngày 19/11/2026).', fullName: 'VF GYM', description: 'VF GYM – 1081 Ngô Quyền là phòng tập hiện đại dành cho mọi đối tượng, từ người mới bắt đầu đến người tập lâu năm. Không gian rộng rãi, sạch sẽ, được trang bị hệ thống máy lạnh mát mẻ giúp bạn thoải mái tập luyện bất kể thời tiết. Phòng gym sở hữu đầy đủ máy tập cardio, máy tập sức mạnh và khu vực tập tạ tự do, đáp ứng đa dạng mục tiêu như giảm cân, tăng cơ, nâng cao sức khỏe hay cải thiện vóc dáng. Bên cạnh đó, VF GYM còn có nhiều tiện ích như khu vực thay đồ, gửi xe thuận tiện, huấn luyện viên nhiệt tình hỗ trợ và môi trường tập luyện thân thiện, tạo động lực để bạn duy trì thói quen vận động mỗi ngày. Với không gian chuyên nghiệp cùng trang thiết bị hiện đại, VF GYM là lựa chọn phù hợp cho những ai mong muốn xây dựng một lối sống khỏe mạnh, năng động và bền vững.', address: '1081 Ngô Quyền, P. An Hải, TP. Đà Nẵng', city: 'Đà Nẵng', hours: 'Thứ 2 - Thứ 7 (05h00 - 20h00)', types: ['Gym'], amenities: ['Phòng tập máy lạnh', 'Máy tập hiện đại', 'HLV hỗ trợ', 'Phòng thay đồ', 'Bãi đỗ xe', 'Không gian chuyên nghiệp'], cover: '/assets/partners/covers/vf-gym.webp' },
@@ -425,6 +426,19 @@ export const CLIENT_SEEDS: Client[] = [
   { id: 'danava-place-yoga-an-nhien', name: 'Yoga An Nhiên', logo: '/assets/partners/places/yoga-an-nhien.webp', url: 'https://danava.vn/places/yoga-an-nhien', projectId: '', role: 'Yoga', relation: 'place', verified: false, permission: true, published: true, note: 'Địa điểm công khai trên https://danava.vn/places (lấy ngày 19/11/2026).', description: 'Yoga An Nhiên là không gian kết nối những người yêu Yoga, nơi cùng nhau nuôi dưỡng niềm đam mê, lan tỏa năng lượng tích cực và gieo những duyên lành cho sức khỏe. Với môi trường học tập thân thiện cùng đội ngũ hướng dẫn tận tâm, Yoga An Nhiên đồng hành cùng bạn trên hành trình nâng cao thể chất, cân bằng tinh thần và xây dựng lối sống an nhiên, khỏe mạnh mỗi ngày.', address: 'Phú Sơn Tây 4, Hoà Tiến, TP. Đà Nẵng', city: 'Đà Nẵng', hours: 'Thứ 2 - Thứ 6 (5:00-20:30)', types: ['Yoga'], amenities: ['Lớp Yoga cộng đồng', 'Không gian thư thái', 'Kết nối người yêu Yoga', 'Lan tỏa lối sống khỏe', 'Phù hợp mọi lứa tuổi', 'Rèn luyện mỗi ngày'], cover: '/assets/partners/covers/yoga-an-nhien.webp' },
   { id: 'danava-place-yoga-song-khoe', name: 'Yoga Sống Khỏe', logo: '/assets/partners/places/yoga-song-khoe.webp', url: 'https://danava.vn/places/yoga-song-khoe', projectId: '', role: 'Spa & Wellness', relation: 'place', verified: false, permission: true, published: true, note: 'Địa điểm công khai trên https://danava.vn/places (lấy ngày 19/11/2026).', description: 'Học Viện Yoga Sống Khỏe với 30 chi nhánh trên toàn quốc, là thành viên của Liên Đoàn Yoga Việt Nam và thành Viên Liên Minh Yoga Quốc Tế. Chúng tôi đã đào tạo hơn 10.000 Huấn Luyện Viên cấp chứng chỉ quốc tế, là đơn vị chuyên tổ chức những cuộc thi về Yoga trên toàn quốc', address: 'HA 02-77&79, Hải Âu 2, Vinhomes Ocean Park, Gia Lâm, Hà Nội', city: 'Hà Nội', hours: '08:00 - 21:00', types: ['Spa'], amenities: ['Đào tạo HLV Yoga', 'Tổ chức thi đấu', 'Hệ thống 30 chi nhánh', 'Thành viên Liên đoàn', 'Linh hoạt thời gian', 'Hỗ trợ nhanh chóng'], cover: '/assets/partners/covers/yoga-song-khoe.webp' },
 ];
+
+/** Đợt đưa 9 khách hàng marketing (lib/marketing-portfolio.ts) vào danh sách quản trị (25/11/2026) */
+export const MARKETING_SEED = 'marketing-clients-2026-11';
+/** Khách hàng marketing đã hợp tác → bản ghi khách hàng, đã xác minh, hiện ở khối logo trang chủ */
+export const MARKETING_CLIENT_SEEDS: Client[] = MARKETING_ENGAGEMENTS.map(m => ({
+  id: 'mkt-' + m.id, name: m.client, logo: m.logo || '', url: m.website || m.fanpage || '', projectId: '',
+  role: m.throughPartner ? 'Truyền thông qua đối tác' : 'Marketing & truyền thông', relation: 'client' as const, onHome: true,
+  permission: true, published: true, note: 'Khách hàng dự án marketing (lib/marketing-portfolio.ts).'
+}));
+export const CLIENT_SEEDS: Client[] = [...BASE_CLIENT_SEEDS, ...MARKETING_CLIENT_SEEDS];
+/** Dữ liệu đã lưu chưa nhận đợt khách hàng marketing → bổ sung một lần những mục chưa có (theo id hoặc tên) */
+const marketingToAdd = (data: SiteData) => !data.clients?.length || (data.seeded || []).includes(MARKETING_SEED) ? []
+  : MARKETING_CLIENT_SEEDS.filter(x => !data.clients!.some(c => c.id === x.id || c.name.trim().toLowerCase() === x.name.toLowerCase())).map(x => structuredClone(x));
 
 /**
  * Mục trưng bày đã được chủ sở hữu yêu cầu gỡ khỏi website (19/11/2026).
@@ -507,7 +521,8 @@ export function normalizeContent(data: SiteData): SiteData {
     clients: [...fill(data.clients, structuredClone(CLIENT_SEEDS)), // Dữ liệu cũ chưa có mục “địa điểm” nào → bổ sung một lần; danh sách rỗng là lựa chọn của quản trị viên nên giữ nguyên
       ...(data.clients?.length && !data.clients.some(c => c.relation === 'place') ? structuredClone(CLIENT_SEEDS.filter(x => x.relation === 'place')) : []),
       // Dữ liệu lưu trước khi có 13 “đối tác đồng hành” lấy từ danava.vn → bổ sung đúng một lần (đánh dấu trong `seeded`)
-      ...(needsPartnerSeed(data) ? structuredClone(CLIENT_SEEDS.filter(x => x.id.startsWith(PARTNER_PREFIX))) : [])].map(c => {
+      ...(needsPartnerSeed(data) ? structuredClone(CLIENT_SEEDS.filter(x => x.id.startsWith(PARTNER_PREFIX))) : []),
+      ...marketingToAdd(data)].map(c => {
       const seed = CLIENT_SEEDS.find(x => x.id === c.id);
       if (!seed) return c;
       const out = { ...c };
@@ -518,7 +533,7 @@ export function normalizeContent(data: SiteData): SiteData {
       }
       return out;
     }),
-    seeded: Array.from(new Set([...(data.seeded || []), PARTNER_SEED])),
+    seeded: Array.from(new Set([...(data.seeded || []), PARTNER_SEED, MARKETING_SEED])),
     testimonials: fill(data.testimonials, []),
     posts: data.posts.filter(p => !REMOVED_POST_IDS.includes(p.id)).map(p => {
       const saved = fill(p.topicId, POST_TOPICS[p.id] || '');

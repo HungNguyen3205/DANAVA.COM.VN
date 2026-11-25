@@ -12,7 +12,7 @@ import { cmsText, ct } from './cms';
 import { rich } from './rich';
 import { HomeCases, type HomeCase } from './HomeCases';
 import { MARKETING_ENGAGEMENTS } from '@/lib/marketing-portfolio';
-import { projectHref, publicPartners } from '@/lib/site-queries';
+import { homePartners, projectHref } from '@/lib/site-queries';
 
 export { getProjectTeam, findProject, projectGallery } from './project-helpers';
 
@@ -65,12 +65,8 @@ export function ProjectsIndex() {
       return { id: 'm-' + m.id, group: 'marketing' as const, client: c.v, title: ti.v, text: tx.v, image: m.image?.src, logo: m.logo, href: '/giai-phap/digital-marketing/#du-an-marketing', tag: tg.v, cms: { client: c.a, title: ti.a, text: tx.a, tag: tg.a } };
     })
   ], [projects, data]);
-  const brands = useMemo(() => {
-    const names = new Set<string>();
-    publicPartners(data).forEach(c => names.add(c.name.trim().toLowerCase()));
-    MARKETING_ENGAGEMENTS.forEach(m => names.add(m.client.trim().toLowerCase()));
-    return names.size;
-  }, [data]);
+  // Cùng con số với trang chủ: khách hàng & đối tác đã xác minh hợp tác
+  const brands = useMemo(() => homePartners(data).length, [data]);
   const mosaic = cases.filter(c => c.image).slice(0, 3);
   const web = (data.showcase || []).filter(x => x.published && x.serviceId === 'website');
   const webCase = web.filter(x => x.caseStudy);
