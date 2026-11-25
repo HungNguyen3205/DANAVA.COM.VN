@@ -87,6 +87,11 @@ export const STATIC_SEO: StaticSeo[] = [
     description: 'Điền yêu cầu để nhận báo giá tham khảo thiết kế landing page hoặc website doanh nghiệp tại DANAVA.'
   },
   {
+    path: '/bao-gia-su-kien/', name: 'Báo giá tổ chức sự kiện',
+    title: 'Báo giá tổ chức sự kiện trọn gói',
+    description: 'Kể về sự kiện của bạn: loại sự kiện, quy mô, hạng mục và ngân sách. Nhận khoảng chi phí tham khảo ngay, chuyên viên DANAVA xác nhận báo giá chính thức.'
+  },
+  {
     path: '/chinh-sach-dich-vu/', name: 'Chính sách dịch vụ',
     title: 'Chính sách dịch vụ và bảo hành kỹ thuật',
     description: 'Quy chuẩn phạm vi hỗ trợ, cam kết chất lượng SLA 99.9%, chính sách bảo hành phần mềm và website 12 tháng, bàn giao mã nguồn sạch và bảo mật tài nguyên tại DANAVA Solutions.'

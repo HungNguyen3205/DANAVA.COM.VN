@@ -7,17 +7,14 @@
 import Link from 'next/link';
 import { LangSwitch } from './LangSwitch';
 import { useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, BriefcaseBusiness, FolderKanban, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BriefcaseBusiness, ChevronRight, FolderKanban, Home, Info, LayoutGrid, MessageCircle, Network, Newspaper, Phone, Users, X, type LucideIcon } from 'lucide-react';
 import { MayFigure } from './anna/MayFigure';
 import { useSite } from '../SiteStore';
 import { block, safeHref } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
 import { CONTACT, formatPhone } from './catalog';
-import { DICH_VU, SHOW_DICH_VU_MENU } from '@/lib/dich-vu';
-import { CalendarDays, Megaphone, MonitorSmartphone, Plane } from 'lucide-react';
+import { SERVICE_MENU } from '@/lib/services-menu';
 
-/** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
-const DV_ICON: LucideIcon[] = [Megaphone, MonitorSmartphone, CalendarDays, Plane];
 import { iconFor } from './icons';
 import { useDialog } from './useDialog';
 import { useAnna } from './anna/AnnaProvider';
@@ -123,21 +120,21 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
             </section>
           ))}
 
-          {SHOW_DICH_VU_MENU && (<section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-services">
-            <h2 className="sm__subtitle" id="sm-group-services" {...tServices.a}>{tServices.v}</h2>
-            <ul>
-              {DICH_VU.map((s, i) => {
-                const Icon = DV_ICON[i % DV_ICON.length];
-                return (
-                  <li key={s.id}>
-                    <Link className="sm__row sm__row--page" href={`/dich-vu/${s.slug}/`} onClick={onClose} aria-current={current(`/dich-vu/${s.slug}/`)}>
-                      <Icon className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{s.title}</span>
+          {/* Dịch vụ: mỗi nhóm báo giá một nhóm nhỏ (lib/services-menu.ts) */}
+          {SERVICE_MENU.map(g => (
+            <section key={g.id} className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby={`sm-svc-${g.id}`}>
+              <h2 className="sm__subtitle" id={`sm-svc-${g.id}`}>{g.label}</h2>
+              <ul>
+                {g.items.map(it => (
+                  <li key={it.id}>
+                    <Link className="sm__row sm__row--page" href={it.href} onClick={onClose} aria-current={current(it.href)}>
+                      <ChevronRight className="sm__icon" aria-hidden="true" strokeWidth={1.8} /><span className="sm__label">{it.label}{it.badge ? <small className="sm__badge"> {it.badge}</small> : null}</span>
                     </Link>
                   </li>
-                );
-              })}
-            </ul>
-          </section>)}
+                ))}
+              </ul>
+            </section>
+          ))}
 
           <section className="sm__group sm__group--more" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby="sm-group-about">
             <h2 className="sm__subtitle" id="sm-group-about" {...tAbout.a}>{tAbout.v}</h2>

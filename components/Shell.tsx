@@ -7,7 +7,8 @@ import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
 import { block, safeHref } from '@/lib/blocks';
 import { HrefIcon, IconBox, type Tone } from './site/icons';
-import { DICH_VU, SHOW_DICH_VU_MENU } from '@/lib/dich-vu';
+import { SERVICE_MENU } from '@/lib/services-menu';
+import { LayoutTemplate, PartyPopper, Dumbbell } from 'lucide-react';
 import { cmsBlock, cmsText, ct } from './site/cms';
 import type { SiteData } from '@/lib/content';
 
@@ -16,10 +17,7 @@ function S({ data, k, def, label }: { data: SiteData; k: string; def: string; la
   const x = ct(data, `shell.${k}`, def, label, { scope: 'global' });
   return <span {...x.a}>{x.v}</span>;
 }
-import { Megaphone, MonitorSmartphone, CalendarDays, Plane } from 'lucide-react';
 
-/** Icon cho từng dịch vụ (theo thứ tự trong DICH_VU) */
-const DV_ICON: LucideIcon[] = [Megaphone, MonitorSmartphone, CalendarDays, Plane];
 import { contactChannels } from '@/lib/contact-channels';
 import { BrandIcon } from './site/BrandIcons';
 import { MobileMenu } from './site/MobileMenu';
@@ -84,6 +82,7 @@ export function Header() {
   const [about, setAbout] = useState(false);
   const aboutRef = useRef<HTMLLIElement | null>(null);
   const [svc, setSvc] = useState(false);
+  const [svcGroup, setSvcGroup] = useState(SERVICE_MENU[0].id);
   const svcRef = useRef<HTMLLIElement | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const megaRef = useRef<HTMLLIElement | null>(null);
@@ -178,30 +177,50 @@ export function Header() {
                   )}
                 </div>
               </li>
-              {SHOW_DICH_VU_MENU && (<li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onMouseEnter={() => setSvc(true)} onMouseLeave={() => setSvc(false)}>
+              {/* Dịch vụ: danh mục báo giá bên trái, mục của danh mục đang chọn bên phải (lib/services-menu.ts) */}
+              <li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onMouseEnter={() => setSvc(true)} onMouseLeave={() => setSvc(false)}>
                 <button
                   type="button"
                   className="s-nav__link"
                   aria-expanded={svc}
                   aria-controls="s-mega-services"
-                  aria-current={path.startsWith('/dich-vu') ? 'page' : undefined}
+                  aria-current={['/bao-gia', '/thiet-bi-gym', '/giai-phap/setup-van-hanh-phong-gym'].some(p => path.startsWith(p)) ? 'page' : undefined}
                   onClick={() => setSvc(v => !v)}
                 >
-                  Dịch vụ <ChevronDown aria-hidden="true" />
+                  <S data={data} k="nav.services" def="Dịch vụ" label="Menu: Dịch vụ" /> <ChevronDown aria-hidden="true" />
                 </button>
-                <div className="s-mega s-mega--cols s-mega--services" id="s-mega-services">
-                  <div className="s-mega__cols">
-                    <div className="s-mega__col">
-                      <p className="s-mega__head"><span>Dịch vụ<small>Ngoài phần mềm</small></span></p>
-                      <ul>
-                        {DICH_VU.map((s, i) => (
-                          <li key={s.id}><MenuItem it={{ label: s.title, desc: s.description, href: `/dich-vu/${s.slug}/`, badge: '', image: '', icon: DV_ICON[i % DV_ICON.length], tone: i % 2 ? 'orange' : 'blue' }} onPick={() => setSvc(false)} /></li>
-                        ))}
-                      </ul>
-                    </div>
+                <div className="s-mega s-svc" id="s-mega-services">
+                  <ul className="s-svc__groups" role="tablist" aria-label="Nhóm dịch vụ">
+                    {SERVICE_MENU.map(g => {
+                      const Icon = g.icon === 'landing' ? LayoutTemplate : g.icon === 'event' ? PartyPopper : Dumbbell;
+                      const x = ct(data, `nav.svc.${g.id}.label`, g.label, 'Menu Dịch vụ: tên nhóm', { scope: 'global' });
+                      return (
+                        <li key={g.id} role="presentation">
+                          <button type="button" role="tab" aria-selected={svcGroup === g.id} className={`s-svc__group${svcGroup === g.id ? ' is-on' : ''}`}
+                            onMouseEnter={() => setSvcGroup(g.id)} onFocus={() => setSvcGroup(g.id)} onClick={() => setSvcGroup(g.id)}>
+                            <Icon aria-hidden="true" /><span {...x.a}>{x.v}</span><ChevronDown className="s-svc__chev" aria-hidden="true" />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <div className="s-svc__items" role="tabpanel">
+                    {SERVICE_MENU.filter(g => g.id === svcGroup).map(g => g.items.map(it => {
+                      const l = ct(data, `nav.svc.${g.id}.${it.id}.label`, it.label, 'Menu Dịch vụ: tên mục', { scope: 'global' });
+                      const d = ct(data, `nav.svc.${g.id}.${it.id}.desc`, it.desc, 'Menu Dịch vụ: mô tả mục', { scope: 'global' });
+                      return (
+                        <Link key={g.id + it.id} className="s-svc__item" href={it.href} onClick={() => setSvc(false)}>
+                          <span className="s-svc__arrow" aria-hidden="true"><ArrowRight /></span>
+                          <span className="s-svc__txt">
+                            <span className="s-svc__label"><span {...l.a}>{l.v}</span>{it.badge && <span className="s-svc__badge">{it.badge}</span>}</span>
+                            <span className="s-svc__desc" {...d.a}>{d.v}</span>
+                          </span>
+                        </Link>
+                      );
+                    }))}
                   </div>
                 </div>
-              </li>)}
+              </li>
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}><S data={data} k="nav.ecosystem" def="Hệ sinh thái" label="Menu: Hệ sinh thái" /></Link>
               </li>

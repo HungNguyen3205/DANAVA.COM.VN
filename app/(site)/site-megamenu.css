@@ -44,3 +44,34 @@
   .s-app .s-mega__col { padding: 0 14px; }
   .s-app .s-mega__col li { height: 78px; }
 }
+
+/* ==== Menu "Dịch vụ" (components/Shell.tsx, lib/services-menu.ts): danh mục báo giá trái + mục phải, kiểu danh mục dịch vụ ==== */
+.s-app .s-mega.s-svc {
+  display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 0; left: 50%; top: calc(100% - 6px);
+  width: min(900px, calc(100vw - 48px)); padding: 14px; transform: translate(-50%, -6px);
+}
+.s-app .s-nav__item.is-open .s-mega.s-svc { transform: translate(-50%, 0); }
+.s-svc__groups { display: grid; align-content: start; gap: 4px; margin: 0; padding: 4px 12px 4px 0; border-right: 1px solid #eef1f6; list-style: none; }
+.s-app .s-svc__group {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 12px; border: 0; border-radius: 12px; background: none;
+  color: #13244f; font: inherit; font-size: 14.5px; font-weight: 700; text-align: left; cursor: pointer; transition: background .15s, color .15s;
+}
+.s-svc__group > svg:first-child { flex: none; width: 19px; height: 19px; color: #5b6478; }
+.s-svc__group .s-svc__chev { margin-left: auto; width: 15px; height: 15px; transform: rotate(-90deg); opacity: .5; }
+.s-app .s-svc__group:hover { background: #f6f8fc; }
+.s-app .s-svc__group.is-on { background: #fff1e6; color: #c2410c; }
+.s-svc__group.is-on > svg { color: #f26b1d !important; opacity: 1; }
+.s-svc__items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 6px 10px; padding: 4px 4px 4px 16px; }
+.s-app .s-svc__item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 14px; color: inherit; text-decoration: none; transition: background .15s; }
+.s-app .s-svc__item:hover { background: #f8f9fc; }
+.s-svc__arrow { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: #fff1e6; color: #f26b1d; transition: background .15s, color .15s, transform .15s; }
+.s-svc__arrow svg { width: 17px; height: 17px; }
+.s-app .s-svc__item:hover .s-svc__arrow { background: #f26b1d; color: #fff; transform: translateX(2px); }
+.s-svc__txt { display: grid; gap: 3px; min-width: 0; }
+.s-svc__label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: #13244f; font-size: 14.5px; font-weight: 800; line-height: 1.3; }
+.s-svc__badge { padding: 2px 7px; border-radius: 6px; background: #fde8e7; color: #c2410c; font-size: 10.5px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+.s-svc__desc { color: #5b6478; font-size: 12.5px; line-height: 1.45; }
+@media (max-width: 1100px) { .s-svc__items { grid-template-columns: 1fr; } .s-app .s-mega.s-svc { width: min(720px, calc(100vw - 32px)); grid-template-columns: 220px minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .s-app .s-mega.s-svc, .s-app .s-nav__item.is-open .s-mega.s-svc { transform: translate(-50%, 0); } }
+/* Điện thoại: nhãn nhỏ cạnh tên mục */
+.sm__badge { color: #c2410c; font-size: 11px; font-weight: 800; }
