@@ -703,3 +703,7 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gp-group.is-open .gp-group__chev { transform: rotate(180deg); color: var(--gs-orange); }
 .gp-group .gp-eq { max-height: none; padding: 0 8px 8px; overflow: visible; }
 .gp-group .gp-eq li { padding: 6px; }
+
+/* Banner "Đã lưu": nút đóng */
+.s-app .gs .gs-share__x { margin-left: auto; padding: 0; width: 28px; height: 28px; justify-content: center; background: transparent; color: inherit; opacity: .7; }
+.s-app .gs .gs-share__x:hover { background: rgba(255, 255, 255, .7); opacity: 1; }

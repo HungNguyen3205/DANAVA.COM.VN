@@ -178,7 +178,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   }
 
   /* ---------- Lưu / chia sẻ / gửi ---------- */
-  const [share, setShare] = useState<{ busy: boolean; url: string; error: string }>({ busy: false, url: '', error: '' });
+  const [share, setShare] = useState<{ busy: boolean; url: string; error: string; hidden?: boolean }>({ busy: false, url: '', error: '' });
   async function save(preview = true): Promise<Project | null> {
     if (!project) return null;
     setShare(s => ({ ...s, busy: true, error: '' }));
@@ -382,9 +382,10 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
           </aside>
         )}
       </div>
-      {(share.url || share.error) && (
+      {(share.url || share.error) && !share.hidden && (
         <p className={`gs-share${share.error ? ' is-error' : ''}`} role="status">
           {share.error || <><Share2 aria-hidden="true" /> Đã lưu. Mở lại phương án bằng đường dẫn: <a href={share.url}>{share.url}</a> <button type="button" onClick={() => { void navigator.clipboard?.writeText(share.url); setNotice('Đã chép đường dẫn'); }}><Copy aria-hidden="true" /> Chép</button></>}
+          <button type="button" className="gs-share__x" aria-label="Đóng" title="Đóng" onClick={() => setShare(s => ({ ...s, error: '', hidden: true }))}><X aria-hidden="true" /></button>
         </p>
       )}
 
