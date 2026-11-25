@@ -16,6 +16,7 @@ export const MEDIA_GROUPS: MediaGroup[] = [
   { id: 'anna', section: 'Thương hiệu', label: 'Trợ lý ANNA', prefix: '/assets/anna/', hint: 'Hình ANNA (đã tách nền) dùng ở dải cuối trang' },
   { id: 'about', section: 'Thương hiệu', label: 'Giới thiệu & văn phòng', prefix: '/assets/about/', hint: 'Trang Về DANAVA, ảnh văn phòng, nhà sáng lập' },
 
+  { id: 'equipment-tbg', section: 'Sản phẩm', label: 'Thiết bị gym (thietbigym.vn)', prefix: '/assets/equipment/tbg/', hint: 'Ảnh máy tập đồng bộ từ đối tác thietbigym.vn (scripts/sync-thietbigym.mjs)' },
   { id: 'products-work', section: 'Sản phẩm', label: 'DANAVA Work', prefix: '/assets/products/danava-work/', hint: 'Ảnh màn hình DANAVA Work' },
   { id: 'products-go', section: 'Sản phẩm', label: 'DANAVA GO (sản phẩm)', prefix: '/assets/products/go/', hint: 'Ảnh màn hình DANAVA GO' },
   { id: 'products', section: 'Sản phẩm', label: 'Sản phẩm chung', prefix: '/assets/products/', hint: 'Ảnh đại diện các sản phẩm, Hello DANAVA' },

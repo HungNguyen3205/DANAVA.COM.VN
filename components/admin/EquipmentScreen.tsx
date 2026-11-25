@@ -6,7 +6,8 @@
 import { Box, Plus } from 'lucide-react';
 import { useState } from 'react';
 import type { SiteData } from '@/lib/content';
-import { EQUIPMENT_CATEGORIES, EQUIPMENT_SEEDS, formatVND, type Equipment, type EquipmentCategory } from '@/lib/equipment';
+import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory } from '@/lib/equipment';
+import { CATALOG_SOURCE, EQUIPMENT_SEEDS } from '@/lib/equipment-seeds';
 import { LibraryButton, uploadMedia } from '../MediaPicker';
 import { PF, Switch } from '../AdminContentEditors';
 import { matches } from './ui';
@@ -44,7 +45,7 @@ function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equi
         <span className="adm-entity__logo" style={{ background: x.image ? undefined : x.color, color: '#fff' }}>{x.image ? <img src={x.image} alt="" width={40} height={40} loading="lazy" /> : <Box size={18} />}</span>
         <span className="adm-entity__main">
           <b>{x.name || 'Chưa đặt tên'}</b>
-          <small>{EQUIPMENT_CATEGORIES[x.category]} · {x.width}×{x.depth}×{x.height} cm{x.model ? ' · có mô hình 3D' : ''}</small>
+          <small>{x.kind ? KIND_LABEL[x.kind] : EQUIPMENT_CATEGORIES[x.category]}{x.sku ? ` · ${x.sku}` : ''} · {x.width}×{x.depth}×{x.height} cm{x.dimsEstimated ? ' (ước tính)' : ''}{x.model ? ' · có file 3D' : ''}</small>
         </span>
         <span className={`adm-pill ${x.price ? 'adm-pill--blue' : 'adm-pill--muted'}`}>{x.price ? formatVND(Number(x.price)) : 'Liên hệ'}</span>
         <span className={`adm-pill ${x.published ? 'adm-pill--green' : 'adm-pill--muted'}`}>{x.published ? 'Đang hiện' : 'Ẩn'}</span>
@@ -68,9 +69,9 @@ function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equi
             <span className="eq-color"><input type="color" value={x.color} onChange={e => set({ color: e.target.value })} /><code>{x.color}</code></span>
           </label>
           <div className="pf-field pf-field--wide eq-dims">
-            <Num label="Rộng (cm)" value={x.width} max={2000} onChange={width => set({ width })} />
-            <Num label="Sâu (cm)" value={x.depth} max={2000} onChange={depth => set({ depth })} />
-            <Num label="Cao (cm)" value={x.height} max={500} onChange={height => set({ height })} />
+            <Num label="Rộng (cm)" value={x.width} max={2000} onChange={width => set({ width, dimsEstimated: false })} />
+            <Num label="Sâu (cm)" value={x.depth} max={2000} onChange={depth => set({ depth, dimsEstimated: false })} />
+            <Num label="Cao (cm)" value={x.height} max={500} onChange={height => set({ height, dimsEstimated: false })} />
             <small className="eq-hint">Chiếm khoảng {Math.ceil(x.width / 40)}×{Math.ceil(x.depth / 40)} ô gạch 40 cm trong phòng lab 3D.</small>
           </div>
           <div className="pf-field pf-field--wide eq-files">
@@ -85,7 +86,7 @@ function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equi
             </div>
             <div className="eq-file">
               <span>Mô hình 3D (.glb)</span>
-              <code className="eq-model">{x.model || 'Chưa có, phòng lab dùng khối hộp màu'}</code>
+              <code className="eq-model">{x.model || `Chưa có, phòng lab dùng mô hình dựng sẵn: ${x.kind ? KIND_LABEL[x.kind] : 'theo tên máy'}`}</code>
               <div className="eq-file__btns">
                 <label className="ps-libbtn">{busy === 'model' ? 'Đang tải…' : '↑ Tải mô hình .glb'}<input type="file" hidden accept=".glb,model/gltf-binary" onChange={e => { void up('model')(e.target.files?.[0]); e.target.value = ''; }} /></label>
                 {x.model && <button type="button" className="pf-delete" onClick={() => set({ model: '' })}>Gỡ</button>}
@@ -94,6 +95,7 @@ function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equi
             </div>
           </div>
           <PF label="Mô tả ngắn" value={x.description} max={500} area wide onChange={description => set({ description })} />
+          {x.source && <p className="pf-field pf-field--wide eq-hint">Nguồn: <a href={x.source} target="_blank" rel="noopener">{x.source}</a>{x.dimsEstimated ? ' · kích thước đang ước tính theo loại máy, sửa lại nếu có số đo thật' : ''}</p>}
         </div>
         {err && <p className="mb-err" role="alert">{err}</p>}
         <div className="pf-switches">
@@ -119,6 +121,7 @@ export function EquipmentScreen({ draft, setDraft }: { draft: SiteData; setDraft
           <button type="button" className="admin-secondary" onClick={() => setList([{ id: 'may-' + Math.random().toString(36).slice(2, 8), name: '', category: 'cardio', price: '', width: 100, depth: 60, height: 100, image: '', model: '', color: '#2b4294', description: '', published: false }, ...list])}><Plus size={15} /> Thêm máy</button>
         </div>
         <p className="adm-home-count" role="status"><b>{priced}</b>/{list.length} máy đã có giá</p>
+        <p className="field-note">Danh mục mặc định đồng bộ từ đối tác <b>{CATALOG_SOURCE.site}</b> ngày {CATALOG_SOURCE.syncedAt.split('-').reverse().join('/')} (giá, tên, ảnh). Cập nhật lại giá: chạy <code>node scripts/sync-thietbigym.mjs</code> rồi triển khai.</p>
         <p className="field-note">Giá, kích thước và mô hình 3D dùng cho trang <a href="/thiet-bi-gym/" target="_blank" rel="noopener">/thiet-bi-gym/</a> và phòng lab 3D <a href="/bao-gia-setup-phong-gym/" target="_blank" rel="noopener">/bao-gia-setup-phong-gym/</a>. Máy chưa có giá hiện “Liên hệ” và không cộng vào tổng chi phí. Bấm <b>Xuất bản</b> để áp dụng.</p>
         <div className="adm-listbar">
           <input type="search" className="adm-listbar__search" placeholder="Tìm máy…" value={q} onChange={e => setQ(e.target.value)} aria-label="Tìm máy" />

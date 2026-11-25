@@ -4,7 +4,7 @@ import { getSiteContent } from '@/lib/database';
 import { JsonLd } from '@/components/site/blocks';
 import { Crumbs } from '@/components/site/ui';
 import { GymPlanner } from '@/components/site/GymPlanner';
-import { publicEquipment } from '@/lib/equipment';
+import { FLOORING, publicEquipment } from '@/lib/equipment-seeds';
 
 export const generateMetadata = seoPage('/bao-gia-setup-phong-gym/');
 
@@ -26,7 +26,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
         </section>
         <section className="gp-body">
           <div className="s-container">
-            <GymPlanner equipment={publicEquipment(data.equipment)} addId={typeof add === 'string' ? add.slice(0, 60) : undefined} />
+            <GymPlanner flooring={FLOORING} equipment={publicEquipment(data.equipment).filter(x => x.category !== 'accessory')} addId={typeof add === 'string' ? add.slice(0, 60) : undefined} />
           </div>
         </section>
       </main>

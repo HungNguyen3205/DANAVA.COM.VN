@@ -279,3 +279,22 @@
 /* Dải phòng lab: tách các bước và nút "Vào setup phòng tập của bạn" */
 .s-app .gy-lab .gy-lab__steps { margin: 22px 0 28px; }
 .s-app .gy-lab__card .gy-lab__steps + .s-btn { margin-top: 4px; }
+
+/* Phòng lab: ô tìm máy, nguồn đối tác, dòng thảm sàn */
+.gp-search { display: flex; align-items: center; gap: 8px; height: 38px; margin-bottom: 8px; padding: 0 10px; border: 1px solid #dfe4ee; border-radius: 10px; background: #fff; color: #8a94a8; }
+.gp-search svg { width: 16px; height: 16px; flex: none; }
+.gp-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; color: #13244f; font: inherit; font-size: 13.5px; }
+.gp-eq__none { justify-content: center; color: #8a94a8; font-size: 13px; }
+.gp-src { margin: 10px 0 0; color: #8a94a8; font-size: 11.5px; }
+.s-app .gp-src a { color: #c2410c; font-weight: 700; }
+.gp-floor { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 14px; padding: 12px 14px; border-radius: 14px; background: #fff7f0; color: #1d2a4d; font-size: 14px; line-height: 1.5; cursor: pointer; }
+.gp-floor input { width: 18px; height: 18px; margin-top: 2px; accent-color: #f26b1d; flex: none; }
+.gp-floor b { color: #13244f; }
+/* Trang thiết bị: nhãn kích thước ước tính, nguồn đối tác */
+.eqp-card__est { color: #8a94a8; font-size: 11.5px; }
+.eqp-src { margin: 14px 0 0; color: #8a94a8; font-size: 13px; }
+.s-app .eqp-src a { color: #c2410c; font-weight: 700; }
+
+.s-app .eqp-card__src { display: inline-flex; align-items: center; gap: 4px; color: #8a94a8; font-size: 12.5px; font-weight: 600; text-decoration: none; }
+.eqp-card__src svg { width: 13px; height: 13px; }
+.s-app .eqp-card__src:hover { color: #c2410c; }

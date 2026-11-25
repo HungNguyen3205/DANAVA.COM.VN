@@ -3,9 +3,10 @@
  * Nút "Đặt vào phòng 3D" mở phòng lab /bao-gia-setup-phong-gym/?add=<mã máy>.
  */
 import Link from 'next/link';
-import { ArrowRight, Box, Boxes, Ruler } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Box, Boxes, Ruler } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
-import { EQUIPMENT_CATEGORIES, formatVND, publicEquipment, type EquipmentCategory } from '@/lib/equipment';
+import { EQUIPMENT_CATEGORIES, formatVND, type EquipmentCategory } from '@/lib/equipment';
+import { CATALOG_SOURCE, publicEquipment } from '@/lib/equipment-seeds';
 import { ct } from './cms';
 import { Crumbs, CtaBand } from './ui';
 
@@ -25,6 +26,7 @@ export function EquipmentPage({ data }: { data: SiteData }) {
             <Link className="s-btn s-btn--primary s-btn--lg" href="/bao-gia-setup-phong-gym/"><Boxes aria-hidden="true" /> {t('cta.lab', 'Mở phòng lab 3D', 'Nút')}</Link>
             <nav className="eqp-cats" aria-label="Nhóm thiết bị">{cats.map(c => <a key={c} href={`#nhom-${c}`}>{EQUIPMENT_CATEGORIES[c]}</a>)}</nav>
           </div>
+          <p className="eqp-src">{list.length} thiết bị · Danh mục, giá và hình ảnh từ đối tác <a href={CATALOG_SOURCE.url} target="_blank" rel="noopener">{CATALOG_SOURCE.site}</a> (cập nhật {CATALOG_SOURCE.syncedAt.split('-').reverse().join('/')}).</p>
         </div>
       </section>
 
@@ -41,10 +43,12 @@ export function EquipmentPage({ data }: { data: SiteData }) {
                   </span>
                   <div className="eqp-card__body">
                     <h3>{x.name}</h3>
+                    {x.sku && <p className="eqp-card__est">Mã: {x.sku}</p>}
                     {x.description && <p>{x.description}</p>}
-                    <p className="eqp-card__size"><Ruler aria-hidden="true" />{x.width} × {x.depth} × {x.height} cm</p>
+                    <p className="eqp-card__size"><Ruler aria-hidden="true" />{x.width} × {x.depth} × {x.height} cm{x.dimsEstimated && <span className="eqp-card__est"> (ước tính)</span>}</p>
                     <p className="eqp-card__price">{x.price ? formatVND(Number(x.price)) : <span className="eqp-card__contact">Liên hệ</span>}</p>
-                    <Link className="eqp-card__add" href={`/bao-gia-setup-phong-gym/?add=${encodeURIComponent(x.id)}`}>Đặt vào phòng 3D <ArrowRight aria-hidden="true" /></Link>
+                    {x.category !== 'accessory' && <Link className="eqp-card__add" href={`/bao-gia-setup-phong-gym/?add=${encodeURIComponent(x.id)}`}>Đặt vào phòng 3D <ArrowRight aria-hidden="true" /></Link>}
+                    {x.source && <a className="eqp-card__src" href={x.source} target="_blank" rel="noopener">Xem trên {CATALOG_SOURCE.site} <ArrowUpRight aria-hidden="true" /></a>}
                   </div>
                 </li>
               ))}

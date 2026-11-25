@@ -1,10 +1,11 @@
 /**
  * Bộ máy 3D của phòng lab setup phòng gym (components/site/GymPlanner.tsx).
  * Đơn vị: mét. Sàn W × L chia ô gạch `tile` (m). Máy là khối hộp theo kích thước thật (hoặc mô hình .glb nếu có),
- * bám ô gạch khi kéo, xoay 90°, tô đỏ khi chồng nhau hoặc ra ngoài phòng.
+ * (mô hình dựng sẵn theo loại máy, hoặc file .glb), bám ô gạch khi kéo, xoay 90°, tô đỏ khi chồng nhau hoặc ra ngoài phòng.
  */
 import type * as T from 'three';
 import type { Equipment } from '@/lib/equipment';
+import { buildModel } from './gym-planner-models';
 
 export type Placed = { uid: string; eqId: string; x: number; z: number; rot: number; bad: boolean };
 type Item = { uid: string; eq: Equipment; group: T.Group; x: number; z: number; rot: number; bad: boolean; mats: T.MeshStandardMaterial[] };
@@ -128,14 +129,13 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
 
   const loader = new GLTFLoader();
   function makeItem(eq: Equipment): Item {
-    const group = new THREE.Group();
+    // Mô hình dựng sẵn theo loại máy (gym-planner-models.ts); có file .glb thì thay bằng file đó khi tải xong
     const w = eq.width / 100, d = eq.depth / 100, h = Math.max(eq.height / 100, 0.02);
-    const mat = new THREE.MeshStandardMaterial({ color: eq.color, roughness: .55, metalness: .15 });
-    const box = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    box.position.y = h / 2;
-    box.castShadow = box.receiveShadow = true;
+    const built = buildModel(THREE, eq);
+    const group = new THREE.Group();
+    const box = built.group;
     group.add(box);
-    const it: Item = { uid: 'i' + ++seq, eq, group, x: 0, z: 0, rot: 0, bad: false, mats: [mat] };
+    const it: Item = { uid: 'i' + ++seq, eq, group, x: 0, z: 0, rot: 0, bad: false, mats: built.mats };
     group.userData.uid = it.uid;
     if (eq.model) {
       loader.load(eq.model, gltf => {

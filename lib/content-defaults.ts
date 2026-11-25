@@ -9,7 +9,8 @@
 import { initial, RETIRED_SERVICES, type Client, type Feature, type Faq, type Project, type Service, type SiteData, type SubService, type Topic } from './content.ts';
 import { HUDI_WEBSITE_SHOWCASE, SHOWCASE_SEEDS } from './showcase-seeds.ts';
 import { MARKETING_ENGAGEMENTS } from './marketing-portfolio.ts';
-import { EQUIPMENT_SEEDS } from './equipment.ts';
+import { LEGACY_SEED_IDS } from './equipment.ts';
+import { EQUIPMENT_SEEDS } from './equipment-seeds.ts';
 
 /* ------------------------------------------------------------------ Dịch vụ */
 type ServiceSeed = Pick<Service, 'heroLead' | 'audience' | 'problems' | 'process' | 'faqs' | 'pricing' | 'productUrl' | 'productLabel'>;
@@ -538,7 +539,8 @@ export function normalizeContent(data: SiteData): SiteData {
       return out;
     }),
     // Thiết bị phòng gym: dữ liệu cũ chưa có → danh mục mẫu (giá trống); danh sách quản trị viên đã sửa giữ nguyên
-    equipment: data.equipment ?? structuredClone(EQUIPMENT_SEEDS),
+    // Danh sách còn y nguyên danh mục mẫu cũ (chưa nhập giá) → thay bằng danh mục đối tác thietbigym.vn
+    equipment: !data.equipment || (data.equipment.every(x => LEGACY_SEED_IDS.includes(x.id) && !x.price && !x.image && !x.model)) ? structuredClone(EQUIPMENT_SEEDS) : data.equipment,
     seeded: Array.from(new Set([...(data.seeded || []), PARTNER_SEED, MARKETING_SEED])),
     testimonials: fill(data.testimonials, []),
     posts: data.posts.filter(p => !REMOVED_POST_IDS.includes(p.id)).map(p => {

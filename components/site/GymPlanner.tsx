@@ -8,9 +8,9 @@
  * Thiết kế lưu trên trình duyệt của khách (localStorage) để tải lại trang không mất.
  */
 import Link from 'next/link';
-import { Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Send, Trash2, TriangleAlert } from 'lucide-react';
+import { Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Trash2, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { EQUIPMENT_CATEGORIES, formatVND, type Equipment, type EquipmentCategory } from '@/lib/equipment';
+import { EQUIPMENT_CATEGORIES, formatVND, type Equipment, type EquipmentCategory, type Flooring } from '@/lib/equipment';
 import { createEngine, type Engine, type Placed } from './gym-planner-engine';
 
 const KEY = 'danava-gym-planner';
@@ -19,7 +19,7 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
 /** Diện tích → phòng chữ nhật tỉ lệ ~1.4 : 1 */
 const dimsOf = (area: number) => { const l = Math.sqrt(area / 1.4); return { w: round1(l * 1.4), l: round1(area / round1(l * 1.4)) }; };
 
-export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId?: string }) {
+export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipment[]; addId?: string; flooring?: Flooring | null }) {
   const host = useRef<HTMLDivElement>(null);
   const engine = useRef<Engine | null>(null);
   const [ready, setReady] = useState(false);
@@ -29,6 +29,8 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
   const [placed, setPlaced] = useState<Placed[]>([]);
   const [sel, setSel] = useState<string | null>(null);
   const [cat, setCat] = useState<EquipmentCategory | ''>('');
+  const [q, setQ] = useState('');
+  const [floorOn, setFloorOn] = useState(true);
   const [form, setForm] = useState({ open: false, name: '', phone: '', note: '', sending: false, done: '', error: '' });
   const byId = useMemo(() => new Map(equipment.map(e => [e.id, e])), [equipment]);
   const restored = useRef<Saved | null>(null);
@@ -91,12 +93,16 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
     for (const p of placed) { const eq = byId.get(p.eqId); if (!eq) continue; const l = m.get(eq.id) || { eq, qty: 0 }; l.qty++; m.set(eq.id, l); }
     return [...m.values()];
   }, [placed, byId]);
-  const total = lines.reduce((s, l) => s + (l.eq.price ? Number(l.eq.price) * l.qty : 0), 0);
+  // Thảm gạch cao su lát toàn sàn (đối tác): số viên theo kích thước viên thảm, không theo ô lưới hiển thị
+  const floorTiles = flooring ? Math.ceil((room.w * 100) / flooring.sizeCm) * Math.ceil((room.l * 100) / flooring.sizeCm) : 0;
+  const floorCost = flooring && floorOn && flooring.price ? floorTiles * Number(flooring.price) : 0;
+  const total = lines.reduce((s, l) => s + (l.eq.price ? Number(l.eq.price) * l.qty : 0), 0) + floorCost;
   const contact = lines.filter(l => !l.eq.price).length;
   const bad = placed.filter(p => p.bad).length;
   const tiles = Math.ceil(room.w / room.tile) * Math.ceil(room.l / room.tile);
   const selEq = sel ? byId.get(placed.find(p => p.uid === sel)?.eqId || '') : undefined;
-  const shown = equipment.filter(e => !cat || e.category === cat);
+  const fold = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase();
+  const shown = equipment.filter(e => (!cat || e.category === cat) && (!q.trim() || fold(`${e.name} ${e.sku || ''}`).includes(fold(q.trim()))));
 
   async function send(e: FormEvent) {
     e.preventDefault();
@@ -104,8 +110,9 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
     const summary = [
       `Phòng tập ${room.area} m² (${room.w} × ${room.l} m), ô gạch ${Math.round(room.tile * 100)} cm (~${tiles} viên).`,
       'Thiết bị:',
-      ...lines.map(l => `- ${l.eq.name} × ${l.qty}: ${l.eq.price ? formatVND(Number(l.eq.price) * l.qty) : 'Liên hệ'}`),
-      `Tổng thiết bị đã có giá: ${formatVND(total)}${contact ? ` (+${contact} loại máy cần báo giá)` : ''}.`,
+      ...lines.map(l => `- ${l.eq.name}${l.eq.sku ? ` [${l.eq.sku}]` : ''} × ${l.qty}: ${l.eq.price ? formatVND(Number(l.eq.price) * l.qty) : 'Liên hệ'}`),
+      flooring && floorOn ? `- ${flooring.name} × ${floorTiles} viên: ${flooring.price ? formatVND(floorCost) : 'Liên hệ'}` : '',
+      `Tổng thiết bị + sàn đã có giá: ${formatVND(total)}${contact ? ` (+${contact} loại máy cần báo giá)` : ''}.`,
       form.note.trim() ? `Ghi chú: ${form.note.trim()}` : ''
     ].filter(Boolean).join('\n');
     try {
@@ -136,6 +143,7 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
 
           <section className="gp-box gp-box--list">
             <h2><Boxes aria-hidden="true" /> Thiết bị <small>bấm + để thêm vào phòng</small></h2>
+            <div className="gp-search"><Search aria-hidden="true" /><input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={`Tìm trong ${equipment.length} máy (tên, mã)…`} aria-label="Tìm máy" /></div>
             <div className="gp-cats" role="tablist" aria-label="Nhóm máy">
               <button type="button" role="tab" aria-selected={!cat} className={!cat ? 'is-on' : ''} onClick={() => setCat('')}>Tất cả</button>
               {(Object.keys(EQUIPMENT_CATEGORIES) as EquipmentCategory[]).filter(c => equipment.some(e => e.category === c)).map(c => (
@@ -146,11 +154,13 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
               {shown.map(e => (
                 <li key={e.id}>
                   <span className="gp-eq__sw" style={{ background: e.color }}>{e.image ? <img src={e.image} alt="" loading="lazy" /> : null}</span>
-                  <span className="gp-eq__txt"><b>{e.name}</b><small>{e.width}×{e.depth} cm · {e.price ? formatVND(Number(e.price)) : 'Liên hệ'}</small></span>
+                  <span className="gp-eq__txt"><b title={e.name}>{e.name}</b><small>{e.width}×{e.depth} cm{e.dimsEstimated ? ' (ước tính)' : ''} · {e.price ? formatVND(Number(e.price)) : 'Liên hệ'}</small></span>
                   <button type="button" className="gp-eq__add" disabled={!started} onClick={() => engine.current?.add(e)} aria-label={`Thêm ${e.name} vào phòng`}><Plus aria-hidden="true" /></button>
                 </li>
               ))}
+              {shown.length === 0 && <li className="gp-eq__none">Không có máy nào khớp.</li>}
             </ul>
+            <p className="gp-src">Danh mục, giá và hình ảnh: đối tác <a href="https://thietbigym.vn/" target="_blank" rel="noopener">thietbigym.vn</a></p>
           </section>
         </aside>
 
@@ -191,6 +201,12 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
               <button type="button" onClick={() => { engine.current?.clear(); setStarted(false); try { localStorage.removeItem(KEY); } catch {} }}>Làm lại phòng</button>
             </div>
           </div>
+          {flooring && (
+            <label className="gp-floor">
+              <input type="checkbox" checked={floorOn} onChange={e => setFloorOn(e.target.checked)} />
+              <span>Lát thảm gạch cao su {flooring.sizeCm}×{flooring.sizeCm} cm toàn sàn: <b>{floorTiles.toLocaleString('vi-VN')} viên</b> × {flooring.price ? formatVND(Number(flooring.price)) : 'Liên hệ'}{floorOn && floorCost ? <> = <b>{formatVND(floorCost)}</b></> : null}</span>
+            </label>
+          )}
           {lines.length === 0 ? <p className="gp-cost__empty">Chưa có máy nào. Bấm <b>+</b> ở danh mục bên trái để thêm máy vào phòng.</p> : (
             <table className="gp-table">
               <thead><tr><th>Thiết bị</th><th>Kích thước</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
@@ -205,10 +221,10 @@ export function GymPlanner({ equipment, addId }: { equipment: Equipment[]; addId
                   </tr>
                 ))}
               </tbody>
-              <tfoot><tr><td colSpan={4}>Tổng chi phí thiết bị{contact ? ` (chưa gồm ${contact} loại máy “Liên hệ”)` : ''}</td><td>{formatVND(total)}</td></tr></tfoot>
+              <tfoot><tr><td colSpan={4}>Tổng chi phí thiết bị{floorCost ? ' + thảm sàn' : ''}{contact ? ` (chưa gồm ${contact} loại máy “Liên hệ”)` : ''}</td><td>{formatVND(total)}</td></tr></tfoot>
             </table>
           )}
-          <p className="gp-note">Giá tham khảo theo danh mục DANAVA, chưa gồm vận chuyển, lắp đặt và thi công sàn. Chuyên viên DANAVA sẽ xác nhận báo giá chính thức.</p>
+          <p className="gp-note">Giá tham khảo theo bảng giá đối tác thietbigym.vn, chưa gồm vận chuyển, lắp đặt và thi công. Chuyên viên DANAVA sẽ xác nhận báo giá chính thức.</p>
 
           <div className="gp-actions">
             <button type="button" className="s-btn s-btn--primary s-btn--lg" onClick={() => setForm(f => ({ ...f, open: !f.open }))}><Send aria-hidden="true" /> Gửi bản thiết kế cho DANAVA</button>
