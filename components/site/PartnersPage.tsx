@@ -174,8 +174,11 @@ function JoinBand({ data, partners, cities, places }: { data: SiteData; partners
   const assure = t('assure', 'Tư vấn miễn phí · Phản hồi trong 1 ngày làm việc', 'Cam kết dưới nút');
   const proofA = t('proof.before', 'Đang có', 'Dòng bằng chứng (trước số)');
   const proofB = t('proof.after', 'cơ sở cùng đồng hành', 'Dòng bằng chứng (sau số)');
-  const logos = partners.filter(p => p.logo).slice(0, 8);
-  const orbit = logos.slice(0, 6);
+  // Mọi đối tác có logo: vòng trong ~1/3 (tối đa 6), vòng ngoài phần còn lại (tối đa 16) + ô "Bạn?"
+  const logos = partners.filter(p => p.logo);
+  const innerCount = Math.min(6, Math.ceil(logos.length / 3));
+  const inner = logos.slice(0, innerCount);
+  const outer = logos.slice(innerCount, innerCount + 16);
   const total = partners.length + places;
 
   return (
@@ -219,8 +222,9 @@ function JoinBand({ data, partners, cities, places }: { data: SiteData; partners
               <span key={i} className="pj__star" style={{ left: `${x}%`, top: `${y}%`, ['--d' as string]: `${d}s` }} />
             ))}
             <span className="pj__core"><img src="/assets/danava-mark.png" alt="" /></span>
-            {orbit.map((p, i) => <span key={p.id} className="pj__node" style={{ ['--a' as string]: `${(360 / (orbit.length + 1)) * i}deg`, ['--d' as string]: `${i * .35}s` }}><img src={p.logo} alt="" loading="lazy" /></span>)}
-            <span className="pj__node pj__node--you" style={{ ['--a' as string]: `${(360 / (orbit.length + 1)) * orbit.length}deg` }}><b>Bạn?</b></span>
+            {inner.map((p, i) => <span key={p.id} className="pj__node pj__node--in" title={p.name} style={{ ['--a' as string]: `${(360 / inner.length) * i + 30}deg`, ['--d' as string]: `${i * .4}s` }}><img src={p.logo} alt="" loading="lazy" /></span>)}
+            {outer.map((p, i) => <span key={p.id} className="pj__node" title={p.name} style={{ ['--a' as string]: `${(360 / (outer.length + 1)) * i}deg`, ['--d' as string]: `${i * .3}s` }}><img src={p.logo} alt="" loading="lazy" /></span>)}
+            <span className="pj__node pj__node--you" style={{ ['--a' as string]: `${(360 / (outer.length + 1)) * outer.length}deg` }}><b>Bạn?</b></span>
           </div>
         </div>
       </div>
