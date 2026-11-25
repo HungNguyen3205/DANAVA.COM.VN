@@ -29,6 +29,7 @@ import './site-buttons.css';
 import './site-quote.css';
 import './site-quote-chat.css';
 import './site-services.css';
+import './site-gym.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 import { CmsOverlay } from '@/components/site/CmsOverlay';
 

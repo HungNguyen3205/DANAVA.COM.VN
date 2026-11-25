@@ -47,6 +47,11 @@ export const STATIC_SEO: StaticSeo[] = [
     description: 'DANAVA Work: nền tảng quản trị công việc, nơi đội ngũ DANAVA phân bổ và theo dõi công việc của nhóm.'
   },
   {
+    path: '/giai-phap/setup-van-hanh-phong-gym/', name: 'Setup & vận hành phòng gym', absoluteTitle: true,
+    title: 'Setup và vận hành phòng gym trọn gói | DANAVA Solutions',
+    description: 'DANAVA Solutions tư vấn setup phòng gym, triển khai phần mềm quản lý hội viên và truyền thông khai trương. Gọi 0935 91 7677 để trao đổi về phòng tập của bạn.'
+  },
+  {
     path: '/dich-vu/', name: 'Dịch vụ',
     title: 'Dịch vụ: truyền thông, landing page, sự kiện và du lịch',
     description: 'Dịch vụ của DANAVA ngoài phần mềm: truyền thông nội dung, thiết kế landing page, tổ chức sự kiện và du lịch trải nghiệm.'
