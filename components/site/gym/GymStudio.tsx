@@ -269,6 +269,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
         {/* ----- Sân khấu 3D / 2D ----- */}
         <div className="gs-stagewrap">
           <div className="gs-stage">
+            <div className="gs-stage__wait" aria-hidden="true"><i /><span>Đang dựng mô hình 3D…</span></div>
             {gl !== 'fail' && <div ref={host} className="gs-canvas" />}
             <div className="gs-float gs-float--tl">
               <div className="gs-chiprow">

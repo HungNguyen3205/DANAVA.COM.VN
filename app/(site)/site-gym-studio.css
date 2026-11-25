@@ -707,3 +707,9 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 /* Banner "Đã lưu": nút đóng */
 .s-app .gs .gs-share__x { margin-left: auto; padding: 0; width: 28px; height: 28px; justify-content: center; background: transparent; color: inherit; opacity: .7; }
 .s-app .gs .gs-share__x:hover { background: rgba(255, 255, 255, .7); opacity: 1; }
+
+/* Khung chờ trong lúc tải thư viện 3D (ẩn khi đã có canvas) */
+.gs-stage__wait { position: absolute; inset: 0; z-index: 0; display: grid; place-content: center; justify-items: center; gap: 12px; color: #56607a; font-size: 13.5px; font-weight: 700; pointer-events: none; }
+.gs-stage__wait i { width: min(420px, 70%); aspect-ratio: 16 / 9; border-radius: 18px; background: linear-gradient(90deg, #e6ebf4 0%, #f4f7fc 45%, #e6ebf4 90%); background-size: 200% 100%; animation: s-sk 1.2s linear infinite; }
+.gs-stage:has(canvas) .gs-stage__wait { display: none; }
+@media (prefers-reduced-motion: reduce) { .gs-stage__wait i { animation: none; } }

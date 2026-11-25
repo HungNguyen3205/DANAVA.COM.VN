@@ -4,6 +4,7 @@ import { ContactDock } from './ContactDock';
 import { AnnaProvider } from './anna/AnnaProvider';
 import { AnnaLauncher } from './anna/AnnaEntry';
 import { CmsStyles } from './CmsStyles';
+import { NavSkeleton } from './NavSkeleton';
 import { ct } from './cms';
 import { getSiteContent } from '@/lib/database';
 import { LocaleLinks } from './LangSwitch';
@@ -26,6 +27,7 @@ export async function SiteFrame({ children }: { children: ReactNode }) {
         <AnnaLauncher />
         <CmsStyles />
         <LocaleLinks />
+        <NavSkeleton />
       </AnnaProvider>
     </div>
   );

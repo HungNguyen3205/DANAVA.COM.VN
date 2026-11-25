@@ -184,3 +184,20 @@ html.has-modal { overflow: hidden; }
   .s-header .s-nav__list { gap: 6px; }
   .s-header .s-nav__link { padding: 0 14px; }
 }
+
+/* Khung chờ khi chuyển trang (components/site/NavSkeleton.tsx) */
+.s-navsk { position: fixed; inset: var(--s-header-h, 72px) 0 0; z-index: 40; overflow: hidden; background: #fbf8f3; animation: s-navsk-in .18s ease-out; }
+.s-navsk__in { width: min(1240px, calc(100% - 2 * var(--s-gutter, 20px))); margin: 0 auto; padding-top: clamp(20px, 4vw, 40px); display: grid; gap: 14px; }
+.s-sk { display: block; border-radius: 10px; background: linear-gradient(90deg, #ece7df 0%, #f6f2ec 45%, #ece7df 90%); background-size: 200% 100%; animation: s-sk 1.2s linear infinite; }
+.s-sk--crumb { width: 180px; height: 12px; }
+.s-sk--kicker { width: 140px; height: 12px; margin-top: 10px; background-color: #ffe3cc; }
+.s-sk--h1 { width: min(720px, 92%); height: clamp(34px, 5vw, 56px); border-radius: 14px; }
+.s-sk--line { width: min(640px, 96%); height: 14px; }
+.s-sk--short { width: min(420px, 62%); }
+.s-navsk__cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
+.s-navsk__card { display: grid; gap: 10px; padding: 14px; border-radius: 20px; background: #fff; box-shadow: 0 18px 40px -32px rgba(19, 36, 79, .4); }
+.s-sk--img { width: 100%; aspect-ratio: 16 / 10; border-radius: 14px; }
+@keyframes s-sk { to { background-position: -200% 0; } }
+@keyframes s-navsk-in { from { opacity: 0; } }
+@media (max-width: 760px) { .s-navsk__cards { grid-template-columns: 1fr; } .s-navsk__card:nth-child(n + 2) { display: none; } }
+@media (prefers-reduced-motion: reduce) { .s-sk, .s-navsk { animation: none; } }

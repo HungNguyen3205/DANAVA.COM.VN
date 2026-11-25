@@ -1,4 +1,6 @@
 import { breadcrumbLD } from '@/lib/seo';
+// CSS phòng lab 3D chỉ tải ở trang này (không tải ở mọi trang của website)
+import '../site-gym-studio.css';
 import { seoPage } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import { JsonLd } from '@/components/site/blocks';
