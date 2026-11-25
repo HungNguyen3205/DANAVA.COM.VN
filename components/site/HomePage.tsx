@@ -155,7 +155,7 @@ export default function HomePage({ data }: { data: SiteData }) {
             <OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={contactChannels(data).zalo} />
             {/* Máy tính: hai nhãn kính mờ ở hai góc. Điện thoại: ghim bản đồ (văn phòng) + con dấu tròn (thương hiệu). */}
             {(() => { const x = t('cover.office', 'DANAVA Office · Đà Nẵng', 'Nhãn nổi trên mô hình'); return <span className="hb-float hb-float--a" aria-hidden="true"><MapPin /><span className="hb-float__place" {...x.a}>{x.v}</span><span className="hb-float__sep">·</span><span className="hb-float__yr">{P.years.replace(' - ', ' – ')}</span></span>; })()}
-            {(() => { const x = t('cover.brands', 'thương hiệu đã đồng hành', 'Nhãn nổi trên mô hình'); return <span className="hb-float hb-float--b" aria-hidden="true"><i /><span className="hb-float__n">{logos.length}</span><span className="hb-float__lbl" {...x.a}>{x.v}</span></span>; })()}
+            {(() => { const x = t('cover.brands', 'thương hiệu đã đồng hành', 'Nhãn nổi trên mô hình'); const n = t('cover.brands-count', '100+', 'Số thương hiệu trên con dấu'); return <span className="hb-float hb-float--b" aria-hidden="true"><i /><span className="hb-float__n" {...n.a}>{n.v}</span><span className="hb-float__lbl" {...x.a}>{x.v}</span></span>; })()}
             <div className="hb-build" aria-hidden="true">
               <p><ArrowDown />Lướt xuống để dựng văn phòng</p>
               <ol>{['Sàn', 'Vách', 'Bàn họp', 'Nội thất', 'Hoàn thiện'].map((t, i) => <li key={t} data-build-step={i} className={i === 0 ? 'is-on' : undefined}><b>{i + 1}</b>{t}</li>)}</ol>
