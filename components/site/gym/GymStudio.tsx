@@ -7,7 +7,7 @@
  * Hình học luôn kiểm tra lại bằng lib/gym-geometry.ts sau mỗi thao tác. Không có WebGL → mặt bằng 2D (SVG).
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Box, Building2, Columns3, Copy, Eye, Lock, Users, Map as MapIcon, MessageCircle, Move3d, Palette, Redo2, RotateCw, Ruler, Send, Share2, Shuffle, SlidersHorizontal, Sparkles, Trash2, TriangleAlert, Undo2, Unlock, View, X } from 'lucide-react';
+import { Box, Building2, ChevronDown, Columns3, Copy, Eye, Lock, MoreHorizontal, RotateCcw, Save, Users, Map as MapIcon, MessageCircle, Move3d, Palette, Redo2, RotateCw, Ruler, Send, Share2, Shuffle, SlidersHorizontal, Sparkles, Trash2, TriangleAlert, Undo2, Unlock, View, X } from 'lucide-react';
 import type { Equipment, Flooring } from '@/lib/equipment';
 import { formatVND } from '@/lib/equipment';
 import { FIXTURE_KINDS, LINK_KINDS, STRATEGIES, activeOption, fmtArea, layoutHash, normalizeProject, optionCode, type FurnKind, type Project, type Strategy } from '@/lib/gym-project';
@@ -51,6 +51,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const [eqSub, setEqSub] = useState<'eq' | 'reception'>('eq');
   const [moreViews, setMoreViews] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [moreMenu, setMoreMenu] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => { fetch('/api/admin/session/').then(r => r.json()).then(v => setIsAdmin(!!v?.authenticated)).catch(() => {}); }, []);
   const [compare, setCompare] = useState(false);
@@ -275,7 +276,14 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               <div className="gs-views" role="radiogroup" aria-label="Góc xem">
                 {gl !== 'fail' && <button type="button" role="radio" aria-checked={mode === 'orbit'} className={mode === 'orbit' ? 'is-on' : ''} onClick={() => { setMode('orbit'); setMoreViews(false); setTimeout(() => studio.current?.resetView(), 0); }}><span>3D</span></button>}
                 <button type="button" role="radio" aria-checked={mode === 'plan'} className={mode === 'plan' ? 'is-on' : ''} onClick={() => { setMode('plan'); setMoreViews(false); setTimeout(() => studio.current?.resetView(), 0); }}><span>2D</span></button>
+                {gl !== 'fail' && <button type="button" className={`gs-more${!['orbit', 'plan'].includes(mode) || moreViews ? ' is-on' : ''}`} aria-expanded={moreViews} aria-label="Góc nhìn khác" title="Góc nhìn khác" onClick={() => setMoreViews(v => !v)}><Eye aria-hidden="true" /><ChevronDown aria-hidden="true" className="gs-caret" /></button>}
               </div>
+              {moreViews && gl !== 'fail' && (
+                <div className="gs-dropdown" role="menu">
+                  {VIEWS.filter(([k]) => k !== 'orbit' && k !== 'plan').filter(([k]) => project.floors.length > 1 || (k !== 'stack' && k !== 'exploded')).map(([k, l, ic]) => <button key={k} type="button" role="menuitemradio" aria-checked={mode === k} className={mode === k ? 'is-on' : ''} onClick={() => { setMode(k); setMoreViews(false); setTimeout(() => studio.current?.resetView(), 0); }}>{ic}{l}</button>)}
+                  <label className="gs-toggle"><input type="checkbox" checked={showClear} onChange={e => setShowClear(e.target.checked)} /><span>Khoảng trống quanh máy</span></label>
+                </div>
+              )}
             </div>
             {option && !sel && (
               <div className="gs-dock">
@@ -329,6 +337,17 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               <span className="gs-side__tools">
                 <button type="button" className="gs-icon" onClick={undo} disabled={!hist.current.past.length} title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác"><Undo2 /></button>
                 <button type="button" className="gs-icon" onClick={redo} disabled={!hist.current.future.length} title="Làm lại (Ctrl+Y)" aria-label="Làm lại"><Redo2 /></button>
+                <span className="gs-menuwrap">
+                  <button type="button" className={`gs-icon${moreMenu ? ' is-on' : ''}`} aria-label="Thêm" title="Thêm" aria-expanded={moreMenu} onClick={() => setMoreMenu(v => !v)}><MoreHorizontal /></button>
+                  {moreMenu && (
+                    <span className="gs-dropdown gs-dropdown--right" role="menu" onClick={() => setMoreMenu(false)}>
+                      {project.options.length > 1 && <button type="button" role="menuitem" onClick={nextOption}><Shuffle aria-hidden="true" /> Phương án khác</button>}
+                      {project.options.length > 1 && <button type="button" role="menuitem" onClick={() => setCompare(c => !c)}><Columns3 aria-hidden="true" /> So sánh {project.options.length} phương án</button>}
+                      <button type="button" role="menuitem" onClick={() => void save()} disabled={share.busy}><Save aria-hidden="true" /> {share.busy ? 'Đang lưu…' : 'Lưu & lấy đường dẫn'}</button>
+                      <button type="button" role="menuitem" className="is-danger" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) { setProject(null); setCustom(false); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}><RotateCcw aria-hidden="true" /> Bắt đầu lại</button>
+                    </span>
+                  )}
+                </span>
                 <button type="button" className="gs-icon" onClick={() => setCustom(false)} aria-label="Về danh mục máy" title="Về danh mục máy"><X /></button>
               </span>
             </div>
@@ -353,16 +372,6 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
             {tab === 'style' && <StylePanel p={project} floor={floor} set={fn => set(fn)} addDecor={(k: FurnKind) => { const F = FURNITURE[k]; set(p => E.addFurniture(p, floor.id, { kind: k, x: 0, z: 0, rot: 0, w: F.w, d: F.d, group: 'decor' }), `Đã thêm ${F.label.toLowerCase()} — kéo để đặt`); }} />}
             {tab === 'assistant' && extras?.assistant?.({ project, commit, floorId: floor.id })}
             {tab === 'sim' && extras?.sim?.({ project, catalog, floorId: floor.id, setFloorId, saveSim, setPeople: pushPeople, setHeat, onPick: fn => { pickRef.current = fn; } })}
-            <div className="gs-side__more">
-              {project.options.length > 1 && <button type="button" className="gs-btn" onClick={nextOption}><Shuffle aria-hidden="true" /> Phương án khác</button>}
-              {gl !== 'fail' && VIEWS.filter(([k]) => k !== 'orbit' && k !== 'plan').filter(([k]) => project.floors.length > 1 || (k !== 'stack' && k !== 'exploded')).map(([k, l, ic]) => <button key={k} type="button" className={`gs-btn${mode === k ? ' is-on' : ''}`} onClick={() => { setMode(k); setTimeout(() => studio.current?.resetView(), 0); }}>{ic}{l}</button>)}
-              <label className="gs-toggle"><input type="checkbox" checked={showClear} onChange={e => setShowClear(e.target.checked)} /><span>Khoảng trống quanh máy</span></label>
-            </div>
-            <p className="gs-side__foot">
-              <button type="button" className="gs-link" onClick={() => setCompare(c => !c)}>So sánh cả {project.options.length} phương án</button>
-              <button type="button" className="gs-link" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) { setProject(null); setCustom(false); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}>Bắt đầu lại</button>
-              <button type="button" className="gs-link" onClick={() => void save()} disabled={share.busy}>{share.busy ? 'Đang lưu…' : project.code ? `Lưu (${project.code})` : 'Lưu & lấy đường dẫn'}</button>
-            </p>
           </aside>
         )}
       </div>

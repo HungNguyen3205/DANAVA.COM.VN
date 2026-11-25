@@ -548,3 +548,19 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-menu button.is-on { background: #fff; color: var(--gs-navy); box-shadow: 0 8px 18px -12px rgba(19, 36, 79, .55); }
 .s-app .gs .gs-menu button.is-on { background: #fff !important; color: var(--gs-navy) !important; }
 .s-app .gs .gs-menu button.is-on svg { color: var(--gs-orange); }
+
+/* Menu thả xuống: góc nhìn (trong khung 3D) và ⋯ (tiêu đề Tùy chỉnh) */
+.gs-views .gs-more { gap: 2px; }
+.gs-caret { width: 12px !important; height: 12px !important; opacity: .6; }
+.gs-dropdown { display: grid; gap: 2px; min-width: 200px; padding: 6px; border: 1px solid var(--gs-line); border-radius: 14px; background: #fff; box-shadow: 0 18px 40px -20px rgba(19, 36, 79, .55); }
+.gs-dropdown button { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 10px; border: 0; border-radius: 10px; background: none; color: var(--gs-navy); font: inherit; font-size: 13.5px; font-weight: 600; text-align: left; cursor: pointer; white-space: nowrap; }
+.gs-dropdown button svg { width: 16px; height: 16px; color: var(--gs-muted); }
+.gs-dropdown button:hover { background: #f6f8fb; }
+.gs-dropdown button.is-on { background: #fff7f0; color: #c2410c; }
+.gs-dropdown button.is-on svg { color: var(--gs-orange); }
+.gs-dropdown button.is-danger { color: #b42318; }
+.gs-dropdown button.is-danger svg { color: #b42318; }
+.gs-dropdown .gs-toggle { margin: 4px 0 0; padding: 8px 10px 4px; border-top: 1px solid var(--gs-line); font-size: 13px; }
+.gs-menuwrap { position: relative; display: inline-flex; }
+.gs-dropdown--right { position: absolute; top: calc(100% + 6px); right: 0; z-index: 20; }
+.gs-icon.is-on { border-color: var(--gs-navy); }
