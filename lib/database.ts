@@ -350,7 +350,7 @@ export async function getSiteContent(): Promise<ContentEnvelope> {
   let data = siteView(envelope.data);
   if (loc !== 'vi') { const { localizeSite } = await import('./i18n-server.ts'); data = localizeSite(data, loc); }
   // Chữ đã sửa + bản dịch cho các khối dùng chung và seo() (lib/request-texts.ts); ngoài React Server Components thì bỏ qua
-  try { const { requestTexts } = await import('./request-texts.ts'); const store = requestTexts(); store.texts = data.texts; store.view = data.localeView; } catch {}
+  try { const { requestTexts } = await import('./request-texts.ts'); const store = requestTexts(); store.texts = data.texts; store.view = data.localeView; store.phone = data.phone; } catch {}
   return { ...envelope, data };
 }
 

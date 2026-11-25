@@ -8,4 +8,4 @@
 import { cache } from 'react';
 import type { LocaleView } from './content.ts';
 
-export const requestTexts = cache((): { texts?: Record<string, string>; view?: LocaleView } => ({}));
+export const requestTexts = cache((): { texts?: Record<string, string>; view?: LocaleView; phone?: string } => ({}));

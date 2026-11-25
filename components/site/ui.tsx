@@ -1,6 +1,8 @@
 import type { SiteData } from '@/lib/content';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Check, type LucideIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Phone, type LucideIcon } from 'lucide-react';
+import { CONTACT } from '@/lib/company';
+import { requestTexts } from '@/lib/request-texts';
 import type { ReactNode } from 'react';
 import type { Tone } from './catalog';
 import { ct } from './cms';
@@ -15,7 +17,7 @@ function keyOf(href: string, label: string): string {
 }
 /** Chữ nút/liên kết dùng chung sửa được (khóa shared.<nhóm>.<đường dẫn>.<mã chữ>). */
 /** Dữ liệu trang cho chữ dùng chung khi render trong component trình duyệt (bản sửa + bản dịch); trống = kho của yêu cầu (máy chủ). */
-type TextData = Pick<SiteData, 'texts' | 'localeView'> | null;
+type TextData = (Pick<SiteData, 'texts' | 'localeView'> & { phone?: string }) | null;
 function SharedLabel({ group, href, label, what, data = null }: { group: string; href: string; label: string; what: string; data?: TextData }) {
   const x = ct(data, `shared.${group}.${keyOf(href, label)}`, label, what, { scope: 'global' });
   return <span {...x.a}>{x.v}</span>;
@@ -143,6 +145,15 @@ export function CtaBand({
           <div className="s-row">
             <Link className="s-btn s-btn--light s-btn--lg" href={primary.href}><SharedLabel data={data} group="cta" href={primary.href} label={primary.label} what="Dải cuối trang: nút chính" /></Link>
             {secondary && <Link className="s-btn s-btn--outline-light s-btn--lg" href={secondary.href}><SharedLabel data={data} group="cta" href={secondary.href} label={secondary.label} what="Dải cuối trang: nút phụ" /></Link>}
+            {(() => {
+              // Hotline: số trong Cài đặt website → Liên hệ (trình duyệt: data.phone; máy chủ: kho của yêu cầu), mặc định số công ty
+              let phone = data?.phone || '';
+              if (!phone) { try { phone = requestTexts().phone || ''; } catch {} }
+              phone = phone || CONTACT.phone;
+              const digits = phone.replace(/[^\d+]/g, '');
+              const label = ct(data, 'shared.cta.hotline', 'Hotline', 'Dải cuối trang: nút hotline', { scope: 'global' });
+              return <a className="s-btn s-btn--outline-light s-btn--lg s-cta__hotline" href={`tel:${digits}`}><Phone aria-hidden="true" /><span {...label.a}>{label.v}</span> <b>{phone}</b></a>;
+            })()}
           </div>
         </div>
         </div>
