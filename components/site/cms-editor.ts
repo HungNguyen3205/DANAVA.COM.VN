@@ -51,6 +51,7 @@ export function startCmsEditor() {
     [data-cms][contenteditable] { cursor: text !important; -webkit-user-select: text !important; user-select: text !important; caret-color: ${ORANGE}; }
     [data-cms][contenteditable]:focus { outline: 2px solid ${ORANGE} !important; background: rgba(242,107,29,.06); }
     [data-cms-multiline] { white-space: pre-line; }
+    [data-cms] { white-space-collapse: preserve-breaks; }
     .is-cms-press { animation: cms-press ${HOLD_MS}ms linear forwards; }
     @keyframes cms-press { from { box-shadow: 0 0 0 0 rgba(242,107,29,.0); } to { box-shadow: 0 0 0 6px rgba(242,107,29,.35); } }
     @media (prefers-reduced-motion: reduce) { .is-cms-press { animation: none; box-shadow: 0 0 0 4px rgba(242,107,29,.35); } }
@@ -171,20 +172,21 @@ export function startCmsEditor() {
   const norm = (s: string) => s.replace(/ /g, ' ').replace(/​/g, '');
   /** Chữ của vùng đang sửa → giá trị lưu (giữ *nhấn mạnh* nếu vùng cho phép). */
   function serialize(el: HTMLElement, rich: boolean, multiline: boolean): string {
-    if (!rich) return norm(multiline ? el.innerText : el.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+    const lines = (v: string) => (multiline ? v.replace(/\n{3,}/g, '\n\n') : v.replace(/[ \t]*\n[\s]*/g, '\n'));
+    if (!rich) return lines(norm(el.innerText || el.textContent || '')).trim();
     let out = '';
     const walk = (node: Node, top: boolean) => {
       node.childNodes.forEach(n => {
         if (n.nodeType === Node.TEXT_NODE) { out += n.textContent || ''; return; }
         if (!(n instanceof HTMLElement)) return;
-        if (n.tagName === 'BR') { out += multiline ? '\n' : ' '; return; }
-        if (/^(DIV|P)$/.test(n.tagName)) { out += multiline ? '\n' : ' '; walk(n, top); return; }
+        if (n.tagName === 'BR') { out += '\n'; return; }
+        if (/^(DIV|P)$/.test(n.tagName)) { out += '\n'; walk(n, top); return; }
         const t = (n.textContent || '').replace(/\*/g, '');
         if (top && t.trim()) out += `*${t}*`; else out += t;
       });
     };
     walk(el, true);
-    return norm(out).replace(/\*\*/g, '').trim();
+    return lines(norm(out)).replace(/\*\*/g, '').trim();
   }
   /** Giá trị → hiển thị (an toàn: chỉ tạo nút chữ + thẻ nhấn mạnh cùng kiểu với thẻ đang có). */
   function render(el: HTMLElement, value: string, rich: boolean) {
@@ -726,7 +728,7 @@ export function startCmsEditor() {
       st.setAttribute('aria-pressed', String(styleOpen));
       st.setAttribute('aria-haspopup', 'dialog');
       bar.append(st);
-      bar.append(btn(ICON.x, 'Hủy (Esc)', () => deselect(false)), btn(`${ICON.check} Xong`, 'Xong', () => deselect(), 'pri'));
+      bar.append(btn(ICON.x, 'Hủy (Esc)', () => deselect(false)), btn(`${ICON.check} Xong`, 'Xong (Ctrl + Enter) · Enter để xuống dòng', () => deselect(), 'pri'));
     } else if (sel.kind === 'image') {
       const img = sel.el as HTMLImageElement;
       bar.append(
@@ -867,7 +869,8 @@ export function startCmsEditor() {
     const mod = e.ctrlKey || e.metaKey;
     if (editing) {
       if (e.key === 'Escape') { e.preventDefault(); deselect(false); return; }
-      if (e.key === 'Enter' && !editing.multiline && !e.isComposing) { e.preventDefault(); deselect(); return; }
+      if (e.key === 'Enter' && mod && !e.isComposing) { e.preventDefault(); deselect(); return; }
+      if (e.key === 'Enter' && !editing.multiline && !e.isComposing) { e.preventDefault(); document.execCommand('insertLineBreak'); return; }
       if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); deselect(); post('key', { key: 'save' }); }
       return; // Ctrl+Z trong ô đang gõ = hoàn tác gõ chữ của trình duyệt
     }
@@ -885,7 +888,7 @@ export function startCmsEditor() {
   document.addEventListener('beforeinput', e => {
     if (!editing || !editing.el.contains(e.target as Node)) return;
     const ie = e as InputEvent;
-    if ((ie.inputType === 'insertParagraph' || ie.inputType === 'insertLineBreak') && !editing.multiline) { e.preventDefault(); return; }
+    if (ie.inputType === 'insertParagraph' && !editing.multiline) { e.preventDefault(); document.execCommand('insertLineBreak'); return; }
     if (/^format/.test(ie.inputType)) { e.preventDefault(); return; } // chỉ nhấn mạnh qua nút
     const limit = limits[editing.path];
     if (limit && ie.data && serialize(editing.el, editing.rich, editing.multiline).length + ie.data.length > limit && !ie.isComposing) {
@@ -899,7 +902,7 @@ export function startCmsEditor() {
     if (!editing || !editing.el.contains(e.target as Node)) return;
     e.preventDefault();
     let text = e.clipboardData?.getData('text/plain') || '';
-    if (!editing.multiline) text = text.replace(/\s*\n+\s*/g, ' ');
+    if (!editing.multiline) text = text.replace(/[ \t]*\n\s*/g, '\n');
     document.execCommand('insertText', false, text); // chỉ chữ thuần; vẫn hoàn tác được bằng Ctrl+Z
   }, true);
   document.addEventListener('drop', e => { if (editing) e.preventDefault(); }, true);

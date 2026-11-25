@@ -451,3 +451,6 @@ aside.consent-banner .consent-banner__btn:focus-visible { outline: 3px solid #13
 /* Tiêu đề cân dòng, tránh rớt 1 chữ */
 .s-app :where(h1, h2, h3), .s-display, .s-h1, .s-h2, .s-h3 { text-wrap: balance; }
 .s-lead, .s-card__text { text-wrap: pretty; }
+
+/* Chữ chỉnh trong admin: Enter = xuống dòng → giữ ngắt dòng; độ ưu tiên 0 để không đè CSS riêng của từng phần */
+:where(.s-app [data-cms]) { white-space-collapse: preserve-breaks; }
