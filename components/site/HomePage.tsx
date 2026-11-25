@@ -161,8 +161,11 @@ export default function HomePage({ data }: { data: SiteData }) {
           </div>
           <div className="hb-cover__3d" {...cmsSkip}>
             <OfficeScene fallback="/assets/about/office-sm.webp" qrUrl={contactChannels(data).zalo} />
-            {(() => { const x = t('cover.office', 'Văn phòng DANAVA · Đà Nẵng', 'Nhãn nổi trên mô hình'); return <span className="hb-float hb-float--a" aria-hidden="true"><MapPin /><span {...x.a}>{x.v}</span> · {P.years.replace(' - ', ' – ')}</span>; })()}
-            {(() => { const x = t('cover.brands', 'thương hiệu đã đồng hành', 'Nhãn nổi trên mô hình'); return <span className="hb-float hb-float--b" aria-hidden="true"><i />{logos.length} <span {...x.a}>{x.v}</span></span>; })()}
+            {/* Máy tính: hai nhãn ở hai góc (wrapper display: contents). Điện thoại: gộp thành một thẻ hai dòng ở góc trên. */}
+            <div className="hb-tags">
+              {(() => { const x = t('cover.office', 'Văn phòng DANAVA · Đà Nẵng', 'Nhãn nổi trên mô hình'); return <span className="hb-float hb-float--a" aria-hidden="true"><MapPin /><span {...x.a}>{x.v}</span> · {P.years.replace(' - ', ' – ')}</span>; })()}
+              {(() => { const x = t('cover.brands', 'thương hiệu đã đồng hành', 'Nhãn nổi trên mô hình'); return <span className="hb-float hb-float--b" aria-hidden="true"><i />{logos.length} <span {...x.a}>{x.v}</span></span>; })()}
+            </div>
             <div className="hb-build" aria-hidden="true">
               <p><ArrowDown />Lướt xuống để dựng văn phòng</p>
               <ol>{['Sàn', 'Vách', 'Bàn họp', 'Nội thất', 'Hoàn thiện'].map((t, i) => <li key={t} data-build-step={i} className={i === 0 ? 'is-on' : undefined}><b>{i + 1}</b>{t}</li>)}</ol>
