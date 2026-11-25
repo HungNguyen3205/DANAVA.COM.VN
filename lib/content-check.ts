@@ -33,7 +33,7 @@ export function contentProblem(data: SiteData): string | null {
     if (entries.length > MAX_STYLES) return `Tối đa ${MAX_STYLES} phần có kiểu chữ riêng.`;
     for (const [k, v] of entries) {
       if (!validTextStyleKey(k)) return 'Kiểu chữ gắn với một phần không hợp lệ.';
-      if (!validTextStyle(v)) return `Kiểu chữ không hợp lệ: ${styleError(v as never) || 'chỉ đổi được màu (#RRGGBB) và cỡ chữ (số nguyên px).'}`;
+      if (!validTextStyle(v)) return `Kiểu chữ không hợp lệ: ${styleError(v as never) || 'chỉ đổi được màu (#RRGGBB), cỡ chữ (số nguyên px), đậm / nghiêng, căn lề và liên kết.'}`;
     }
   }
   for (const p of data.posts) {

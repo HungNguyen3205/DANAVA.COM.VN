@@ -1,12 +1,27 @@
 /**
  * Kiểu chữ tùy chỉnh theo từng phần trên trang (admin → Chỉnh sửa website → chọn chữ → "Kiểu chữ").
  * Lưu ở SiteData.textStyles[khóa vùng], khóa = đúng khóa data-cms của phần chữ (lib/cms-paths.ts),
- * tách khỏi nội dung: chỉ màu (#rrggbb) và cỡ chữ px cho máy tính (≥ 768px) / điện thoại (< 768px).
+ * tách khỏi nội dung: màu (#rrggbb), cỡ chữ px cho máy tính (≥ 768px) / điện thoại (< 768px),
+ * in đậm / in nghiêng (true = bật, false = tắt kiểu sẵn có), căn lề, và liên kết URL (bấm vào phần chữ để mở; components/site/CmsLinks.tsx).
  * Không có giá trị = kế thừa kiểu chữ responsive hiện tại của giao diện.
  * Dùng chung cho máy chủ (kiểm tra khi lưu, xuất CSS cho website) và trình biên tập trong trang.
  */
 
-export type TextStyle = { color?: string; size?: number; sizeMobile?: number };
+export type TextAlign = 'left' | 'center' | 'right';
+export type TextStyle = { color?: string; size?: number; sizeMobile?: number; bold?: boolean; italic?: boolean; align?: TextAlign; href?: string };
+const FIELDS = ['color', 'size', 'sizeMobile', 'bold', 'italic', 'align', 'href'] as const;
+const ALIGNS: string[] = ['left', 'center', 'right'];
+/** Liên kết cho phép: đường dẫn trong website (/…), http(s)://…, mailto:, tel: — không khoảng trắng / dấu nháy / <> */
+export const validTextHref = (h: unknown): h is string => typeof h === 'string' && h.length <= 300 && (/^\/(?!\/)[^\s"'<>\\]*$/.test(h) || /^https?:\/\/[^\s"'<>\\]+$/.test(h) || /^mailto:[^\s"'<>\\]+$/.test(h) || /^tel:\+?[0-9]{3,20}$/.test(h));
+/** Chuẩn hóa liên kết người dùng nhập: tên miền trơn → https://, đường dẫn thiếu / → thêm /, số điện thoại → tel:; không hợp lệ → null. */
+export function normalizeHref(input: string): string | null {
+  let v = input.trim();
+  if (!v) return null;
+  if (/^\+?[0-9 .()-]{6,20}$/.test(v)) v = `tel:${v.replace(/[ .()-]/g, '')}`;
+  else if (/^[\w-]+(\.[\w-]+)+(\/|$)/.test(v) && !v.startsWith('/')) v = `https://${v}`;
+  else if (/^[a-z0-9-]+(\/[a-z0-9-]*)*\/?$/i.test(v)) v = `/${v}`;
+  return validTextHref(v) ? v : null;
+}
 export type TextStyles = Record<string, TextStyle>;
 export type StyleDevice = 'desktop' | 'mobile';
 
@@ -45,7 +60,11 @@ export function validTextStyle(s: unknown): s is TextStyle {
   if (!s || typeof s !== 'object' || Array.isArray(s)) return false;
   const o = s as Record<string, unknown>;
   const keys = Object.keys(o);
-  if (!keys.length || keys.some(k => !['color', 'size', 'sizeMobile'].includes(k))) return false;
+  if (!keys.length || keys.some(k => !(FIELDS as readonly string[]).includes(k))) return false;
+  if (o.bold !== undefined && typeof o.bold !== 'boolean') return false;
+  if (o.italic !== undefined && typeof o.italic !== 'boolean') return false;
+  if (o.align !== undefined && !ALIGNS.includes(o.align as string)) return false;
+  if (o.href !== undefined && !validTextHref(o.href)) return false;
   if (o.color !== undefined && !(typeof o.color === 'string' && HEX.test(o.color))) return false;
   if (o.size !== undefined && !okSize(o.size, 'desktop')) return false;
   if (o.sizeMobile !== undefined && !okSize(o.sizeMobile, 'mobile')) return false;
@@ -67,9 +86,7 @@ export function validTextStyles(v: unknown): v is TextStyles {
 export function withTextStyle(styles: TextStyles | undefined, key: string, style: TextStyle | null): TextStyles | undefined {
   if (!validTextStyleKey(key)) throw Error('Phần này không đổi kiểu chữ được.');
   const clean: TextStyle = {};
-  if (style?.color !== undefined) clean.color = style.color;
-  if (style?.size !== undefined) clean.size = style.size;
-  if (style?.sizeMobile !== undefined) clean.sizeMobile = style.sizeMobile;
+  for (const f of FIELDS) if (style?.[f] !== undefined) (clean as Record<string, unknown>)[f] = style[f];
   const next = { ...(styles || {}) };
   if (!Object.keys(clean).length) delete next[key];
   else {
@@ -87,6 +104,8 @@ export function styleError(s: TextStyle): string {
     const v = d === 'desktop' ? s.size : s.sizeMobile;
     if (v !== undefined && !okSize(v, d)) return `Cỡ chữ ${d === 'desktop' ? 'máy tính' : 'điện thoại'} từ ${SIZE_LIMITS[d][0]} đến ${SIZE_LIMITS[d][1]}px.`;
   }
+  if (s.href !== undefined && !validTextHref(s.href)) return 'Liên kết phải là đường dẫn trong website (/…) hoặc https://…, mailto:, tel:.';
+  if (s.align !== undefined && !ALIGNS.includes(s.align)) return 'Căn lề không hợp lệ.';
   return '';
 }
 
@@ -103,6 +122,11 @@ export function textStylesCss(styles: TextStyles | undefined | null): string {
     const sel = `html body [data-cms="${k}"]`;
     if (s.color) base.push(`${sel}{color:${s.color}!important;-webkit-text-fill-color:currentColor}`);
     if (s.size || s.sizeMobile) base.push(`${sel}{overflow-wrap:anywhere;max-width:100%}`);
+    if (s.bold !== undefined) base.push(`${sel}{font-weight:${s.bold ? 700 : 400}!important}`);
+    if (s.italic !== undefined) base.push(`${sel}{font-style:${s.italic ? 'italic' : 'normal'}!important}`);
+    // căn lề: phần chữ thường là thẻ inline (span) → cho chiếm cả dòng để căn được
+    if (s.align) base.push(`${sel}{display:block;text-align:${s.align}!important}`);
+    if (s.href) base.push(`${sel}{cursor:pointer;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}${sel}:hover{opacity:.8}`);
     if (s.size) desk.push(`${sel}{font-size:${s.size}px!important}`);
     if (s.sizeMobile) mob.push(`${sel}{font-size:${s.sizeMobile}px!important}`);
   }

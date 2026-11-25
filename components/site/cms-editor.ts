@@ -12,7 +12,7 @@
  *   xem trước ngay bằng thẻ <style id="cms-text-styles"> (cùng CSS với website, lib/text-styles.ts), lưu vào bản nháp qua admin.
  */
 
-import { BRAND_COLORS, MOBILE_MAX, SIZE_BY_KIND, SIZE_LIMITS, normalizeHex, textStylesCss, type StyleDevice, type TextStyle, type TextStyles } from '@/lib/text-styles';
+import { BRAND_COLORS, MOBILE_MAX, SIZE_BY_KIND, SIZE_LIMITS, normalizeHex, normalizeHref, textStylesCss, type TextAlign, type StyleDevice, type TextStyle, type TextStyles } from '@/lib/text-styles';
 
 type Mode = 'view' | 'edit';
 type Kind = 'text' | 'image' | 'link' | 'block';
@@ -118,6 +118,12 @@ export function startCmsEditor() {
     .pop .seg button { height: 28px; padding: 0 10px; color: #3d4a6b; font-size: 12.5px; }
     .pop .seg button[aria-pressed=true] { background: #fff; color: #13244f; box-shadow: 0 1px 2px rgba(8,16,40,.14); }
     .pop input[type=range] { height: 28px; padding: 0; border: 0; accent-color: #f26b1d; box-shadow: none; touch-action: pan-y; cursor: pointer; }
+    .fmt { display: flex; align-items: center; gap: 4px; }
+    .fmt .sep { width: 1px; height: 22px; margin: 0 4px; background: #e3e8f0; }
+    .pop .fmt button { font-size: 16px; }
+    .pop .fmt button[aria-pressed=true] { background: #13244f; color: #fff; border-color: #13244f; }
+    .pop .fmt button i { font-family: Georgia, serif; font-weight: 700; }
+    .pop button:disabled { opacity: .45; cursor: default; }
     .note { margin: 0; color: #5b6886; font-size: 12px; font-weight: 500; }
     .note b { font-size: 12px; color: #13244f; }
     @keyframes in { from { opacity: 0; transform: translateY(4px); } }
@@ -137,6 +143,9 @@ export function startCmsEditor() {
     link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
     em: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 4h-9M14 20H5M15 4 9 20"/></svg>',
     type: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h11v2M9.5 5v14M7 19h5"/><path d="M14 13v-1h7v1M17.5 12v7M16 19h3"/></svg>',
+    alignL: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg>',
+    alignC: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M7 12h10M5.5 18h13"/></svg>',
+    alignR: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M10 12h10M7 18h13"/></svg>',
     sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>'
   };
   let toastTimer = 0;
@@ -466,7 +475,8 @@ export function startCmsEditor() {
     probe.style.setProperty('pointer-events', 'none', 'important');
     el.after(probe);
     const cs = getComputedStyle(probe);
-    const out = { color: toHex(cs.color), size: Math.round(parseFloat(cs.fontSize)) };
+    const align: TextAlign = cs.textAlign === 'center' ? 'center' : cs.textAlign === 'right' || cs.textAlign === 'end' ? 'right' : 'left';
+    const out = { color: toHex(cs.color), size: Math.round(parseFloat(cs.fontSize)), bold: Number(cs.fontWeight) >= 600, italic: cs.fontStyle === 'italic', align };
     probe.remove();
     return out;
   }
@@ -481,7 +491,7 @@ export function startCmsEditor() {
   const beginStyle = () => { if (!styleSession) { styleSession = true; post('style-begin', { path: editPath() }); } };
   const commitStyle = () => { if (styleSession) { styleSession = false; post('style-commit'); } };
   /** Áp một thay đổi kiểu chữ: xem trước ngay + gửi về bản nháp (máy chủ kiểm tra lại khi lưu). */
-  function setStyle(patch: Partial<Record<keyof TextStyle, number | string | undefined>>) {
+  function setStyle(patch: Partial<Record<keyof TextStyle, number | string | boolean | undefined>>) {
     const path = editPath();
     if (!path) return;
     const next: Record<string, unknown> = { ...curStyle(), ...patch };
@@ -536,8 +546,49 @@ export function startCmsEditor() {
     if (!sel) return;
     const el = sel.el;
     const h = document.createElement('b'); h.textContent = `Kiểu chữ · ${sel.label}`;
+    // Định dạng: đậm, nghiêng, căn lề (bấm lại = về như giao diện)
+    const fSec = document.createElement('div'); fSec.className = 'sec first';
+    fSec.innerHTML = '<div class="hd"><span>Định dạng</span><span class="chip" data-k="fchip"></span></div>';
+    const fRow = document.createElement('div'); fRow.className = 'fmt';
+    const toggle = (k: 'bold' | 'italic') => {
+      const nat = natural(el)[k], now = curStyle()[k] ?? nat;
+      once({ [k]: !now === nat ? undefined : !now });
+    };
+    const bB = btn('<b>B</b>', 'In đậm', () => toggle('bold'), 'ghost sq'); bB.dataset.k = 'bold';
+    const bI = btn('<i>I</i>', 'In nghiêng', () => toggle('italic'), 'ghost sq'); bI.dataset.k = 'italic';
+    const sep = document.createElement('span'); sep.className = 'sep';
+    fRow.append(bB, bI, sep);
+    for (const [a, t, ic] of [['left', 'Căn trái', ICON.alignL], ['center', 'Căn giữa', ICON.alignC], ['right', 'Căn phải', ICON.alignR]] as [TextAlign, string, string][]) {
+      const b = btn(ic, t, () => once({ align: a === natural(el).align ? undefined : a }), 'ghost sq'); b.dataset.align = a; fRow.append(b);
+    }
+    fSec.append(fRow);
+    // Liên kết (không cho phần nằm sẵn trong nút / liên kết khác)
+    const lSec = document.createElement('div'); lSec.className = 'sec';
+    const nested = !!el.parentElement?.closest('a,button');
+    lSec.innerHTML = '<div class="hd"><span>Liên kết</span><span class="chip" data-k="lchip"></span></div>';
+    const lLine = document.createElement('div'); lLine.className = 'line';
+    const url = document.createElement('input'); url.type = 'text'; url.inputMode = 'url'; url.spellcheck = false; url.autocapitalize = 'off'; url.maxLength = 300; url.dataset.k = 'url';
+    url.placeholder = '/lien-he/ hoặc https://…'; url.setAttribute('aria-label', 'Đường dẫn khi bấm vào phần chữ');
+    const lErr = document.createElement('p'); lErr.className = 'err'; lErr.setAttribute('role', 'alert');
+    const applyUrl = () => {
+      const raw = url.value.trim();
+      if (!raw) { lErr.textContent = ''; url.removeAttribute('aria-invalid'); if (curStyle().href) once({ href: undefined }); return; }
+      const v = normalizeHref(raw);
+      url.setAttribute('aria-invalid', String(!v));
+      lErr.textContent = v ? '' : 'Nhập đường dẫn trong website (vd. /lien-he/) hoặc https://…, mailto:, số điện thoại.';
+      if (v && v !== curStyle().href) once({ href: v });
+      if (v) url.value = v;
+    };
+    url.addEventListener('change', applyUrl);
+    url.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyUrl(); } });
+    const lDel = btn(ICON.x, 'Bỏ liên kết', () => { url.value = ''; applyUrl(); }, 'ghost sq'); lDel.dataset.k = 'ldel';
+    lLine.append(url, lDel);
+    const lNote = document.createElement('p'); lNote.className = 'note';
+    lNote.textContent = nested ? 'Phần này đã nằm trong một nút / liên kết nên không gắn thêm được.' : 'Khách bấm vào phần chữ sẽ mở đường dẫn này. Để trống = không có liên kết.';
+    if (nested) { url.disabled = true; lDel.disabled = true; }
+    lSec.append(lLine, lErr, lNote);
     // Màu chữ
-    const cSec = document.createElement('div'); cSec.className = 'sec first';
+    const cSec = document.createElement('div'); cSec.className = 'sec';
     cSec.innerHTML = '<div class="hd"><span>Màu chữ</span><span class="chip" data-k="cchip"></span></div>';
     const sw = document.createElement('div'); sw.className = 'sw'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'Màu nhận diện DANAVA');
     for (const c of BRAND_COLORS) {
@@ -612,7 +663,7 @@ export function startCmsEditor() {
 
     const foot = document.createElement('div'); foot.className = 'row';
     foot.append(btn(`${ICON.check} Xong`, 'Đóng bảng kiểu chữ', () => closeStyle(), 'pri'));
-    pop.append(h, cSec, sSec, foot);
+    pop.append(h, fSec, cSec, sSec, lSec, foot);
     refreshStyle(true);
   }
 
@@ -645,6 +696,15 @@ export function startCmsEditor() {
     range.min = String(lo); range.max = String(hi); if (active !== range) range.value = String(size);
     range.setAttribute('aria-valuetext', `${size}px`);
     q<HTMLButtonElement>('sreset')!.disabled = !custom;
+    const bold = st.bold ?? nat.bold, italic = st.italic ?? nat.italic, align = st.align ?? nat.align;
+    q('bold')?.setAttribute('aria-pressed', String(bold));
+    q('italic')?.setAttribute('aria-pressed', String(italic));
+    pop.querySelectorAll<HTMLButtonElement>('.fmt [data-align]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.align === align)));
+    const fCustom = st.bold !== undefined || st.italic !== undefined || !!st.align;
+    const fchip = q('fchip'); if (fchip) { fchip.textContent = fCustom ? 'Đã tùy chỉnh' : 'Mặc định giao diện'; fchip.classList.toggle('on', fCustom); }
+    const url = q<HTMLInputElement>('url'); if (url && (active !== url || all)) url.value = st.href || '';
+    const lchip = q('lchip'); if (lchip) { lchip.textContent = st.href ? 'Đang gắn' : 'Không có'; lchip.classList.toggle('on', !!st.href); }
+    const ldel = q<HTMLButtonElement>('ldel'); if (ldel && !url?.disabled) ldel.disabled = !st.href;
   }
   pop.addEventListener('keydown', e => { if (styleOpen && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeStyle(); } });
   const onDevice = () => { if (styleOpen) { refreshStyle(true); place(); keepVisible(); } };
@@ -662,7 +722,7 @@ export function startCmsEditor() {
     if (sc) { const b = document.createElement('span'); b.className = `scope${sc.global ? ' is-global' : ''}`; b.textContent = sc.text; b.title = sc.global ? 'Thay đổi hiển thị trên mọi trang dùng phần này' : 'Cập nhật hồ sơ gốc trong module quản trị'; bar.append(b); }
     if (sel.kind === 'text') {
       if (editing?.rich) { const b = btn(`${ICON.em} Nhấn mạnh`, 'Nhấn mạnh phần chữ đang chọn', toggleEm); bar.append(b); }
-      const st = btn(`${ICON.type} Kiểu chữ`, 'Màu và cỡ chữ của phần này', () => (styleOpen ? closeStyle() : openStyle()));
+      const st = btn(`${ICON.type} Kiểu chữ`, 'Đậm, nghiêng, căn lề, màu, cỡ chữ và liên kết của phần này', () => (styleOpen ? closeStyle() : openStyle()));
       st.setAttribute('aria-pressed', String(styleOpen));
       st.setAttribute('aria-haspopup', 'dialog');
       bar.append(st);

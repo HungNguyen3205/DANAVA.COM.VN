@@ -63,3 +63,24 @@ test('ghi kiểu chữ không đổi nội dung; khôi phục từng thuộc tí
   assert.throws(() => writeTextStyle(base, 'khong.hop.le', { size: 20 }));
   assert.throws(() => withTextStyle({}, 'txt.a', { color: 'blue' }), /Mã màu/);
 });
+
+test('đậm / nghiêng / căn lề / liên kết: kiểm tra, chuẩn hóa và CSS', async () => {
+  const { normalizeHref } = await import('../lib/text-styles.ts');
+  assert.ok(validTextStyles({ 'hero.line1': { bold: true, italic: false, align: 'center', href: '/lien-he/' } }));
+  assert.ok(validTextStyles({ 'hero.line1': { href: 'https://danava.com.vn/x?y=1' } }));
+  assert.ok(!validTextStyles({ 'hero.line1': { bold: 'yes' } }), 'bold không phải boolean');
+  assert.ok(!validTextStyles({ 'hero.line1': { align: 'justify' } }), 'căn lề lạ');
+  assert.ok(!validTextStyles({ 'hero.line1': { href: 'javascript:alert(1)' } }), 'javascript:');
+  assert.ok(!validTextStyles({ 'hero.line1': { href: '//evil.com' } }), 'protocol-relative');
+  assert.ok(!validTextStyles({ 'hero.line1': { href: '/a" onclick="x' } }), 'dấu nháy');
+  assert.equal(normalizeHref('lien-he'), '/lien-he');
+  assert.equal(normalizeHref('danava.com.vn/abc'), 'https://danava.com.vn/abc');
+  assert.equal(normalizeHref('0905 123 456'), 'tel:0905123456');
+  assert.equal(normalizeHref('javascript:alert(1)'), null);
+  const css = textStylesCss({ 'hero.line1': { bold: true, italic: true, align: 'center', href: '/x/' } });
+  assert.match(css, /font-weight:700!important/);
+  assert.match(css, /font-style:italic!important/);
+  assert.match(css, /display:block;text-align:center!important/);
+  assert.match(css, /cursor:pointer;text-decoration:underline/);
+  assert.deepEqual(withTextStyle(undefined, 'hero.line1', { bold: false, href: '/a/' }), { 'hero.line1': { bold: false, href: '/a/' } });
+});
