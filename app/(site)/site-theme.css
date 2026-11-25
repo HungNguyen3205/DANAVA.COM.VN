@@ -902,3 +902,9 @@ html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
   .s-app .s-cta.s-cta--anna a.s-cta__hotline svg { width: 16px; height: 16px; }
 }
 @media (max-width: 380px) { .s-cta-wrap { --anna-w: 140px; } }
+
+/* Điện thoại: ANNA bám sát mép dưới dải (đầu vẫn nhô lên khỏi mép trên), không mờ phần dưới */
+@media (max-width: 860px) {
+  .s-cta__anna { top: auto; bottom: 0; }
+  .s-cta__anna img { -webkit-mask-image: none; mask-image: none; object-position: bottom; }
+}
