@@ -35,39 +35,39 @@ export function StartWizard({ onCreate, aiNote }: { onCreate: (p: Project) => vo
   const [n, setN] = useState(1);
   const [areas, setAreas] = useState<number[]>([150, 120, 100, 100, 100]);
   const [budget, setBudget] = useState('');
-  const [style, setStyle] = useState<InteriorStyle>('industrial');
+  const [noBudget, setNoBudget] = useState(true);
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    const b = Number(budget.replace(/[^\d.,]/g, '').replace(',', '.')) * 1e6 || 0;
-    onCreate(newProject({ model, areas: areas.slice(0, n), budget: b, interior: style }));
+    const b = noBudget ? 0 : Number(budget.replace(/[^\d.,]/g, '').replace(',', '.')) * 1e6 || 0;
+    onCreate(newProject({ model, areas: areas.slice(0, n), budget: b, interior: 'industrial' }));
   };
   return (
     <form className="gs-start" onSubmit={submit}>
-      <p className="gs-start__kicker"><Sparkles aria-hidden="true" /> 4 câu hỏi · nhận 3 phương án bố trí</p>
-      <h2>Phòng tập bạn đang dự tính thế nào?</h2>
-      <fieldset><legend><b>1</b> Mô hình phòng tập</legend>
-        <div className="gs-cards">
+      <h2>Phòng tập của bạn thế nào?</h2>
+      <p className="gs-start__lead">Trả lời 4 câu, xem ngay phòng tập 3D gợi ý và chi phí dự kiến.</p>
+      <fieldset><legend><b>1</b> Loại phòng tập</legend>
+        <div className="gs-cards gs-cards--start">
           {(Object.keys(BUSINESS_MODELS) as BusinessModel[]).map(k => (
-            <button key={k} type="button" role="radio" aria-checked={model === k} className={model === k ? 'is-on' : ''} onClick={() => setModel(k)}><b>{BUSINESS_MODELS[k].label}</b><small>{BUSINESS_MODELS[k].hint}</small></button>
+            <button key={k} type="button" role="radio" aria-checked={model === k} className={model === k ? 'is-on' : ''} onClick={() => setModel(k)}><b>{BUSINESS_MODELS[k].label}</b></button>
           ))}
         </div>
       </fieldset>
       <fieldset><legend><b>2</b> Số tầng <small>(tính cả tầng trệt)</small></legend>
-        <Seg label="Số tầng" value={String(n)} options={[1, 2, 3, 4, 5].map(i => [String(i), `${i} tầng`] as [string, string])} onChange={v => setN(Number(v))} />
+        <Seg label="Số tầng" value={String(n)} options={[1, 2, 3, 4, 5].map(i => [String(i), `${i}`] as [string, string])} onChange={v => setN(Number(v))} />
       </fieldset>
-      <fieldset><legend><b>3</b> Diện tích từng tầng</legend>
+      <fieldset><legend><b>3</b> Diện tích {n > 1 ? 'từng tầng' : 'sàn'}</legend>
         <div className="gs-start__areas">
-          {Array.from({ length: n }, (_, i) => <Num key={i} label={i === 0 ? 'Tầng trệt' : `Tầng ${i + 1}`} value={areas[i]} min={20} max={2000} step={5} unit="m²" onChange={v => setAreas(a => a.map((x, j) => (j === i ? v : x)))} />)}
+          {Array.from({ length: n }, (_, i) => <Num key={i} label={n > 1 ? (i === 0 ? 'Tầng trệt' : `Tầng ${i + 1}`) : 'Diện tích'} value={areas[i]} min={20} max={2000} step={5} unit="m²" onChange={v => setAreas(a => a.map((x, j) => (j === i ? v : x)))} />)}
         </div>
-        <small className="gs-hint">Ước tính trước, sau đó chỉnh dài × rộng, cột, cửa, cầu thang… trong mục Mặt bằng.</small>
       </fieldset>
-      <fieldset><legend><b>4</b> Ngân sách toàn dự án</legend>
-        <label className="gs-budget"><input inputMode="decimal" value={budget} placeholder="không giới hạn" onChange={e => setBudget(e.target.value.replace(/[^\d.,]/g, '').slice(0, 8))} /> triệu đồng <small>(thiết bị + thảm sàn có giá)</small></label>
+      <fieldset><legend><b>4</b> Ngân sách dự kiến</legend>
+        <div className="gs-budgetrow">
+          <button type="button" role="radio" aria-checked={noBudget} className={`gs-chip${noBudget ? ' is-on' : ''}`} onClick={() => setNoBudget(true)}>Chưa xác định</button>
+          <label className={`gs-budget${noBudget ? ' is-dim' : ''}`}><input inputMode="decimal" value={budget} placeholder="vd 800" onFocus={() => setNoBudget(false)} onChange={e => { setBudget(e.target.value.replace(/[^\d.,]/g, '').slice(0, 8)); setNoBudget(false); }} aria-label="Ngân sách (triệu đồng)" /> triệu đồng</label>
+        </div>
       </fieldset>
-      <details className="gs-start__more"><summary>Phong cách nội thất (có thể đổi sau)</summary>
-        <Seg label="Phong cách" value={style} options={(Object.keys(INTERIOR_STYLES) as InteriorStyle[]).map(k => [k, INTERIOR_STYLES[k].label])} onChange={setStyle} />
-      </details>
-      <button type="submit" className="s-btn s-btn--primary s-btn--lg"><Sparkles aria-hidden="true" /> Tạo 3 phương án bố trí</button>
+      <button type="submit" className="s-btn s-btn--primary s-btn--lg gs-start__go"><Sparkles aria-hidden="true" /> Xem phòng tập gợi ý</button>
+      <p className="gs-start__after">Cột, cửa, cầu thang, thiết bị, màu sắc… chỉnh sau trong phần <b>Tùy chỉnh</b>.</p>
       {aiNote}
     </form>
   );
@@ -93,7 +93,7 @@ export function BriefPanel({ p, set, onRegenerate, equipment }: { p: Project; se
       </div>
       <h3>Ghi chú nhu cầu</h3>
       <textarea className="gs-textarea" rows={3} maxLength={2000} value={p.brief.notes} placeholder="Nhóm khách, giờ cao điểm, thiết bị muốn giữ…" onChange={e => { const v = e.target.value; set(q => ({ ...q, brief: { ...q.brief, notes: v } })); }} />
-      <button type="button" className="s-btn s-btn--primary gs-wide" onClick={onRegenerate}><Sparkles aria-hidden="true" /> Tạo lại 3 phương án <small>(giữ phần đã khoá)</small></button>
+      <button type="button" className="s-btn s-btn--primary gs-wide" onClick={onRegenerate}><Sparkles aria-hidden="true" /> Tạo lại phương án <small>(giữ phần đã khoá)</small></button>
     </div>
   );
 }

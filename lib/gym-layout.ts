@@ -636,7 +636,9 @@ export function generateOptions(project: Project, catalog: Equipment[], opts: { 
   const keepPl = (opts.keep?.placements ?? []).filter(p => p.locked);
   const sel = selectEquipment(project, catalog, keepPl, opts.flooring);
   const strategies = (opts.strategies?.length ? opts.strategies : STRATEGY_ORDER[project.brief.model]).slice(0, 3);
-  const options = strategies.map((s, i) => generateOption(project, catalog, s, sel, 'ABC'[i], opts.keep));
+  const raw = strategies.map((s, i) => generateOption(project, catalog, s, sel, 'ABC'[i], opts.keep));
+  // Phương án hiện đầu tiên = phương án chứa được nhiều máy nhất (ưu tiên nhẹ kiểu hợp mô hình kinh doanh); khách chọn kiểu riêng thì giữ thứ tự
+  const options = opts.strategies?.length ? raw : raw.map((o, i) => ({ o, score: o.placements.length * 10 - i * 3 })).sort((a, b) => b.score - a.score).map(({ o }, i) => ({ ...o, letter: 'ABC'[i] }));
   // So sánh với danh sách chung: phương án nào thiếu máy thì ghi rõ
   const total = sel.floors.reduce((s, f) => s + f.eqs.length, 0);
   for (const o of options) {

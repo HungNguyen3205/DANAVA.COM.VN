@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
             <Crumbs data={data} items={[{ href: '/', label: 'Trang chủ' }, { href: '/giai-phap/setup-van-hanh-phong-gym/', label: 'Setup phòng gym' }, { label: 'Phòng lab 3D' }]} />
             <p className="gy-kicker">DANAVA Gym Solutions · Phòng lab 3D</p>
             <h1 className="gy-h2">Thiết kế phòng tập của bạn</h1>
-            <p className="gy-lead">Khai báo mặt bằng từng tầng, nhận 3 phương án bố trí có lý do rõ ràng, chỉnh theo ý thích, xem chi phí và mô phỏng một ngày vận hành.</p>
+            <p className="gy-lead">Nhập nhu cầu, xem phòng tập 3D gợi ý cùng chi phí dự kiến, rồi gửi để DANAVA tư vấn triển khai.</p>
           </div>
         </section>
         <section className="gp-body">

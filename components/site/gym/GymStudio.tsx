@@ -7,22 +7,22 @@
  * Hình học luôn kiểm tra lại bằng lib/gym-geometry.ts sau mỗi thao tác. Không có WebGL → mặt bằng 2D (SVG).
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Box, Building2, Check, ClipboardList, Columns3, Copy, Eye, Lock, Map as MapIcon, MessageCircle, Move3d, Palette, Redo2, RotateCw, Ruler, Save, Send, Share2, Sparkles, Trash2, TriangleAlert, Undo2, Unlock, Users, View } from 'lucide-react';
+import { Box, Building2, Columns3, Copy, Eye, Lock, Map as MapIcon, MessageCircle, Move3d, Palette, Redo2, RotateCw, Ruler, Send, Share2, Shuffle, SlidersHorizontal, Sparkles, Trash2, TriangleAlert, Undo2, Unlock, View, X } from 'lucide-react';
 import type { Equipment, Flooring } from '@/lib/equipment';
 import { formatVND } from '@/lib/equipment';
 import { FIXTURE_KINDS, LINK_KINDS, STRATEGIES, activeOption, fmtArea, layoutHash, normalizeProject, optionCode, type FurnKind, type Project, type Strategy } from '@/lib/gym-project';
 import { FURNITURE, buildReception } from '@/lib/gym-decor';
-import { generateOption, generateOptions, selectEquipment } from '@/lib/gym-layout';
+import { generateOption, generateOptions, groupOf, selectEquipment } from '@/lib/gym-layout';
 import { validateOption } from '@/lib/gym-geometry';
 import { costOf, shortVND } from '@/lib/gym-cost';
 import * as E from '@/lib/gym-edit';
 import { createStudio, type PersonView, type Studio, type ViewMode } from './studio-engine';
 import { Plan2D } from './Plan2D';
-import { BriefPanel, CostTable, EquipmentPanel, FloorsPanel, Num, ReceptionPanel, STRATEGY_LIST, StartWizard, StylePanel } from './StudioPanels';
+import { BriefPanel, CostTable, EquipmentPanel, FloorsPanel, Num, ReceptionPanel, STRATEGY_LIST, Seg, StartWizard, StylePanel } from './StudioPanels';
 
 const KEY = 'danava-gym-studio-v2';
 const TOKENS = 'danava-gym-tokens';
-type Tab = 'brief' | 'floors' | 'eq' | 'reception' | 'style' | 'assistant' | 'sim';
+type Tab = 'plan' | 'eqrec' | 'style' | 'assistant' | 'sim';
 const VIEWS: [ViewMode, string, ReactNode][] = [
   ['plan', 'Mặt bằng 2D', <MapIcon key="p" aria-hidden="true" />], ['orbit', '3D', <Box key="o" aria-hidden="true" />], ['entrance', 'Từ cửa vào', <Eye key="e" aria-hidden="true" />],
   ['eye', 'Ngang tầm người', <View key="v" aria-hidden="true" />], ['stack', 'Cả công trình', <Building2 key="s" aria-hidden="true" />], ['exploded', 'Tách tầng', <Columns3 key="x" aria-hidden="true" />]
@@ -44,7 +44,14 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const [floorId, setFloorId] = useState('');
   const [mode, setMode] = useState<ViewMode>('orbit');
   const [sel, setSel] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>('eq');
+  const [tab, setTab] = useState<Tab>('eqrec');
+  // Giao diện tinh gọn: chỉnh sửa gom vào "Tùy chỉnh"; mỗi lần mở một mục
+  const [custom, setCustom] = useState(false);
+  const [planSub, setPlanSub] = useState<'floors' | 'brief'>('floors');
+  const [eqSub, setEqSub] = useState<'eq' | 'reception'>('eq');
+  const [moreViews, setMoreViews] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => { fetch('/api/admin/session/').then(r => r.json()).then(v => setIsAdmin(!!v?.authenticated)).catch(() => {}); }, []);
   const [compare, setCompare] = useState(false);
   const [notice, setNotice] = useState('');
   const [gl, setGl] = useState<'loading' | 'ok' | 'fail'>('loading');
@@ -97,8 +104,8 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
       if ((e.target as HTMLElement)?.closest('input,textarea,select')) return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
-      else if ((e.key === 'Delete' || e.key === 'Backspace') && sel) { set(p => E.removeItem(p, sel)); setSel(null); }
-      else if (e.key.toLowerCase() === 'r' && sel) set(p => E.rotateItem(p, sel));
+      else if ((e.key === 'Delete' || e.key === 'Backspace') && sel && customRef.current) { set(p => E.removeItem(p, sel)); setSel(null); }
+      else if (e.key.toLowerCase() === 'r' && sel && customRef.current) set(p => E.rotateItem(p, sel));
     };
     window.addEventListener('keydown', k);
     return () => window.removeEventListener('keydown', k);
@@ -106,7 +113,9 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
 
   /* ---------- Bộ dựng 3D ---------- */
   const onMove = useRef<(id: string, x: number, z: number) => void>(() => {});
-  onMove.current = (id, x, z) => set(p => E.moveItem(p, id, x, z));
+  const customRef = useRef(false); customRef.current = custom;
+  // Chưa mở "Tùy chỉnh" thì không cho kéo lệch thiết bị (tránh khách vô tình làm sai phương án)
+  onMove.current = (id, x, z) => { if (!customRef.current) { setNotice('Bấm "Tùy chỉnh" để di chuyển thiết bị'); force(n => n + 1); return; } set(p => E.moveItem(p, id, x, z)); };
   useEffect(() => {
     if (!project || studio.current || gl === 'fail' || !host.current) return;
     let off = false;
@@ -125,12 +134,12 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
     if (!project?.reception.enabled) return [];
     const f = project.floors.find(x => x.id === project.reception.floorId);
     const door = f?.fixtures.find(x => x.kind === 'door' && x.main) ?? f?.fixtures.find(x => x.kind === 'door');
-    return f && door && tab === 'reception' ? buildReception(project.reception, f, door).flows.map(fl => ({ ...fl, floorId: f.id })) : [];
-  }, [project, tab]);
+    return f && door && custom && tab === 'eqrec' && eqSub === 'reception' ? buildReception(project.reception, f, door).flows.map(fl => ({ ...fl, floorId: f.id })) : [];
+  }, [project, tab, custom, eqSub]);
   useEffect(() => {
     if (!project || !studio.current || !floorId) return;
-    studio.current.update({ project, option, catalog, floorId, mode, selected: sel, issues, flows, showClear: showClear || mode === 'plan', heat });
-  }, [project, option, catalog, floorId, mode, sel, issues, flows, showClear, heat, gl]);
+    studio.current.update({ project, option, catalog, floorId, mode, selected: sel, issues, flows, showClear: showClear || (mode === 'plan' && custom), heat });
+  }, [project, option, catalog, floorId, mode, sel, issues, flows, showClear, heat, gl, custom]);
   useEffect(() => { studio.current?.setPeople(people); }, [people]);
   // Mô phỏng đẩy nhân vật thẳng vào bộ dựng 3D mỗi khung hình (không qua React); 2D dự phòng thì qua state
   const saveSim = useCallback((patch: Pick<Project, 'scenario' | 'simRun'>) => setProject(p => (p ? { ...p, ...patch } : p)), []);
@@ -142,7 +151,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
     if (!project || !floorId || !addId || added.current || !project.options.length) return;
     const eq = catalog.get(addId);
     added.current = true;
-    if (eq) { const r = E.addEquipment(project, floorId, eq, catalog); commit(r.project, `Đã thêm ${eq.name}`); setSel(r.id); }
+    if (eq) { const r = E.addEquipment(project, floorId, eq, catalog); commit(r.project, `Đã thêm ${eq.name}`); setSel(r.id); setCustom(true); setTab('eqrec'); }
   }, [project, floorId, addId, catalog, commit]);
 
   /* ---------- Tạo phương án ---------- */
@@ -151,7 +160,6 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
     const next: Project = { ...base, options, active: 0, version: base.version + 1, updatedAt: Date.now() };
     commit(next, label);
     if (selection.notes.length) setTimeout(() => setNotice(selection.notes[0]), 1800);
-    setTab('eq');
   }
   function changeStrategy(i: number, s: Strategy) {
     if (!project) return;
@@ -234,89 +242,81 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const sorted = [...project.floors].sort((a, b) => a.level - b.level);
   const goIssue = (id: string, fid: string) => { setFloorId(fid); setSel(id); };
 
+  const totalArea = project.floors.reduce((s, f) => s + f.w * f.l, 0);
+  const nextOption = () => { if (project.options.length < 2) return; const i = (project.active + 1) % project.options.length; commit({ ...project, active: i }); setSel(null); setNotice(`Phương án ${project.options[i].letter}: ${STRATEGIES[project.options[i].strategy].label}`); };
+  const openSend = () => { setForm(f => ({ ...f, open: true })); setTimeout(() => document.getElementById('gs-send')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50); };
+  const points = option ? keyPoints(project, option, catalog) : [];
+  const notes = option ? attention(project, option, catalog, cost, validation) : [];
+  const fixFirst = () => { const i = errors[0]; if (!i) return; setCustom(true); setFloorId(i.floorId); setSel(i.id); };
+  const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Thiết bị & lễ tân', <Box key="e" />], ['style', 'Màu sắc, trang trí', <Palette key="s" />],
+    ...(extras?.assistant ? [['assistant', 'Nhờ ANNA chỉnh', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Xem phòng hoạt động', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
+
   return (
-    <div className="gs">
-      {/* ----- Phương án ----- */}
-      <div className="gs-top">
-        <div className="gs-opts" role="radiogroup" aria-label="Phương án bố trí">
-          {project.options.map((o, i) => {
-            const c = costOf(project, o, catalog, flooring), v = validateOption(project, o, catalog);
-            const nErr = v.issues.filter(x => x.level === 'error').length;
-            return (
-              <button key={o.id} type="button" role="radio" aria-checked={project.active === i} className={project.active === i ? 'is-on' : ''} onClick={() => { commit({ ...project, active: i }); setSel(null); }}>
-                <b>{o.letter}</b>
-                <span><strong>{STRATEGIES[o.strategy].label}</strong><small>{o.placements.length} máy · {shortVND(c.priced)}{nErr ? ` · ${nErr} lỗi` : ''}</small></span>
-              </button>
-            );
-          })}
+    <div className={`gs${custom ? ' is-custom' : ''}`}>
+      {/* ----- Tóm tắt phương án + hành động ----- */}
+      {option && (
+        <div className="gs-sum">
+          <div className="gs-sum__title">
+            <span className="gs-sum__badge">{option.letter}</span>
+            <div><small>Phương án gợi ý{project.options.length > 1 ? ` ${project.active + 1}/${project.options.length}` : ''}</small><b>{STRATEGIES[option.strategy].label}</b></div>
+          </div>
+          <dl className="gs-sum__facts">
+            <div><dt>Diện tích</dt><dd>{fmtArea(totalArea)}{project.floors.length > 1 ? ` · ${project.floors.length} tầng` : ''}</dd></div>
+            <div><dt>Thiết bị</dt><dd>{option.placements.length} máy</dd></div>
+            <div><dt>Chi phí dự kiến</dt><dd>{shortVND(cost.range[0])} – {shortVND(cost.range[1])}</dd></div>
+          </dl>
+          <div className="gs-sum__act">
+            {project.options.length > 1 && <button type="button" className="gs-btn gs-btn--lg" onClick={nextOption}><Shuffle aria-hidden="true" /> Xem phương án khác</button>}
+            <button type="button" className={`gs-btn gs-btn--lg${custom ? ' is-on' : ''}`} onClick={() => setCustom(c => !c)} aria-expanded={custom}><SlidersHorizontal aria-hidden="true" /> {custom ? 'Đóng tùy chỉnh' : 'Tùy chỉnh'}</button>
+            <button type="button" className="s-btn s-btn--primary gs-cta" onClick={openSend}><Send aria-hidden="true" /> Nhận tư vấn phương án này</button>
+          </div>
         </div>
-        <div className="gs-tools">
-          <button type="button" className="gs-icon" onClick={undo} disabled={!hist.current.past.length} title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác"><Undo2 /></button>
-          <button type="button" className="gs-icon" onClick={redo} disabled={!hist.current.future.length} title="Làm lại (Ctrl+Y)" aria-label="Làm lại"><Redo2 /></button>
-          <button type="button" className="gs-btn" onClick={() => setCompare(c => !c)}><Columns3 aria-hidden="true" /> So sánh</button>
-          <button type="button" className="gs-btn" onClick={() => void save()} disabled={share.busy}><Save aria-hidden="true" /> {share.busy ? 'Đang lưu…' : project.code ? `Lưu ${project.code}` : 'Lưu & lấy mã'}</button>
-        </div>
-      </div>
-      {(share.url || share.error) && (
-        <p className={`gs-share${share.error ? ' is-error' : ''}`} role="status">
-          {share.error || <><Share2 aria-hidden="true" /> Mã phương án <b>{project.code}</b> (phiên bản {project.version}) — mở lại bằng đường dẫn: <a href={share.url}>{share.url}</a> <button type="button" onClick={() => { void navigator.clipboard?.writeText(share.url); setNotice('Đã chép đường dẫn'); }}><Copy aria-hidden="true" /> Chép</button></>}
-        </p>
       )}
 
       {compare && <Compare project={project} catalog={catalog} flooring={flooring} onPick={i => { commit({ ...project, active: i }); setCompare(false); }} onStrategy={changeStrategy} onClose={() => setCompare(false)} />}
 
       <div className="gs-main">
-        {/* ----- Bảng điều khiển ----- */}
-        <aside className="gs-side" aria-label="Bảng điều khiển thiết kế">
-          <div className="gs-tabs" role="tablist">
-            {([['brief', 'Nhu cầu', <ClipboardList key="b" />], ['floors', 'Mặt bằng', <Ruler key="f" />], ['eq', 'Thiết bị', <Box key="e" />], ['reception', 'Lễ tân', <Users key="r" />], ['style', 'Phong cách', <Palette key="s" />],
-              ...(extras?.assistant ? [['assistant', 'ANNA', <MessageCircle key="a" />]] : []), ...(extras?.sim ? [['sim', 'Vận hành', <Move3d key="m" />]] : [])] as [Tab, string, ReactNode][]).map(([k, l, ic]) => (
-              <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)}>{ic}{l}</button>
-            ))}
-          </div>
-          {tab === 'brief' && <BriefPanel p={project} set={fn => set(fn)} equipment={equipment} onRegenerate={() => regenerate(project)} />}
-          {tab === 'floors' && <FloorsPanel p={project} floor={floor} setFloorId={setFloorId} selectItem={setSel} act={{
-            updateFloor: (id, patch) => set(p => E.updateFloor(p, id, patch)),
-            addFloor: () => set(p => E.addFloor(p), 'Đã thêm tầng — bấm "Tạo lại 3 phương án" để xếp máy cho tầng mới'),
-            duplicateFloor: id => set(p => E.duplicateFloor(p, id), 'Đã sao chép tầng'),
-            removeFloor: id => set(p => E.removeFloor(p, id), 'Đã xoá tầng'),
-            addFixture: kind => { const r = E.addFixture(project, floor.id, kind); commit(r.project, `Đã thêm ${FIXTURE_KINDS[kind].label.toLowerCase()} — kéo để đặt đúng chỗ`); setSel(r.id); },
-            addLink: (kind, fl) => { const r = E.addLink(project, kind, fl); commit(r.project, `Đã thêm ${LINK_KINDS[kind].label.toLowerCase()}`); setSel(r.id); },
-            lockFloor: locked => set(p => E.lockFloor(p, floor.id, locked), locked ? 'Đã khoá toàn bộ tầng — tạo lại phương án sẽ giữ nguyên' : 'Đã mở khoá tầng')
-          }} />}
-          {tab === 'eq' && <EquipmentPanel equipment={equipment} p={project} floor={floor} onMust={id => set(p => ({ ...p, brief: { ...p.brief, mustHave: p.brief.mustHave.includes(id) ? p.brief.mustHave.filter(x => x !== id) : [...p.brief.mustHave, id] } }))}
-            onAdd={eq => { if (!option) return; const r = E.addEquipment(project, floor.id, eq, catalog); commit(r.project, r.placed ? `Đã thêm ${eq.name} vào ${floor.name.toLowerCase()}` : `Hết chỗ hợp lệ cho ${eq.name} — đã đặt giữa sàn (tô đỏ), hãy dời máy khác`); setSel(r.id); }} />}
-          {tab === 'reception' && <ReceptionPanel p={project} set={patch => set(p => E.setReception(p, patch))} />}
-          {tab === 'style' && <StylePanel p={project} floor={floor} set={fn => set(fn)} addDecor={(k: FurnKind) => { const F = FURNITURE[k]; set(p => E.addFurniture(p, floor.id, { kind: k, x: 0, z: 0, rot: 0, w: F.w, d: F.d, group: 'decor' }), `Đã thêm ${F.label.toLowerCase()} — kéo để đặt`); }} />}
-          {tab === 'assistant' && extras?.assistant?.({ project, commit, floorId: floor.id })}
-          {tab === 'sim' && extras?.sim?.({ project, catalog, floorId: floor.id, setFloorId, saveSim, setPeople: pushPeople, setHeat, onPick: fn => { pickRef.current = fn; } })}
-        </aside>
-
         {/* ----- Sân khấu 3D / 2D ----- */}
         <div className="gs-stagewrap">
           <div className="gs-bar">
-            <div className="gs-floortabs" role="radiogroup" aria-label="Tầng đang xem">
-              {sorted.map(f => <button key={f.id} type="button" role="radio" aria-checked={f.id === floor.id} className={f.id === floor.id ? 'is-on' : ''} onClick={() => { setFloorId(f.id); setSel(null); }}>{f.name}</button>)}
-            </div>
+            {sorted.length > 1 ? (
+              <div className="gs-floortabs" role="radiogroup" aria-label="Tầng đang xem">
+                {sorted.map(f => <button key={f.id} type="button" role="radio" aria-checked={f.id === floor.id} className={f.id === floor.id ? 'is-on' : ''} onClick={() => { setFloorId(f.id); setSel(null); }}>{f.name}</button>)}
+              </div>
+            ) : <span className="gs-floorname">{floor.name} · {fmtArea(floor.w * floor.l)}</span>}
             <div className="gs-views" role="radiogroup" aria-label="Góc xem">
-              {VIEWS.filter(([k]) => gl !== 'fail' || k === 'plan').filter(([k]) => project.floors.length > 1 || (k !== 'stack' && k !== 'exploded')).map(([k, l, ic]) => <button key={k} type="button" role="radio" aria-checked={mode === k} className={mode === k ? 'is-on' : ''} onClick={() => { setMode(k); setTimeout(() => studio.current?.resetView(), 0); }} title={l}>{ic}<span>{l}</span></button>)}
+              {gl !== 'fail' && <button type="button" role="radio" aria-checked={mode === 'orbit'} className={mode === 'orbit' ? 'is-on' : ''} onClick={() => { setMode('orbit'); setTimeout(() => studio.current?.resetView(), 0); }}><Box aria-hidden="true" /><span>3D</span></button>}
+              <button type="button" role="radio" aria-checked={mode === 'plan'} className={mode === 'plan' ? 'is-on' : ''} onClick={() => { setMode('plan'); setTimeout(() => studio.current?.resetView(), 0); }}><MapIcon aria-hidden="true" /><span>Mặt bằng</span></button>
+              {gl !== 'fail' && <button type="button" className={`gs-more${moreViews || !['orbit', 'plan'].includes(mode) ? ' is-on' : ''}`} aria-expanded={moreViews} onClick={() => setMoreViews(v => !v)}><Eye aria-hidden="true" /><span>Góc nhìn khác</span></button>}
             </div>
           </div>
+          {moreViews && gl !== 'fail' && (
+            <div className="gs-moreviews">
+              {VIEWS.filter(([k]) => k !== 'orbit' && k !== 'plan').filter(([k]) => project.floors.length > 1 || (k !== 'stack' && k !== 'exploded')).map(([k, l, ic]) => <button key={k} type="button" className={mode === k ? 'is-on' : ''} onClick={() => { setMode(k); setTimeout(() => studio.current?.resetView(), 0); }}>{ic}{l}</button>)}
+              <label className="gs-toggle"><input type="checkbox" checked={showClear} onChange={e => setShowClear(e.target.checked)} /><span>Hiện khoảng trống quanh máy</span></label>
+            </div>
+          )}
           <div className="gs-stage">
             {gl !== 'fail' && <div ref={host} className="gs-canvas" />}
-            {gl === 'loading' && <p className="gp-loading">Đang dựng không gian 3D…</p>}
+            {gl === 'loading' && <p className="gp-loading">Đang dựng phòng 3D…</p>}
             {gl === 'fail' && (
               <div className="gs-fallback">
-                <p className="gs-note"><TriangleAlert aria-hidden="true" /> Trình duyệt / thiết bị này không chạy được 3D (WebGL). Bạn vẫn thiết kế đầy đủ trên mặt bằng 2D: kéo thả, xoay, khoá, chi phí và gửi phương án.</p>
-                <Plan2D project={project} option={option} floor={floor} catalog={catalog} selected={sel} issues={issues} onSelect={setSel} onMove={(id, x, z) => set(p => E.moveItem(p, id, x, z))} people={people} showClear flows={flows} className="gs-plan" />
+                <p className="gs-note"><TriangleAlert aria-hidden="true" /> Thiết bị này không hiển thị được 3D — đang xem mặt bằng 2D. Mọi chức năng vẫn dùng được.</p>
+                <Plan2D project={project} option={option} floor={floor} catalog={catalog} selected={sel} issues={issues} onSelect={setSel} onMove={(id, x, z) => onMove.current(id, x, z)} people={people} showClear={custom} flows={flows} className="gs-plan" />
               </div>
             )}
-            {gl === 'ok' && <label className="gs-clearbtn"><input type="checkbox" checked={showClear} onChange={e => setShowClear(e.target.checked)} /> Khoảng trống vận hành</label>}
-            {sel && (selPl || selFu || selFx || selLn) && (
+            {sel && (selPl || selFu || selFx || selLn) && !custom && (
+              <div className="gs-toolbar gs-toolbar--info" role="status">
+                <b>{selEq?.name ?? (selFu ? (selFu.label === 'logo' ? 'Vách nhận diện' : selFu.label || FURNITURE[selFu.kind].label) : selFx ? (selFx.label || FIXTURE_KINDS[selFx.kind].label) : selLn ? LINK_KINDS[selLn.kind].label : '')}
+                  {selEq && <small>{selEq.price ? formatVND(Number(selEq.price)) : 'Giá: DANAVA báo sau'} · {selEq.width}×{selEq.depth} cm</small>}</b>
+                <button type="button" onClick={() => { setCustom(true); setTab(selFx || selLn ? 'plan' : 'eqrec'); }}><SlidersHorizontal aria-hidden="true" /> Chỉnh</button>
+              </div>
+            )}
+            {sel && (selPl || selFu || selFx || selLn) && custom && (
               <div className={`gs-toolbar${selIssues.some(i => i.level === 'error') ? ' is-bad' : ''}`} role="toolbar" aria-label="Vật đang chọn">
                 <b>{selEq?.name ?? (selFu ? (selFu.label === 'logo' ? 'Vách nhận diện' : selFu.label || FURNITURE[selFu.kind].label) : selFx ? (selFx.label || FIXTURE_KINDS[selFx.kind].label) : selLn ? LINK_KINDS[selLn.kind].label : '')}
                   {selEq && <small>{selEq.price ? formatVND(Number(selEq.price)) : 'Chưa có giá'} · {selEq.width}×{selEq.depth} cm{selEq.dimsEstimated ? ' (ước tính)' : ''}</small>}
-                  {selIssues.map((i, k) => <small key={k} className="is-err">{i.msg}</small>)}
+                  {selIssues.slice(0, 2).map((i, k) => <small key={k} className="is-err">{i.msg}</small>)}
                 </b>
                 {(selFx || selLn) && <>
                   <Num label="Rộng" unit="m" value={(selFx ?? selLn)!.w} min={.1} max={40} onChange={v => set(p => selFx ? E.updateFixture(p, selFx.id, { w: v }) : E.updateLink(p, selLn!.id, { w: v }))} />
@@ -326,44 +326,107 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
                 <button type="button" onClick={() => set(p => E.rotateItem(p, sel))} disabled={!!(selPl?.locked || selFu?.locked)}><RotateCw aria-hidden="true" /> Xoay</button>
                 {(selPl || selFu) && <button type="button" onClick={() => set(p => E.duplicateItem(p, sel, catalog))}><Copy aria-hidden="true" /> Nhân bản</button>}
                 {(selPl || selFu) && <button type="button" onClick={() => set(p => E.toggleLock(p, sel), (selPl ?? selFu)!.locked ? 'Đã mở khoá' : 'Đã khoá — tạo lại phương án sẽ giữ nguyên vị trí này')}>{(selPl ?? selFu)!.locked ? <><Unlock aria-hidden="true" /> Mở khoá</> : <><Lock aria-hidden="true" /> Khoá</>}</button>}
-                {selPl && project.floors.length > 1 && <label className="gs-movefloor"><span>Chuyển tầng</span><select value={selPl.floorId} disabled={!!selPl.locked} onChange={e => { const r = E.moveToFloor(project, selPl.id, e.target.value, catalog); commit(r.project, r.placed ? 'Đã chuyển máy sang tầng khác' : 'Tầng đích hết chỗ hợp lệ — máy đặt giữa sàn (tô đỏ)'); setFloorId(e.target.value); }}>{sorted.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select></label>}
+                {selPl && project.floors.length > 1 && <label className="gs-movefloor"><span>Chuyển tầng</span><select value={selPl.floorId} disabled={!!selPl.locked} onChange={e => { const r = E.moveToFloor(project, selPl.id, e.target.value, catalog); commit(r.project, r.placed ? 'Đã chuyển máy sang tầng khác' : 'Tầng đích hết chỗ — máy đặt giữa sàn (tô đỏ)'); setFloorId(e.target.value); }}>{sorted.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select></label>}
                 <button type="button" className="is-danger" disabled={!!(selPl?.locked || selFu?.locked)} onClick={() => { set(p => E.removeItem(p, sel)); setSel(null); }}><Trash2 aria-hidden="true" /> Xoá</button>
               </div>
             )}
             {notice && <p className="gs-notice" role="status">{notice}</p>}
-            {gl === 'ok' && !sel && <p className="gp-hint">Kéo để di chuyển · R xoay · Ctrl+Z hoàn tác · kéo nền để xoay góc nhìn</p>}
+            {gl === 'ok' && !sel && <p className="gp-hint">{custom ? 'Kéo thiết bị để di chuyển · R xoay · Ctrl+Z hoàn tác' : 'Kéo nền để xoay · cuộn hoặc chụm 2 ngón để phóng to'}</p>}
           </div>
         </div>
-      </div>
 
-      {/* ----- Phương án đang chọn: lý do, kiểm tra, chi phí, gửi ----- */}
+        {/* ----- Tùy chỉnh: chỉ mở khi khách bấm, mỗi lần một mục ----- */}
+        {custom && (
+          <aside className="gs-side" aria-label="Tùy chỉnh phương án">
+            <div className="gs-side__head">
+              <b>Tùy chỉnh</b>
+              <span className="gs-side__tools">
+                <button type="button" className="gs-icon" onClick={undo} disabled={!hist.current.past.length} title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác"><Undo2 /></button>
+                <button type="button" className="gs-icon" onClick={redo} disabled={!hist.current.future.length} title="Làm lại (Ctrl+Y)" aria-label="Làm lại"><Redo2 /></button>
+                <button type="button" className="gs-icon" onClick={() => setCustom(false)} aria-label="Đóng tùy chỉnh"><X /></button>
+              </span>
+            </div>
+            <div className="gs-menu" role="tablist">
+              {SIDE_TABS.map(([k, l, ic]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)}>{ic}<span>{l}</span></button>)}
+            </div>
+            {tab === 'plan' && <>
+              <Seg label="Mặt bằng" value={planSub} options={[['floors', 'Tầng, cửa, cầu thang'], ['brief', 'Nhu cầu & ngân sách']]} onChange={setPlanSub} />
+              {planSub === 'floors' ? <FloorsPanel p={project} floor={floor} setFloorId={setFloorId} selectItem={setSel} act={{
+                updateFloor: (id, patch) => set(p => E.updateFloor(p, id, patch)),
+                addFloor: () => set(p => E.addFloor(p), 'Đã thêm tầng — bấm "Tạo lại phương án" trong mục Nhu cầu để xếp máy'),
+                duplicateFloor: id => set(p => E.duplicateFloor(p, id), 'Đã sao chép tầng'),
+                removeFloor: id => set(p => E.removeFloor(p, id), 'Đã xoá tầng'),
+                addFixture: kind => { const r = E.addFixture(project, floor.id, kind); commit(r.project, `Đã thêm ${FIXTURE_KINDS[kind].label.toLowerCase()} — kéo để đặt đúng chỗ`); setSel(r.id); },
+                addLink: (kind, fl) => { const r = E.addLink(project, kind, fl); commit(r.project, `Đã thêm ${LINK_KINDS[kind].label.toLowerCase()}`); setSel(r.id); },
+                lockFloor: locked => set(p => E.lockFloor(p, floor.id, locked), locked ? 'Đã khoá toàn bộ tầng' : 'Đã mở khoá tầng')
+              }} /> : <BriefPanel p={project} set={fn => set(fn)} equipment={equipment} onRegenerate={() => regenerate(project)} />}
+            </>}
+            {tab === 'eqrec' && <>
+              <Seg label="Thiết bị và lễ tân" value={eqSub} options={[['eq', 'Thiết bị'], ['reception', 'Lễ tân']]} onChange={setEqSub} />
+              {eqSub === 'eq' ? <EquipmentPanel equipment={equipment} p={project} floor={floor} onMust={id => set(p => ({ ...p, brief: { ...p.brief, mustHave: p.brief.mustHave.includes(id) ? p.brief.mustHave.filter(x => x !== id) : [...p.brief.mustHave, id] } }))}
+                onAdd={eq => { if (!option) return; const r = E.addEquipment(project, floor.id, eq, catalog); commit(r.project, r.placed ? `Đã thêm ${eq.name}` : `Hết chỗ cho ${eq.name} — đã đặt giữa sàn (tô đỏ), hãy dời máy khác`); setSel(r.id); }} />
+                : <ReceptionPanel p={project} set={patch => set(p => E.setReception(p, patch))} />}
+            </>}
+            {tab === 'style' && <StylePanel p={project} floor={floor} set={fn => set(fn)} addDecor={(k: FurnKind) => { const F = FURNITURE[k]; set(p => E.addFurniture(p, floor.id, { kind: k, x: 0, z: 0, rot: 0, w: F.w, d: F.d, group: 'decor' }), `Đã thêm ${F.label.toLowerCase()} — kéo để đặt`); }} />}
+            {tab === 'assistant' && extras?.assistant?.({ project, commit, floorId: floor.id })}
+            {tab === 'sim' && extras?.sim?.({ project, catalog, floorId: floor.id, setFloorId, saveSim, setPeople: pushPeople, setHeat, onPick: fn => { pickRef.current = fn; } })}
+            <p className="gs-side__foot">
+              <button type="button" className="gs-link" onClick={() => setCompare(c => !c)}>So sánh cả {project.options.length} phương án</button>
+              <button type="button" className="gs-link" onClick={() => void save()} disabled={share.busy}>{share.busy ? 'Đang lưu…' : project.code ? `Lưu (${project.code})` : 'Lưu & lấy đường dẫn'}</button>
+            </p>
+          </aside>
+        )}
+      </div>
+      {(share.url || share.error) && (
+        <p className={`gs-share${share.error ? ' is-error' : ''}`} role="status">
+          {share.error || <><Share2 aria-hidden="true" /> Đã lưu. Mở lại phương án bằng đường dẫn: <a href={share.url}>{share.url}</a> <button type="button" onClick={() => { void navigator.clipboard?.writeText(share.url); setNotice('Đã chép đường dẫn'); }}><Copy aria-hidden="true" /> Chép</button></>}
+        </p>
+      )}
+
+      {/* ----- Ý chính, lưu ý, chi phí, gửi tư vấn ----- */}
       {option && (
         <section className="gs-below">
           <div className="gs-col">
-            <h2>Phương án {optionCode(project, option)} · {STRATEGIES[option.strategy].label} <small>phiên bản {option.version}</small></h2>
-            <label className="gs-text gs-inline"><span>Đổi kiểu bố trí</span><select value={option.strategy} onChange={e => changeStrategy(project.active, e.target.value as Strategy)}>{STRATEGY_LIST.map(s => <option key={s} value={s}>{STRATEGIES[s].label}</option>)}</select></label>
-            <ul className="gs-reasons">{option.reasons.map((r, i) => <li key={i}>{r}</li>)}{option.changes.map((r, i) => <li key={'c' + i} className="is-change">{r}</li>)}</ul>
-            {option.dropped.length > 0 && <details className="gs-dropped"><summary>{option.dropped.length} máy chưa đặt được</summary><ul>{option.dropped.map((d, i) => <li key={i}>{catalog.get(d.eqId)?.name ?? d.eqId} — {project.floors.find(f => f.id === d.floorId)?.name}: {d.reason}</li>)}</ul><p className="gs-note">Đề xuất: đổi kiểu bố trí, thu nhỏ sảnh lễ tân, bỏ bớt vùng không dùng, hoặc chọn máy nhỏ hơn.</p></details>}
-            <h3><TriangleAlert aria-hidden="true" /> Kiểm tra bố trí {errors.length ? <em className="is-bad">{errors.length} lỗi</em> : <em className="is-ok"><Check aria-hidden="true" /> đạt</em>}</h3>
-            {errors.length > 0 && <ul className="gs-issues">{errors.slice(0, 30).map((i, k) => <li key={k}><button type="button" onClick={() => goIssue(i.id, i.floorId)}>{project.floors.length > 1 ? `${project.floors.find(f => f.id === i.floorId)?.name}: ` : ''}{i.msg}</button></li>)}</ul>}
-            {!!validation?.verify.length && <><h3>Cần xác minh trước khi triển khai</h3><ul className="gs-verify">{validation.verify.map((v, i) => <li key={i}>{v}</li>)}</ul></>}
+            <h2>Điểm chính của phương án</h2>
+            <ul className="gs-points">{points.map((p, i) => <li key={i}>{p}</li>)}</ul>
+            {notes.length > 0 && <>
+              <h3><TriangleAlert aria-hidden="true" /> Cần lưu ý</h3>
+              <ul className="gs-notes">{notes.slice(0, 4).map((n, i) => <li key={i}>{n.text}{n.fix && <button type="button" className="gs-link" onClick={fixFirst}>Xem chỗ cần chỉnh</button>}</li>)}</ul>
+              {notes.length > 4 && <details className="gs-notesmore"><summary>Xem thêm {notes.length - 4} lưu ý</summary><ul className="gs-notes">{notes.slice(4).map((n, i) => <li key={i}>{n.text}</li>)}</ul></details>}
+            </>}
+            {isAdmin && (
+              <details className="gs-admin">
+                <summary>Chi tiết kỹ thuật (chỉ quản trị viên thấy)</summary>
+                <p>Mã {optionCode(project, option)} · phiên bản {option.version} · mã bố trí {layoutHash(project, option)}</p>
+                <ul className="gs-reasons">{option.reasons.map((r, i) => <li key={i}>{r}</li>)}{option.changes.map((r, i) => <li key={'c' + i} className="is-change">{r}</li>)}</ul>
+                {option.dropped.length > 0 && <><b>Máy chưa đặt được</b><ul>{option.dropped.map((d, i) => <li key={i}>{catalog.get(d.eqId)?.name ?? d.eqId} — {project.floors.find(f => f.id === d.floorId)?.name}: {d.reason}</li>)}</ul></>}
+                {errors.length > 0 && <><b>Lỗi kiểm tra hình học</b><ul className="gs-issues">{errors.map((i, k) => <li key={k}><button type="button" onClick={() => { setCustom(true); goIssue(i.id, i.floorId); }}>{i.msg}</button></li>)}</ul></>}
+                {!!validation?.verify.length && <><b>Cần xác minh (đầy đủ)</b><ul>{validation.verify.map((v, i) => <li key={i}>{v}</li>)}</ul></>}
+              </details>
+            )}
           </div>
           <div className="gs-col">
-            <h2>Chi phí {project.floors.length > 1 ? 'từng tầng & toàn công trình' : `phòng ${fmtArea(floor.w * floor.l)}`}</h2>
-            <CostTable cost={cost} />
-            <p className="gp-note">Giá thiết bị theo bảng giá đối tác thietbigym.vn; nội thất là khoảng giá tham khảo (giả định). Chưa gồm vận chuyển, lắp đặt, thi công, điện. DANAVA xác nhận báo giá chính thức sau khảo sát.</p>
+            <h2>Chi phí dự kiến</h2>
+            <p className="gs-bigcost">{shortVND(cost.range[0])} – {shortVND(cost.range[1])}</p>
+            <ul className="gs-costbrief">
+              <li><span>Thiết bị + thảm sàn đã có giá</span><b>{formatVND(cost.priced)}</b></li>
+              <li><span>Nội thất, lễ tân, trang trí (tham khảo)</span><b>{shortVND(cost.furnEst[0])} – {shortVND(cost.furnEst[1])}</b></li>
+              {cost.unpricedCount > 0 && <li className="is-warn"><span>{cost.unpricedCount} máy chưa có giá</span><b>DANAVA báo sau</b></li>}
+              {cost.budget > 0 && <li className={cost.overBudget ? 'is-bad' : 'is-ok'}><span>So với ngân sách {shortVND(cost.budget)}</span><b>{cost.overBudget ? `vượt ${shortVND(cost.priced - cost.budget)}` : `còn ${shortVND(cost.budget - cost.priced)}`}</b></li>}
+            </ul>
+            <details className="gs-costdetail"><summary>Xem chi tiết chi phí</summary><CostTable cost={cost} /><p className="gp-note">Giá thiết bị theo bảng giá đối tác thietbigym.vn; nội thất là khoảng tham khảo. Chưa gồm vận chuyển, lắp đặt, thi công, điện.</p></details>
             <div className="gs-send" id="gs-send">
               {form.done ? <p className="gp-done" role="status">{form.done}</p> : <>
-                <button type="button" className="s-btn s-btn--primary s-btn--lg" onClick={() => setForm(f => ({ ...f, open: !f.open }))}><Send aria-hidden="true" /> Nhận tư vấn phương án này</button>
+                {!form.open && <button type="button" className="s-btn s-btn--primary s-btn--lg gs-wide" onClick={() => setForm(f => ({ ...f, open: true }))}><Send aria-hidden="true" /> Nhận tư vấn phương án này</button>}
                 {form.open && (
                   <form className="gp-form" onSubmit={send}>
+                    <p className="gp-form__wide gs-formlead">Để lại liên hệ — DANAVA nhận kèm đúng phương án, ảnh 3D và chi phí bạn đang xem.</p>
                     <label>Họ và tên<input required minLength={2} maxLength={150} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} autoComplete="name" /></label>
                     <label>Số điện thoại<input required type="tel" maxLength={25} value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} autoComplete="tel" /></label>
                     <label className="gp-form__wide">Ghi chú (tuỳ chọn)<textarea rows={2} maxLength={1000} value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))} /></label>
-                    <div className="gp-form__wide gs-toggles"><label className="gs-toggle"><input type="checkbox" checked={form.studio} onChange={e => setForm(f => ({ ...f, studio: e.target.checked }))} /><span>Quan tâm thêm DANAVA Studio (quản lý hội viên, check-in)</span></label><label className="gs-toggle"><input type="checkbox" checked={form.marketing} onChange={e => setForm(f => ({ ...f, marketing: e.target.checked }))} /><span>Quan tâm thêm marketing khai trương</span></label></div>
+                    <details className="gp-form__wide gs-formmore"><summary>Quan tâm thêm dịch vụ khác?</summary><div className="gs-toggles"><label className="gs-toggle"><input type="checkbox" checked={form.studio} onChange={e => setForm(f => ({ ...f, studio: e.target.checked }))} /><span>Phần mềm DANAVA Studio</span></label><label className="gs-toggle"><input type="checkbox" checked={form.marketing} onChange={e => setForm(f => ({ ...f, marketing: e.target.checked }))} /><span>Marketing khai trương</span></label></div></details>
                     {form.error && <p className="gp-error" role="alert">{form.error}</p>}
-                    <button type="submit" className="s-btn s-btn--primary" disabled={form.sending}>{form.sending ? 'Đang lưu & gửi…' : `Gửi phương án ${option.letter}`}</button>
-                    <small className="gp-form__wide gs-note">Hệ thống lưu phương án kèm ảnh tổng thể và mã {project.code || '(cấp khi gửi)'} để DANAVA mở lại đúng bản bạn chọn.</small>
+                    <button type="submit" className="s-btn s-btn--primary s-btn--lg gp-form__wide" disabled={form.sending}>{form.sending ? 'Đang gửi…' : 'Gửi yêu cầu tư vấn'}</button>
                   </form>
                 )}
               </>}
@@ -371,13 +434,40 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
           </div>
         </section>
       )}
-      {option && !form.done && <a className="gs-sticky" href="#gs-send" onClick={() => setForm(f => ({ ...f, open: true }))}><Send aria-hidden="true" /> Nhận tư vấn phương án {option.letter}</a>}
+      {option && !form.done && <button type="button" className="gs-sticky" onClick={openSend}><Send aria-hidden="true" /> Nhận tư vấn phương án này</button>}
       <p className="gs-foot">
-        <button type="button" className="gs-link" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng mã vẫn còn).')) { setProject(null); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}>Bắt đầu thiết kế mới</button>
-        <span>· Dữ liệu phương án lưu trên trình duyệt của bạn; chỉ gửi lên DANAVA khi bạn bấm Lưu hoặc Gửi.</span>
+        <button type="button" className="gs-link" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) { setProject(null); setCustom(false); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}>Bắt đầu lại</button>
       </p>
     </div>
   );
+}
+
+/** Tối đa 3 ý chính cho khách (ngôn ngữ đơn giản) */
+function keyPoints(p: Project, o: NonNullable<ReturnType<typeof activeOption>>, catalog: Map<string, Equipment>) {
+  const out: string[] = [STRATEGIES[o.strategy].hint + '.'];
+  const g = { cardio: 0, machine: 0, free: 0 };
+  for (const pl of o.placements) { const e = catalog.get(pl.eqId); const k = e ? groupOf(e) : null; if (k) g[k]++; }
+  const zone = o.furniture.find(f => f.kind === 'turf' || f.kind === 'mat-zone');
+  if (p.reception.enabled) out.push('Lễ tân ngay cửa vào: hội viên quét QR rồi đi thẳng vào khu tập, khách mới có góc ngồi chờ và tư vấn riêng.');
+  else if (zone) out.push(`Khu tập chức năng khoảng ${Math.round(zone.w * zone.d)} m² ở giữa phòng cho kéo sled, lunge, lớp nhóm nhỏ.`);
+  out.push(`${o.placements.length} thiết bị: ${g.cardio} cardio · ${g.machine} máy tạ · ${g.free} khung tạ & tạ tự do${p.floors.length > 1 ? `, chia trên ${p.floors.length} tầng` : ''}.`);
+  return out.slice(0, 3);
+}
+/** Lưu ý ngắn, dễ hiểu (chi tiết kỹ thuật chỉ quản trị viên thấy) */
+function attention(p: Project, o: NonNullable<ReturnType<typeof activeOption>>, catalog: Map<string, Equipment>, cost: ReturnType<typeof costOf>, v: ReturnType<typeof validateOption> | null) {
+  const out: { text: string; fix?: boolean }[] = [];
+  const errs = v?.issues.filter(i => i.level === 'error').length ?? 0;
+  if (errs) out.push({ text: `${errs} vị trí thiết bị đang chồng lên nhau hoặc chắn lối đi.`, fix: true });
+  if (cost.overBudget) out.push({ text: `Vượt ngân sách khoảng ${shortVND(cost.priced - cost.budget)} — có thể nhờ ANNA giảm chi phí.` });
+  if (cost.unpricedCount) out.push({ text: `${cost.unpricedCount} máy chưa có giá niêm yết — DANAVA sẽ báo giá khi tư vấn.` });
+  if (o.dropped.length) out.push({ text: `${o.dropped.length} máy chưa đủ chỗ đặt nên chưa đưa vào phương án.` });
+  for (const t of v?.verify ?? []) {
+    if (/tải trọng/.test(t)) out.push({ text: 'Tầng trên có thiết bị nặng: cần kỹ sư kiểm tra sàn trước khi lắp.' });
+    else if (/ổ cắm|220 V/.test(t)) out.push({ text: 'Máy chạy bộ cần ổ điện riêng gần máy.' });
+    else if (/ước tính/.test(t)) out.push({ text: 'Một số kích thước máy đang là ước tính, sẽ đo chính xác khi khảo sát.' });
+    else if (/đưa máy lên|thang máy/.test(t)) out.push({ text: 'Máy lớn ở tầng trên: cần kiểm tra lối đưa máy lên (cầu thang / thang máy).' });
+  }
+  return out.filter((x, i, a) => a.findIndex(y => y.text === x.text) === i);
 }
 
 /* ---------- So sánh 3 phương án (cùng danh sách máy & ngân sách) ---------- */

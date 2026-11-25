@@ -330,3 +330,98 @@
 .gs-scn summary { cursor: pointer; font-size: 13px; font-weight: 800; }
 .gs-aiscn { display: grid; gap: 6px; margin: 8px 0; }
 .gs-aiscn textarea { padding: 8px 10px; border: 1px solid #dfe4ee; border-radius: 10px; font: inherit; font-size: 13px; }
+
+/* ==========================================================================
+   Giao diện tinh gọn: tóm tắt + phòng 3D lớn; "Tùy chỉnh" mở bảng bên khi cần
+   ========================================================================== */
+/* Bước đầu */
+.gs-start { gap: 18px; width: min(680px, 100%); }
+.gs-start__lead { margin: -8px 0 0; color: var(--gs-muted); font-size: 15px; }
+.gs-cards--start { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.gs-cards--start button { padding: 12px 14px; text-align: center; }
+.gs-cards--start button b { font-size: 14.5px; }
+.gs-budgetrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.gs-chip { min-height: 40px; padding: 0 16px; border: 1.5px solid var(--gs-line); border-radius: 999px; background: #fff; color: var(--gs-navy); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.gs-chip.is-on { border-color: var(--gs-orange); background: #fff7f0; color: #c2410c; }
+.gs-budget.is-dim input { opacity: .55; }
+.gs-start__go { justify-self: stretch; min-height: 54px; font-size: 17px; }
+.gs-start__after { margin: -6px 0 0; color: var(--gs-muted); font-size: 13px; text-align: center; }
+.gs-start .gs-seg button { font-size: 15px; min-height: 40px; }
+
+/* Tóm tắt phương án */
+.gs-sum { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px 20px; margin-bottom: 12px; padding: 14px 16px; border: 1px solid var(--gs-line); border-radius: 22px; background: #fff; box-shadow: 0 20px 40px -36px rgba(19, 36, 79, .6); }
+.gs-sum__title { display: flex; align-items: center; gap: 10px; }
+.gs-sum__badge { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: linear-gradient(180deg, #ffa24a, #f26b1d); color: #fff; font-size: 19px; font-weight: 900; }
+.gs-sum__title small { display: block; color: var(--gs-muted); font-size: 12px; font-weight: 700; }
+.gs-sum__title b { font-size: 17px; }
+.gs-sum__facts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0; }
+.gs-sum__facts dt { color: var(--gs-muted); font-size: 12px; font-weight: 700; }
+.gs-sum__facts dd { margin: 0; font-size: 16px; font-weight: 800; }
+.gs-sum__act { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.gs-btn--lg { min-height: 44px; padding: 0 16px; border-radius: 999px; font-size: 14px; }
+.gs-btn.is-on { border-color: var(--gs-navy); background: var(--gs-navy); color: #fff; }
+.gs-cta { min-height: 46px; padding: 0 20px; font-size: 15px; }
+
+/* Bố cục: mặc định phòng 3D chiếm toàn bộ; Tùy chỉnh mở bảng bên phải */
+.gs-main { grid-template-columns: minmax(0, 1fr); }
+.gs.is-custom .gs-main { grid-template-columns: minmax(0, 1fr) 380px; }
+.gs-stage { height: min(74vh, 800px); }
+.gs-floorname { padding: 0 6px; color: var(--gs-muted); font-size: 13.5px; font-weight: 700; }
+.gs-views .gs-more.is-on { background: #fff; color: var(--gs-navy); }
+.gs-moreviews { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px; border-radius: 14px; background: #f6f8fb; }
+.gs-moreviews button { display: inline-flex; align-items: center; gap: 5px; height: 34px; padding: 0 12px; border: 1px solid var(--gs-line); border-radius: 999px; background: #fff; color: var(--gs-navy); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.gs-moreviews button svg { width: 15px; height: 15px; }
+.gs-moreviews button.is-on { border-color: var(--gs-orange); color: #c2410c; }
+.gs-moreviews .gs-toggle { margin-left: 4px; }
+.gs-toolbar--info { background: rgba(19, 36, 79, .92); }
+
+.gs-side { max-height: min(84vh, 880px); }
+.gs-side__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gs-side__head b { font-size: 16px; }
+.gs-side__tools { display: inline-flex; gap: 4px; }
+.gs-menu { display: grid; gap: 4px; }
+.gs-menu button { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border: 1px solid var(--gs-line); border-radius: 14px; background: #fff; color: var(--gs-navy); font: inherit; font-size: 14.5px; font-weight: 700; text-align: left; cursor: pointer; }
+.gs-menu button svg { width: 18px; height: 18px; color: var(--gs-orange); }
+.gs-menu button.is-on { border-color: var(--gs-orange); background: #fff7f0; }
+.gs-side .gs-seg { flex: none; }
+.gs-side__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin: 0; font-size: 13px; }
+
+/* Ý chính, lưu ý, chi phí */
+.gs-points { display: grid; gap: 10px; margin: 6px 0 0; padding: 0; list-style: none; }
+.gs-points li { position: relative; padding-left: 28px; font-size: 15px; line-height: 1.55; }
+.gs-points li::before { content: '✓'; position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #e3f6ea; color: #137a43; font-size: 12px; font-weight: 900; }
+.gs-notes { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.gs-notes li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 9px 12px; border-radius: 12px; background: #fffbeb; color: #78350f; font-size: 14px; line-height: 1.5; }
+.gs-notesmore summary, .gs-admin summary, .gs-costdetail summary, .gs-formmore summary { cursor: pointer; color: var(--gs-navy); font-size: 13.5px; font-weight: 700; }
+.gs-notesmore { margin-top: 6px; }
+.gs-admin { margin-top: 14px; padding: 10px 12px; border: 1px dashed #c7d2e8; border-radius: 12px; background: #f8fafc; font-size: 12.5px; }
+.gs-admin ul { margin: 6px 0; padding-left: 18px; }
+.gs-bigcost { margin: 0 0 8px; color: var(--gs-navy); font-size: clamp(24px, 3vw, 32px); font-weight: 900; }
+.gs-costbrief { display: grid; gap: 4px; margin: 0 0 10px; padding: 0; list-style: none; }
+.gs-costbrief li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 8px 12px; border-radius: 10px; background: #f6f8fb; font-size: 14px; }
+.gs-costbrief li.is-warn { background: #fff7ed; color: #9a4a06; }
+.gs-costbrief li.is-bad { background: #fef2f2; color: #b42318; }
+.gs-costbrief li.is-ok { background: #e3f6ea; color: #137a43; }
+.gs-costdetail { margin-bottom: 12px; }
+.gs-costdetail[open] summary { margin-bottom: 8px; }
+.gs-formlead { margin: 0; color: var(--gs-muted); font-size: 13.5px; }
+.gs-formmore .gs-toggles { margin: 8px 0 0; }
+button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
+
+@media (max-width: 1100px) {
+  .gs.is-custom .gs-main { grid-template-columns: 1fr; }
+  .gs-sum { grid-template-columns: 1fr; }
+  .gs-sum__act { justify-content: stretch; }
+  .gs-sum__act > * { flex: 1 1 auto; }
+  .gs-stage { height: 62vh; min-height: 360px; }
+  .gs-side { max-height: none; }
+}
+@media (max-width: 640px) {
+  .gs-sum { padding: 12px; }
+  .gs-sum__facts { gap: 4px 16px; }
+  .gs-sum__facts dd { font-size: 14.5px; }
+  .gs-sum .gs-cta { display: none; }
+  .gs-stage { height: 56vh; }
+  .gs-moreviews button { flex: 1 1 auto; justify-content: center; }
+}
+@media (max-width: 640px) { .gs .gs-views button span { display: inline; } .gs .gs-views button { padding: 0 9px; font-size: 12px; } }
