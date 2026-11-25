@@ -25,7 +25,7 @@ const cd = (data: SiteData, k: string, def: string, label: string, rich = false)
 
 export function ContactDock() {
   const { data } = useSite();
-  const { zalo, messenger, instagram, tel, phone } = contactChannels(data);
+  const { zalo, messenger, tel, phone } = contactChannels(data);
   return (
     <aside className="cd" aria-label={txt(data, 'contactdock.aria', 'Liên hệ nhanh')}>
       {zalo && (
@@ -36,11 +36,6 @@ export function ContactDock() {
       {messenger && (
         <a className="cd__btn cd__btn--messenger" href={messenger} target="_blank" rel="noopener noreferrer" aria-label={txt(data, 'contactdock.messenger-aria', 'Nhắn Messenger cho DANAVA (mở tab mới)')}>
           <BrandIcon name="messenger" />{(() => { const x = cd(data, 'dock.messenger', 'Nhắn Messenger', 'Chú thích nút Messenger'); return <span className="cd__tip" aria-hidden="true" {...x.a}>{x.v}</span>; })()}
-        </a>
-      )}
-      {instagram && (
-        <a className="cd__btn cd__btn--instagram" href={instagram} target="_blank" rel="noopener noreferrer" aria-label={txt(data, 'contactdock.instagram-aria', 'Instagram của DANAVA (mở tab mới)')}>
-          <BrandIcon name="instagram" />{(() => { const x = cd(data, 'dock.instagram', 'Instagram', 'Chú thích nút Instagram'); return <span className="cd__tip" aria-hidden="true" {...x.a}>{x.v}</span>; })()}
         </a>
       )}
       {tel && (

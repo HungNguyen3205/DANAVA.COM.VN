@@ -154,8 +154,27 @@
 .s-app .cd__btn { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; color: #fff; box-shadow: 0 10px 22px -12px rgba(11, 19, 43, .6); transition: transform .2s ease; }
 .s-app .cd__btn--zalo { background: #0068ff; }
 .s-app .cd__btn--messenger { background: linear-gradient(135deg, #00b2ff 0%, #006aff 45%, #a033ff 100%); }
-.s-app .cd__btn--instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
 .s-app .cd__btn--call { background: #f26b1d; }
+/* Nút gọi: rung kiểu chuông điện thoại — rung vài nhịp rồi nghỉ, kèm vòng sóng lan ra */
+.s-app .cd__btn--call > svg { animation: cd-ring 2.4s ease-in-out infinite; transform-origin: 50% 50%; }
+.s-app .cd__btn--call::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; background: #f26b1d; z-index: -1;
+  animation: cd-ring-wave 2.4s ease-out infinite;
+}
+@keyframes cd-ring {
+  0%, 40%, 100% { transform: rotate(0); }
+  4%, 12%, 20%, 28% { transform: rotate(-16deg); }
+  8%, 16%, 24%, 32% { transform: rotate(16deg); }
+}
+@keyframes cd-ring-wave {
+  0% { transform: scale(1); opacity: .55; }
+  60%, 100% { transform: scale(1.65); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-app .cd__btn--call > svg, .s-app .cd__btn--call::before { animation: none; }
+}
+/* Instagram ở hàng mạng xã hội chân trang: màu chuyển sắc của Instagram */
+.s-app .s-footer .s-footer__social a.soc--instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%) !important; }
 .s-app .cd__btn .br-icon { color: #fff; }
 .s-app .cd__btn > svg { width: 24px; height: 24px; }
 .s-app .cd__btn > .br-icon--zalo { width: 36px; height: 36px; }

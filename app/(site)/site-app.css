@@ -162,7 +162,10 @@
 
 /* Banner đồng ý thống kê: gọn hơn trên điện thoại, 2 nút chia đôi hàng */
 @media (max-width: 680px) {
-  .consent-banner { left: 12px; right: 12px; padding: 14px 16px; gap: 10px; font-size: 14px; line-height: 1.5; border-radius: 16px; }
-  .consent-banner p { font-size: 13.5px; }
-  .consent-banner button { flex: 1 1 0; min-height: 44px; }
+  aside.consent-banner { left: 12px; right: 12px; grid-template-columns: 44px minmax(0, 1fr); gap: 12px 14px; padding: 18px 16px 16px; font-size: 13.5px; line-height: 1.55; border-radius: 20px; }
+  .consent-banner__icon { width: 44px; height: 44px; }
+  .consent-banner__icon svg { width: 20px; height: 20px; }
+  aside.consent-banner p.consent-banner__title { font-size: 15px; }
+  .consent-banner__actions { gap: 8px; }
+  aside.consent-banner .consent-banner__btn { flex: 1 1 0; min-height: 46px; padding: 0 14px; font-size: 14.5px; }
 }

@@ -346,11 +346,30 @@ body:has(.s-app) { margin: 0; background: var(--s-bg); color: var(--s-ink); font
 /* ==========================================================================
    Consent banner (Analytics component)
    ========================================================================== */
-.consent-banner { position: fixed; z-index: 90; left: 16px; right: 16px; bottom: 16px; max-width: 560px; margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 10px; padding: 18px 20px; background: #fff; color: #0b132b; border: 1px solid #e5e8ef; border-radius: 18px; box-shadow: 0 2px 4px rgba(11, 19, 43, .04), 0 24px 56px rgba(11, 19, 43, .14); font-family: var(--s-font); font-size: 14.5px; line-height: 1.5; }
-.consent-banner p { margin: 0; flex: 1 1 100%; color: #334155; }
-.consent-banner a { color: #2b4294; font-weight: 700; text-decoration: underline; }
-.consent-banner button { min-height: 40px; padding: 0 18px; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer; border: 1.5px solid #0b132b; background: transparent; color: #0b132b; }
-.consent-banner button:last-child { background: #2b4294; border-color: #2b4294; color: #fff; }
+/* Thẻ trắng bo tròn: biểu tượng cookie trong vòng tròn xanh nhạt, tiêu đề đậm, đoạn mô tả có link chính sách,
+   hai nút viên thuốc canh phải ("Chỉ cần thiết" viền mảnh, "Đồng ý tất cả" cam chuyển sắc). */
+aside.consent-banner {
+  position: fixed; z-index: 90; left: 16px; right: 16px; bottom: 16px; max-width: 760px; margin-left: auto;
+  display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: start; gap: 18px 22px; padding: 26px 30px 24px;
+  background: #fff; color: #13244f; border: 1px solid #e6eaf2; border-radius: 26px;
+  box-shadow: 0 2px 4px rgba(11, 19, 43, .04), 0 28px 60px -18px rgba(11, 19, 43, .28);
+  font-family: var(--s-font); font-size: 15px; line-height: 1.65;
+}
+.consent-banner__icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: #e8edf7; color: #13244f; }
+.consent-banner__icon svg { width: 24px; height: 24px; }
+aside.consent-banner p { margin: 0; flex: none; font-size: inherit; color: #5b6478; }
+aside.consent-banner p.consent-banner__title { margin-bottom: 4px; color: #13244f; font-size: 17px; font-weight: 800; line-height: 1.4; }
+aside.consent-banner a { color: #2b4294; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+.consent-banner__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; }
+aside.consent-banner .consent-banner__btn {
+  flex: none; min-height: 52px; padding: 0 30px; border-radius: 999px; font: inherit; font-size: 16px; font-weight: 800; white-space: nowrap; cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+aside.consent-banner .consent-banner__btn--ghost { border: 1px solid #dfe3ec; background: #fff; color: #13244f; }
+aside.consent-banner .consent-banner__btn--ghost:hover { background: #f5f7fb; }
+aside.consent-banner .consent-banner__btn--accept { border: 0; background: linear-gradient(180deg, #ffa024, #f26b1d); color: #fff; box-shadow: 0 14px 26px -14px rgba(242, 107, 29, .9); }
+aside.consent-banner .consent-banner__btn--accept:hover { transform: translateY(-1px); box-shadow: 0 18px 30px -14px rgba(242, 107, 29, .95); }
+aside.consent-banner .consent-banner__btn:focus-visible { outline: 3px solid #13244f; outline-offset: 3px; }
 
 /* ==========================================================================
    Motion

@@ -268,7 +268,7 @@ export function Footer() {
   const services = sortServices(data.services);
   const phone = data.phone || CONTACT.phone;
   const email = data.email || CONTACT.email;
-  const { socials } = contactChannels(data);
+  const { socials, instagram } = contactChannels(data);
 
   return (
     <footer className="s-footer" {...cmsBlock('Chân trang', 'site-footer', { panel: 'site', scope: 'global' })}>
@@ -284,14 +284,19 @@ export function Footer() {
               <a href={`mailto:${email}`}><Mail aria-hidden="true" /><span {...cmsText('site.email', 'Email liên hệ', { scope: 'global' })}>{email}</span></a>
               <a href={co.mapUrl} target="_blank" rel="noopener noreferrer"><MapPin aria-hidden="true" /><span {...cmsText('block.company.address', 'Địa chỉ (chân trang, trang Liên hệ)', { scope: 'global' })}>{co.address}</span></a>
             </div>
-            {/* Zalo, Messenger, Hotline (và Instagram) nằm ở cột nút nổi mép phải (ContactDock), không lặp lại ở đây */}
-            {socials.some(s => s.key !== 'zalo') && (
+            {/* Zalo, Messenger, Hotline nằm ở cột nút nổi mép phải (ContactDock), không lặp lại ở đây */}
+            {(instagram || socials.some(s => s.key !== 'zalo')) && (
               <ul className="s-footer__social" aria-label="Mạng xã hội của DANAVA">
                 {socials.filter(s => s.key !== 'zalo').map(s => (
                   <li key={s.key}>
                     <a className={`soc soc--${s.key}`} href={s.href} target="_blank" rel="noopener noreferrer" title={s.name} aria-label={`${s.name} của DANAVA (mở tab mới)`}><BrandIcon name={s.key} /></a>
                   </li>
                 ))}
+                {instagram && (
+                  <li>
+                    <a className="soc soc--instagram" href={instagram} target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram của DANAVA (mở tab mới)"><BrandIcon name="instagram" /></a>
+                  </li>
+                )}
               </ul>
             )}
           </div>
