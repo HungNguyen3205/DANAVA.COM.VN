@@ -267,7 +267,8 @@ function LogoField({ value, name, onChange }: { value: string; name: string; onC
   );
 }
 
-export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+/** Quản trị → Đối tác (part="clients") và Quản trị → Nhận xét khách hàng (part="testimonials"): hai mục riêng trên menu. */
+export function ProofEditor({ draft, setDraft, part }: { draft: SiteData; setDraft: (d: SiteData) => void; part: 'clients' | 'testimonials' }) {
   const clients = draft.clients || [];
   const tests = draft.testimonials || [];
   const projects = draft.projects || [];
@@ -303,8 +304,8 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
     </label>
   );
 
-  return (
-    <div className="admin-two">
+  if (part === 'clients') return (
+    <div className="pf-page">
       <section className="admin-panel">
         <div className="panel-heading">
           <h2>Khách hàng & đối tác đồng hành</h2>
@@ -402,27 +403,56 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
           </details>
         ))}
       </section>
+    </div>
+  );
+
+  return (
+    <div className="pf-page">
       <section className="admin-panel">
         <div className="panel-heading">
           <h2>Nhận xét khách hàng</h2>
-          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, testimonials: [...tests, { id: uid(), quote: '', name: '', role: '', company: '', projectId: '', image: '', source: '', permission: false, published: false }] })}>+ Thêm</button>
+          <button type="button" className="admin-secondary" onClick={() => setDraft({ ...draft, testimonials: [{ id: uid(), quote: '', name: '', role: '', company: '', projectId: '', image: '', source: '', permission: false, published: false }, ...tests] })}>+ Thêm</button>
         </div>
-        <p className="field-note">Chỉ nhập nhận xét thật, khách hàng đã đồng ý công bố. Nhận xét hiển thị trên trang chủ và trang dự án liên quan. Không đánh dấu sao/điểm đánh giá.</p>
-        {tests.map(t => (
-          <details key={t.id} className="adm-card">
-            <summary><b>{t.name || 'Chưa có tên'}</b> · {t.published && t.permission ? 'Đang hiển thị' : 'Ẩn'}</summary>
-            <Text label="Nội dung nhận xét" value={t.quote} area rows={4} max={1500} onChange={quote => setT(t.id, { quote })} />
-            <Text label="Người nhận xét" value={t.name} max={150} onChange={name => setT(t.id, { name })} />
-            <Text label="Chức danh" value={t.role} max={150} onChange={role => setT(t.id, { role })} />
-            <Text label="Doanh nghiệp" value={t.company} max={150} onChange={company => setT(t.id, { company })} />
-            {projectSelect(t.projectId, projectId => setT(t.id, { projectId }))}
-            <MediaPicker label="Ảnh (tùy chọn, cần đồng ý của người trong ảnh)" value={t.image} onChange={image => setT(t.id, { image })} />
-            <Text label="Nguồn / bằng chứng đồng ý (nội bộ)" value={t.source} area max={500} onChange={source => setT(t.id, { source })} />
-            <Toggle label="Khách hàng đã đồng ý công bố" checked={t.permission} onChange={permission => setT(t.id, { permission, published: permission && t.published })} />
-            <Toggle label="Xuất bản" checked={t.published} onChange={published => setT(t.id, { published: published && t.permission && !!t.quote.trim() && !!t.name.trim() })} />
-            <button type="button" className="danger" onClick={() => setDraft({ ...draft, testimonials: tests.filter(x => x.id !== t.id) })}>Xóa</button>
-          </details>
-        ))}
+        <p className="field-note">Chỉ nhập nhận xét thật, khách hàng đã đồng ý công bố. Hiện trên trang chủ và trang dự án liên quan. Không chấm sao/điểm.</p>
+        {tests.length === 0 && <p className="adm-empty">Chưa có nhận xét nào. Bấm <b>+ Thêm</b> để nhập nhận xét đầu tiên.</p>}
+        {tests.map(t => {
+          const shown = t.published && t.permission;
+          return (
+            <details key={t.id} className="adm-card adm-entity">
+              <summary>
+                <span className="adm-entity__logo">{t.image ? <img src={t.image} alt="" width={40} height={40} loading="lazy" /> : (t.name || '?').slice(0, 1)}</span>
+                <span className="adm-entity__main">
+                  <b>{t.name || 'Chưa có tên'}</b>
+                  <small>{[t.role, t.company].filter(Boolean).join(' · ') || (t.quote ? '“' + t.quote.slice(0, 60) + '”' : 'Chưa có nội dung')}</small>
+                </span>
+                <span className={`adm-pill ${shown ? 'adm-pill--green' : 'adm-pill--muted'}`}>{shown ? 'Đang hiển thị' : 'Đang ẩn'}</span>
+              </summary>
+              <div className="pf">
+                <div className="pf-grid">
+                  <PF label="Nội dung nhận xét" value={t.quote} max={1500} area wide placeholder="Nguyên văn lời khách hàng…" onChange={quote => setT(t.id, { quote })} />
+                  <PF label="Người nhận xét" value={t.name} max={150} placeholder="vd. Chị Lan" onChange={name => setT(t.id, { name })} />
+                  <PF label="Chức danh" value={t.role} max={150} placeholder="vd. Chủ phòng tập" onChange={role => setT(t.id, { role })} />
+                  <PF label="Doanh nghiệp" value={t.company} max={150} placeholder="vd. HARIVER Gym" onChange={company => setT(t.id, { company })} />
+                  <div className="pf-field">{projectSelect(t.projectId, projectId => setT(t.id, { projectId }))}</div>
+                </div>
+                <div className="pf-switches">
+                  <Switch on={shown} title="Hiện trên website" sub="Khách hàng đã đồng ý công bố"
+                    onChange={v => setT(t.id, { permission: v, published: v && !!t.quote.trim() && !!t.name.trim() })} />
+                </div>
+                <details className="pf-more">
+                  <summary>Thông tin thêm <small>không bắt buộc</small></summary>
+                  <div className="pf-grid">
+                    <div className="pf-field pf-field--wide"><MediaPicker label="Ảnh (cần đồng ý của người trong ảnh)" value={t.image} onChange={image => setT(t.id, { image })} /></div>
+                    <PF label="Nguồn / bằng chứng đồng ý (nội bộ)" value={t.source} max={500} area wide onChange={source => setT(t.id, { source })} />
+                  </div>
+                </details>
+                <div className="pf-foot">
+                  <button type="button" className="pf-delete" onClick={() => setDraft({ ...draft, testimonials: tests.filter(x => x.id !== t.id) })}>Xóa nhận xét</button>
+                </div>
+              </div>
+            </details>
+          );
+        })}
       </section>
     </div>
   );

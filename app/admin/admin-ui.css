@@ -917,3 +917,7 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
   .ax-scope .pf-logo { justify-items: start; }
   .ax-scope .pf-grid { grid-template-columns: 1fr; }
 }
+/* rãnh nút gạt là <span>: phải là khối mới nhận kích thước (thiếu dòng này → chấm tròn đè lên chữ) */
+.ax-scope .pf-switch__track { display: block; }
+/* Mỗi mục (Đối tác / Nhận xét) là một trang riêng: một cột, rộng vừa đọc */
+.ax-scope .pf-page { max-width: 920px; }

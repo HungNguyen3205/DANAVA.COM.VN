@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { DropdownMenu } from 'radix-ui';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  ArrowUpRight, Bell, Blocks, Briefcase, Building2, ChartColumn, Check, ChevronRight, ClipboardList, ContactRound, Handshake, ExternalLink, FileText, FolderOpen,
+  ArrowUpRight, Bell, Blocks, Briefcase, Building2, ChartColumn, Check, ChevronRight, ClipboardList, ContactRound, Handshake, MessageSquareQuote, ExternalLink, FileText, FolderOpen,
   Gauge, Globe, History, Image as ImageIcon, Inbox, KeyRound, Layers, LayoutGrid, Link2, LogOut, Menu, Navigation, Package, Palette, PanelLeftClose,
   PanelLeftOpen, PanelsTopLeft, PieChart, Plug, Plus, Rocket, Save, Search, Settings, Tags, Undo2, Users, Wrench, X, CircleAlert, type LucideIcon
 } from 'lucide-react';
@@ -51,7 +51,7 @@ type Props = {
 const ICONS: Record<string, LucideIcon> = {
   'tong-quan': LayoutGrid, 'chinh-sua': PanelsTopLeft, trang: PanelsTopLeft, 'landing-page': Rocket, menu: Navigation, 'giao-dien': Palette, 'mau-khoi': Blocks,
   'san-pham': Package, 'nhom-loai': Tags, 'bai-viet': FileText, 'du-an': Briefcase, 'thuong-hieu': Building2,
-  'khach-hang': Inbox, 'danh-ba': ContactRound, 'bieu-mau': ClipboardList, 'doi-tac': Handshake, 'thu-vien': ImageIcon,
+  'khach-hang': Inbox, 'danh-ba': ContactRound, 'bieu-mau': ClipboardList, 'doi-tac': Handshake, 'nhan-xet': MessageSquareQuote, 'thu-vien': ImageIcon,
   'thong-ke': ChartColumn, 'nguon-khach': PieChart, 'hieu-qua': Gauge,
   'cai-dat': Settings, 'tai-khoan': KeyRound, seo: Link2, 'tich-hop': Plug, 'nhat-ky': History
 };

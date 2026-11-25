@@ -48,7 +48,8 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
       { slug: 'khach-hang', label: 'Yêu cầu tư vấn', perm: 'leads.read', desc: 'Yêu cầu gửi từ website: phân công người phụ trách và theo dõi tiến độ.' },
       { slug: 'danh-ba', label: 'Danh bạ', perm: 'leads.read', desc: 'Mỗi khách hàng một dòng, gộp các lần gửi yêu cầu theo số điện thoại hoặc email.' },
       { slug: 'bieu-mau', label: 'Biểu mẫu', perm: 'leads.read', desc: 'Các biểu mẫu trên website và số yêu cầu mỗi biểu mẫu nhận được.' },
-      { slug: 'doi-tac', label: 'Đối tác', perm: 'content.read', desc: 'Khách hàng & đối tác đã hợp tác. Mục đã xác minh hiện ở khối logo trang chủ và được cộng vào con số “thương hiệu đã đồng hành”. Kèm nhận xét khách hàng.' },
+      { slug: 'doi-tac', label: 'Đối tác', perm: 'content.read', desc: 'Khách hàng & đối tác đã hợp tác. Mục đã xác minh hiện ở khối logo trang chủ và được cộng vào con số “thương hiệu đã đồng hành”.' },
+      { slug: 'nhan-xet', label: 'Nhận xét khách hàng', perm: 'content.read', desc: 'Lời nhận xét thật của khách hàng đã đồng ý công bố. Hiện trên trang chủ và trang dự án liên quan.' },
     ],
   },
   {
