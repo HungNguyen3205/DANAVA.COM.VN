@@ -748,5 +748,11 @@
 @media (prefers-reduced-motion: no-preference) {
   .hb-office:not(.is-qr) .hb-office__qrbtn { animation: hb-qr-drop .8s cubic-bezier(.34, 1.56, .64, 1) both, hb-qr-glow 1.8s ease-out .8s 6; }
 }
+/* Khung 3D hẹp (điện thoại): nhãn "… thương hiệu đã đồng hành" ở góc dưới trái sẽ đè lên nút "Mã QR Zalo"
+   → chuyển nhãn lên góc trên, ngay dưới nhãn "Văn phòng DANAVA"; mép dưới chỉ còn nút QR và nút đặt lại góc nhìn. */
+.hb-cover__3d.is-narrow .hb-float--b { top: 56px; bottom: auto; left: 16px; right: auto; }
+@media (max-width: 600px) {
+  .hb-cover__3d .hb-float--b { top: 56px; bottom: auto; left: 16px; right: auto; }
+}
 /* bảng QR đã có bóng riêng: bỏ vệt bóng của sa bàn */
 .hb-office.is-qr .hb-office__stage::before { opacity: 0; }
