@@ -150,6 +150,10 @@ export type Project = {
   options: DesignOption[];
   active: number;
   updatedAt: number;
+  /** kịch bản mô phỏng vận hành (lib/gym-sim.ts Scenario) — lưu cùng phương án */
+  scenario?: Record<string, unknown>;
+  /** tóm tắt lần mô phỏng gần nhất; layout = layoutHash lúc chạy (khác hiện tại → cần chạy lại) */
+  simRun?: { option: string; layout: string; at: number; source: string; visitors: number; peak: number; waitMachineSec: number; deskWaitSec: number; abandons: number };
 };
 
 /* ---------- Tiện ích ---------- */
@@ -330,9 +334,33 @@ export function normalizeProject(raw: unknown, known?: Set<string>): Project | s
     version: Math.round(num(r.version, 1, 1e6, 1)), title: str(r.title, 120, 'Phòng tập của tôi') || 'Phòng tập của tôi',
     brief, floors: floors.sort((a, b2) => a.level - b2.level), links, reception,
     brand: { accent: color(br.accent, '#f26b1d'), logoText: str(br.logoText, 24, 'YOUR GYM') },
-    options, active: Math.round(num(r.active, 0, Math.max(0, options.length - 1), 0)), updatedAt: Math.round(num(r.updatedAt, 0, 1e14, Date.now()))
+    options, active: Math.round(num(r.active, 0, Math.max(0, options.length - 1), 0)), updatedAt: Math.round(num(r.updatedAt, 0, 1e14, Date.now())),
+    ...(normalizeScenario(r.scenario) ? { scenario: normalizeScenario(r.scenario)! } : {}),
+    ...(r.simRun && typeof r.simRun === 'object' ? { simRun: simRunOf(r.simRun as Record<string, unknown>) } : {})
   };
 }
 
 /** Thiết bị theo id (dùng nhiều nơi) */
 export const catalogMap = (eqs: Equipment[]) => new Map(eqs.map(e => [e.id, e]));
+
+const simRunOf = (x: Record<string, unknown>) => ({ option: str(x.option, 4), layout: str(x.layout, 20), at: Math.round(num(x.at, 0, 1e14, 0)), source: str(x.source, 12), visitors: Math.round(num(x.visitors, 0, 1e5, 0)), peak: Math.round(num(x.peak, 0, 1e5, 0)), waitMachineSec: Math.round(num(x.waitMachineSec, 0, 1e5, 0)), deskWaitSec: Math.round(num(x.deskWaitSec, 0, 1e5, 0)), abandons: Math.round(num(x.abandons, 0, 1e5, 0)) });
+
+/** Chuẩn hoá kịch bản mô phỏng (chỉ các trường biết trước, số hữu hạn, mảng ngắn) */
+export function normalizeScenario(v: unknown): Record<string, unknown> | null {
+  if (!v || typeof v !== 'object') return null;
+  const x = v as Record<string, unknown>;
+  const n = (k: string, lo: number, hi: number) => (typeof x[k] === 'number' && Number.isFinite(x[k]) ? Math.min(hi, Math.max(lo, x[k] as number)) : undefined);
+  const pair = (k: string, lo: number, hi: number) => { const a = x[k]; return Array.isArray(a) && a.length === 2 && a.every(y => typeof y === 'number' && Number.isFinite(y)) ? [Math.min(hi, Math.max(lo, a[0])), Math.min(hi, Math.max(lo, a[1]))] : undefined; };
+  const rec = (k: string, keys: string[]) => { const o = x[k]; if (!o || typeof o !== 'object') return undefined; const out: Record<string, number> = {}; for (const kk of keys) { const val = (o as Record<string, unknown>)[kk]; if (typeof val === 'number' && Number.isFinite(val)) out[kk] = Math.min(1, Math.max(0, val)); } return Object.keys(out).length === keys.length ? out : undefined; };
+  const open = n('open', 0, 23), close = n('close', 1, 24), visitors = n('visitors', 1, 5000);
+  if (open === undefined || close === undefined || visitors === undefined || close <= open) return null;
+  const profile = Array.isArray(x.profile) ? x.profile.slice(0, 24).map(y => (typeof y === 'number' && Number.isFinite(y) ? Math.max(0, y) : 0)) : [];
+  const out: Record<string, unknown> = {
+    open, close, visitors: Math.round(visitors), profile, mix: rec('mix', ['member', 'guest', 'pt']), groupRate: n('groupRate', 0, .9),
+    programs: rec('programs', ['cardio', 'upper', 'lower', 'full', 'functional']), stay: pair('stay', 5, 400), setTime: pair('setTime', 10, 600), rest: pair('rest', 5, 900),
+    chatChance: n('chatChance', 0, 1), chatTime: pair('chatTime', 5, 1800), patience: pair('patience', 5, 3600), staff: n('staff', 0, 10), trainers: n('trainers', 0, 30),
+    ptSlots: Array.isArray(x.ptSlots) ? x.ptSlots.filter(y => typeof y === 'number' && Number.isFinite(y)).slice(0, 200) : [],
+    allowShare: x.allowShare !== false, onGiveUp: x.onGiveUp === 'leave' ? 'leave' : 'skip', seed: Math.round(n('seed', 1, 1e6) ?? 1), source: x.source === 'calibrated' ? 'calibrated' : 'assumed'
+  };
+  return Object.values(out).some(v2 => v2 === undefined) ? null : out;
+}

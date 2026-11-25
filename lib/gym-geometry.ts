@@ -169,11 +169,11 @@ export function checkEquipment(eq: Equipment, x: number, z: number, rot: number,
 export const CELL = .2;
 /** Lưới đi lại của một tầng: ô bị chặn nếu cách vật cản / tường gần hơn bán kính người */
 export class NavGrid {
-  nx: number; nz: number; free: Uint8Array; floor: Floor;
-  constructor(floor: Floor, obstacles: Rect[], radius = .3) {
-    this.floor = floor;
-    this.nx = Math.max(1, Math.round(floor.w / CELL));
-    this.nz = Math.max(1, Math.round(floor.l / CELL));
+  nx: number; nz: number; free: Uint8Array; floor: Floor; cs: number;
+  constructor(floor: Floor, obstacles: Rect[], radius = .3, cell = CELL) {
+    this.floor = floor; this.cs = cell;
+    this.nx = Math.max(1, Math.round(floor.w / this.cs));
+    this.nz = Math.max(1, Math.round(floor.l / this.cs));
     this.free = new Uint8Array(this.nx * this.nz).fill(1);
     const r = radius;
     for (let j = 0; j < this.nz; j++) for (let i = 0; i < this.nx; i++) {
@@ -189,13 +189,13 @@ export class NavGrid {
       }
     }
   }
-  center(i: number, j: number): [number, number] { return [-this.floor.w / 2 + (i + .5) * CELL, -this.floor.l / 2 + (j + .5) * CELL]; }
-  cell(x: number, z: number): [number, number] { return [Math.floor((x + this.floor.w / 2) / CELL), Math.floor((z + this.floor.l / 2) / CELL)]; }
+  center(i: number, j: number): [number, number] { return [-this.floor.w / 2 + (i + .5) * this.cs, -this.floor.l / 2 + (j + .5) * this.cs]; }
+  cell(x: number, z: number): [number, number] { return [Math.floor((x + this.floor.w / 2) / this.cs), Math.floor((z + this.floor.l / 2) / this.cs)]; }
   ok(i: number, j: number) { return i >= 0 && j >= 0 && i < this.nx && j < this.nz && this.free[j * this.nx + i] === 1; }
   /** Ô đi được gần điểm nhất (trong bán kính tìm kiếm) */
   nearest(x: number, z: number, maxR = 2.5): [number, number] | null {
     const [ci, cj] = this.cell(x, z);
-    const R = Math.ceil(maxR / CELL);
+    const R = Math.ceil(maxR / this.cs);
     let best: [number, number] | null = null, bd = Infinity;
     for (let dj = -R; dj <= R; dj++) for (let di = -R; di <= R; di++) {
       const i = ci + di, j = cj + dj;

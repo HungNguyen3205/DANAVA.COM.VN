@@ -288,3 +288,45 @@
 .gs-ai__form { display: flex; align-items: flex-end; gap: 6px; }
 .gs-ai__form textarea { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #dfe4ee; border-radius: 12px; color: var(--gs-navy); font: inherit; font-size: 13.5px; resize: none; }
 .gs-ai__form .gs-icon { width: 42px; height: 42px; border: 0; background: linear-gradient(180deg, #ffa24a, #f26b1d); color: #fff; }
+
+/* ---------- Vận hành (mô phỏng) ---------- */
+.gs-sim { display: flex; flex-direction: column; gap: 8px; }
+.gs-warnbox { margin: 0; padding: 8px 12px; border-radius: 10px; background: #fef2f2; color: #b42318; font-size: 12.5px; font-weight: 700; }
+.gs-simctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.gs-simctl .s-btn { min-height: 38px; padding: 0 16px; font-size: 14px; }
+.gs-simctl .gs-seg { flex: none; }
+.gs-simctl .gs-seg button { flex: none; min-height: 30px; padding: 0 9px; }
+.gs-clock { margin-left: auto; padding: 4px 10px; border-radius: 10px; background: var(--gs-navy); color: #fff; font-size: 16px; font-variant-numeric: tabular-nums; }
+.gs-live { display: grid; gap: 4px; }
+.gs-live button { display: grid; gap: 1px; padding: 7px 10px; border: 1.5px solid var(--gs-line); border-radius: 11px; background: #fff; color: var(--gs-navy); font: inherit; text-align: left; cursor: pointer; }
+.gs-live button.is-on { border-color: var(--gs-orange); }
+.gs-live button b { font-size: 12.5px; } .gs-live button span { color: var(--gs-muted); font-size: 12px; }
+.gs-legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; font-size: 11.5px; color: var(--gs-muted); }
+.gs-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.gs-legend i { width: 10px; height: 10px; border-radius: 50%; }
+.gs-agent { padding: 10px 12px; border-radius: 12px; background: #fff7f0; font-size: 12.5px; line-height: 1.5; }
+.gs-agent p { margin: 2px 0; }
+.gs-agent em { font-style: normal; font-weight: 800; color: #c2410c; }
+.gs-res h3 { margin-top: 10px; }
+.gs-chart { margin: 0; }
+.gs-chart svg { width: 100%; height: auto; border-radius: 10px; background: #f6f8fb; }
+.gs-chart figcaption { color: var(--gs-muted); font-size: 11.5px; }
+.gs-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 8px 0; }
+.gs-kpis div { padding: 6px 8px; border-radius: 9px; background: #f6f8fb; }
+.gs-kpis dt { color: var(--gs-muted); font-size: 11px; font-weight: 700; }
+.gs-kpis dd { margin: 0; font-size: 13px; font-weight: 800; }
+.gs-util { display: grid; gap: 3px; max-height: 220px; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+.gs-util li { position: relative; display: flex; justify-content: space-between; gap: 6px; padding: 4px 8px; border-radius: 7px; background: #f6f8fb; font-size: 11.5px; overflow: hidden; }
+.gs-util li i { position: absolute; inset: 0 auto 0 0; background: rgba(43, 66, 148, .12); }
+.gs-util li.is-hot i { background: rgba(242, 107, 29, .22); }
+.gs-util li.is-low { color: var(--gs-muted); }
+.gs-util li span, .gs-util li b { position: relative; }
+.gs-util li span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.gs-aibox { padding: 10px 12px; border-radius: 12px; background: #f6f8fb; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; }
+.gs-aibox b { display: inline-flex; align-items: center; gap: 4px; color: #c2410c; }
+.gs-aibox b svg { width: 14px; height: 14px; }
+.gs-aggwrap { overflow-x: auto; }
+.gs-agg { min-width: 460px; font-size: 11.5px; }
+.gs-scn summary { cursor: pointer; font-size: 13px; font-weight: 800; }
+.gs-aiscn { display: grid; gap: 6px; margin: 8px 0; }
+.gs-aiscn textarea { padding: 8px 10px; border: 1px solid #dfe4ee; border-radius: 10px; font: inherit; font-size: 13px; }

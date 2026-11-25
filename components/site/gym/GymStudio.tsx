@@ -32,7 +32,7 @@ export type StudioExtras = {
   /** bảng trợ lý ANNA (giai đoạn 3) */
   assistant?: (ctx: { project: Project; commit: (p: Project, label: string) => void; floorId: string }) => ReactNode;
   /** bảng mô phỏng vận hành (giai đoạn 4) */
-  sim?: (ctx: { project: Project; catalog: Map<string, Equipment>; floorId: string; setFloorId: (id: string) => void; setPeople: (p: PersonView[]) => void; setHeat: (h: NonNullable<Parameters<Studio['update']>[0]['heat']> | null) => void; onPick: (fn: (id: string) => void) => void }) => ReactNode;
+  sim?: (ctx: { project: Project; catalog: Map<string, Equipment>; floorId: string; setFloorId: (id: string) => void; saveSim: (patch: Pick<Project, 'scenario' | 'simRun'>) => void; setPeople: (p: PersonView[]) => void; setHeat: (h: NonNullable<Parameters<Studio['update']>[0]['heat']> | null) => void; onPick: (fn: (id: string) => void) => void }) => ReactNode;
 };
 
 export function GymStudio({ equipment, flooring, addId, code, extras }: { equipment: Equipment[]; flooring: Flooring | null; addId?: string; code?: string; extras?: StudioExtras }) {
@@ -132,6 +132,9 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
     studio.current.update({ project, option, catalog, floorId, mode, selected: sel, issues, flows, showClear: showClear || mode === 'plan', heat });
   }, [project, option, catalog, floorId, mode, sel, issues, flows, showClear, heat, gl]);
   useEffect(() => { studio.current?.setPeople(people); }, [people]);
+  // Mô phỏng đẩy nhân vật thẳng vào bộ dựng 3D mỗi khung hình (không qua React); 2D dự phòng thì qua state
+  const saveSim = useCallback((patch: Pick<Project, 'scenario' | 'simRun'>) => setProject(p => (p ? { ...p, ...patch } : p)), []);
+  const pushPeople = useCallback((list: PersonView[]) => { if (studio.current) studio.current.setPeople(list); else setPeople(list); }, []);
 
   // Thêm máy từ trang thiết bị (?add=)
   const added = useRef(false);
@@ -200,6 +203,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
       }),
       `Thiết bị + sàn đã có giá: ${formatVND(cost.priced)}${cost.unpricedCount ? ` (+${cost.unpricedCount} máy chưa có giá)` : ''}; nội thất (giả định) ${shortVND(cost.furnEst[0])}–${shortVND(cost.furnEst[1])}.`,
       `Lễ tân: ${p.reception.enabled ? `${p.reception.shape}, ${p.reception.size}` : 'không'} · phong cách ${p.brief.interior}.`,
+      p.simRun ? `Mô phỏng phương án ${p.simRun.option} (${p.simRun.source === 'calibrated' ? 'đã hiệu chỉnh' : 'giả định mẫu'}${p.simRun.layout !== layoutHash(p, option) ? ', CŨ — mặt bằng đã đổi sau lần chạy' : ''}): ${p.simRun.visitors} lượt/ngày, đông nhất ${p.simRun.peak} người, chờ máy TB ${p.simRun.waitMachineSec} giây, bỏ bài ${p.simRun.abandons}.` : '',
       validation?.verify.length ? `Cần xác minh: ${validation.verify.length} mục (tải trọng, điện, kích thước…).` : '',
       `Dịch vụ thêm: ${[form.studio && 'DANAVA Studio', form.marketing && 'Marketing'].filter(Boolean).join(', ') || 'không'}`,
       form.note.trim() ? `Ghi chú: ${form.note.trim()}` : ''
@@ -285,7 +289,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
           {tab === 'reception' && <ReceptionPanel p={project} set={patch => set(p => E.setReception(p, patch))} />}
           {tab === 'style' && <StylePanel p={project} floor={floor} set={fn => set(fn)} addDecor={(k: FurnKind) => { const F = FURNITURE[k]; set(p => E.addFurniture(p, floor.id, { kind: k, x: 0, z: 0, rot: 0, w: F.w, d: F.d, group: 'decor' }), `Đã thêm ${F.label.toLowerCase()} — kéo để đặt`); }} />}
           {tab === 'assistant' && extras?.assistant?.({ project, commit, floorId: floor.id })}
-          {tab === 'sim' && extras?.sim?.({ project, catalog, floorId: floor.id, setFloorId, setPeople, setHeat, onPick: fn => { pickRef.current = fn; } })}
+          {tab === 'sim' && extras?.sim?.({ project, catalog, floorId: floor.id, setFloorId, saveSim, setPeople: pushPeople, setHeat, onPick: fn => { pickRef.current = fn; } })}
         </aside>
 
         {/* ----- Sân khấu 3D / 2D ----- */}
