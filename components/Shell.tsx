@@ -184,7 +184,7 @@ export function Header() {
                   className="s-nav__link"
                   aria-expanded={svc}
                   aria-controls="s-mega-services"
-                  aria-current={['/bao-gia', '/thiet-bi-gym', '/giai-phap/setup-van-hanh-phong-gym'].some(p => path.startsWith(p)) ? 'page' : undefined}
+                  aria-current={['/bao-gia', '/thiet-bi-gym'].some(p => path.startsWith(p)) ? 'page' : undefined}
                   onClick={() => setSvc(v => !v)}
                 >
                   <S data={data} k="nav.services" def="Dịch vụ" label="Menu: Dịch vụ" /> <ChevronDown aria-hidden="true" />
