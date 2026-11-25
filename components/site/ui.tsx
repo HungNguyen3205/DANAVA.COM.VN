@@ -150,9 +150,11 @@ export function CtaBand({
               let phone = data?.phone || '';
               if (!phone) { try { phone = requestTexts().phone || ''; } catch {} }
               phone = phone || CONTACT.phone;
+              // Hiển thị dễ đọc: 0935917677 → 0935 91 76 77 (số đã có khoảng trắng thì giữ nguyên)
+              const shown = /^0\d{9}$/.test(phone.trim()) ? phone.trim().replace(/^(\d{4})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4') : phone;
               const digits = phone.replace(/[^\d+]/g, '');
               const label = ct(data, 'shared.cta.hotline', 'Hotline', 'Dải cuối trang: nút hotline', { scope: 'global' });
-              return <a className="s-btn s-btn--outline-light s-btn--lg s-cta__hotline" href={`tel:${digits}`}><Phone aria-hidden="true" /><span {...label.a}>{label.v}</span> <b>{phone}</b></a>;
+              return <a className="s-btn s-btn--outline-light s-btn--lg s-cta__hotline" href={`tel:${digits}`}><Phone aria-hidden="true" /><span {...label.a}>{label.v}</span> <b>{shown}</b></a>;
             })()}
           </div>
         </div>

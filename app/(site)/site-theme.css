@@ -882,3 +882,23 @@ html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
   .s-cta-wrap { --anna-w: 112px; }
   .s-app .s-cta.s-cta--anna .s-lead { display: none; }
 }
+
+/* Nút Hotline: cam thương hiệu (chuyển màu trên sáng – dưới đậm như mọi nút cam) */
+.s-app .s-cta a.s-cta__hotline {
+  border-color: transparent !important; background: linear-gradient(180deg, #ffa24a 0%, #f26b1d 100%) !important; color: #fff !important;
+  box-shadow: 0 14px 28px -14px rgba(242, 107, 29, .9) !important;
+}
+.s-app .s-cta a.s-cta__hotline:hover { background: linear-gradient(180deg, #ff9535 0%, #e85f12 100%) !important; color: #fff !important; }
+
+/* Điện thoại: ANNA to hơn, chữ nhỏ lại */
+@media (max-width: 860px) {
+  .s-cta-wrap { --anna-w: clamp(150px, 44vw, 270px); margin-top: 64px; }
+  .s-app .s-cta.s-cta--anna { min-height: calc(var(--anna-w) * 1.04 - 52px); padding-left: calc(var(--anna-w) - 4px); gap: 10px; }
+  .s-cta__anna { top: -56px; }
+  .s-app .s-cta.s-cta--anna .s-h2 { font-size: clamp(17px, 4.6vw, 24px); line-height: 1.22; }
+  .s-app .s-cta.s-cta--anna .s-lead { font-size: 12.5px; line-height: 1.45; }
+  .s-app .s-cta.s-cta--anna .s-btn { min-height: 40px; font-size: 13.5px; }
+  .s-app .s-cta.s-cta--anna a.s-cta__hotline { padding: 0 10px; gap: 6px; }
+  .s-app .s-cta.s-cta--anna a.s-cta__hotline svg { width: 16px; height: 16px; }
+}
+@media (max-width: 380px) { .s-cta-wrap { --anna-w: 140px; } }
