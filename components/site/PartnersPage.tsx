@@ -4,11 +4,11 @@
  * Nhóm theo tỉnh/thành; mỗi thẻ: ảnh bìa, logo, lĩnh vực, địa chỉ, giờ mở cửa, tiện ích, giới thiệu, liên kết.
  */
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, BadgeCheck, Clock, MapPin, ChevronDown } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BadgeCheck, Clock, MapPin, ChevronDown, CalendarCheck, Megaphone, Sparkles, Store } from 'lucide-react';
 import type { Client, SiteData } from '@/lib/content';
 import { publicPartners, publicPlaces, publishedProjects } from '@/lib/site-queries';
 import { PlacesDirectory, type PlaceCard } from './PlacesDirectory';
-import { Crumbs, CtaBand } from './ui';
+import { Crumbs } from './ui';
 import { pageCopy } from '@/lib/blocks';
 import { cmsText, ct } from './cms';
 import { rich } from './rich';
@@ -147,7 +147,78 @@ export function PartnersPage({ data }: { data: SiteData }) {
         </section>
       )}
 
-      <CtaBand cms={{ title: 'pages.doi-tac.ctaTitle', lead: copy.ctaLead ? 'pages.doi-tac.ctaLead' : 'pages.mac-dinh.ctaLead' }} title={rich(copy.ctaTitle)} lead={copy.ctaLead || pageCopy(data, 'mac-dinh').ctaLead} primary={{ href: '/lien-he/?service=danava-studio', label: 'Đăng ký demo' }} secondary={{ href: '/he-sinh-thai/', label: 'Xem hệ sinh thái' }} />
+      <JoinBand data={data} partners={partners} cities={allCities.size} places={places.length} />
     </main>
+  );
+}
+
+/**
+ * Lời mời trở thành đối tác: dải cuối trang riêng của /doi-tac/.
+ * Trái: lời mời, 3 lợi ích, "đang có N cơ sở cùng đồng hành" kèm logo thật, 2 nút. Phải: quỹ đạo logo đối tác quanh biểu tượng DANAVA.
+ * Chữ sửa được trong trình biên tập (khóa partners.join.*; tiêu đề / câu dẫn dùng chung khóa dải cuối trang của trang Đối tác).
+ */
+function JoinBand({ data, partners, cities, places }: { data: SiteData; partners: Client[]; cities: number; places: number }) {
+  const copy = pageCopy(data, 'doi-tac');
+  const t = (k: string, def: string, label: string, opts: { rich?: boolean; multiline?: boolean } = {}) => ct(data, `partners.join.${k}`, def, label, opts);
+  const kicker = t('kicker', 'Lời mời đồng hành', 'Dòng chữ nhỏ');
+  // Tiêu đề lưu ở khối pages (Trang website → Đối tác), sửa trực tiếp như dải cuối trang cũ
+  const titleCms = { 'data-cms': 'pages.doi-tac.ctaTitle', 'data-cms-label': 'Lời mời đối tác: tiêu đề', 'data-cms-rich': '' };
+  const lead = t('lead', 'Mang cơ sở của bạn lên nền tảng danava.vn, vận hành gọn bằng DANAVA Studio và lớn lên cùng cộng đồng wellness. DANAVA đi cùng bạn từ ngày đầu.', 'Câu dẫn', { multiline: true });
+  const perks = [
+    { icon: <Store aria-hidden="true" />, title: t('perk.1.title', 'Khách tìm thấy bạn', 'Lợi ích 1: tiêu đề'), text: t('perk.1.text', 'Trang riêng trên danava.vn: dịch vụ, giờ mở cửa, đặt lịch.', 'Lợi ích 1: mô tả') },
+    { icon: <CalendarCheck aria-hidden="true" />, title: t('perk.2.title', 'Vận hành nhẹ tênh', 'Lợi ích 2: tiêu đề'), text: t('perk.2.text', 'Lịch lớp, hội viên, thanh toán trên DANAVA Studio.', 'Lợi ích 2: mô tả') },
+    { icon: <Megaphone aria-hidden="true" />, title: t('perk.3.title', 'Cùng nhau lan toả', 'Lợi ích 3: tiêu đề'), text: t('perk.3.text', 'Sự kiện, workshop và truyền thông chung với cộng đồng.', 'Lợi ích 3: mô tả') }
+  ];
+  const primary = t('cta.primary', 'Trở thành đối tác', 'Nút chính');
+  const secondary = t('cta.secondary', 'Xem hệ sinh thái', 'Nút phụ');
+  const assure = t('assure', 'Tư vấn miễn phí · Phản hồi trong 1 ngày làm việc', 'Cam kết dưới nút');
+  const proofA = t('proof.before', 'Đang có', 'Dòng bằng chứng (trước số)');
+  const proofB = t('proof.after', 'cơ sở cùng đồng hành', 'Dòng bằng chứng (sau số)');
+  const logos = partners.filter(p => p.logo).slice(0, 8);
+  const orbit = logos.slice(0, 6);
+  const total = partners.length + places;
+
+  return (
+    <section className="pj" aria-labelledby="pj-title" data-cms-block="Lời mời trở thành đối tác">
+      <div className="s-container">
+        <div className="pj__card">
+          <span className="pj__glow pj__glow--a" aria-hidden="true" />
+          <span className="pj__glow pj__glow--b" aria-hidden="true" />
+          <div className="pj__text">
+            <p className="pj__kicker"><Sparkles aria-hidden="true" /><span {...kicker.a}>{kicker.v}</span></p>
+            <h2 className="pj__title" id="pj-title" {...titleCms}>{rich(copy.ctaTitle)}</h2>
+            <p className="pj__lead" {...lead.a}>{lead.v}</p>
+            <ul className="pj__perks">
+              {perks.map((p, i) => (
+                <li key={i} style={{ ['--i' as string]: i }}>
+                  <span className="pj__perk-icon">{p.icon}</span>
+                  <span><b {...p.title.a}>{p.title.v}</b><small {...p.text.a}>{p.text.v}</small></span>
+                </li>
+              ))}
+            </ul>
+            <div className="pj__actions">
+              <Link className="pj__btn pj__btn--primary" href="/lien-he/?service=danava-studio"><span {...primary.a}>{primary.v}</span><ArrowRight aria-hidden="true" /></Link>
+              <Link className="pj__btn pj__btn--ghost" href="/he-sinh-thai/"><span {...secondary.a}>{secondary.v}</span></Link>
+            </div>
+            <p className="pj__assure" {...assure.a}>{assure.v}</p>
+            {logos.length > 0 && (
+              <div className="pj__proof">
+                <span className="pj__faces" aria-hidden="true">{logos.slice(0, 5).map(p => <img key={p.id} src={p.logo} alt="" loading="lazy" />)}</span>
+                <span><span {...proofA.a}>{proofA.v}</span> <b>{total}+</b> <span {...proofB.a}>{proofB.v}</span>{cities > 0 ? ` · ${cities} tỉnh/thành` : ''}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Quỹ đạo logo đối tác quanh biểu tượng DANAVA, có ô trống "Bạn?" mời tham gia */}
+          <div className="pj__orbit" aria-hidden="true">
+            <span className="pj__ring pj__ring--1" />
+            <span className="pj__ring pj__ring--2" />
+            <span className="pj__core"><img src="/assets/danava-mark.png" alt="" /></span>
+            {orbit.map((p, i) => <span key={p.id} className="pj__node" style={{ ['--a' as string]: `${(360 / (orbit.length + 1)) * i}deg`, ['--d' as string]: `${i * .35}s` }}><img src={p.logo} alt="" loading="lazy" /></span>)}
+            <span className="pj__node pj__node--you" style={{ ['--a' as string]: `${(360 / (orbit.length + 1)) * orbit.length}deg` }}><b>Bạn?</b></span>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
