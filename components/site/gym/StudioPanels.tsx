@@ -175,6 +175,9 @@ const PRICE_BANDS: { label: string; ok: (p: number) => boolean }[] = [
   { label: 'Mọi mức giá', ok: () => true }, { label: 'Dưới 20 triệu', ok: p => p > 0 && p < 20e6 }, { label: '20 – 50 triệu', ok: p => p >= 20e6 && p < 50e6 },
   { label: '50 – 100 triệu', ok: p => p >= 50e6 && p < 100e6 }, { label: 'Trên 100 triệu', ok: p => p >= 100e6 }, { label: 'Đã có giá', ok: p => p > 0 }
 ];
+/** Nhóm hiển thị trong danh mục gọn: theo nhóm cơ / loại máy */
+const EQ_GROUPS: [string, string][] = [['cardio', 'Cardio'], ['chest', 'Ngực'], ['back', 'Lưng · xô'], ['legs', 'Chân · mông'], ['shoulder', 'Vai'], ['arms', 'Tay'], ['core', 'Bụng'], ['rig', 'Giàn · khung đa năng'], ['free', 'Tạ tự do'], ['func', 'Functional & phụ kiện'], ['other', 'Máy khác']];
+const eqGroup = (e: Equipment) => e.category === 'cardio' ? 'cardio' : e.category === 'free-weight' ? 'free' : e.category === 'strength' ? (muscleOf(e) || 'other') : 'func';
 export function EquipmentPanel({ equipment, p, floor, onAdd, onMust, simple }: { equipment: Equipment[]; p: Project; floor: Floor; onAdd: (e: Equipment) => void; onMust: (id: string) => void; simple?: boolean }) {
   const [cat, setCat] = useState<EquipmentCategory | ''>('');
   const [q, setQ] = useState('');
@@ -183,6 +186,7 @@ export function EquipmentPanel({ equipment, p, floor, onAdd, onMust, simple }: {
   const [sort, setSort] = useState<'' | 'asc' | 'desc'>('');
   const [limit, setLimit] = useState(PAGE);
   const [open, setOpen] = useState('');
+  const [group, setGroup] = useState('');
   const fold = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
   const inCat = equipment.filter(e => !cat || e.category === cat);
   const shown = inCat.filter(e => (!muscle || muscleOf(e) === muscle) && PRICE_BANDS[band].ok(Number(e.price) || 0) && (!q.trim() || fold(`${e.name} ${e.sku || ''}`).includes(fold(q.trim()))));
@@ -190,45 +194,70 @@ export function EquipmentPanel({ equipment, p, floor, onAdd, onMust, simple }: {
   const opt = p.options[p.active];
   const qty = (id: string) => opt?.placements.filter(x => x.eqId === id).length ?? 0;
   const filtered = !!(cat || muscle || band || q.trim());
+  const row = (e: Equipment) => {
+    const n = qty(e.id), must = p.brief.mustHave.includes(e.id);
+    return (
+      <li key={e.id} className={open === e.id ? 'is-open' : ''}>
+        <button type="button" className="gp-eq__row" onClick={() => setOpen(open === e.id ? '' : e.id)} aria-expanded={open === e.id}>
+          <span className="gp-eq__sw" style={{ background: e.color }}>{e.image ? <img src={e.image} alt="" loading="lazy" /> : null}</span>
+          <span className="gp-eq__txt"><b title={e.name}>{e.name}</b><span><em className={e.price ? '' : 'is-contact'}>{e.price ? formatVND(Number(e.price)) : 'Chưa có giá'}</em>{n ? <i>Trong phòng ×{n}</i> : null}{e.dimsEstimated && !simple ? <i className="is-est">KT ước tính</i> : null}</span></span>
+        </button>
+        <span className="gs-eqbtns">
+          {!simple && <button type="button" className={`gs-star${must ? ' is-on' : ''}`} onClick={() => onMust(e.id)} aria-label={must ? `Bỏ bắt buộc ${e.name}` : `Đánh dấu bắt buộc ${e.name}`} title="Máy bắt buộc khi tạo phương án"><Star aria-hidden="true" /></button>}
+          <button type="button" className="gp-eq__add" onClick={() => onAdd(e)} aria-label={`Thêm ${e.name} vào ${floor.name}`}><Plus aria-hidden="true" /></button>
+        </span>
+        {open === e.id && (
+          <div className="gp-eq__more">
+            {e.image && <img src={e.image} alt={e.name} loading="lazy" />}
+            <dl>{e.sku && <><dt>Mã</dt><dd>{e.sku}</dd></>}{e.kind && <><dt>Loại</dt><dd>{KIND_LABEL[e.kind]}</dd></>}<dt>Kích thước</dt><dd>{e.width} × {e.depth} × {e.height} cm{e.dimsEstimated ? ' (ước tính, cần xác minh)' : ''}</dd></dl>
+            {e.source && <a href={e.source} target="_blank" rel="noopener">Xem chi tiết <ExternalLink aria-hidden="true" /></a>}
+          </div>
+        )}
+      </li>
+    );
+  };
+  const grouped = simple && !q.trim();
   return (
     <div className="gs-panel gs-panel--list">
       <div className="gp-search"><Search aria-hidden="true" /><input type="search" value={q} onChange={e => { setQ(e.target.value); setLimit(PAGE); }} placeholder={`Tìm trong ${equipment.length} máy (tên, mã)…`} aria-label="Tìm máy" /></div>
-      <div className="gp-cats" role="radiogroup" aria-label="Nhóm máy">
+      {!grouped && <div className="gp-cats" role="radiogroup" aria-label="Nhóm máy">
         <button type="button" role="radio" aria-checked={!cat} className={!cat ? 'is-on' : ''} onClick={() => { setCat(''); setMuscle(''); setLimit(PAGE); }}>Tất cả</button>
         {(Object.keys(EQUIPMENT_CATEGORIES) as EquipmentCategory[]).filter(c => equipment.some(e => e.category === c)).map(c => <button key={c} type="button" role="radio" aria-checked={cat === c} className={cat === c ? 'is-on' : ''} onClick={() => { setCat(c); setMuscle(''); setLimit(PAGE); }}>{c === 'strength' ? 'Máy sức mạnh' : EQUIPMENT_CATEGORIES[c]}<small>{equipment.filter(e => e.category === c).length}</small></button>)}
-      </div>
-      {cat === 'strength' && <div className="gp-muscles">{(Object.keys(MUSCLES) as Muscle[]).map(m => { const n = inCat.filter(e => muscleOf(e) === m).length; return n ? <button key={m} type="button" role="radio" aria-checked={muscle === m} className={muscle === m ? 'is-on' : ''} onClick={() => { setMuscle(muscle === m ? '' : m); setLimit(PAGE); }}>{MUSCLES[m].label} <small>{n}</small></button> : null; })}</div>}
+      </div>}
+      {!grouped && cat === 'strength' && <div className="gp-muscles">{(Object.keys(MUSCLES) as Muscle[]).map(m => { const n = inCat.filter(e => muscleOf(e) === m).length; return n ? <button key={m} type="button" role="radio" aria-checked={muscle === m} className={muscle === m ? 'is-on' : ''} onClick={() => { setMuscle(muscle === m ? '' : m); setLimit(PAGE); }}>{MUSCLES[m].label} <small>{n}</small></button> : null; })}</div>}
       {!simple && <div className="gp-filterbar">
         <label className="gp-select" aria-label="Mức giá"><select value={band} onChange={e => { setBand(Number(e.target.value)); setLimit(PAGE); }}>{PRICE_BANDS.map((b, i) => <option key={b.label} value={i}>{b.label}</option>)}</select><ChevronDown aria-hidden="true" /></label>
         <button type="button" className={`gp-sort${sort ? ' is-on' : ''}`} onClick={() => setSort(sort === '' ? 'asc' : sort === 'asc' ? 'desc' : '')}><ArrowDownUp aria-hidden="true" />{sort === 'asc' ? 'Giá thấp' : sort === 'desc' ? 'Giá cao' : 'Sắp xếp'}</button>
       </div>}
       {!simple && <p className="gp-count"><b>{shown.length}</b> máy · bấm + để thêm vào <b>{floor.name.toLowerCase()}</b>{filtered && <button type="button" onClick={() => { setCat(''); setMuscle(''); setBand(0); setQ(''); }}>Xoá lọc</button>}</p>}
-      <ul className="gp-eq">
-        {shown.slice(0, limit).map(e => {
-          const n = qty(e.id), must = p.brief.mustHave.includes(e.id);
-          return (
-            <li key={e.id} className={open === e.id ? 'is-open' : ''}>
-              <button type="button" className="gp-eq__row" onClick={() => setOpen(open === e.id ? '' : e.id)} aria-expanded={open === e.id}>
-                <span className="gp-eq__sw" style={{ background: e.color }}>{e.image ? <img src={e.image} alt="" loading="lazy" /> : null}</span>
-                <span className="gp-eq__txt"><b title={e.name}>{e.name}</b><span><em className={e.price ? '' : 'is-contact'}>{e.price ? formatVND(Number(e.price)) : 'Chưa có giá'}</em>{n ? <i>Trong phòng ×{n}</i> : null}{e.dimsEstimated && !simple ? <i className="is-est">KT ước tính</i> : null}</span></span>
-              </button>
-              <span className="gs-eqbtns">
-                {!simple && <button type="button" className={`gs-star${must ? ' is-on' : ''}`} onClick={() => onMust(e.id)} aria-label={must ? `Bỏ bắt buộc ${e.name}` : `Đánh dấu bắt buộc ${e.name}`} title="Máy bắt buộc khi tạo phương án"><Star aria-hidden="true" /></button>}
-                <button type="button" className="gp-eq__add" onClick={() => onAdd(e)} aria-label={`Thêm ${e.name} vào ${floor.name}`}><Plus aria-hidden="true" /></button>
-              </span>
-              {open === e.id && (
-                <div className="gp-eq__more">
-                  {e.image && <img src={e.image} alt={e.name} loading="lazy" />}
-                  <dl>{e.sku && <><dt>Mã</dt><dd>{e.sku}</dd></>}{e.kind && <><dt>Loại</dt><dd>{KIND_LABEL[e.kind]}</dd></>}<dt>Kích thước</dt><dd>{e.width} × {e.depth} × {e.height} cm{e.dimsEstimated ? ' (ước tính, cần xác minh)' : ''}</dd></dl>
-                  {e.source && <a href={e.source} target="_blank" rel="noopener">Xem chi tiết <ExternalLink aria-hidden="true" /></a>}
-                </div>
-              )}
-            </li>
-          );
-        })}
+      {grouped ? (
+        <div className="gp-groups">
+          {EQ_GROUPS.map(([k, label]) => {
+            const list = equipment.filter(e => eqGroup(e) === k);
+            if (!list.length) return null;
+            const isOpen = group === k, inRoom = list.reduce((t, e) => t + qty(e.id), 0);
+            return (
+              <section key={k} className={`gp-group${isOpen ? ' is-open' : ''}`}>
+                <button type="button" className="gp-group__head" aria-expanded={isOpen} onClick={() => { setGroup(isOpen ? '' : k); setLimit(PAGE); setOpen(''); }}>
+                  <span className="gp-group__thumbs" aria-hidden="true">{list.filter(e => e.image).slice(0, 3).map(e => <img key={e.id} src={e.image} alt="" loading="lazy" />)}</span>
+                  <span className="gp-group__name"><b>{label}</b><small>{list.length} máy{inRoom ? <i>{inRoom} trong phòng</i> : null}</small></span>
+                  <ChevronDown className="gp-group__chev" aria-hidden="true" />
+                </button>
+                {isOpen && (
+                  <ul className="gp-eq">
+                    {list.slice(0, limit).map(row)}
+                    {list.length > limit && <li className="gp-eq__moreBtn"><button type="button" onClick={() => setLimit(l => l + PAGE)}>Xem thêm {Math.min(PAGE, list.length - limit)} máy</button></li>}
+                  </ul>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      ) : <ul className="gp-eq">
+        {shown.slice(0, limit).map(row)}
         {shown.length > limit && <li className="gp-eq__moreBtn"><button type="button" onClick={() => setLimit(l => l + PAGE)}>Xem thêm {Math.min(PAGE, shown.length - limit)} máy</button></li>}
         {shown.length === 0 && <li className="gp-eq__none">Không có máy nào khớp.</li>}
-      </ul>
+      </ul>}
       {!simple && <p className="gp-src">Danh mục, giá và hình ảnh: đối tác <a href="https://thietbigym.vn/" target="_blank" rel="noopener">thietbigym.vn</a></p>}
     </div>
   );
