@@ -9,7 +9,7 @@ export type Change = { area: string; kind: 'them' | 'xoa' | 'sua'; id?: string; 
 type Rec = { id: string } & Record<string, unknown>;
 const COLLECTIONS: { key: keyof SiteData; area: string; name: string }[] = [
   { key: 'posts', area: 'Bài viết', name: 'title' },
-  { key: 'services', area: 'Sản phẩm & dịch vụ', name: 'title' },
+  { key: 'services', area: 'Giải pháp', name: 'title' },
   { key: 'subServices', area: 'Trang dịch vụ con', name: 'title' },
   { key: 'productGroups', area: 'Nhóm sản phẩm', name: 'name' },
   { key: 'projects', area: 'Dự án', name: 'title' },

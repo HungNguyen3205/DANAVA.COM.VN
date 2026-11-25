@@ -34,7 +34,7 @@ export function validCmsPath(path: string): boolean {
 
 /**
  * Bản ghi sửa được ngay trên trang: rec.<loại>.<id>.<trường>[.<vị trí>.<trường con>…] — cùng nguồn với module quản trị
- * (Sản phẩm & Dịch vụ, Bài viết, Dự án, Hồ sơ thương hiệu…). Chỉ ghi vào trường đang là chữ;
+ * (Giải pháp, Bài viết, Dự án, Hồ sơ thương hiệu…). Chỉ ghi vào trường đang là chữ;
  * trường kỹ thuật (mã, đường dẫn, liên kết, quan hệ, trạng thái) không sửa ở đây.
  */
 export const REC_KINDS = ['services', 'subServices', 'posts', 'projects', 'topics', 'staff', 'testimonials', 'clients', 'showcase', 'metrics'] as const;

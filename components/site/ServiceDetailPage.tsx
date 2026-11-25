@@ -113,7 +113,7 @@ function StandardServicePage({ service, data, section }: { service: Service; dat
 
       <ScopeSection title={service.description} items={service.items} rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
 
-      {/* Tính năng nhập trong hồ sơ sản phẩm (admin → Sản phẩm & Dịch vụ → Nội dung) */}
+      {/* Tính năng nhập trong hồ sơ sản phẩm (admin → Giải pháp → Nội dung) */}
       <FeatureGrid id="tinh-nang" eyebrow="Tính năng" title={`Tính năng của ${service.title}`} features={service.features || []} soft rec={{ base: `rec.services.${service.id}`, label: `Hồ sơ ${service.title}` }} />
 
       {/* DANAVA Studio: ảnh giao diện thật */}

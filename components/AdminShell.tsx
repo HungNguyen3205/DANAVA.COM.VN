@@ -56,17 +56,17 @@ const ICONS: Record<string, LucideIcon> = {
   'cai-dat': Settings, 'tai-khoan': KeyRound, seo: Link2, 'tich-hop': Plug, 'nhat-ky': History
 };
 const GROUP_ICONS: Record<string, LucideIcon> = {
-  'Tổng quan': LayoutGrid, Website: Globe, 'Chỉnh sửa website': PanelsTopLeft, 'Sản phẩm & Dịch vụ': Layers, 'Nội dung': FileText,
+  'Tổng quan': LayoutGrid, Website: Globe, 'Chỉnh sửa website': PanelsTopLeft, 'Giải pháp': Layers, 'Nội dung': FileText,
   'Khách hàng': Users, 'Tài nguyên': FolderOpen, 'Báo cáo': ChartColumn, 'Hệ thống': Wrench
 };
 
 /** Nhãn ngắn dưới biểu tượng khi thanh bên thu gọn */
 const SHORT: Record<string, string> = {
-  'Tổng quan': 'Tổng quan', 'Chỉnh sửa website': 'Website', 'Sản phẩm & Dịch vụ': 'Sản phẩm', 'Nội dung': 'Nội dung',
+  'Tổng quan': 'Tổng quan', 'Chỉnh sửa website': 'Website', 'Giải pháp': 'Giải pháp', 'Nội dung': 'Nội dung',
   'Khách hàng': 'Khách hàng', 'Tài nguyên': 'Tài nguyên', 'Báo cáo': 'Báo cáo', 'Hệ thống': 'Hệ thống'
 };
 /** Nhóm bắt đầu một cụm mới trên thanh bên (vạch ngăn phía trên) */
-const SECTION_START = new Set(['Sản phẩm & Dịch vụ', 'Báo cáo']);
+const SECTION_START = new Set(['Giải pháp', 'Báo cáo']);
 
 /** Chờ menu Radix đóng hẳn (trả focus trong setTimeout 0) trước khi mở hộp thoại. */
 const settle = () => new Promise(r => setTimeout(r, 40));

@@ -558,8 +558,8 @@ export function readSaved(raw: string | null): SiteData {
  */
 const SECTION: Record<string, string> = {
   staff: 'Hồ sơ thương hiệu → Đội ngũ', projects: 'Nội dung → Dự án', posts: 'Nội dung → Bài viết', metrics: 'Hồ sơ thương hiệu → Số liệu công bố',
-  services: 'Sản phẩm & Dịch vụ', productGroups: 'Sản phẩm & Dịch vụ → Nhóm & loại', landings: 'Landing page', redirects: 'Cài đặt website → Chuyển hướng',
-  subServices: 'Sản phẩm & Dịch vụ → Trang con', topics: 'Bài viết → Danh mục', clients: 'Khách hàng → Đối tác', showcase: 'Dự án → Portfolio',
+  services: 'Giải pháp', productGroups: 'Giải pháp → Nhóm & loại', landings: 'Landing page', redirects: 'Cài đặt website → Chuyển hướng',
+  subServices: 'Giải pháp → Trang con', topics: 'Bài viết → Danh mục', clients: 'Khách hàng → Đối tác', showcase: 'Dự án → Portfolio',
   testimonials: 'Khách hàng → Nhận xét khách hàng'
 };
 const FIELD: Record<string, string> = {

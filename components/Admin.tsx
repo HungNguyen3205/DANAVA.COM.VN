@@ -446,7 +446,7 @@ function AdminWorkspace({ section }: { section: string }) {
     const out: SearchRecord[] = [];
     if (can(user.role, 'content.read')) {
       for (const p of draft.posts) out.push({ label: p.title, kind: 'Bài viết', href: `/admin/bai-viet/?id=${p.id}` });
-      for (const s of draft.services) out.push({ label: s.title, kind: 'Sản phẩm & dịch vụ', href: `/admin/san-pham/?id=${s.id}` });
+      for (const s of draft.services) out.push({ label: s.title, kind: 'Giải pháp', href: `/admin/san-pham/?id=${s.id}` });
       for (const p of draft.projects || []) out.push({ label: p.title, kind: 'Dự án', href: `/admin/du-an/?tab=du-an&id=${p.id}` });
       for (const x of draft.showcase || []) out.push({ label: x.name, kind: 'Portfolio', href: `/admin/du-an/?tab=portfolio&id=${x.id}` });
       for (const p of draft.staff) out.push({ label: p.name, kind: 'Đội ngũ', href: '/admin/thuong-hieu/?tab=doi-ngu' });

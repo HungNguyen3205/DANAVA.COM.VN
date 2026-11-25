@@ -34,7 +34,7 @@ export function OverviewTasks({ data, leads, draft }: { data: SiteData; leads: A
     sales && { label: 'Yêu cầu mới', value: fresh, note: `${month} yêu cầu trong 30 ngày`, href: '/admin/khach-hang/', icon: Inbox, tone: '' },
     can(user.role, 'reports.read') && { label: 'Người xem 30 ngày', value: visitors ? visitors.visitors : '—', note: visitors ? `${visitors.pageviews} lượt xem trang` : 'Đang tải…', href: '/admin/thong-ke/', icon: ChartColumn, tone: 'is-navy' },
     content && { label: 'Bài viết công khai', value: data.posts.filter(p => p.published && !p.archived).length, note: `${data.posts.filter(p => !p.published && !p.archived).length} bài nháp`, href: '/admin/bai-viet/', icon: FileText, tone: 'is-green' },
-    content && { label: 'Sản phẩm & dịch vụ', value: data.services.filter(s => s.published !== false).length, note: `${(data.landings || []).filter(l => l.status === 'published').length} landing page công khai`, href: '/admin/san-pham/', icon: Package, tone: '' }
+    content && { label: 'Giải pháp', value: data.services.filter(s => s.published !== false).length, note: `${(data.landings || []).filter(l => l.status === 'published').length} landing page công khai`, href: '/admin/san-pham/', icon: Package, tone: '' }
   ].filter(Boolean) as { label: string; value: number | string; note: string; href: string; icon: typeof Inbox; tone: string }[];
 
   const tasks: { text: string; href: string }[] = [];

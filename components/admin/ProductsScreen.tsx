@@ -1,6 +1,6 @@
 'use client';
 /**
- * Sản phẩm & Dịch vụ: danh sách + hồ sơ từng sản phẩm (tab Thông tin chung, Nội dung, Gói & giá, Hiển thị, SEO, Lịch sử).
+ * Giải pháp: danh sách + hồ sơ từng sản phẩm (tab Thông tin chung, Nội dung, Gói & giá, Hiển thị, SEO, Lịch sử).
  * Một nguồn dữ liệu: SiteData.services. Trang chủ, hệ sinh thái, landing page, ANNA đọc bản đã xuất bản của hồ sơ này.
  */
 import { ArrowLeft, ArrowUpDown, ExternalLink, Eye, EyeOff, Pencil, Plus, Star, Trash2 } from 'lucide-react';
@@ -86,7 +86,7 @@ function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => 
 
   return (
     <>
-      <PageHeader title="Sản phẩm & dịch vụ" description={`${draft.services.filter(s => s.published !== false).length} đang hiển thị · ${draft.services.filter(s => s.published === false).length} đang ẩn`}
+      <PageHeader title="Giải pháp" description={`${draft.services.filter(s => s.published !== false).length} đang hiển thị · ${draft.services.filter(s => s.published === false).length} đang ẩn`}
         actions={<>
           <Button variant="secondary" onClick={() => setSorting(v => !v)} aria-pressed={sorting}><ArrowUpDown size={16} /> {sorting ? 'Xong sắp xếp' : 'Sắp xếp thứ tự'}</Button>
           <Button variant="primary" onClick={() => setCreating(v => !v)}><Plus size={16} /> Thêm sản phẩm</Button>
@@ -189,7 +189,7 @@ function ProductProfile({ draft, setDraft, product: s, onBack, studioPricing, ct
   return (
     <div className="blk-stack">
       <PageHeader
-        back={<Button variant="ghost" onClick={onBack}><ArrowLeft size={16} /> Sản phẩm & dịch vụ</Button>}
+        back={<Button variant="ghost" onClick={onBack}><ArrowLeft size={16} /> Giải pháp</Button>}
         title={s.title || 'Sản phẩm chưa đặt tên'}
         description={<>{def.label} · <StatusBadge tone={s.published === false ? 'neutral' : 'success'}>{s.published === false ? 'Đang ẩn' : 'Đang hiển thị'}</StatusBadge></>}
         actions={<a className="ax-btn ax-btn--secondary" href={`/giai-phap/${s.slug}/`} target="_blank" rel="noopener"><ExternalLink size={15} /> Xem trang</a>}
@@ -207,7 +207,7 @@ function ProductProfile({ draft, setDraft, product: s, onBack, studioPricing, ct
             </label>
             <label>Nhóm (phân loại, lọc)
               <select value={s.groupId || ''} onChange={e => edit({ groupId: e.target.value || undefined })}><option value="">(chưa phân nhóm)</option>{groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select>
-              <small className="field-note">Quản lý nhóm ở Sản phẩm & Dịch vụ → Nhóm & loại.</small>
+              <small className="field-note">Quản lý nhóm ở Giải pháp → Nhóm & loại.</small>
             </label>
           </div>
           <Text label="Mô tả ngắn (thẻ, menu, kết quả tìm kiếm)" value={s.description} area max={2000} onChange={description => edit({ description })} />
