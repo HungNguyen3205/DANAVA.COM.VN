@@ -41,18 +41,8 @@
 .gy-iso:hover .gy-iso__floor { transform: rotateX(52deg) rotateZ(-38deg) scale(1.03); }
 .gy-iso__floor i { border-radius: 4px; background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
 .gy-iso__floor i:nth-child(7n + 3) { background: rgba(242, 107, 29, .35); }
-.gy-iso__eq { position: absolute; display: grid; place-items: center; width: 22%; aspect-ratio: 1; border-radius: 10px; background: #fff; color: var(--gy-orange); box-shadow: 0 10px 20px -8px rgba(0, 0, 0, .5); transform: rotateZ(45deg) rotateX(-58deg) translateY(-30%); }
-.gy-iso__eq svg { width: 50%; height: 50%; }
-.gy-iso__eq--a { left: 12%; top: 14%; }
-.gy-iso__eq--b { left: 56%; top: 30%; }
-.gy-iso__eq--c { left: 30%; top: 62%; }
 .gy-iso__tag { position: absolute; bottom: 8%; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 999px; background: #fff; color: var(--gy-navy); font-size: 13.5px; font-weight: 800; box-shadow: 0 14px 28px -14px rgba(19, 36, 79, .5); }
 .gy-iso__tag svg { width: 15px; height: 15px; color: var(--gy-orange); }
-@media (prefers-reduced-motion: no-preference) {
-  .gy-iso__eq { animation: gy-bob 3.4s ease-in-out infinite; }
-  .gy-iso__eq--b { animation-delay: .8s; }
-  .gy-iso__eq--c { animation-delay: 1.6s; }
-}
 @keyframes gy-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 
 /* ---------- Ba trụ cột ---------- */
@@ -79,8 +69,8 @@
 .gy-lab__lead { margin: 12px 0 0; color: #c9d3ee; font-size: 15.5px; line-height: 1.65; }
 .gy-lab__steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 22px 0 26px; padding: 0; list-style: none; }
 .gy-lab__steps li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 14px; background: rgba(255, 255, 255, .06); font-size: 14px; font-weight: 700; }
-.gy-lab__steps li span { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: rgba(242, 107, 29, .25); color: #ffb066; }
-.gy-lab__steps li span svg { width: 17px; height: 17px; }
+.gy-lab__steps li .gy-lab__ico { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: rgba(242, 107, 29, .25); color: #ffb066; }
+.gy-lab__steps li .gy-lab__ico svg { width: 17px; height: 17px; }
 .gy-lab__steps li b { color: #ffb066; }
 .gy-lab__visual { position: relative; display: grid; place-items: center; min-height: 280px; perspective: 900px; }
 .gy-lab__room { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; width: min(100%, 340px); aspect-ratio: 1; padding: 8px; border-radius: 16px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .15); transform: rotateX(55deg) rotateZ(-40deg); }
@@ -261,3 +251,27 @@
   .gp-table th:nth-child(2), .gp-table td:nth-child(2) { display: none; }
   .gp-table td, .gp-table th { padding: 8px 6px; }
 }
+
+/* ---- Sửa (25/11): bước phòng lab, sàn isometric, nút hero ---- */
+.gy-lab__steps li { align-items: center; }
+.gy-lab__txt { min-width: 0; line-height: 1.35; }
+.gy-lab__steps li b { flex: none; }
+/* Sàn isometric 7×7: máy là khối nổi (đẩy lên theo trục z, bóng xếp lớp giả mặt bên) */
+.gy-iso__floor { grid-template-columns: repeat(7, 1fr); width: 70%; gap: 5px; padding: 8px; background: linear-gradient(135deg, #22397a, #13244f); transform-style: preserve-3d; }
+.gy-iso__floor i { border-radius: 5px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+.gy-iso__floor i:nth-child(7n + 3) { background: rgba(255, 255, 255, .08); }
+.gy-iso__m { position: relative; transform: translateZ(14px); transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+.gy-iso__m--o { background: linear-gradient(135deg, #ffb066, #f26b1d) !important; box-shadow: 1px 1px 0 #d9590f, 2px 2px 0 #d9590f, 3px 3px 0 #c2410c, 4px 4px 0 #c2410c, 5px 5px 0 #a8380a, 6px 6px 0 #a8380a, 8px 8px 14px rgba(0, 0, 0, .35) !important; }
+.gy-iso__m--b { background: linear-gradient(135deg, #7cc2ef, #53a5db) !important; box-shadow: 1px 1px 0 #3b88bd, 2px 2px 0 #3b88bd, 3px 3px 0 #2e6f9c, 4px 4px 0 #2e6f9c, 5px 5px 0 #245a80, 6px 6px 0 #245a80, 8px 8px 14px rgba(0, 0, 0, .35) !important; }
+.gy-iso__m--y { background: linear-gradient(135deg, #ffe39b, #ffc94d) !important; box-shadow: 1px 1px 0 #e0a92c, 2px 2px 0 #e0a92c, 3px 3px 0 #c58f1c, 4px 4px 0 #c58f1c, 5px 5px 0 #a87814, 6px 6px 0 #a87814, 8px 8px 14px rgba(0, 0, 0, .35) !important; }
+.gy-iso:hover .gy-iso__m { transform: translateZ(22px); }
+.gy-iso__tag { bottom: 4%; }
+@media (prefers-reduced-motion: no-preference) {
+  .gy-iso__m--o { animation: gy-lift 3.6s ease-in-out infinite; }
+  .gy-iso__m--b { animation: gy-lift 3.6s ease-in-out 1.2s infinite; }
+  .gy-iso__m--y { animation: gy-lift 3.6s ease-in-out 2.4s infinite; }
+}
+@keyframes gy-lift { 0%, 100% { transform: translateZ(14px); } 50% { transform: translateZ(22px); } }
+/* Hai nút hero cùng một hàng, cùng chiều cao */
+.gy-hero__actions { align-items: center; }
+.gy-hero__actions .s-btn--lg, .s-app .gy-hero__actions .gy-btn-3d { min-height: 52px; padding: 0 22px; font-size: 15px; }

@@ -924,3 +924,10 @@ html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
   .s-app .s-cta.s-cta--anna { min-height: calc(var(--anna-w) * 1.04 - 40px); padding-left: calc(var(--anna-w) + 4px); }
 }
 @media (max-width: 380px) { .s-cta-wrap { --anna-w: 112px; } }
+
+/* Dải cuối trang có ANNA: cột chữ đủ rộng, cột nút tối đa 460px, nút tự xuống dòng (trang có 3 nút) */
+@media (min-width: 861px) {
+  .s-app .s-cta.s-cta--anna { grid-template-columns: minmax(260px, 1fr) minmax(0, 460px); }
+  .s-app .s-cta.s-cta--anna .s-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+  .s-app .s-cta.s-cta--anna .s-row .s-btn { white-space: nowrap; }
+}

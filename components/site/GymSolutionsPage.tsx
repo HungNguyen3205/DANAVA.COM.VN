@@ -13,8 +13,11 @@ import { CONTACT } from '@/lib/company';
 import { ct } from './cms';
 import { rich } from './rich';
 import { Crumbs, CtaBand } from './ui';
+import { formatPhone } from './catalog';
 
 const CONSULT = '/lien-he/?service=danava-studio';
+/** Sàn 7×7 thu nhỏ: ô có máy (o = cardio cam, b = sức mạnh xanh, y = tạ vàng) */
+const ISO_MACHINES: Record<number, string> = { 8: 'o', 9: 'o', 15: 'o', 16: 'o', 12: 'b', 19: 'b', 26: 'b', 31: 'y', 32: 'y', 38: 'y', 39: 'y', 44: 'o' };
 const LAB = '/bao-gia-setup-phong-gym/';
 
 export function GymSolutionsPage({ data }: { data: SiteData }) {
@@ -67,16 +70,13 @@ export function GymSolutionsPage({ data }: { data: SiteData }) {
                 <Link className="s-btn s-btn--primary s-btn--lg" href={CONSULT}>{T('cta.primary', 'Đặt lịch tư vấn setup phòng gym', 'Nút chính')} <ArrowRight aria-hidden="true" /></Link>
                 <Link className="gy-btn-3d" href={LAB}><Boxes aria-hidden="true" />{T('cta.lab', 'Vào setup phòng tập của bạn', 'Nút phòng lab 3D')}</Link>
               </div>
-              <a className="gy-hero__call" href={tel}><Phone aria-hidden="true" />{T('hero.call', 'Gọi tư vấn', 'Nhãn gọi')} <b>{phone}</b></a>
+              <a className="gy-hero__call" href={tel}><Phone aria-hidden="true" />{T('hero.call', 'Gọi tư vấn', 'Nhãn gọi')} <b>{formatPhone(phone)}</b></a>
             </div>
 
             {/* Sàn phòng tập isometric thu nhỏ: gợi ý phòng lab 3D */}
             <Link className="gy-iso" href={LAB} aria-label="Mở phòng lab 3D để tự setup phòng tập">
               <span className="gy-iso__floor" aria-hidden="true">
-                {Array.from({ length: 36 }, (_, i) => <i key={i} />)}
-                <b className="gy-iso__eq gy-iso__eq--a"><Dumbbell /></b>
-                <b className="gy-iso__eq gy-iso__eq--b"><Dumbbell /></b>
-                <b className="gy-iso__eq gy-iso__eq--c"><Dumbbell /></b>
+                {Array.from({ length: 49 }, (_, i) => <i key={i} className={ISO_MACHINES[i] ? `gy-iso__m gy-iso__m--${ISO_MACHINES[i]}` : undefined} />)}
               </span>
               <span className="gy-iso__tag"><Sparkles aria-hidden="true" />{T('hero.iso-tag', 'Thử setup phòng tập 3D', 'Nhãn mô hình')}</span>
             </Link>
@@ -113,7 +113,7 @@ export function GymSolutionsPage({ data }: { data: SiteData }) {
               <h2 className="gy-h2 gy-h2--light" id="gy-lab-title">{T('lab.title', 'Tự setup phòng tập của bạn trong 3D', 'Tiêu đề')}</h2>
               <p className="gy-lab__lead">{T('lab.lead', 'Nhập diện tích, chọn kích thước ô gạch, kéo thả máy móc vào phòng và xem tổng chi phí thiết bị ngay bên dưới. Gửi bản thiết kế cho DANAVA để nhận báo giá chính thức.', 'Câu dẫn', { multiline: true })}</p>
               <ol className="gy-lab__steps">
-                {labSteps.map((s, i) => <li key={s.k}><span><s.icon aria-hidden="true" /></span><b>{i + 1}</b>{T(`lab.${s.k}`, s.text, 'Bước')}</li>)}
+                {labSteps.map((s, i) => <li key={s.k}><span className="gy-lab__ico"><s.icon aria-hidden="true" /></span><b>{i + 1}</b><span className="gy-lab__txt">{T(`lab.${s.k}`, s.text, 'Bước')}</span></li>)}
               </ol>
               <Link className="s-btn s-btn--primary s-btn--lg" href={LAB}>{T('lab.cta', 'Vào setup phòng tập của bạn', 'Nút')} <ArrowRight aria-hidden="true" /></Link>
             </div>
