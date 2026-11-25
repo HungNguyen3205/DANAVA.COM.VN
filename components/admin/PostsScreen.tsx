@@ -4,15 +4,16 @@
  * trình sửa chia tab (Nội dung, Phân loại, SEO, Lịch sử), phần nâng cao thu gọn.
  * Trạng thái: Nháp → Công khai → Lưu trữ (ẩn khỏi website, không xóa).
  */
-import { Archive, ArrowLeft, Copy, ExternalLink, Eye, Pencil, Plus, Trash2, Undo2 } from 'lucide-react';
-import { useEffect, useState, type ReactNode } from 'react';
+import { ArrowLeft, ExternalLink, Trash2 } from 'lucide-react';
+import { useEffect, type ReactNode } from 'react';
 import MediaPicker from '../MediaPicker';
 import { Lines, ServiceChecks, Text, Toggle } from '../AdminContentEditors';
 import type { Post, SiteData } from '@/lib/content';
 import { RecordHistory } from './RecordHistory';
+import { PostTable } from './PostTable';
 import { slugify } from './ProductsScreen';
-import { Button, DataTable, FormSection, PageHeader, StatusBadge, TabBar, useConfirm, type Tone } from './kit';
-import { Empty, SearchBar, matches, useQueryParam, usePaged } from './ui';
+import { Button, FormSection, PageHeader, StatusBadge, TabBar, useConfirm, type Tone } from './kit';
+import { useQueryParam } from './ui';
 
 type Status = 'nhap' | 'cong-khai' | 'luu-tru';
 const statusOf = (p: Post): Status => (p.archived ? 'luu-tru' : p.published ? 'cong-khai' : 'nhap');
@@ -42,75 +43,14 @@ export function PostsScreen({ draft, setDraft, saveBar }: Props) {
     : <PostList draft={draft} setDraft={setDraft} open={pid => setId(pid, true)} create={create} />;
 }
 
+/** Danh sách bài viết kiểu WP admin + cột SEO (components/admin/PostTable.tsx). */
 function PostList({ draft, setDraft, open, create }: { draft: SiteData; setDraft: (d: SiteData) => void; open: (id: string) => void; create: () => void }) {
-  const confirm = useConfirm();
-  const [q, setQ] = useState('');
-  const [status, setStatus] = useState('');
-  const [topic, setTopic] = useState('');
-  const [product, setProduct] = useState('');
-  const shown = draft.posts
-    .filter(p => matches(q, p.title, p.slug, p.category, (p.tags || []).join(' ')))
-    .filter(p => (status ? statusOf(p) === status : statusOf(p) !== 'luu-tru'))
-    .filter(p => !topic || (topic === '-' ? !p.topicId : p.topicId === topic))
-    .filter(p => !product || p.serviceIds?.includes(product))
-    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  const { slice, pager } = usePaged(shown, 20);
-  const topicName = (tid?: string) => (draft.topics || []).find(t => t.id === tid)?.name || 'Chưa phân loại';
-  const counts: Record<Status, number> = { nhap: 0, 'cong-khai': 0, 'luu-tru': 0 };
-  for (const p of draft.posts) counts[statusOf(p)]++;
-  const patch = (id: string, change: Partial<Post>) => setDraft({ ...draft, posts: draft.posts.map(p => (p.id === id ? { ...p, ...change } : p)) });
   const duplicate = (p: Post) => {
     const nid = globalThis.crypto.randomUUID();
     setDraft({ ...draft, posts: [{ ...structuredClone(p), id: nid, slug: `${p.slug}-ban-sao`.slice(0, 140), title: `${p.title} (bản sao)`, published: false, archived: undefined }, ...draft.posts] });
     open(nid);
   };
-
-  return (
-    <>
-      <PageHeader title="Bài viết" description={`${counts['cong-khai']} công khai · ${counts.nhap} nháp · ${counts['luu-tru']} lưu trữ`}
-        actions={<Button variant="primary" onClick={create}><Plus size={16} /> Viết bài mới</Button>} />
-      <SearchBar value={q} onChange={setQ} placeholder="Tìm theo tiêu đề, đường dẫn, thẻ…">
-        <select aria-label="Lọc theo trạng thái" value={status} onChange={e => setStatus(e.target.value)}>
-          <option value="">Nháp & công khai</option>
-          <option value="cong-khai">Công khai ({counts['cong-khai']})</option>
-          <option value="nhap">Nháp ({counts.nhap})</option>
-          <option value="luu-tru">Lưu trữ ({counts['luu-tru']})</option>
-        </select>
-        <select aria-label="Lọc theo danh mục" value={topic} onChange={e => setTopic(e.target.value)}>
-          <option value="">Mọi danh mục</option><option value="-">Chưa phân loại</option>
-          {(draft.topics || []).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
-        <select aria-label="Lọc theo sản phẩm liên quan" value={product} onChange={e => setProduct(e.target.value)}>
-          <option value="">Mọi sản phẩm</option>{draft.services.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
-        </select>
-      </SearchBar>
-      <DataTable
-        caption="Danh sách bài viết"
-        rows={slice}
-        rowKey={p => p.id}
-        onRowClick={p => open(p.id)}
-        empty={<Empty title={draft.posts.length ? 'Không có bài nào khớp bộ lọc' : 'Chưa có bài viết'} action={!draft.posts.length && <Button variant="primary" onClick={create}><Plus size={16} /> Viết bài đầu tiên</Button>}>Thử đổi từ khóa hoặc bộ lọc.</Empty>}
-        columns={[
-          { key: 'title', header: 'Tiêu đề', primary: true, cell: p => <span className="ax-cell-title"><b>{p.title || '(chưa có tiêu đề)'}</b><small>/blogs/{p.slug}/{p.tags?.length ? ` · #${p.tags.join(' #')}` : ''}</small></span> },
-          { key: 'topic', header: 'Danh mục', hideOnMobile: true, cell: p => topicName(p.topicId) },
-          { key: 'date', header: 'Ngày đăng', width: '120px', cell: p => <span className="ax-nowrap">{p.date || '—'}</span> },
-          { key: 'status', header: 'Trạng thái', width: '130px', cell: p => <StatusBadge tone={STATUS[statusOf(p)].tone}>{STATUS[statusOf(p)].label}</StatusBadge> }
-        ]}
-        actions={p => [
-          { label: 'Sửa', icon: <Pencil size={15} />, onSelect: () => open(p.id) },
-          { label: 'Xem trên website', icon: <Eye size={15} />, onSelect: () => window.open(`/blogs/${p.slug}/`, '_blank', 'noopener'), hidden: statusOf(p) !== 'cong-khai' },
-          { label: 'Nhân bản', icon: <Copy size={15} />, onSelect: () => duplicate(p) },
-          { label: 'Lưu trữ', icon: <Archive size={15} />, onSelect: () => patch(p.id, { archived: true, published: false }), hidden: statusOf(p) === 'luu-tru' },
-          { label: 'Khôi phục từ lưu trữ', icon: <Undo2 size={15} />, onSelect: () => patch(p.id, { archived: undefined }), hidden: statusOf(p) !== 'luu-tru' },
-          { label: 'Xóa', icon: <Trash2 size={15} />, danger: true, onSelect: async () => {
-            if (await confirm({ title: `Xóa bài “${p.title}”?`, body: 'Nên dùng Lưu trữ nếu chỉ muốn ẩn khỏi website. Thay đổi áp dụng khi Lưu nháp hoặc Xuất bản.', confirmLabel: 'Xóa bài', tone: 'danger' }))
-              setDraft({ ...draft, posts: draft.posts.filter(x => x.id !== p.id) });
-          } }
-        ]}
-      />
-      {pager}
-    </>
-  );
+  return <PostTable draft={draft} setDraft={setDraft} open={open} create={create} duplicate={duplicate} />;
 }
 
 function PostEditor({ draft, setDraft, saveBar, post, onBack }: Props & { post: Post; onBack: () => void }) {
