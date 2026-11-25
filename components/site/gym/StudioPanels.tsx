@@ -119,29 +119,30 @@ export function FloorsPanel({ p, floor, setFloorId, act, selectItem }: {
   const opt = p.options[p.active];
   const lockedAll = !!opt && [...opt.placements, ...opt.furniture].filter(x => x.floorId === floor.id).every(x => x.locked) && [...opt.placements].some(x => x.floorId === floor.id);
   return (
-    <div className="gs-panel">
-      <div className="gs-floors">
-        {sorted.map(f => <button key={f.id} type="button" role="radio" aria-checked={f.id === floor.id} className={f.id === floor.id ? 'is-on' : ''} onClick={() => setFloorId(f.id)}><Layers aria-hidden="true" />{f.name}<small>{fmtArea(f.w * f.l)}</small></button>)}
+    <div className="gs-panel gs-floorp">
+      <div className="gs-floorbar">
+        <div className="gs-floorseg" role="radiogroup" aria-label="Tầng">
+          {sorted.map(f => <button key={f.id} type="button" role="radio" aria-checked={f.id === floor.id} className={f.id === floor.id ? 'is-on' : ''} onClick={() => setFloorId(f.id)} title={`${f.name} · ${fmtArea(f.w * f.l)}`}>{f.level === 0 ? 'Trệt' : `T${f.level + 1}`}</button>)}
+        </div>
+        <button type="button" className="gs-icon" onClick={act.addFloor} disabled={p.floors.length >= 5} title="Thêm tầng" aria-label="Thêm tầng"><Plus /></button>
+        <button type="button" className="gs-icon" onClick={() => act.duplicateFloor(floor.id)} disabled={p.floors.length >= 5} title={`Sao chép ${floor.name.toLowerCase()}`} aria-label="Sao chép tầng"><Copy /></button>
+        <button type="button" className="gs-icon is-danger" onClick={() => { if (confirm(`Xoá ${floor.name} và toàn bộ máy trên tầng này?`)) act.removeFloor(floor.id); }} disabled={p.floors.length <= 1} title={`Xoá ${floor.name.toLowerCase()}`} aria-label="Xoá tầng"><Trash2 /></button>
       </div>
-      <p className="gs-note">Tổng {p.floors.length} tầng, gồm tầng trệt. Đổi tầng không làm mất dữ liệu.</p>
-      <div className="gs-row">
-        <button type="button" className="gs-btn" onClick={act.addFloor} disabled={p.floors.length >= 5}><Plus aria-hidden="true" /> Thêm tầng</button>
-        <button type="button" className="gs-btn" onClick={() => act.duplicateFloor(floor.id)} disabled={p.floors.length >= 5}><Copy aria-hidden="true" /> Sao chép</button>
-        <button type="button" className="gs-btn is-danger" onClick={() => { if (confirm(`Xoá ${floor.name} và toàn bộ máy trên tầng này?`)) act.removeFloor(floor.id); }} disabled={p.floors.length <= 1}><Trash2 aria-hidden="true" /> Xoá</button>
-      </div>
-      <h3>{floor.name}</h3>
-      <label className="gs-text"><span>Tên tầng</span><input value={floor.name} maxLength={40} onChange={e => act.updateFloor(floor.id, { name: e.target.value })} /></label>
-      <div className="gs-grid3">
-        <Num label="Ngang (mặt tiền)" unit="m" value={floor.w} min={3} max={80} onChange={v => act.updateFloor(floor.id, { w: v })} />
+      <div className="gs-grid3 gs-dims">
+        <Num label="Ngang" unit="m" value={floor.w} min={3} max={80} onChange={v => act.updateFloor(floor.id, { w: v })} />
         <Num label="Sâu" unit="m" value={floor.l} min={3} max={80} onChange={v => act.updateFloor(floor.id, { l: v })} />
-        <Num label="Cao trần" unit="m" value={floor.h} min={2.2} max={8} onChange={v => act.updateFloor(floor.id, { h: v })} />
+        <Num label="Cao" unit="m" value={floor.h} min={2.2} max={8} onChange={v => act.updateFloor(floor.id, { h: v })} />
       </div>
-      <p className="gs-area"><b>{fmtArea(total)}</b> tổng · <b>{fmtArea(usable)}</b> còn lại để bố trí <small>(trừ vật cố định, cầu thang + chiếu nghỉ)</small></p>
-      <div className="gs-grid2">
-        <label className="gs-text"><span>Công năng</span><select value={floor.use} onChange={e => act.updateFloor(floor.id, { use: e.target.value as Floor['use'] })}>{Object.entries(FLOOR_USES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select></label>
-        <Num label="Người tập cùng lúc" value={floor.users} min={0} max={500} step={1} onChange={v => act.updateFloor(floor.id, { users: Math.round(v) })} />
-      </div>
-      <label className="gs-text"><span>Ngân sách riêng của tầng</span><span className="gs-num__box"><input inputMode="numeric" value={floor.budget ? Math.round(floor.budget / 1e6) : ''} placeholder="chia từ ngân sách dự án" onChange={e => act.updateFloor(floor.id, { budget: Number(e.target.value.replace(/\D/g, '')) * 1e6 })} /><i>triệu</i></span></label>
+      <p className="gs-area"><b>{fmtArea(total)}</b> · còn {fmtArea(usable)} để đặt máy</p>
+      <details className="gs-fold">
+        <summary>Tên, công năng, ngân sách tầng</summary>
+        <label className="gs-text"><span>Tên tầng</span><input value={floor.name} maxLength={40} onChange={e => act.updateFloor(floor.id, { name: e.target.value })} /></label>
+        <div className="gs-grid2">
+          <label className="gs-text"><span>Công năng</span><select value={floor.use} onChange={e => act.updateFloor(floor.id, { use: e.target.value as Floor['use'] })}>{Object.entries(FLOOR_USES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select></label>
+          <Num label="Người tập cùng lúc" value={floor.users} min={0} max={500} step={1} onChange={v => act.updateFloor(floor.id, { users: Math.round(v) })} />
+        </div>
+        <label className="gs-text"><span>Ngân sách riêng (triệu)</span><span className="gs-num__box"><input inputMode="numeric" value={floor.budget ? Math.round(floor.budget / 1e6) : ''} placeholder="chia từ ngân sách dự án" onChange={e => act.updateFloor(floor.id, { budget: Number(e.target.value.replace(/D/g, '')) * 1e6 })} /><i>triệu</i></span></label>
+      </details>
       <h3>Vật cố định <small>bấm để thêm, kéo để đặt</small></h3>
       <div className="gs-tiles">
         {(Object.keys(FIXTURE_KINDS) as FixtureKind[]).map(k => { const [Ic, short] = FIX_TILE[k]; return <button key={k} type="button" onClick={() => act.addFixture(k)} title={`Thêm ${FIXTURE_KINDS[k].label.toLowerCase()}`} style={{ ['--c' as string]: FIXTURE_KINDS[k].color }}><Ic aria-hidden="true" /><span>{short}</span></button>; })}

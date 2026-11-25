@@ -600,3 +600,16 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-fold > :not(summary) { margin: 10px 12px 12px; }
 .gs-fold .gs-textarea { width: calc(100% - 24px); }
 .gs-regen { min-height: 46px; margin-top: 14px; }
+
+/* Mặt bằng: thanh tầng gọn + 3 số đo một hàng */
+.gs-floorbar { display: flex; align-items: center; gap: 4px; }
+.gs-floorseg { display: flex; flex: 1; gap: 3px; padding: 3px; border-radius: 12px; background: #eef2f9; }
+.gs-floorseg button { flex: 1; height: 32px; border: 0; border-radius: 9px; background: transparent; color: #5b6478; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.s-app .gs .gs-floorseg button.is-on { background: #fff !important; color: var(--gs-navy) !important; box-shadow: 0 6px 14px -10px rgba(19, 36, 79, .55) !important; }
+.gs-floorbar .gs-icon { width: 34px; height: 34px; }
+.gs-floorbar .gs-icon.is-danger { color: #b42318; }
+.gs-dims { margin-top: 10px; }
+.gs-dims .gs-num__box input { height: 36px; font-size: 14.5px; padding: 0 6px 0 10px; }
+.gs-floorp .gs-area { margin: 6px 0 0; font-size: 12.5px; }
+.gs-floorp .gs-area b { font-size: 13.5px; }
+.gs-floorp .gs-fold .gs-text { margin: 0 0 8px; }
