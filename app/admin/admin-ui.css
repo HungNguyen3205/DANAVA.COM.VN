@@ -858,3 +858,62 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 /* Quản trị → Đối tác & nhận xét: số thương hiệu đang hiện ở trang chủ (đã xác minh hợp tác) */
 .ax-scope .adm-home-count { display: inline-flex; align-items: baseline; gap: 6px; margin: 4px 0 6px; padding: 8px 14px; border-radius: 12px; background: #fff4e8; color: #8a3a0a; font-size: 13.5px; font-weight: 600; }
 .ax-scope .adm-home-count b { color: #f26b1d; font-size: 20px; font-weight: 800; line-height: 1; }
+
+/* ==== Quản trị → Đối tác: khung điền gọn (components/AdminContentEditors.tsx → ProofEditor) ==== */
+.ax-scope .pf { display: grid; gap: 14px; padding-top: 14px; margin-top: 12px; border-top: 1px solid var(--ax-border); }
+.ax-scope .pf-main { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: start; }
+.ax-scope .pf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+.ax-scope .pf-field { display: grid; gap: 4px; margin: 0; min-width: 0; font-size: 12px; font-weight: 600; color: var(--ax-muted); }
+.ax-scope .pf-field--wide { grid-column: 1 / -1; }
+.ax-scope .pf-field > span { font-size: 12px; font-weight: 600; color: var(--ax-muted); }
+.ax-scope .pf-field :is(input, select, textarea) { width: 100%; min-width: 0; height: 38px; margin: 0; padding: 0 11px; border: 1px solid var(--ax-border); border-radius: 10px; background: #fff; color: var(--ax-text); font: inherit; font-size: 14px; font-weight: 500; }
+.ax-scope .pf-field textarea { height: auto; min-height: 76px; padding: 9px 11px; line-height: 1.5; resize: vertical; }
+.ax-scope .pf-field :is(input, select, textarea):focus { outline: none; border-color: var(--ax-accent); box-shadow: 0 0 0 3px rgba(242, 107, 29, .15); }
+.ax-scope .pf-field label { display: grid; gap: 4px; margin: 0; font-size: 12px; font-weight: 600; color: var(--ax-muted); }
+
+/* Logo vuông bấm để tải */
+.ax-scope .pf-logo { display: grid; gap: 6px; justify-items: center; }
+.ax-scope .pf-logo__tile { position: relative; display: grid; place-items: center; width: 96px; height: 96px; overflow: hidden; border: 1.5px dashed #c9d1e1; border-radius: 18px; background: #f6f8fc; cursor: pointer; transition: border-color .15s, background .15s; }
+.ax-scope .pf-logo__tile:hover { border-color: var(--ax-accent); background: #fff7f0; }
+.ax-scope .pf-logo__tile:focus-within { outline: 2px solid var(--ax-accent); outline-offset: 2px; }
+.ax-scope .pf-logo__tile img { width: 100%; height: 100%; object-fit: contain; padding: 8px; background: #fff; }
+.ax-scope .pf-logo__ph { font-size: 30px; font-weight: 800; color: #9aa6bd; line-height: 1; margin-bottom: 14px; }
+.ax-scope .pf-logo__cta { position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 0; background: rgba(19, 36, 79, .78); color: #fff; font-size: 11px; font-weight: 700; text-align: center; opacity: 0; transition: opacity .15s; }
+.ax-scope .pf-logo__tile:not(:has(img)) .pf-logo__cta { opacity: 1; background: transparent; color: var(--ax-muted); }
+.ax-scope .pf-logo__tile:hover .pf-logo__cta, .ax-scope .pf-logo__tile.is-busy .pf-logo__cta { opacity: 1; }
+.ax-scope .pf-logo__rm { padding: 0; border: 0; background: none; color: var(--ax-muted); font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; }
+.ax-scope .pf-logo__rm:hover { color: #b42318; }
+.ax-scope .pf-logo__err { max-width: 110px; color: #b42318; font-size: 11px; text-align: center; }
+
+/* Công tắc dạng thẻ */
+.ax-scope .pf-switches { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.ax-scope .pf-switch { position: relative; display: flex; align-items: center; gap: 12px; margin: 0; padding: 11px 14px; border: 1px solid var(--ax-border); border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .15s, background .15s; }
+.ax-scope .pf-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.ax-scope .pf-switch__track { position: relative; flex: none; width: 38px; height: 22px; border-radius: 999px; background: #d5dbe7; transition: background .2s; }
+.ax-scope .pf-switch__track i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .2s; }
+.ax-scope .pf-switch.is-on .pf-switch__track { background: #18794e; }
+.ax-scope .pf-switch--accent.is-on .pf-switch__track { background: #f26b1d; }
+.ax-scope .pf-switch.is-on .pf-switch__track i { transform: translateX(16px); }
+.ax-scope .pf-switch.is-on { border-color: #b7e2c9; background: #f3fbf6; }
+.ax-scope .pf-switch--accent.is-on { border-color: #ffd3b5; background: #fff7f0; }
+.ax-scope .pf-switch:has(input:focus-visible) { outline: 2px solid var(--ax-accent); outline-offset: 2px; }
+.ax-scope .pf-switch__text { display: grid; gap: 1px; min-width: 0; }
+.ax-scope .pf-switch__text b { font-size: 13.5px; color: var(--ax-text); }
+.ax-scope .pf-switch__text small { font-size: 11.5px; color: var(--ax-muted); }
+
+/* Thông tin thêm (thu gọn) */
+.ax-scope .pf-more { border: 1px solid var(--ax-border); border-radius: 14px; background: #fafbfd; }
+.ax-scope .pf-more > summary { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; list-style: none; font-size: 13px; font-weight: 700; color: var(--ax-text); }
+.ax-scope .pf-more > summary::-webkit-details-marker { display: none; }
+.ax-scope .pf-more > summary::before { content: '+'; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 6px; background: #e8edf7; color: var(--ax-text-2); font-size: 13px; line-height: 1; }
+.ax-scope .pf-more[open] > summary::before { content: '−'; }
+.ax-scope .pf-more > summary small { font-weight: 500; color: var(--ax-muted); }
+.ax-scope .pf-more > .pf-grid { padding: 4px 14px 14px; }
+.ax-scope .pf-foot { display: flex; justify-content: flex-end; }
+.ax-scope .pf-delete { padding: 6px 10px; border: 0; border-radius: 8px; background: none; color: #b42318; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.ax-scope .pf-delete:hover { background: #fdecea; }
+@media (max-width: 640px) {
+  .ax-scope .pf-main { grid-template-columns: 1fr; }
+  .ax-scope .pf-logo { justify-items: start; }
+  .ax-scope .pf-grid { grid-template-columns: 1fr; }
+}

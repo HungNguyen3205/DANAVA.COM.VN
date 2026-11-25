@@ -5,7 +5,7 @@
  * Mọi thay đổi chỉ nằm trong bản chỉnh sửa (draft) cho tới khi bấm "Lưu thay đổi" → lưu vào database.
  */
 import { useState } from 'react';
-import MediaPicker from './MediaPicker';
+import MediaPicker, { uploadMedia } from './MediaPicker';
 import { ask } from './admin/kit';
 import { CLIENT_SEEDS } from '@/lib/content-defaults';
 import { homePartners } from '@/lib/site-queries';
@@ -226,6 +226,47 @@ export function TopicsEditor({ draft, setDraft }: { draft: SiteData; setDraft: (
 }
 
 /* ------------------------------------------------ Khách hàng & nhận xét */
+/** Ô nhập gọn cho khung đối tác: nhãn nhỏ phía trên, không bộ đếm ký tự. */
+function PF({ label, value, onChange, max, placeholder, area = false, wide = false }: { label: string; value: string; onChange: (v: string) => void; max: number; placeholder?: string; area?: boolean; wide?: boolean }) {
+  return (
+    <label className={`pf-field${wide ? ' pf-field--wide' : ''}`}>
+      <span>{label}</span>
+      {area ? <textarea rows={3} maxLength={max} value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} />
+        : <input maxLength={max} value={value} placeholder={placeholder} onChange={e => onChange(e.target.value)} />}
+    </label>
+  );
+}
+/** Công tắc dạng thẻ: tiêu đề + dòng giải thích ngắn. */
+function Switch({ on, title, sub, onChange, accent = false }: { on: boolean; title: string; sub: string; onChange: (v: boolean) => void; accent?: boolean }) {
+  return (
+    <label className={`pf-switch${on ? ' is-on' : ''}${accent ? ' pf-switch--accent' : ''}`}>
+      <input type="checkbox" role="switch" checked={on} onChange={e => onChange(e.target.checked)} />
+      <span className="pf-switch__track" aria-hidden="true"><i /></span>
+      <span className="pf-switch__text"><b>{title}</b><small>{sub}</small></span>
+    </label>
+  );
+}
+/** Logo vuông: bấm để tải ảnh, có nút gỡ. */
+function LogoField({ value, name, onChange }: { value: string; name: string; onChange: (v: string) => void }) {
+  const [busy, setBusy] = useState(false), [err, setErr] = useState('');
+  return (
+    <div className="pf-logo">
+      <label className={`pf-logo__tile${busy ? ' is-busy' : ''}`} title="Bấm để tải logo (PNG, JPG, WebP, tối đa 6 MB)">
+        {value ? <img src={value} alt="" /> : <span className="pf-logo__ph">{(name.trim() || '+').slice(0, 1).toUpperCase()}</span>}
+        <span className="pf-logo__cta">{busy ? 'Đang tải…' : value ? 'Đổi logo' : 'Tải logo'}</span>
+        <input type="file" hidden accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={async e => {
+          const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
+          setBusy(true); setErr('');
+          try { onChange(await uploadMedia(file)); } catch (x) { setErr(x instanceof Error ? x.message : 'Lỗi tải ảnh'); }
+          setBusy(false);
+        }} />
+      </label>
+      {value && <button type="button" className="pf-logo__rm" onClick={() => onChange('')}>Gỡ logo</button>}
+      {err && <small className="pf-logo__err" role="alert">{err}</small>}
+    </div>
+  );
+}
+
 export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
   const clients = draft.clients || [];
   const tests = draft.testimonials || [];
@@ -270,7 +311,7 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
           <button type="button" className="admin-secondary" onClick={() => { setQ(''); setRel('all'); setDraft({ ...draft, clients: [{ id: uid(), name: '', logo: '', url: '', projectId: '', role: '', relation: 'client', onHome: false, permission: false, published: false, note: '' }, ...clients] }); }}>+ Thêm</button>
         </div>
         <p className="adm-home-count" role="status">Trang chủ đang hiện <b>{homeCount}</b> thương hiệu đã đồng hành</p>
-        <p className="field-note">Một khách hàng/đối tác lên khối logo trang chủ và được cộng vào con số trên khi bật đủ <b>Đã xác minh hợp tác</b>, <b>Có quyền hiển thị</b> và <b>Xuất bản</b>. Mục mới thêm nằm ở tab <b>Chờ xác minh</b>. Ghi nguồn xác nhận vào ghi chú.</p>
+        <p className="field-note">Bấm <b>+ Thêm</b>, điền tên & logo, bật <b>Hiện trên website</b> và <b>Đã xác minh hợp tác</b>: logo lên trang chủ và con số tự cộng thêm.</p>
         <button
           type="button"
           className="admin-secondary"
@@ -308,32 +349,56 @@ export function ProofEditor({ draft, setDraft }: { draft: SiteData; setDraft: (d
               {isPending(c) && <span className="adm-pill adm-pill--muted">Chờ xác minh</span>}
               <span className={`adm-pill ${isShown(c) ? 'adm-pill--green' : 'adm-pill--muted'}`}>{isShown(c) ? 'Đang hiển thị' : 'Đang ẩn'}</span>
             </summary>
-            <Text label="Tên khách hàng" value={c.name} max={150} onChange={name => setC(c.id, { name })} />
-            <MediaPicker label="Logo (để trống nếu chưa có quyền dùng logo)" value={c.logo} onChange={logo => setC(c.id, { logo })} />
-            <Text label="Liên kết (website hoặc trang trên danava.vn, https://…)" value={c.url} max={300} onChange={url => setC(c.id, { url })} />
-            <Text label="Lĩnh vực (hiện dưới logo)" value={c.role || ''} max={80} onChange={role => setC(c.id, { role })} />
-            <Text label="Tên đầy đủ" value={c.fullName || ''} max={200} onChange={fullName => setC(c.id, { fullName })} />
-            <Text label="Địa chỉ" value={c.address || ''} max={300} onChange={address => setC(c.id, { address })} />
-            <Text label="Tỉnh/thành (dùng để nhóm trên trang Đối tác)" value={c.city || ''} max={100} onChange={city => setC(c.id, { city })} />
-            <Text label="Giờ mở cửa" value={c.hours || ''} max={200} onChange={hours => setC(c.id, { hours })} />
-            <Lines label="Dịch vụ & tiện ích (mỗi dòng một mục)" value={c.amenities || []} rows={3} onChange={amenities => setC(c.id, { amenities })} />
-            <Text label="Giới thiệu" value={c.description || ''} area rows={4} max={2000} onChange={description => setC(c.id, { description })} />
-            <MediaPicker label="Ảnh bìa" value={c.cover || ''} onChange={cover => setC(c.id, { cover })} />
-            <label>
-              Loại quan hệ
-              <select value={c.relation || 'client'} onChange={e => setC(c.id, { relation: e.target.value as 'client' | 'partner' | 'place' })}>
-                <option value="client">Khách hàng của DANAVA</option>
-                <option value="partner">Đối tác đồng hành (danava.vn)</option>
-                <option value="place">Địa điểm trên danava.vn/places</option>
-              </select>
-            </label>
-            {relOf(c) !== 'place' && <Toggle label="Đã xác minh hợp tác (hiện ở khối logo trang chủ, được cộng vào con số “thương hiệu đã đồng hành”)" checked={c.onHome !== false} onChange={onHome => setC(c.id, { onHome })} />}
-            <Toggle label="Có huy hiệu DANAVA Verified" checked={!!c.verified} onChange={verified => setC(c.id, { verified })} />
-            {projectSelect(c.projectId, projectId => setC(c.id, { projectId }))}
-            <Text label="Ghi chú nguồn / quyền sử dụng (nội bộ)" value={c.note} area max={1000} onChange={note => setC(c.id, { note })} />
-            <Toggle label="Có quyền hiển thị tên/logo công khai" checked={c.permission} onChange={permission => setC(c.id, { permission, published: permission && c.published })} />
-            <Toggle label="Xuất bản" checked={c.published} onChange={published => setC(c.id, { published: published && c.permission && !!c.name.trim() })} />
-            <button type="button" className="danger" onClick={() => setDraft({ ...draft, clients: clients.filter(x => x.id !== c.id) })}>Xóa</button>
+            <div className="pf">
+              {/* Phần chính: logo + 4 ô cần thiết */}
+              <div className="pf-main">
+                <LogoField value={c.logo} name={c.name} onChange={logo => setC(c.id, { logo })} />
+                <div className="pf-grid">
+                  <PF label="Tên" value={c.name} max={150} placeholder="vd. HUDI Sofa" onChange={name => setC(c.id, { name })} />
+                  <label className="pf-field">
+                    <span>Loại</span>
+                    <select value={c.relation || 'client'} onChange={e => setC(c.id, { relation: e.target.value as 'client' | 'partner' | 'place' })}>
+                      <option value="client">Khách hàng</option>
+                      <option value="partner">Đối tác đồng hành</option>
+                      <option value="place">Địa điểm danava.vn</option>
+                    </select>
+                  </label>
+                  <PF label="Lĩnh vực" value={c.role || ''} max={80} placeholder="vd. Gym & Fitness" onChange={role => setC(c.id, { role })} />
+                  <PF label="Liên kết" value={c.url} max={300} placeholder="https://…" onChange={url => setC(c.id, { url })} />
+                </div>
+              </div>
+
+              {/* Hai công tắc: hiện công khai (đã được đồng ý dùng tên/logo) + đã xác minh → lên trang chủ */}
+              <div className="pf-switches">
+                <Switch on={c.permission && c.published} title="Hiện trên website" sub="Đã được đồng ý dùng tên & logo"
+                  onChange={v => setC(c.id, { permission: v, published: v && !!c.name.trim() })} />
+                {relOf(c) !== 'place' && (
+                  <Switch on={c.onHome !== false} title="Đã xác minh hợp tác" sub="Lên logo trang chủ, cộng vào con số" accent
+                    onChange={onHome => setC(c.id, { onHome })} />
+                )}
+              </div>
+
+              {/* Không bắt buộc */}
+              <details className="pf-more">
+                <summary>Thông tin thêm <small>không bắt buộc</small></summary>
+                <div className="pf-grid">
+                  <PF label="Tên đầy đủ" value={c.fullName || ''} max={200} onChange={fullName => setC(c.id, { fullName })} />
+                  <PF label="Tỉnh/thành" value={c.city || ''} max={100} placeholder="vd. Đà Nẵng" onChange={city => setC(c.id, { city })} />
+                  <PF label="Địa chỉ" value={c.address || ''} max={300} wide onChange={address => setC(c.id, { address })} />
+                  <PF label="Giờ mở cửa" value={c.hours || ''} max={200} onChange={hours => setC(c.id, { hours })} />
+                  <div className="pf-field">{projectSelect(c.projectId, projectId => setC(c.id, { projectId }))}</div>
+                  <PF label="Giới thiệu" value={c.description || ''} max={2000} area wide onChange={description => setC(c.id, { description })} />
+                  <div className="pf-field pf-field--wide"><Lines label="Dịch vụ & tiện ích (mỗi dòng một mục)" value={c.amenities || []} rows={3} onChange={amenities => setC(c.id, { amenities })} /></div>
+                  <div className="pf-field pf-field--wide"><MediaPicker label="Ảnh bìa" value={c.cover || ''} onChange={cover => setC(c.id, { cover })} /></div>
+                  <PF label="Ghi chú nội bộ (nguồn, quyền sử dụng)" value={c.note} max={1000} area wide onChange={note => setC(c.id, { note })} />
+                  <div className="pf-field pf-field--wide"><Toggle label="Có huy hiệu DANAVA Verified (danava.vn)" checked={!!c.verified} onChange={verified => setC(c.id, { verified })} /></div>
+                </div>
+              </details>
+
+              <div className="pf-foot">
+                <button type="button" className="pf-delete" onClick={() => setDraft({ ...draft, clients: clients.filter(x => x.id !== c.id) })}>Xóa mục này</button>
+              </div>
+            </div>
           </details>
         ))}
       </section>

@@ -799,3 +799,7 @@
 @keyframes hb-pin-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
 /* bảng QR đã có bóng riêng: bỏ vệt bóng của sa bàn */
 .hb-office.is-qr .hb-office__stage::before { opacity: 0; }
+
+/* Mã QR trên khung hẹp (điện thoại): dòng "Quét mã…" nằm dưới bảng, nút "Về văn phòng" cũng ở đáy → đè nhau.
+   Phía trên bảng đã chừa sẵn 76px (OfficeScene: top = 76) → đưa nút lên góc trên phải. */
+.hb-cover__3d.is-narrow .hb-office.is-qr .hb-office__qrbtn { top: 16px; bottom: auto; right: 12px; animation: none; }
