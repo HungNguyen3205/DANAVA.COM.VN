@@ -363,7 +363,8 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
                 removeFloor: id => set(p => E.removeFloor(p, id), 'Đã xoá tầng'),
                 addFixture: kind => { const r = E.addFixture(project, floor.id, kind); commit(r.project, `Đã thêm ${FIXTURE_KINDS[kind].label.toLowerCase()} — kéo để đặt đúng chỗ`); setSel(r.id); },
                 addLink: (kind, fl) => { const r = E.addLink(project, kind, fl); commit(r.project, `Đã thêm ${LINK_KINDS[kind].label.toLowerCase()}`); setSel(r.id); },
-                lockFloor: locked => set(p => E.lockFloor(p, floor.id, locked), locked ? 'Đã khoá toàn bộ tầng' : 'Đã mở khoá tầng')
+                lockFloor: locked => set(p => E.lockFloor(p, floor.id, locked), locked ? 'Đã khoá toàn bộ tầng' : 'Đã mở khoá tầng'),
+                regenerate: () => regenerate(project, 'Đã xếp lại máy theo công năng / ngân sách mới (giữ phần đã khoá)')
               }} /> : <BriefPanel p={project} set={fn => set(fn)} equipment={equipment} onRegenerate={() => regenerate(project)} />}
             </>}
             {tab === 'eqrec' && <>

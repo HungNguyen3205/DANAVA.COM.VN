@@ -110,12 +110,15 @@ export function BriefPanel({ p, set, onRegenerate, equipment }: { p: Project; se
 /* ---------- Mặt bằng nhiều tầng ---------- */
 export function FloorsPanel({ p, floor, setFloorId, act, selectItem }: {
   p: Project; floor: Floor; setFloorId: (id: string) => void;
-  act: { updateFloor: (id: string, patch: Partial<Floor>) => void; addFloor: () => void; duplicateFloor: (id: string) => void; removeFloor: (id: string) => void; addFixture: (kind: FixtureKind) => void; addLink: (kind: LinkKind, floors: string[]) => void; lockFloor: (locked: boolean) => void };
+  act: { updateFloor: (id: string, patch: Partial<Floor>) => void; addFloor: () => void; duplicateFloor: (id: string) => void; removeFloor: (id: string) => void; addFixture: (kind: FixtureKind) => void; addLink: (kind: LinkKind, floors: string[]) => void; lockFloor: (locked: boolean) => void; regenerate: () => void };
   selectItem: (id: string) => void;
 }) {
   const sorted = [...p.floors].sort((a, b) => a.level - b.level);
   const total = floor.w * floor.l, usable = usableArea(p, floor);
   const [linkFloors, setLinkFloors] = useState<string[]>(sorted.map(f => f.id));
+  // Đổi công năng / số người / ngân sách tầng chỉ có tác dụng khi xếp lại máy → hiện nút ngay khi khách đổi
+  const [dirty, setDirty] = useState(false);
+  const upd = (patch: Partial<Floor>) => { act.updateFloor(floor.id, patch); setDirty(true); };
   const opt = p.options[p.active];
   const lockedAll = !!opt && [...opt.placements, ...opt.furniture].filter(x => x.floorId === floor.id).every(x => x.locked) && [...opt.placements].some(x => x.floorId === floor.id);
   return (
@@ -135,13 +138,15 @@ export function FloorsPanel({ p, floor, setFloorId, act, selectItem }: {
       </div>
       <p className="gs-area"><b>{fmtArea(total)}</b> · còn {fmtArea(usable)} để đặt máy</p>
       <details className="gs-fold">
-        <summary>Tên, công năng, ngân sách tầng</summary>
+        <summary>Công năng & ngân sách tầng</summary>
+        <p className="gs-note">Dùng khi xếp máy cho tầng: loại máy, số máy, mức giá.</p>
         <label className="gs-text"><span>Tên tầng</span><input value={floor.name} maxLength={40} onChange={e => act.updateFloor(floor.id, { name: e.target.value })} /></label>
         <div className="gs-grid2">
-          <label className="gs-text"><span>Công năng</span><select value={floor.use} onChange={e => act.updateFloor(floor.id, { use: e.target.value as Floor['use'] })}>{Object.entries(FLOOR_USES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select></label>
-          <Num label="Người tập cùng lúc" value={floor.users} min={0} max={500} step={1} onChange={v => act.updateFloor(floor.id, { users: Math.round(v) })} />
+          <label className="gs-text"><span>Công năng</span><select value={floor.use} onChange={e => upd({ use: e.target.value as Floor['use'] })}>{Object.entries(FLOOR_USES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select></label>
+          <Num label="Người tập cùng lúc (0 = tự tính)" value={floor.users} min={0} max={500} step={1} onChange={v => upd({ users: Math.round(v) })} />
         </div>
-        <label className="gs-text"><span>Ngân sách riêng (triệu)</span><span className="gs-num__box"><input inputMode="numeric" value={floor.budget ? Math.round(floor.budget / 1e6) : ''} placeholder="chia từ ngân sách dự án" onChange={e => act.updateFloor(floor.id, { budget: Number(e.target.value.replace(/D/g, '')) * 1e6 })} /><i>triệu</i></span></label>
+        <label className="gs-text"><span>Ngân sách riêng (triệu)</span><span className="gs-num__box"><input inputMode="numeric" value={floor.budget ? Math.round(floor.budget / 1e6) : ''} placeholder="chia từ ngân sách dự án" onChange={e => upd({ budget: Number(e.target.value.replace(/D/g, '')) * 1e6 })} /><i>triệu</i></span></label>
+        {dirty && <button type="button" className="s-btn s-btn--primary gs-wide" onClick={() => { act.regenerate(); setDirty(false); }}><Sparkles aria-hidden="true" /> Xếp lại máy theo thông tin này</button>}
       </details>
       <h3>Vật cố định <small>bấm để thêm, kéo để đặt</small></h3>
       <div className="gs-tiles">

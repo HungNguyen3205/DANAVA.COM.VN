@@ -613,3 +613,10 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-floorp .gs-area { margin: 6px 0 0; font-size: 12.5px; }
 .gs-floorp .gs-area b { font-size: 13.5px; }
 .gs-floorp .gs-fold .gs-text { margin: 0 0 8px; }
+
+.gs-floorp .gs-fold > :not(summary) { margin: 8px 12px; }
+.gs-floorp .gs-fold .gs-text { margin: 8px 12px; }
+.gs-floorp .gs-fold .gs-grid2 { margin: 8px 12px; }
+.gs-floorp .gs-fold .gs-grid2 .gs-text { margin: 0; }
+.gs-floorp .gs-fold .gs-note { margin: 10px 12px 0; }
+.gs-floorp .gs-fold .s-btn { width: calc(100% - 24px); margin: 4px 12px 12px; min-height: 40px; font-size: 14px; }
