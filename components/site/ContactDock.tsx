@@ -2,7 +2,7 @@
 /**
  * Liên hệ nhanh.
  * - Ba nút nổi Zalo, Messenger, Hotline xếp thành cột dọc sát mép phải:
- *   máy tính ở góc dưới (trên bé Mây), điện thoại ở góc trên (dưới header).
+ *   máy tính ở góc dưới (trên bé Mây); điện thoại / máy tính bảng ở góc dưới, ngay trên thanh tab.
  * - Điện thoại: nút "Tư vấn" ở thanh dưới vẫn mở ContactSheet.
  */
 import Link from 'next/link';

@@ -188,7 +188,10 @@ html.is-cine .s-app .cd, html.has-modal .s-app .cd { opacity: 0; visibility: hid
   .s-app .cd__btn { width: 48px; height: 48px; }
 }
 @media (max-width: 860px) {
-  .s-app .cd { z-index: 79; top: calc(var(--s-header-h, 72px) + 12px); bottom: auto; right: max(10px, env(safe-area-inset-right)); gap: 8px; }
+  /* Điện thoại / máy tính bảng: góc dưới phải, ngay trên thanh tab dưới (--s-tabbar-h = 0 khi không có thanh tab) */
+  .s-app .cd { z-index: 79; top: auto; bottom: calc(var(--s-tabbar-h, 0px) + env(safe-area-inset-bottom) + 14px); right: max(12px, env(safe-area-inset-right)); gap: 10px; }
+  /* Bảng cookie (full chiều ngang, cùng vị trí) đang hiện → tạm ẩn cột nút để không chồng lên nhau */
+  body:has(aside.consent-banner) .s-app .cd { opacity: 0; visibility: hidden; }
   .s-app .cd__btn { width: 44px; height: 44px; }
   .s-app .cd__btn > svg { width: 20px; height: 20px; }
   .s-app .cd__btn > .br-icon--zalo { width: 32px; height: 32px; }
