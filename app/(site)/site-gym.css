@@ -388,3 +388,14 @@
 .gp-eq__moreBtn button:hover { border-color: #f26b1d; color: #c2410c; }
 .gp-src { margin: 8px 0 0; }
 @media (max-width: 980px) { .gp-eq { max-height: 460px; } }
+
+/* Phòng lab: thẻ cột trái dạng viên thuốc nổi (thắng quy tắc chip navy chung ở site-buttons.css) */
+.s-app .gp-tabs { gap: 2px; padding: 5px; border: 0; border-radius: 18px; background: linear-gradient(180deg, #eef2f9, #e7ecf6); box-shadow: inset 0 1px 2px rgba(19, 36, 79, .08); }
+.s-app .gp-tabs button { height: 38px; border: 0 !important; border-radius: 13px !important; background: transparent !important; color: #5b6478 !important; box-shadow: none !important; transition: color .2s, background .2s, box-shadow .2s; }
+.s-app .gp-tabs button:hover { color: #13244f !important; background: rgba(255, 255, 255, .55) !important; }
+.s-app .gp-tabs button.is-on { background: #fff !important; color: #13244f !important; box-shadow: 0 10px 20px -12px rgba(19, 36, 79, .55), 0 0 0 1px rgba(19, 36, 79, .04) !important; }
+.s-app .gp-tabs button.is-on svg { color: #f26b1d; animation: gp-pop .35s cubic-bezier(.3, 1.6, .5, 1); }
+.s-app .gp-tabs button i { background: #c5cde0; }
+.s-app .gp-tabs button.is-on i { background: linear-gradient(180deg, #ffa24a, #f26b1d); box-shadow: 0 4px 10px -4px rgba(242, 107, 29, .8); }
+@keyframes gp-pop { from { transform: scale(.6) rotate(-12deg); } }
+@media (prefers-reduced-motion: reduce) { .s-app .gp-tabs button.is-on svg { animation: none; } }

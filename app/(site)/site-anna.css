@@ -232,3 +232,60 @@
   .s-app .an-launch .an-launch__pose { animation: an-mobile-bob 3.6s ease-in-out infinite; }
 }
 @keyframes an-mobile-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* ---------- ANNA: header ánh sáng + thẻ dạng viên thuốc nổi (thắng quy tắc chip navy chung ở site-buttons.css) ---------- */
+.s-app .an-head {
+  position: relative; isolation: isolate; overflow: hidden; padding-bottom: 36px;
+  background:
+    radial-gradient(70% 120% at 105% -10%, rgba(242, 107, 29, .55), transparent 60%),
+    radial-gradient(60% 110% at -5% 110%, rgba(96, 132, 255, .45), transparent 60%),
+    linear-gradient(135deg, #20397f 0%, #13244f 55%, #0d1a3e 100%);
+}
+/* đốm sáng li ti trôi chậm */
+.s-app .an-head::before {
+  content: ''; position: absolute; inset: -20% -10%; z-index: -1; pointer-events: none; opacity: .55;
+  background:
+    radial-gradient(2px 2px at 18% 30%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 62% 22%, #ffd7b8, transparent 60%),
+    radial-gradient(2px 2px at 82% 64%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 38% 78%, #cdd9ff, transparent 60%),
+    radial-gradient(1px 1px at 72% 88%, #fff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 8% 70%, #fff, transparent 60%);
+  animation: an-stars 14s ease-in-out infinite alternate;
+}
+@keyframes an-stars { to { transform: translate3d(-12px, 8px, 0); opacity: .9; } }
+.s-app .an-avatar {
+  position: relative; width: 46px; height: 46px;
+  background: radial-gradient(circle at 35% 30%, #fff, #ffe9d6);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .14), 0 10px 22px -8px rgba(242, 107, 29, .75);
+  animation: an-float 4.5s ease-in-out infinite;
+}
+/* chấm xanh "đang trực tuyến" */
+.s-app .an-avatar::after { content: ''; position: absolute; right: 0; bottom: 1px; width: 11px; height: 11px; border: 2px solid #17295c; border-radius: 50%; background: #34d399; box-shadow: 0 0 0 0 rgba(52, 211, 153, .6); animation: an-online 2.4s ease-out infinite; }
+@keyframes an-float { 50% { transform: translateY(-3px); } }
+@keyframes an-online { 70% { box-shadow: 0 0 0 7px rgba(52, 211, 153, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
+.s-app .an-head h2 { letter-spacing: .06em; text-shadow: 0 2px 14px rgba(242, 107, 29, .35); }
+
+.s-app .an-tabs {
+  position: relative; z-index: 2; gap: 4px; margin: -24px 16px 0; padding: 5px; border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, .96); backdrop-filter: blur(8px);
+  box-shadow: 0 18px 34px -18px rgba(19, 36, 79, .55), 0 0 0 1px rgba(19, 36, 79, .06);
+}
+.s-app .an-tabs button { min-height: 40px; border: 0 !important; border-radius: 999px !important; background: transparent !important; color: #5b6478 !important; box-shadow: none !important; transition: color .2s, background .2s, transform .2s; }
+.s-app .an-tabs button:hover { color: #13244f !important; background: #f5f7fb !important; }
+.s-app .an-tabs button[aria-pressed='true'] {
+  background: linear-gradient(180deg, #ffa24a 0%, #f26b1d 100%) !important; color: #fff !important;
+  box-shadow: 0 10px 20px -10px rgba(242, 107, 29, .9), inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+.s-app .an-tabs button[aria-pressed='true'] svg { animation: an-pop .35s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes an-pop { from { transform: scale(.6) rotate(-12deg); } }
+
+/* thân hội thoại: nền ấm có quầng sáng nhẹ, bong bóng mềm hơn */
+.s-app .an-log { margin-top: -20px; padding-top: 36px; background: radial-gradient(80% 50% at 100% 0%, rgba(242, 107, 29, .07), transparent 70%), radial-gradient(70% 50% at 0% 100%, rgba(96, 132, 255, .07), transparent 70%), #fbf8f3; }
+.s-app .an-msg--bot { box-shadow: 0 10px 24px -18px rgba(19, 36, 79, .45), 0 0 0 1px rgba(19, 36, 79, .04); animation: an-rise .35s cubic-bezier(.2, .8, .2, 1); }
+.s-app .an-msg--me { background: linear-gradient(135deg, #2b4294, #13244f); box-shadow: 0 10px 22px -16px rgba(19, 36, 79, .8); }
+@keyframes an-rise { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  .s-app .an-head::before, .s-app .an-avatar, .s-app .an-avatar::after, .s-app .an-tabs button svg, .s-app .an-msg--bot { animation: none !important; }
+}
+.s-app dialog.an { background: #fbf8f3; }
