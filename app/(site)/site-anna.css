@@ -212,7 +212,7 @@
    Cột Zalo / Messenger / Gọi (site-header.css → .cd) dời lên phía trên ANNA. */
 @media (max-width: 860px) {
   .s-app .an-launch {
-    position: fixed; z-index: 80; right: max(12px, env(safe-area-inset-right)); bottom: calc(var(--s-tabbar-h, 0px) + env(safe-area-inset-bottom) + 12px);
+    position: fixed; z-index: 80; right: max(7px, env(safe-area-inset-right)); bottom: calc(var(--s-tabbar-h, 0px) + env(safe-area-inset-bottom) + 12px); /* tâm thẳng cột nút 44px (right 12px) */
     display: block; width: 54px; height: 58px; padding: 0; border: 0; border-radius: 45%; background: none; color: #13244f; cursor: pointer;
     -webkit-tap-highlight-color: transparent; transition: opacity .2s ease, visibility .2s, transform .2s ease;
   }
@@ -226,8 +226,7 @@
   .s-app .an-launch:focus-visible { outline: 3px solid #13244f; outline-offset: 4px; }
   /* Khung chat đang mở / hộp thoại / bảng cookie → ẩn */
   .s-app .an-launch.is-hidden, html.has-modal .s-app .an-launch, html.is-cine .s-app .an-launch, body:has(aside.consent-banner) .s-app .an-launch { opacity: 0; visibility: hidden; }
-  /* Cột liên hệ nhanh đứng trên ANNA */
-  .s-app .cd { bottom: calc(var(--s-tabbar-h, 0px) + env(safe-area-inset-bottom) + 84px); }
+  /* Cột liên hệ nhanh đứng trên ANNA: đặt ở site-header.css (nạp sau file này) */
 }
 @media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
   .s-app .an-launch .an-launch__pose { animation: an-mobile-bob 3.6s ease-in-out infinite; }
