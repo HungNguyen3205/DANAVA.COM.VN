@@ -207,3 +207,4 @@
 
 /* Số đếm trên tab đang chọn (nền navy) phải đọc được */
 .s-app button[aria-selected="true"] .s-tab__count, .s-app button[aria-pressed="true"] .s-tab__count { color: rgba(255, 255, 255, .78) !important; background: rgba(255, 255, 255, .14) !important; }
+.s-app button[aria-selected="true"] .s-tab__count { padding: 1px 7px; border-radius: 999px; }
