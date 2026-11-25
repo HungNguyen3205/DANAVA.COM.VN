@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { requirePermission, actorOf } from '@/lib/auth';
 import { discardDraft, getContent, getWorkingContent, logAction, writeContent } from '@/lib/database';
 import { autoRedirects } from '@/lib/redirects';
-import { validateContent } from '@/lib/content';
+import { contentError, validateContent } from '@/lib/content';
 import { contentProblem } from '@/lib/content-check';
 
 export const dynamic = 'force-dynamic';
@@ -44,6 +44,7 @@ export async function PUT(req: Request) {
     // Ưu tiên lý do cụ thể (vd. đường dẫn trùng) thay cho thông báo chung
     let reason: string | null = null;
     try { reason = contentProblem(data as never); } catch {}
+    try { reason = reason || contentError(data); } catch {}
     return NextResponse.json({ error: reason || 'Nội dung không đúng cấu trúc.' }, { status: 400 });
   }
   const problem = contentProblem(data);
@@ -56,7 +57,7 @@ export async function PUT(req: Request) {
     const auto = published ? await autoTranslateOnPublish(published, data) : null;
     const base = auto ? auto.data : data;
     const toSave = published ? { ...base, redirects: autoRedirects(published, base) } : base;
-    if (!validateContent(toSave)) return NextResponse.json({ error: 'Không tạo được chuyển hướng cho đường dẫn đã đổi. Kiểm tra mục SEO & chuyển hướng.' }, { status: 400 });
+    if (!validateContent(toSave)) return NextResponse.json({ error: contentError(toSave) || 'Không tạo được chuyển hướng cho đường dẫn đã đổi. Kiểm tra Cài đặt website → Chuyển hướng.' }, { status: 400 });
     const next = await writeContent(toSave, revision as number, { draftOnly: mode === 'draft', actor: actorOf(user), note });
     if (next === null) return NextResponse.json({ error: CONFLICT }, { status: 409 });
     await logAction(actorOf(user), mode === 'draft' ? 'luu-nhap' : 'xuat-ban', 'Nội dung website', note);

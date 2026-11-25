@@ -1,7 +1,7 @@
 import { legacyCatalog } from './legacy-catalog.ts';
 import { verifiedProjects } from './verified-projects.ts';
 import { defaultPresentation, type Presentation } from './presentation.ts';
-import { validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
+import { blocksError, careersProblem, extrasProblem, validBlocks, validCareers, validExtras, type Blocks, type BlockDefaults, type Extras } from './blocks.ts';
 import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.ts';
 import { HOME_HERO_LIMITS, type HomeHero } from './home-hero.ts';
 import { validTextStyles, type TextStyles } from './text-styles.ts';
@@ -430,7 +430,8 @@ const PATH = /^\/[a-z0-9\-/._]*\/$/i;
 function validPageSeo(v: unknown) {
   if (!object(v)) return false;
   const entries = Object.entries(v);
-  return entries.length <= 100 && entries.every(([path, s]) => path.length <= 200 && PATH.test(path) && object(s)
+  // "/" (Trang chủ) không khớp PATH (cần ít nhất /x/) → cho phép riêng
+  return entries.length <= 100 && entries.every(([path, s]) => path.length <= 200 && (path === '/' || PATH.test(path)) && object(s)
     && optStr(s.title, 200) && optStr(s.description, 300) && (s.image === undefined || safeImage(s.image))
     && (s.noindex === undefined || typeof s.noindex === 'boolean'));
 }
@@ -549,4 +550,153 @@ export function readSaved(raw: string | null): SiteData {
   } catch {
     return initial;
   }
+}
+
+/* ================================================================ Báo lỗi cụ thể
+ * contentError(): khi validateContent() từ chối, chỉ rõ SAI Ở ĐÂU (mục trong admin, bản ghi nào, ô nào) và LỖI GÌ.
+ * Cách tìm ô sai cho mọi loại bản ghi: thử thay từng ô bằng một giá trị an toàn; ô nào thay xong bản ghi hợp lệ = ô gây lỗi.
+ */
+const SECTION: Record<string, string> = {
+  staff: 'Hồ sơ thương hiệu → Đội ngũ', projects: 'Nội dung → Dự án', posts: 'Nội dung → Bài viết', metrics: 'Hồ sơ thương hiệu → Số liệu công bố',
+  services: 'Sản phẩm & Dịch vụ', productGroups: 'Sản phẩm & Dịch vụ → Nhóm & loại', landings: 'Landing page', redirects: 'Cài đặt website → Chuyển hướng',
+  subServices: 'Sản phẩm & Dịch vụ → Trang con', topics: 'Bài viết → Danh mục', clients: 'Khách hàng → Đối tác', showcase: 'Dự án → Portfolio',
+  testimonials: 'Khách hàng → Nhận xét khách hàng'
+};
+const FIELD: Record<string, string> = {
+  id: 'mã', slug: 'đường dẫn', title: 'tiêu đề', name: 'tên', category: 'chuyên mục', date: 'ngày đăng', updated: 'ngày cập nhật', body: 'nội dung',
+  image: 'ảnh', logo: 'logo', cover: 'ảnh bìa', ogImage: 'ảnh chia sẻ', mobileImage: 'ảnh điện thoại', motion: 'ảnh động', motionPoster: 'ảnh chờ',
+  url: 'liên kết', source: 'nguồn', productUrl: 'liên kết sản phẩm', demoUrl: 'liên kết demo', signupUrl: 'liên kết đăng ký',
+  excerpt: 'tóm tắt', summary: 'tóm tắt', description: 'mô tả', seoTitle: 'tiêu đề SEO', seoDescription: 'mô tả SEO', tags: 'thẻ',
+  published: 'trạng thái xuất bản', permission: 'quyền hiển thị', quote: 'nội dung nhận xét', role: 'chức danh / lĩnh vực', company: 'doanh nghiệp',
+  note: 'ghi chú', from: 'đường dẫn cũ', to: 'đích chuyển hướng', created: 'ngày tạo', gallery: 'bộ ảnh', serviceId: 'sản phẩm', parentId: 'sản phẩm cha',
+  heroLead: 'câu dẫn đầu trang', features: 'tính năng', label: 'nhãn', value: 'giá trị', visible: 'hiển thị', price: 'giá', packages: 'gói giá'
+};
+const IMAGE_KEY = /^(image|logo|cover|ogImage|mobileImage|motion|motionPoster|screenImage|ecosystemImage)$/;
+const URL_KEY = /^(url|productUrl|demoUrl|signupUrl|source|website|link)$/;
+const SAMPLES: unknown[] = ['', 'aa', 'https://danava.com.vn/', '/assets/danava-logo.png', '2026-01-01', '/aa/', false, true, [], 0, undefined];
+
+function culprit(item: Record<string, unknown>, ok: (x: unknown) => boolean): string | null {
+  for (const k of Object.keys(item)) {
+    for (const s of SAMPLES) {
+      if (typeof item[k] === typeof s || s === undefined || (Array.isArray(item[k]) && Array.isArray(s))) {
+        if (ok({ ...item, [k]: s })) return k;
+      }
+    }
+  }
+  return null;
+}
+function reason(k: string, v: unknown): string {
+  const f = FIELD[k] || k;
+  if (k === 'published') return 'đang bật Xuất bản nhưng còn thiếu thông tin bắt buộc (tên/tiêu đề, nội dung, ảnh hoặc quyền hiển thị)';
+  if (typeof v === 'string') {
+    if (IMAGE_KEY.test(k)) return `${f} "${v}" không hợp lệ: phải là ảnh trong Thư viện ảnh (đường dẫn dạng /assets/…, đuôi .webp/.png/.jpg/.svg)`;
+    if (URL_KEY.test(k)) return `${f} "${v}" không hợp lệ: phải là liên kết đầy đủ bắt đầu bằng https://`;
+    if (k === 'slug') return `${f} "${v}" không hợp lệ: chỉ dùng chữ thường không dấu, số và dấu gạch ngang (vd. "bai-viet-moi")`;
+    if (k === 'date' || k === 'updated' || k === 'created') return `${f} "${v}" không hợp lệ: phải có dạng năm-tháng-ngày (vd. 2026-11-25)`;
+    if (k === 'from' || k === 'to') return `${f} "${v}" không hợp lệ: phải có dạng /duong-dan/ (có dấu / ở đầu và cuối) hoặc https://…`;
+    if (!v.trim()) return `${f} đang để trống`;
+    if (v.length > 150) return `${f} dài ${v.length} ký tự, vượt giới hạn cho phép`;
+    return `${f} "${v.slice(0, 60)}" không hợp lệ`;
+  }
+  if (Array.isArray(v)) return `${f} có mục chưa hợp lệ hoặc quá nhiều mục (${v.length})`;
+  return `${f} không hợp lệ`;
+}
+const nameOf = (x: unknown, i: number) => {
+  const o = (object(x) ? x : {}) as Record<string, unknown>;
+  const n = [o.title, o.name, o.label, o.from, o.slug, o.id].find(v => typeof v === 'string' && v.trim());
+  return n ? `«${String(n).slice(0, 80)}»` : `mục thứ ${i + 1}`;
+};
+function listError(key: string, list: unknown, ok: (x: unknown) => boolean, max: number, unique: [string, (x: Record<string, unknown>) => unknown][] = []): string | null {
+  const where = SECTION[key] || key;
+  if (list === undefined) return null;
+  if (!Array.isArray(list)) return `${where}: dữ liệu không phải danh sách.`;
+  if (list.length > max) return `${where}: có ${list.length} mục, tối đa ${max}.`;
+  for (let i = 0; i < list.length; i++) {
+    const x = list[i];
+    if (ok(x)) continue;
+    if (!object(x)) return `${where}: ${nameOf(x, i)} không đúng dạng dữ liệu.`;
+    const k = culprit(x, ok);
+    return `${where} → ${nameOf(x, i)}: ${k ? reason(k, x[k]) : 'có ô chưa hợp lệ (kiểm tra các ô bắt buộc, ảnh, liên kết và độ dài)'}.`;
+  }
+  for (const [label, pick] of unique) {
+    const seen = new Map<unknown, number>();
+    for (let i = 0; i < list.length; i++) {
+      const v = pick(list[i] as Record<string, unknown>);
+      if (seen.has(v)) return `${where}: ${label} "${String(v)}" bị trùng giữa ${nameOf(list[seen.get(v)!], seen.get(v)!)} và ${nameOf(list[i], i)}. Đổi một trong hai cho khác nhau.`;
+      seen.set(v, i);
+    }
+  }
+  return null;
+}
+
+/** Câu báo lỗi tiếng Việt chỉ rõ chỗ sai; null khi nội dung hợp lệ. */
+export function contentError(v: unknown): string | null {
+  if (validateContent(v)) return null;
+  if (!object(v) || v.version !== 1) return 'Dữ liệu gửi lên không phải nội dung website DANAVA (sai phiên bản hoặc định dạng).';
+  if (!str(v.headline, 150)) return 'Tiêu đề website (headline) dài quá 150 ký tự.';
+  if (!str(v.description, 1000)) return 'Mô tả website dài quá 1.000 ký tự.';
+  if (!str(v.email, 200)) return 'Cài đặt website → Liên hệ: email không hợp lệ.';
+  if (!str(v.phone, 50)) return 'Cài đặt website → Liên hệ: số điện thoại dài quá 50 ký tự.';
+  if (!optStr(v.heroTitle, 150)) return 'Tiêu đề màn mở đầu dài quá 150 ký tự.';
+  if (v.homeHero !== undefined && !validHomeHero(v.homeHero)) return 'Màn mở đầu trang chủ: có ô chưa hợp lệ (ảnh hoặc chữ quá dài).';
+  if (v.texts !== undefined && !validTexts(v.texts)) {
+    const bad = object(v.texts) ? Object.entries(v.texts).find(([k, x]) => !TEXT_KEY.test(k) || typeof x !== 'string' || x.length > 2000) : null;
+    return bad ? `Chữ sửa trên trang "${bad[0]}": ${typeof bad[1] === 'string' && bad[1].length > 2000 ? `dài ${bad[1].length} ký tự, tối đa 2.000` : 'không hợp lệ'}.` : 'Chữ sửa trên trang: quá 800 mục.';
+  }
+  if (v.textStyles !== undefined && !validTextStyles(v.textStyles)) return 'Kiểu chữ (màu, cỡ chữ) của một phần trên trang không hợp lệ.';
+  if (v.i18n !== undefined && !validTranslations(v.i18n)) return 'Bản dịch English / 日本語: có bản dịch không hợp lệ hoặc quá dài.';
+  if (v.localeView !== undefined) return 'Dữ liệu đang ở chế độ xem theo ngôn ngữ, không lưu được. Tải lại trang quản trị rồi thử lại.';
+  if (v.presentation !== undefined && !validPresentation(v.presentation)) return 'Khối trình chiếu: có ảnh hoặc chữ chưa hợp lệ.';
+  if (!validBlocks(v.blocks)) return `Nội dung khối trang: ${blocksError(v.blocks)}`;
+  if (!validExtras(v.extras)) return `Cấu hình trang: ${extrasProblem(v.extras)}`;
+  if (!validCareers(v.careers)) return `Tuyển dụng: ${careersProblem(v.careers)}`;
+
+  if (v.pageSeo !== undefined && !validPageSeo(v.pageSeo)) {
+    if (!object(v.pageSeo)) return 'Cài đặt website → SEO từng trang: dữ liệu không hợp lệ.';
+    for (const [path, s] of Object.entries(v.pageSeo)) {
+      const where = `Cài đặt website → SEO từng trang → trang ${path}`;
+      if (path !== '/' && !PATH.test(path)) return `${where}: đường dẫn trang không hợp lệ.`;
+      if (!object(s)) return `${where}: dữ liệu không hợp lệ.`;
+      if (!optStr(s.title, 200)) return `${where}: tiêu đề SEO dài ${String(s.title).length} ký tự, tối đa 200 (nên 30–60).`;
+      if (!optStr(s.description, 300)) return `${where}: mô tả SEO dài ${String(s.description).length} ký tự, tối đa 300 (nên 110–160).`;
+      if (s.image !== undefined && !safeImage(s.image)) return `${where}: ảnh chia sẻ "${String(s.image)}" phải là ảnh trong Thư viện ảnh (/assets/…).`;
+      if (s.noindex !== undefined && typeof s.noindex !== 'boolean') return `${where}: công tắc "Ẩn khỏi Google" không hợp lệ.`;
+    }
+    return 'Cài đặt website → SEO từng trang: quá 100 trang.';
+  }
+  if (v.tracking !== undefined) {
+    const t = (object(v.tracking) ? v.tracking : {}) as Tracking;
+    const names: Record<keyof Tracking, string> = { ga4: 'Google Analytics 4 (dạng G-XXXXXXXXXX)', gtm: 'Google Tag Manager (dạng GTM-XXXXXXX)', metaPixel: 'Meta Pixel ID (chỉ gồm số)' };
+    for (const k of Object.keys(TRACKING_RULES) as (keyof Tracking)[]) {
+      const x = t[k];
+      if (x !== undefined && x !== '' && !TRACKING_RULES[k].test(String(x))) return `Cài đặt website → Theo dõi: mã ${names[k]} "${String(x)}" sai định dạng.`;
+    }
+  }
+
+  const serviceIds = new Set([...(Array.isArray(v.services) ? (v.services as Service[]).map(s => s.id) : []), ...initial.services.map(s => s.id), ...RETIRED_SERVICES.map(s => s.id)]);
+  const staffOk = (p: unknown) => object(p) && str(p.id, 100) && str(p.name, 150) && str(p.role, 200) && typeof p.visible === 'boolean' && (p.image === undefined || p.image === '' || (str(p.image, 250) && safeImage(p.image)));
+  const metricOk = (m: unknown) => object(m) && str(m.id, 100) && str(m.label, 150) && str(m.value, 50) && typeof m.visible === 'boolean';
+  const checks: (string | null)[] = [
+    listError('services', v.services, validService, 50, [['đường dẫn', x => x.slug], ['mã', x => x.id]]),
+    listError('posts', v.posts, validPost, 500, [['đường dẫn', x => x.slug], ['mã', x => x.id]]),
+    listError('projects', v.projects, validProject, 500, [['đường dẫn', x => x.slug], ['mã', x => x.id]]),
+    listError('staff', v.staff, staffOk, 100, [['mã', x => x.id]]),
+    listError('metrics', v.metrics, metricOk, 20, [['mã', x => x.id]]),
+    listError('productGroups', v.productGroups, validGroup, 30, [['mã', x => x.id]]),
+    listError('landings', v.landings, validLanding, 100, [['mã', x => x.id]]),
+    listError('redirects', v.redirects, validRedirect, 500, [['đường dẫn cũ', x => x.from]]),
+    listError('subServices', v.subServices, s => validSubService(s, serviceIds), 100, [['mã', x => x.id], ['đường dẫn', x => `${x.parentId}/${x.slug}`]]),
+    listError('topics', v.topics, validTopic, 50, [['mã', x => x.id], ['đường dẫn', x => x.slug]]),
+    listError('clients', v.clients, validClient, 100, [['mã', x => x.id]]),
+    listError('showcase', v.showcase, x => validShowcase(x, serviceIds), 200, [['mã', x => x.id], ['đường dẫn', x => x.slug]]),
+    listError('testimonials', v.testimonials, validTestimonial, 100, [['mã', x => x.id]])
+  ];
+  const found = checks.find(Boolean);
+  if (found) return found;
+  if (Array.isArray(v.showcase) && Array.isArray(v.projects)) {
+    const clash = (v.showcase as ShowcaseItem[]).find(x => (v.projects as Project[]).some(p => p.slug === x.slug));
+    if (clash) return `Dự án → Portfolio «${clash.name}»: đường dẫn "${clash.slug}" trùng với một dự án (cùng dùng /du-an/${clash.slug}/). Đổi đường dẫn một trong hai.`;
+  }
+  if (v.seeded !== undefined) return 'Dữ liệu hệ thống (seeded) không hợp lệ. Tải lại trang quản trị rồi thử lại.';
+  return 'Nội dung có chỗ chưa hợp lệ nhưng chưa xác định được vị trí. Hãy gửi ảnh màn hình cho đội kỹ thuật.';
 }

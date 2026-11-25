@@ -13,7 +13,7 @@ import AdminShell, { type SearchRecord } from './AdminShell';
 import AdminOverview, { greeting } from './AdminOverview';
 import { Icon } from './AdminIcons';
 import { LEGACY_SECTIONS, sectionInfo, useAdminLeads, visibleTabs } from './adminData';
-import { initial, validateContent, type SiteData } from '@/lib/content';
+import { contentError, initial, validateContent, type SiteData } from '@/lib/content';
 import { normalizeContent } from '@/lib/content-defaults';
 import { useSite, type SaveMode } from './SiteStore';
 import { TopicsEditor, ProofEditor, ShowcaseEditor, cleanFeatures } from './AdminContentEditors';
@@ -150,7 +150,7 @@ function AdminWorkspace({ section }: { section: string }) {
     try {
       if (file.size > 2_000_000) throw Error('Dung lượng file tối đa 2 MB.');
       const next: unknown = JSON.parse(await file.text());
-      if (!validateContent(next)) throw Error('File không đúng cấu trúc dữ liệu DANAVA.');
+      if (!validateContent(next)) throw Error(`File không đúng cấu trúc dữ liệu DANAVA: ${contentError(next) || 'không rõ vị trí'}`);
       if (await save(next)) {
         setDraft(next);
         setNotice('Đã nhập và lưu dữ liệu lên máy chủ.');

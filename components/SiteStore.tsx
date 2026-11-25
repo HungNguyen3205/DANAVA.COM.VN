@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useRef, useState, type ReactNode } from 'react';
-import { initial, validateContent, type SiteData } from '@/lib/content';
+import { contentError, initial, validateContent, type SiteData } from '@/lib/content';
 import { extraError } from '@/lib/site-extras';
 import { careersError } from '@/lib/careers';
 import { contentProblem } from '@/lib/content-check';
@@ -52,7 +52,7 @@ export function SiteStore({ children, initialData = initial }: { children: React
     if (r.status === 403) { setError(''); setFull(false); return; } // vai trò không xem nội dung (vd. Kinh doanh)
     if (!r.ok) { setError('Không tải được nội dung đầy đủ từ máy chủ. Tải lại trang trước khi chỉnh sửa.'); return; }
     const v = await r.json();
-    if (!validateContent(v.data)) { setError('Nội dung trên máy chủ không đúng cấu trúc.'); return; }
+    if (!validateContent(v.data)) { setError(`Nội dung trên máy chủ không đúng cấu trúc: ${contentError(v.data) || 'không rõ vị trí'}`); return; }
     setData(v.data);
     setRevision(v.revision);
     setDraft({ hasDraft: !!v.hasDraft, updatedAt: v.draftUpdatedAt ?? null, author: v.draftAuthor ?? null });
@@ -65,7 +65,7 @@ export function SiteStore({ children, initialData = initial }: { children: React
     let reason: string | null = null;
     try { reason = contentProblem(next); } catch {}
     const invalid = extraError(next.extras) || careersError(next.careers) || reason;
-    if (invalid || !validateContent(next)) { setError(invalid || 'Nội dung không đúng cấu trúc.'); return false; }
+    if (invalid || !validateContent(next)) { setError(invalid || contentError(next) || 'Nội dung không đúng cấu trúc.'); return false; }
     try {
       const r = await fetch('/api/admin/content/', {
         method: 'PUT',

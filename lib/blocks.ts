@@ -371,6 +371,34 @@ export function validCareers(v: unknown): boolean {
   if (!isObj(v) || JSON.stringify(v).length > 150_000) return false;
   return fits(v, templates().careers!) && careersError(v as typeof CAREERS) === '';
 }
+/* Câu báo lỗi cụ thể cho contentError() (lib/content.ts): khối nào sai, vì sao */
+export function blocksError(v: unknown): string {
+  if (!isObj(v)) return 'dữ liệu khối không hợp lệ.';
+  if (JSON.stringify(v).length > 600_000) return 'tổng dung lượng các khối vượt 600 KB (bớt chữ hoặc mục).';
+  const tpl = templates();
+  for (const [k, x] of Object.entries(v)) {
+    if (!(BLOCK_KEYS as string[]).includes(k) || !tpl[k as BlockKey]) return `khối "${k}" không thuộc website (dữ liệu từ bản khác). Tải lại trang quản trị.`;
+    const t = tpl[k as BlockKey]!;
+    if (!fits(x, k === 'pages' || k === 'company' ? relax(t) : t)) return `khối "${k}" có ô sai kiểu dữ liệu hoặc thiếu ô bắt buộc.`;
+    if (k === 'menu' && !safeMenu(x)) return 'Menu: có liên kết không hợp lệ (chỉ dùng /duong-dan/ trong website hoặc https://…), hoặc quá 6 cột / 12 mục mỗi cột.';
+  }
+  return 'có khối chưa hợp lệ.';
+}
+export function extrasProblem(v: unknown): string {
+  if (!isObj(v)) return 'dữ liệu không hợp lệ.';
+  if (JSON.stringify(v).length > 200_000) return 'dung lượng vượt 200 KB.';
+  const tpl = templates();
+  const bad = Object.entries(v).find(([k, x]) => isExtra(k) && !fits(x, tpl[k]!));
+  if (bad) return `phần "${bad[0]}" có ô sai kiểu dữ liệu hoặc thiếu ô bắt buộc.`;
+  return extraError(v as Extras) || 'có ô chưa hợp lệ.';
+}
+export function careersProblem(v: unknown): string {
+  if (!isObj(v)) return 'dữ liệu không hợp lệ.';
+  if (JSON.stringify(v).length > 150_000) return 'dung lượng vượt 150 KB.';
+  if (!fits(v, templates().careers!)) return 'có ô sai kiểu dữ liệu hoặc thiếu ô bắt buộc.';
+  return careersError(v as typeof CAREERS) || 'có ô chưa hợp lệ.';
+}
+
 /** Đường dẫn menu chỉ được là trang trong website (/…), https://…, hoặc để trống. */
 export const safeHref = (h: string) => h === '' || /^\/(?!\/)[^\s]*$/.test(h) || /^https:\/\/[^\s"'<>]+$/.test(h);
 function safeMenu(v: unknown): boolean {
