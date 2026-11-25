@@ -77,3 +77,20 @@ test('giữ bản dịch đang công khai mà bản gửi lên thiếu', async (
   const r = await autoTranslateOnPublish(published, base);
   assert.equal(r.data.i18n?.en?.['rec.services.studio.title']?.t, 'Studio Suite');
 });
+
+test('đổi tiêu đề / mô tả SEO của trang hoặc bài → bản /en/, /ja/ được dịch lại ngay khi xuất bản', async () => {
+  process.env.GEMINI_API_KEY = 'test';
+  fakeGemini();
+  const { metaKey, fresh } = await import('../lib/i18n.ts');
+  // Trang cố định (SEO từng trang)
+  const next = { ...base, pageSeo: { '/du-an/': { title: 'Dự án tiêu biểu của DANAVA', description: 'Mô tả  mới\ncho trang dự án.' } } };
+  const r = await autoTranslateOnPublish(base, next);
+  assert.equal(r.data.i18n?.en?.[metaKey('/du-an/', 'title')]?.t, '[en] Dự án tiêu biểu của DANAVA');
+  // Mô tả được chuẩn hoá khoảng trắng như seo() → mã băm khớp câu đang hiển thị
+  assert.ok(fresh(r.data.i18n?.ja?.[metaKey('/du-an/', 'desc')], 'Mô tả mới cho trang dự án.'));
+  // Bài viết: đổi tiêu đề SEO
+  const post = base.posts.find(p => p.published)!;
+  const next2 = { ...base, posts: base.posts.map(p => (p.id === post.id ? { ...p, seoTitle: 'Tiêu đề SEO mới cho bài' } : p)) };
+  const r2 = await autoTranslateOnPublish(base, next2);
+  assert.equal(r2.data.i18n?.en?.[metaKey(`/blogs/${post.slug}/`, 'title')]?.t, '[en] Tiêu đề SEO mới cho bài');
+});

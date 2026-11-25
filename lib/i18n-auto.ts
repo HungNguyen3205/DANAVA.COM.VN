@@ -10,7 +10,8 @@
  */
 import type { SiteData } from './content.ts';
 import { readCms } from './cms-paths.ts';
-import { FOREIGN, MAX_TRANSLATIONS, fresh, textHash, type ForeignLocale, type Translations } from './i18n.ts';
+import { FOREIGN, MAX_TRANSLATIONS, fresh, metaKey, textHash, type ForeignLocale, type Translations } from './i18n.ts';
+import { editableMetaPaths, metaSource } from './i18n-meta.ts';
 import { translationsFor } from './i18n-server.ts';
 import { translateTexts, translationKey } from './i18n-translate.ts';
 
@@ -24,7 +25,18 @@ const override = (d: SiteData, key: string) => { const v = d.texts?.[key]; retur
 /** Câu cần dịch lại cho một ngôn ngữ: { khóa: câu tiếng Việt mới }. Ghi chú các bản dịch cần bỏ vào `drop`. */
 function staleFor(prev: SiteData, next: SiteData, loc: ForeignLocale, drop: Set<string>): Record<string, string> {
   const todo: Record<string, string> = {};
-  for (const [key, tr] of Object.entries(translationsFor(next, loc))) {
+  const existing = translationsFor(next, loc);
+  // Tiêu đề / mô tả SEO (meta:<đường dẫn>:title|desc): câu đang hiển thị vừa đổi → dịch lại ngay khi xuất bản.
+  // Gồm cả trang đã có bản dịch SEO và trang/bài vừa được tự nhập SEO trong admin (chưa từng có bản dịch).
+  const metaKeys = new Set(Object.keys(existing).filter(k => k.startsWith('meta:')));
+  for (const path of editableMetaPaths(next)) { metaKeys.add(metaKey(path, 'title')); metaKeys.add(metaKey(path, 'desc')); }
+  for (const key of metaKeys) {
+    const cut = key.lastIndexOf(':'), path = key.slice(5, cut), field = key.slice(cut + 1);
+    if (field !== 'title' && field !== 'desc') continue;
+    const before = metaSource(prev, path, field), after = metaSource(next, path, field);
+    if (after && after.trim() && after !== before && !fresh(existing[key], after) && /[a-zA-ZÀ-ỹ]/.test(after)) todo[key] = after;
+  }
+  for (const [key, tr] of Object.entries(existing)) {
     if (key.startsWith('meta:')) continue;
     if (key.startsWith('txt.')) {
       const k = key.slice(4);
