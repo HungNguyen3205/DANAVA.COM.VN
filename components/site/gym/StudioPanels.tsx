@@ -1,7 +1,7 @@
 'use client';
 /** Các bảng điều khiển của phòng lab thiết kế phòng tập (components/site/gym/GymStudio.tsx). */
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { ArrowDownUp, ArrowUpDown, Ban, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
+import { ArrowDownUp, ArrowUpDown, Ban, Dumbbell, Flame, Leaf, UserRound, Weight, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
 import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory, type EquipmentKind } from '@/lib/equipment';
 import { BUSINESS_MODELS, FIXTURE_KINDS, FLOOR_USES, LINK_KINDS, STRATEGIES, fmtArea, newProject, type BusinessModel, type FixtureKind, type Floor, type FurnKind, type InteriorStyle, type LinkKind, type Project, type Reception, type Strategy } from '@/lib/gym-project';
 import { FURNITURE, INTERIOR_STYLES, RECEPTION_SIZES } from '@/lib/gym-decor';
@@ -72,26 +72,37 @@ export function StartWizard({ onCreate, aiNote }: { onCreate: (p: Project) => vo
 }
 
 /* ---------- Nhu cầu ---------- */
+const MODEL_TILE: Record<BusinessModel, [LucideIcon, string]> = { gym: [Dumbbell, 'Tổng hợp'], pt: [UserRound, 'PT'], strength: [Weight, 'Sức mạnh'], boutique: [Flame, 'Boutique'], wellness: [Leaf, 'Wellness'] };
 export function BriefPanel({ p, set, onRegenerate, equipment }: { p: Project; set: (fn: (p: Project) => Project) => void; onRegenerate: () => void; equipment: Equipment[] }) {
   const kinds = [...new Set(equipment.map(e => e.kind).filter(Boolean))] as EquipmentKind[];
   const must = p.brief.mustHave.map(id => equipment.find(e => e.id === id)).filter((e): e is Equipment => !!e);
+  const noBudget = !p.brief.budget;
   return (
-    <div className="gs-panel">
-      <h3>Mô hình kinh doanh</h3>
-      <div className="gs-cards gs-cards--sm">
-        {(Object.keys(BUSINESS_MODELS) as BusinessModel[]).map(k => <button key={k} type="button" role="radio" aria-checked={p.brief.model === k} className={p.brief.model === k ? 'is-on' : ''} onClick={() => set(q => ({ ...q, brief: { ...q.brief, model: k } }))}><b>{BUSINESS_MODELS[k].label}</b></button>)}
+    <div className="gs-panel gs-brief">
+      <h3>Mô hình</h3>
+      <div className="gs-tiles gs-tiles--model" role="radiogroup" aria-label="Mô hình kinh doanh">
+        {(Object.keys(BUSINESS_MODELS) as BusinessModel[]).map(k => { const [Ic, short] = MODEL_TILE[k]; return <button key={k} type="button" role="radio" aria-checked={p.brief.model === k} className={p.brief.model === k ? 'is-on' : ''} title={`${BUSINESS_MODELS[k].label}: ${BUSINESS_MODELS[k].hint}`} onClick={() => set(q => ({ ...q, brief: { ...q.brief, model: k } }))}><Ic aria-hidden="true" /><span>{short}</span></button>; })}
       </div>
-      <h3>Ngân sách toàn dự án</h3>
-      <label className="gs-budget"><input inputMode="numeric" value={p.brief.budget ? Math.round(p.brief.budget / 1e6) : ''} placeholder="không giới hạn" onChange={e => { const v = Number(e.target.value.replace(/\D/g, '')) * 1e6; set(q => ({ ...q, brief: { ...q.brief, budget: v } })); }} /> triệu đồng</label>
-      <h3>Máy bắt buộc <small>{must.length ? `${must.length} máy` : 'đánh dấu ★ ở mục Thiết bị'}</small></h3>
-      {must.length > 0 && <ul className="gs-chips">{must.map(e => <li key={e.id}>{e.name}<button type="button" aria-label={`Bỏ bắt buộc ${e.name}`} onClick={() => set(q => ({ ...q, brief: { ...q.brief, mustHave: q.brief.mustHave.filter(x => x !== e.id) } }))}>×</button></li>)}</ul>}
-      <h3>Loại trừ nhóm máy</h3>
-      <div className="gs-chipsel">
-        {kinds.filter(k => k !== 'accessory').map(k => { const on = p.brief.exclude.includes(k); return <button key={k} type="button" role="checkbox" aria-checked={on} className={on ? 'is-off' : ''} onClick={() => set(q => ({ ...q, brief: { ...q.brief, exclude: on ? q.brief.exclude.filter(x => x !== k) : [...q.brief.exclude, k] } }))}>{on ? '✕ ' : ''}{KIND_LABEL[k]}</button>; })}
+      <h3>Ngân sách</h3>
+      <div className="gs-budgetrow">
+        <button type="button" role="radio" aria-checked={noBudget} className={`gs-chip${noBudget ? ' is-on' : ''}`} onClick={() => set(q => ({ ...q, brief: { ...q.brief, budget: 0 } }))}>Không giới hạn</button>
+        <span className="gs-num__box gs-budgetbox"><input inputMode="numeric" value={p.brief.budget ? Math.round(p.brief.budget / 1e6) : ''} placeholder="vd 800" aria-label="Ngân sách (triệu đồng)" onChange={e => { const v = Number(e.target.value.replace(/D/g, '')) * 1e6; set(q => ({ ...q, brief: { ...q.brief, budget: v } })); }} /><i>triệu</i></span>
       </div>
-      <h3>Ghi chú nhu cầu</h3>
-      <textarea className="gs-textarea" rows={3} maxLength={2000} value={p.brief.notes} placeholder="Nhóm khách, giờ cao điểm, thiết bị muốn giữ…" onChange={e => { const v = e.target.value; set(q => ({ ...q, brief: { ...q.brief, notes: v } })); }} />
-      <button type="button" className="s-btn s-btn--primary gs-wide" onClick={onRegenerate}><Sparkles aria-hidden="true" /> Tạo lại phương án <small>(giữ phần đã khoá)</small></button>
+      {must.length > 0 && <>
+        <h3>Máy bắt buộc</h3>
+        <ul className="gs-chips">{must.map(e => <li key={e.id}>{e.name}<button type="button" aria-label={`Bỏ bắt buộc ${e.name}`} onClick={() => set(q => ({ ...q, brief: { ...q.brief, mustHave: q.brief.mustHave.filter(x => x !== e.id) } }))}>×</button></li>)}</ul>
+      </>}
+      <details className="gs-fold">
+        <summary>Loại trừ nhóm máy{p.brief.exclude.length ? <b>{p.brief.exclude.length}</b> : null}</summary>
+        <div className="gs-chipsel">
+          {kinds.filter(k => k !== 'accessory').map(k => { const on = p.brief.exclude.includes(k); return <button key={k} type="button" role="checkbox" aria-checked={on} className={on ? 'is-off' : ''} onClick={() => set(q => ({ ...q, brief: { ...q.brief, exclude: on ? q.brief.exclude.filter(x => x !== k) : [...q.brief.exclude, k] } }))}>{on ? '✕ ' : ''}{KIND_LABEL[k]}</button>; })}
+        </div>
+      </details>
+      <details className="gs-fold">
+        <summary>Ghi chú{p.brief.notes.trim() ? <b>✓</b> : null}</summary>
+        <textarea className="gs-textarea" rows={3} maxLength={2000} value={p.brief.notes} placeholder="Nhóm khách, giờ cao điểm, thiết bị muốn giữ…" onChange={e => { const v = e.target.value; set(q => ({ ...q, brief: { ...q.brief, notes: v } })); }} />
+      </details>
+      <button type="button" className="s-btn s-btn--primary gs-wide gs-regen" onClick={onRegenerate} title="Giữ nguyên máy và nội thất đã khoá"><Sparkles aria-hidden="true" /> Tạo lại phương án</button>
     </div>
   );
 }
