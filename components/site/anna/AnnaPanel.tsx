@@ -5,7 +5,7 @@
  */
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { ArrowUp, Calculator, MessageCircle, Phone, RotateCcw, Square, X } from 'lucide-react';
+import { ArrowUp, Calculator, Dumbbell, MessageCircle, Phone, RotateCcw, Square, X } from 'lucide-react';
 import { MayFigure } from './MayFigure';
 import { useSite } from '../../SiteStore';
 import { block } from '@/lib/blocks';
@@ -55,9 +55,12 @@ type Props = {
   question: { text: string; id: number } | null;
   onQuestionTaken: () => void;
   onClose: () => void;
+  /** có thẻ "Chỉnh phòng tập" (chỉ trên trang thiết kế phòng tập) */
+  design?: boolean;
+  setSlot?: (el: HTMLElement | null) => void;
 };
 
-export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken, onClose }: Props) {
+export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken, onClose, design, setSlot }: Props) {
   const { data } = useSite();
   const config = block(data, 'anna');
   const ref = useDialog(open, onClose, modal);
@@ -140,7 +143,8 @@ export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken,
         <button type="button" className="an-icon" onClick={onClose} aria-label={txt(data, 'anna.ui.head.close-aria', 'Đóng ANNA')} data-autofocus={modal ? '' : undefined}><X aria-hidden="true" /></button>
       </header>
 
-      <div className="an-tabs" role="group" aria-label={txt(data, 'anna.ui.tabs.aria', 'Chọn cách tư vấn')}>
+      <div className={`an-tabs${design ? ' an-tabs--3' : ''}`} role="group" aria-label={txt(data, 'anna.ui.tabs.aria', 'Chọn cách tư vấn')}>
+        {design && <button type="button" aria-pressed={tab === 'design'} onClick={() => setTab('design')}><Dumbbell aria-hidden="true" />Chỉnh phòng</button>}
         <button type="button" aria-pressed={tab === 'chat'} onClick={() => setTab('chat')}><MessageCircle aria-hidden="true" /><U data={data} k="tabs.chat" def="Trò chuyện" label="Thẻ ANNA" inline /></button>
         <button type="button" aria-pressed={tab === 'quote'} onClick={() => setTab('quote')}><Calculator aria-hidden="true" /><U data={data} k="tabs.quote" def="Báo giá nhanh" label="Thẻ ANNA" inline /></button>
       </div>
@@ -201,6 +205,8 @@ export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken,
         </form>
         <p className="an-legal"><U data={data} k="legal" def="ANNA dùng AI của Anthropic nên có thể sai. Câu hỏi được gửi tới dịch vụ này để trả lời; đừng nhập thông tin nhạy cảm." label="Lưu ý dùng AI (ANNA)" inline /> <Link href="/chinh-sach-rieng-tu/"><U data={data} k="privacy" def="Quyền riêng tư" label="Liên kết quyền riêng tư (ANNA)" inline /></Link></p>
       </div>
+
+      {design && <div className="an-design" hidden={tab !== 'design'} ref={setSlot} />}
 
       <div className="an-quote" hidden={tab !== 'quote'}>
         <QuickQuote />

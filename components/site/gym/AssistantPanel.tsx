@@ -89,7 +89,7 @@ export function AssistantPanel({ project, commit, equipment, flooring, aiEnabled
         <textarea rows={2} maxLength={1200} value={text} onChange={e => setText(e.target.value)} placeholder="Mô tả thay đổi bạn muốn…" onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void ask(); } }} />
         <button type="submit" className="gs-icon" disabled={busy || text.trim().length < 2} aria-label="Gửi"><Send /></button>
       </form>
-      <p className="gs-note"><Eye aria-hidden="true" /> {aiEnabled ? 'Yêu cầu và tóm tắt mặt bằng (không có thông tin cá nhân) được gửi tới Google Gemini — gói miễn phí có thể được Google dùng để cải thiện sản phẩm. Đừng nhập họ tên, số điện thoại, địa chỉ.' : 'Chế độ mẫu chạy hoàn toàn trên trình duyệt của bạn.'} AI chỉ đề xuất; công cụ kiểm tra hình học và ngân sách trước khi áp dụng.</p>
+      <p className="gs-note"><Eye aria-hidden="true" /> {aiEnabled ? 'Gợi ý bằng Google Gemini (có thể dùng để cải thiện sản phẩm) — đừng nhập thông tin cá nhân.' : 'Chế độ mẫu, chạy trên trình duyệt.'}</p>
     </div>
   );
 }

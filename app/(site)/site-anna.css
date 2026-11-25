@@ -289,3 +289,12 @@
   .s-app .an-head::before, .s-app .an-avatar, .s-app .an-avatar::after, .s-app .an-tabs button svg, .s-app .an-msg--bot { animation: none !important; }
 }
 .s-app dialog.an { background: #fbf8f3; }
+
+/* Thẻ "Chỉnh phòng" (trợ lý thiết kế phòng tập, chỉ trên /bao-gia-setup-phong-gym/) */
+.s-app .an-tabs--3 { grid-template-columns: repeat(3, 1fr); }
+.s-app .an-tabs--3 button { font-size: 13px; }
+.an-design { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.an-design[hidden] { display: none; }
+.an-design > .gs--anna { display: flex; flex: 1; flex-direction: column; min-height: 0; padding: 14px 12px 10px; }
+.an-design .gs-panel { flex: 1; min-height: 0; max-height: none; padding: 0; border: 0; background: transparent; }
+.an-design .gs-ai__list { min-height: 0; }

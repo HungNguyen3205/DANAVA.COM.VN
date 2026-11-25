@@ -668,3 +668,4 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-swdefault.is-on { border-color: var(--gs-orange); color: #c2410c; }
 .gs-tiles--decor { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .gs-tiles--decor button { --c: #2f6f5e; }
+.gs-swdefault { flex: none; white-space: nowrap; line-height: 1; }

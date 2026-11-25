@@ -31,6 +31,9 @@ const VIEWS: [ViewMode, string, ReactNode][] = [
 export type StudioExtras = {
   /** bảng trợ lý ANNA (giai đoạn 3) */
   assistant?: (ctx: { project: Project; commit: (p: Project, label: string) => void; floorId: string }) => ReactNode;
+  /** trợ lý nằm trong chatbot ANNA của website: render luôn (portal), icon ANNA trong Tùy chỉnh gọi openAssistant */
+  assistantPortal?: (ctx: { project: Project; commit: (p: Project, label: string) => void; floorId: string }) => ReactNode;
+  openAssistant?: () => void;
   /** bảng mô phỏng vận hành (giai đoạn 4) */
   sim?: (ctx: { project: Project; catalog: Map<string, Equipment>; floorId: string; setFloorId: (id: string) => void; saveSim: (patch: Pick<Project, 'scenario' | 'simRun'>) => void; setPeople: (p: PersonView[]) => void; setHeat: (h: NonNullable<Parameters<Studio['update']>[0]['heat']> | null) => void; onPick: (fn: (id: string) => void) => void }) => ReactNode;
 };
@@ -255,10 +258,11 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const notes = option ? attention(project, option, catalog, cost, validation) : [];
   const fixFirst = () => { const i = errors[0]; if (!i) return; setCustom(true); setFloorId(i.floorId); setSel(i.id); };
   const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Lễ tân', <Users key="e" />], ['style', 'Màu sắc', <Palette key="s" />],
-    ...(extras?.assistant ? [['assistant', 'ANNA', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Vận hành', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
+    ...(extras?.assistant || extras?.openAssistant ? [['assistant', 'ANNA', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Vận hành', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
 
   return (
     <div className={`gs${custom ? ' is-custom' : ''}`}>
+      {extras?.assistantPortal?.({ project, commit, floorId: floor.id })}
       {compare && <Compare project={project} catalog={catalog} flooring={flooring} onPick={i => { commit({ ...project, active: i }); setCompare(false); }} onStrategy={changeStrategy} onClose={() => setCompare(false)} />}
 
       <div className="gs-main">
@@ -354,7 +358,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               </span>
             </div>
             <div className="gs-menu" role="tablist">
-              {SIDE_TABS.map(([k, l, ic]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)} title={({ plan: 'Mặt bằng: tầng, cửa, cầu thang, nhu cầu', eqrec: 'Lễ tân & đón tiếp', style: 'Màu sắc, trang trí', assistant: 'Nhờ ANNA chỉnh giúp', sim: 'Xem phòng hoạt động' } as Record<Tab, string>)[k]}>{ic}<span>{l}</span></button>)}
+              {SIDE_TABS.map(([k, l, ic]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => (k === 'assistant' && extras?.openAssistant ? extras.openAssistant() : setTab(k))} title={({ plan: 'Mặt bằng: tầng, cửa, cầu thang, nhu cầu', eqrec: 'Lễ tân & đón tiếp', style: 'Màu sắc, trang trí', assistant: 'Nhờ ANNA chỉnh giúp', sim: 'Xem phòng hoạt động' } as Record<Tab, string>)[k]}>{ic}<span>{l}</span></button>)}
             </div>
             {tab === 'plan' && <>
               <Seg label="Mặt bằng" value={planSub} options={[['floors', 'Tầng, cửa, cầu thang'], ['brief', 'Nhu cầu & ngân sách']]} onChange={setPlanSub} />
