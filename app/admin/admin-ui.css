@@ -1198,3 +1198,14 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .eq-glb { display: grid; gap: 3px; margin: 0; padding: 7px 10px; border-radius: 8px; background: #e3f6ea; color: #137a43; font-size: 12px; font-weight: 600; }
 .ax-scope .eq-glb.is-warn { background: #fff4e5; color: #9a4a06; }
 .ax-scope .eq-glb span { font-weight: 500; }
+
+/* Xem thử mô hình .glb (Thiết bị phòng gym) */
+.ax-scope .eq-glbprev { display: grid; gap: 8px; margin-top: 8px; padding: 10px; border: 1px solid var(--ax-line, #e6eaf2); border-radius: 12px; background: #fff; }
+.ax-scope .eq-glbprev__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
+.ax-scope .eq-glbprev__stage { height: 300px; border-radius: 10px; background: radial-gradient(80% 70% at 50% 30%, #fff, #eef2f9); overflow: hidden; }
+.ax-scope .eq-glbprev__stage canvas { display: block; width: 100% !important; height: 100% !important; }
+.ax-scope .eq-glbprev__rep { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; margin: 0; }
+.ax-scope .eq-glbprev__rep div { padding: 6px 8px; border-radius: 8px; background: #f6f8fb; }
+.ax-scope .eq-glbprev__rep dt { color: var(--ax-muted, #6b7489); font-size: 11px; font-weight: 700; }
+.ax-scope .eq-glbprev__rep dd { margin: 0; font-size: 12.5px; font-weight: 700; }
+.ax-scope .eq-glbprev__rep p { grid-column: 1 / -1; }

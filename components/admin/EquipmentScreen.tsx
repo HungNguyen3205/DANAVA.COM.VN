@@ -11,6 +11,7 @@ import { CATALOG_SOURCE, EQUIPMENT_SEEDS } from '@/lib/equipment-seeds';
 import { LibraryButton, uploadMedia } from '../MediaPicker';
 import { PF, Switch } from '../AdminContentEditors';
 import { matches } from './ui';
+import { GlbPreview } from './GlbPreview';
 
 type GlbStats = { before: number; after: number; triangles: number; trianglesBefore: number; warnings: string[] };
 const mb = (n: number) => n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
@@ -33,7 +34,7 @@ function Num({ label, value, onChange, max }: { label: string; value: number; on
 }
 
 function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equipment>) => void; remove: () => void }) {
-  const [busy, setBusy] = useState(''), [err, setErr] = useState(''), [glb, setGlb] = useState<GlbStats | null>(null);
+  const [busy, setBusy] = useState(''), [err, setErr] = useState(''), [glb, setGlb] = useState<GlbStats | null>(null), [preview, setPreview] = useState(false);
   const up = (kind: 'image' | 'model') => async (file?: File) => {
     if (!file) return;
     setBusy(kind); setErr('');
@@ -94,8 +95,10 @@ function EquipmentCard({ x, set, remove }: { x: Equipment; set: (p: Partial<Equi
               <code className="eq-model">{x.model || `Chưa có, phòng lab dùng mô hình dựng sẵn: ${x.kind ? KIND_LABEL[x.kind] : 'theo tên máy'}`}</code>
               <div className="eq-file__btns">
                 <label className="ps-libbtn">{busy === 'model' ? 'Đang tải…' : '↑ Tải mô hình .glb'}<input type="file" hidden accept=".glb,model/gltf-binary" onChange={e => { void up('model')(e.target.files?.[0]); e.target.value = ''; }} /></label>
-                {x.model && <button type="button" className="pf-delete" onClick={() => { set({ model: '' }); setGlb(null); }}>Gỡ</button>}
+                {x.model && <button type="button" className="ps-libbtn" onClick={() => setPreview(v => !v)}>◎ Xem thử 3D</button>}
+                {x.model && <button type="button" className="pf-delete" onClick={() => { set({ model: '' }); setGlb(null); setPreview(false); }}>Gỡ</button>}
               </div>
+              {preview && x.model && <GlbPreview eq={x} onClose={() => setPreview(false)} />}
               {busy === 'model' && <small className="eq-hint">Đang nén mô hình (có thể mất vài giây)…</small>}
               {glb && (
                 <p className={`eq-glb${glb.warnings.length ? ' is-warn' : ''}`} role="status">
