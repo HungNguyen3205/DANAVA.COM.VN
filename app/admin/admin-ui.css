@@ -800,6 +800,12 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .lv-page__text small { flex: 0 1 auto; min-width: 24px; }
 .ax-scope .lv-page { max-width: 380px; height: 38px; }
 .ax-scope .lv-bar__right .lv-status { flex: none; max-width: none; }
+/* Cụm phải (trạng thái lưu + nút) không co nhỏ hơn nội dung — nếu co, nó tràn sang trái đè lên nút chọn thiết bị.
+   Thiếu chỗ thì nút chọn trang bên trái co lại, tên trang rút gọn bằng "…". */
+.ax-scope .lv-bar__right { flex: 1 0 auto; }
+.ax-scope .lv-page { min-width: 0; }
+.ax-scope .lv-page__text { min-width: 0; overflow: hidden; }
+.ax-scope .lv-page__text b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 1100px) { .ax-scope .lv-page__text small { display: none; } .ax-scope .lv-page { max-width: 240px; } }
 
 /* ================================================================ Thanh bên (thiết kế lại 11/2026)
