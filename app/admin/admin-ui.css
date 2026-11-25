@@ -957,3 +957,28 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 /* Cài đặt website → Theo dõi (components/admin/TrackingEditor.tsx) */
 .ax-scope .tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 8px 0 12px; }
 .ax-scope .tk-grid input[aria-invalid="true"] { border-color: #f04438; }
+
+/* Nút gạt dạng thẻ: thắng quy tắc cũ ".adm .admin-panel label { display: block; margin: 14px 0 }" (globals.css) */
+.ax-scope .admin-panel label.pf-switch { display: flex; margin: 0; }
+
+/* SEO từng trang → "Ẩn khỏi Google": thẻ ngang, biểu tượng trái, nút gạt phải; bật = cam cảnh báo */
+.ax-scope .ps-row { align-items: stretch; }
+.ax-scope .admin-panel label.ps-noindex {
+  position: relative; display: flex; flex: 1 1 320px; align-items: center; gap: 12px; margin: 0; padding: 10px 12px 10px 10px;
+  border: 1px solid var(--ax-border); border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.ax-scope .admin-panel label.ps-noindex:hover { border-color: #c9d1e1; }
+.ax-scope .ps-noindex input { position: absolute; opacity: 0; pointer-events: none; }
+.ax-scope .ps-noindex__icon { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 10px; background: #e8f6ee; color: #18794e; transition: background .15s, color .15s; }
+.ax-scope .ps-noindex__icon svg { width: 18px; height: 18px; }
+.ax-scope .ps-noindex__text { display: grid; gap: 1px; flex: 1; min-width: 0; }
+.ax-scope .ps-noindex__text b { font-size: 13.5px; font-weight: 700; color: var(--ax-text); }
+.ax-scope .ps-noindex__text small { font-size: 12px; font-weight: 500; line-height: 1.4; color: var(--ax-muted); }
+.ax-scope .ps-noindex__track { position: relative; display: block; flex: none; width: 40px; height: 22px; border-radius: 999px; background: #d5dbe7; transition: background .2s; }
+.ax-scope .ps-noindex__track i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .2s; }
+.ax-scope .admin-panel label.ps-noindex.is-on { border-color: #ffd3b5; background: #fff7f0; }
+.ax-scope .ps-noindex.is-on .ps-noindex__icon { background: #ffe4d1; color: #c2410c; }
+.ax-scope .ps-noindex.is-on .ps-noindex__track { background: #f26b1d; }
+.ax-scope .ps-noindex.is-on .ps-noindex__track i { transform: translateX(18px); }
+.ax-scope .ps-noindex:has(input:focus-visible) { outline: 2px solid var(--ax-accent); outline-offset: 2px; }
+.ax-scope .ps-row .pf-delete { align-self: center; }

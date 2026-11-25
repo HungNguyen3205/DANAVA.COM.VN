@@ -5,6 +5,7 @@
  * Bài viết, dự án, dịch vụ, chủ đề: SEO điền trong hồ sơ của từng bản ghi.
  */
 import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import type { PageSeo, SiteData } from '@/lib/content';
 import { STATIC_SEO, type StaticSeo } from '@/lib/seo-pages';
 import { uploadMedia } from '../MediaPicker';
@@ -76,10 +77,15 @@ function PageCard({ def, value, onChange }: { def: StaticSeo; value: PageSeo; on
             <textarea rows={3} maxLength={300} value={value.description || ''} placeholder={def.description} onChange={e => set({ description: e.target.value })} />
           </label>
           <div className="ps-row">
-            <label className={`pf-switch${value.noindex ? ' is-on' : ''}`}>
-              <input type="checkbox" role="switch" checked={!!value.noindex} onChange={e => set({ noindex: e.target.checked || undefined })} />
-              <span className="pf-switch__track" aria-hidden="true"><i /></span>
-              <span className="pf-switch__text"><b>Ẩn khỏi Google</b><small>noindex: trang vẫn mở được, không lên kết quả tìm kiếm</small></span>
+            {/* Bật = cảnh báo (cam): trang sẽ biến mất khỏi kết quả tìm kiếm */}
+            <label className={`ps-noindex${value.noindex ? ' is-on' : ''}`}>
+              <span className="ps-noindex__icon" aria-hidden="true">{value.noindex ? <EyeOff /> : <Eye />}</span>
+              <span className="ps-noindex__text">
+                <b>{value.noindex ? 'Đang ẩn khỏi Google' : 'Hiện trên Google'}</b>
+                <small>{value.noindex ? 'Trang vẫn mở được nhưng không lên kết quả tìm kiếm' : 'Bật công tắc để ẩn trang khỏi kết quả tìm kiếm (noindex)'}</small>
+              </span>
+              <input type="checkbox" role="switch" aria-label="Ẩn khỏi Google" checked={!!value.noindex} onChange={e => set({ noindex: e.target.checked || undefined })} />
+              <span className="ps-noindex__track" aria-hidden="true"><i /></span>
             </label>
             {custom && <button type="button" className="pf-delete" onClick={() => onChange({})}>Khôi phục mặc định</button>}
           </div>
