@@ -249,3 +249,42 @@ html.is-cine .s-app .cd, html.has-modal .s-app .cd { opacity: 0; visibility: hid
 .s-lang__menu button svg:not(.s-flag) { margin-left: 0; }
 .s-lang-row button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .s-lang-row button .s-flag { width: 20px; height: 14px; }
+
+/* ==========================================================================
+   Thanh menu co giãn cho mọi màn hình (laptop 13" → TV 4K):
+   - Trải gần toàn chiều rộng (tối đa 1840px), không bó trong khung nội dung 1300px.
+   - Lưới: logo | menu (giữa, co giãn) | ngôn ngữ + nút tư vấn — cột 2 bên không bao giờ bị ép, nút không tràn.
+   - Khoảng cách, cỡ chữ, đệm mục menu tăng giảm theo bề ngang; luôn chừa tối thiểu 24px giữa menu và nút.
+   ========================================================================== */
+@media (min-width: 1081px) {
+  .s-app .s-header__bar {
+    max-width: 1840px; margin: 0 auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: clamp(24px, 2.6vw, 64px);
+    padding: 0 clamp(24px, 3.2vw, 72px);
+  }
+  .s-app .s-header .s-nav { min-width: 0; justify-content: center; }
+  .s-app .s-header .s-nav__list { gap: clamp(0px, calc(2.2vw - 24px), 32px); }
+  .s-app .s-header .s-nav__link {
+    padding: 0 clamp(8px, calc(1.1vw - 4px), 18px);
+    font-size: clamp(14px, calc(.32vw + 10.4px), 17px);
+  }
+  .s-app .s-header .s-nav__link::after { left: clamp(8px, calc(1.1vw - 4px), 18px); right: clamp(8px, calc(1.1vw - 4px), 18px); }
+  .s-app .s-header__actions { display: flex; align-items: center; gap: clamp(8px, .8vw, 14px); margin: 0; }
+  .s-app .s-header__actions .s-btn { flex: none; white-space: nowrap; }
+}
+/* Laptop nhỏ (1081–1240px): logo nhỏ lại, nút ngôn ngữ chỉ còn cờ để menu có chỗ thở */
+@media (min-width: 1081px) and (max-width: 1240px) {
+  .s-app .s-header .s-logo img { height: 28px; }
+  .s-app .s-header .s-lang__btn { padding: 0 8px; }
+  .s-app .s-header .s-lang__btn > span:not(.s-flag) { display: none; }
+  .s-app .s-header .s-btn--primary.s-btn--sm { padding: 0 14px; font-size: 14px; }
+}
+/* Màn lớn / TV: chữ và nút to hơn cho dễ nhìn từ xa */
+@media (min-width: 2200px) {
+  .s-app { --s-header-h: 84px; }
+  .s-app .s-header .s-logo img { height: 40px; }
+  .s-app .s-header .s-nav__link { height: 44px; }
+  .s-app .s-header .s-btn--primary.s-btn--sm { min-height: 46px; padding: 0 24px; font-size: 16px; }
+  .s-app .s-header .s-lang__btn { height: 44px; font-size: 15px; }
+}
