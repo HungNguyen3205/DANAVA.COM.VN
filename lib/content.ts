@@ -557,7 +557,7 @@ export function readSaved(raw: string | null): SiteData {
  * Cách tìm ô sai cho mọi loại bản ghi: thử thay từng ô bằng một giá trị an toàn; ô nào thay xong bản ghi hợp lệ = ô gây lỗi.
  */
 const SECTION: Record<string, string> = {
-  staff: 'Hồ sơ thương hiệu → Đội ngũ', projects: 'Nội dung → Dự án', posts: 'Nội dung → Bài viết', metrics: 'Hồ sơ thương hiệu → Số liệu công bố',
+  staff: 'Hồ sơ thương hiệu → Đội ngũ', projects: 'Nội dung website → Dự án', posts: 'Nội dung website → Bài viết', metrics: 'Hồ sơ thương hiệu → Số liệu công bố',
   services: 'Giải pháp', productGroups: 'Giải pháp → Nhóm & loại', landings: 'Landing page', redirects: 'Cài đặt website → Chuyển hướng',
   subServices: 'Giải pháp → Trang con', topics: 'Bài viết → Danh mục', clients: 'Khách hàng → Đối tác', showcase: 'Dự án → Portfolio',
   testimonials: 'Khách hàng → Nhận xét khách hàng'

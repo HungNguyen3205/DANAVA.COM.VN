@@ -29,7 +29,7 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
     ],
   },
   {
-    group: 'Nội dung',
+    group: 'Nội dung website',
     items: [
       { slug: 'bai-viet', label: 'Bài viết', perm: 'content.read', desc: 'Bài viết mục Blogs: nội dung, ảnh, danh mục, thẻ, tác giả, sản phẩm liên quan, SEO và trạng thái.',
         tabs: [{ id: 'bai-viet', label: 'Bài viết' }, { id: 'danh-muc', label: 'Danh mục' }] },

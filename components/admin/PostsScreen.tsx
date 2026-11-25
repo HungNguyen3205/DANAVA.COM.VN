@@ -1,6 +1,6 @@
 'use client';
 /**
- * Nội dung → Bài viết (màn danh sách chuẩn của admin): FilterBar + DataTable + StatusBadge + menu thao tác,
+ * Nội dung website → Bài viết (màn danh sách chuẩn của admin): FilterBar + DataTable + StatusBadge + menu thao tác,
  * trình sửa chia tab (Nội dung, Phân loại, SEO, Lịch sử), phần nâng cao thu gọn.
  * Trạng thái: Nháp → Công khai → Lưu trữ (ẩn khỏi website, không xóa).
  */

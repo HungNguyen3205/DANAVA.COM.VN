@@ -1,6 +1,6 @@
 'use client';
 /**
- * Nội dung → Bài viết: danh sách kiểu WP admin + cột SEO kiểu Rank Math.
+ * Nội dung website → Bài viết: danh sách kiểu WP admin + cột SEO kiểu Rank Math.
  * - Hàng trạng thái (Tất cả / Công khai / Nháp / Lưu trữ / Thiếu SEO), hành động hàng loạt, lọc tháng / chuyên mục / điểm SEO, tìm kiếm, phân trang.
  * - Cột SEO Details (điểm, schema, liên kết), SEO Title, SEO Desc: bấm bút ở đầu cột để sửa hàng loạt ngay trong bảng.
  * Điểm SEO là gợi ý nội bộ (lib không gọi dịch vụ ngoài): độ dài tiêu đề/mô tả, ảnh bìa, độ dài bài, liên kết, đường dẫn.

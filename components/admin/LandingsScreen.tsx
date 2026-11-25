@@ -3,7 +3,7 @@
  * Website → Landing page:
  *  - Trang nội bộ: dựng trên website DANAVA tại /lp/{slug}/ bằng khối, chỉnh trực quan ở tab Thiết kế.
  *  - Liên kết ngoài: chỉ lưu tên, URL, ảnh, mục đích, sản phẩm liên quan — không tạo trang nội bộ giả.
- * Landing đã làm cho khách hàng quản lý ở Nội dung → Dự án & Portfolio.
+ * Landing đã làm cho khách hàng quản lý ở Nội dung website → Dự án & Portfolio.
  * Website → Mẫu & khối: thư viện khối và mẫu trang.
  */
 import Link from 'next/link';
