@@ -52,6 +52,16 @@ export const STATIC_SEO: StaticSeo[] = [
     description: 'DANAVA Solutions tư vấn setup phòng gym, triển khai phần mềm quản lý hội viên và truyền thông khai trương. Gọi 0935 91 7677 để trao đổi về phòng tập của bạn.'
   },
   {
+    path: '/thiet-bi-gym/', name: 'Thiết bị phòng gym',
+    title: 'Thiết bị phòng gym: máy chạy bộ, giàn tạ, ghế tạ',
+    description: 'Danh mục thiết bị phòng gym kèm kích thước thật và giá. Đặt máy vào phòng lab 3D của DANAVA để xem bố cục và tổng chi phí cho phòng tập của bạn.'
+  },
+  {
+    path: '/bao-gia-setup-phong-gym/', name: 'Phòng lab 3D setup phòng gym',
+    title: 'Tự thiết kế phòng gym 3D và tính chi phí thiết bị',
+    description: 'Nhập diện tích, chọn ô gạch sàn, kéo thả máy chạy bộ, giàn tạ, ghế tạ vào phòng 3D và xem tổng chi phí thiết bị. Gửi bản thiết kế cho DANAVA để nhận báo giá.'
+  },
+  {
     path: '/dich-vu/', name: 'Dịch vụ',
     title: 'Dịch vụ: truyền thông, landing page, sự kiện và du lịch',
     description: 'Dịch vụ của DANAVA ngoài phần mềm: truyền thông nội dung, thiết kế landing page, tổ chức sự kiện và du lịch trải nghiệm.'

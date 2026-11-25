@@ -1179,3 +1179,18 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .ps-og__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .ax-scope .ps-libbtn { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 12px; border: 1px solid #2b4294; border-radius: 8px; background: #fff; color: #2b4294; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
 .ax-scope .ps-libbtn:hover { background: #f0f4ff; }
+
+/* ==== Giải pháp → Thiết bị phòng gym (components/admin/EquipmentScreen.tsx) ==== */
+.ax-scope .eq-hint { color: var(--ax-muted); font-size: 11.5px; font-weight: 500; }
+.ax-scope .eq-color { display: flex; align-items: center; gap: 8px; }
+.ax-scope .eq-color input[type=color] { width: 44px; height: 38px; padding: 2px; border: 1px solid var(--ax-border); border-radius: 10px; background: #fff; }
+.ax-scope .eq-dims { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ax-scope .eq-dims .eq-hint { grid-column: 1 / -1; }
+.ax-scope .eq-files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ax-scope .eq-file { display: grid; gap: 6px; align-content: start; padding: 12px; border: 1px dashed var(--ax-border); border-radius: 12px; }
+.ax-scope .eq-file > span { font-size: 12px; font-weight: 700; color: var(--ax-muted); }
+.ax-scope .eq-file img { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; background: #f6f8fc; }
+.ax-scope .eq-file__btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.ax-scope .eq-file__btns label.ps-libbtn { cursor: pointer; }
+.ax-scope .eq-model { overflow: hidden; padding: 6px 8px; border-radius: 8px; background: #f1f4fa; font-size: 11.5px; white-space: nowrap; text-overflow: ellipsis; }
+@media (max-width: 640px) { .ax-scope .eq-files { grid-template-columns: 1fr; } }

@@ -26,6 +26,7 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
     items: [
       { slug: 'san-pham', label: 'Danh sách', perm: 'content.read', desc: 'Mỗi giải pháp có một hồ sơ. Trang chủ, hệ sinh thái, landing page và ANNA dùng lại dữ liệu đã xuất bản từ hồ sơ này.' },
       { slug: 'nhom-loai', label: 'Nhóm & loại', perm: 'content.read', desc: 'Loại quyết định các trường cần nhập; nhóm dùng để phân loại và lọc.' },
+      { slug: 'thiet-bi', label: 'Thiết bị phòng gym', perm: 'content.read', desc: 'Giá, kích thước, ảnh và mô hình 3D từng máy. Dùng cho trang thiết bị và phòng lab 3D setup phòng tập.' },
     ],
   },
   {

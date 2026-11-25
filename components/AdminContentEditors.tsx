@@ -227,7 +227,7 @@ export function TopicsEditor({ draft, setDraft }: { draft: SiteData; setDraft: (
 
 /* ------------------------------------------------ Khách hàng & nhận xét */
 /** Ô nhập gọn cho khung đối tác: nhãn nhỏ phía trên, không bộ đếm ký tự. */
-function PF({ label, value, onChange, max, placeholder, area = false, wide = false }: { label: string; value: string; onChange: (v: string) => void; max: number; placeholder?: string; area?: boolean; wide?: boolean }) {
+export function PF({ label, value, onChange, max, placeholder, area = false, wide = false }: { label: string; value: string; onChange: (v: string) => void; max: number; placeholder?: string; area?: boolean; wide?: boolean }) {
   return (
     <label className={`pf-field${wide ? ' pf-field--wide' : ''}`}>
       <span>{label}</span>
@@ -237,7 +237,7 @@ function PF({ label, value, onChange, max, placeholder, area = false, wide = fal
   );
 }
 /** Công tắc dạng thẻ: tiêu đề + dòng giải thích ngắn. */
-function Switch({ on, title, sub, onChange, accent = false }: { on: boolean; title: string; sub: string; onChange: (v: boolean) => void; accent?: boolean }) {
+export function Switch({ on, title, sub, onChange, accent = false }: { on: boolean; title: string; sub: string; onChange: (v: boolean) => void; accent?: boolean }) {
   return (
     <label className={`pf-switch${on ? ' is-on' : ''}${accent ? ' pf-switch--accent' : ''}`}>
       <input type="checkbox" role="switch" checked={on} onChange={e => onChange(e.target.checked)} />
