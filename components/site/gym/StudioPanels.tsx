@@ -1,7 +1,7 @@
 'use client';
 /** Các bảng điều khiển của phòng lab thiết kế phòng tập (components/site/gym/GymStudio.tsx). */
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { ArrowDownUp, Building2, ChevronDown, Copy, ExternalLink, Layers, Lock, Plus, Search, Sparkles, Star, Trash2, Unlock } from 'lucide-react';
+import { ArrowDownUp, ArrowUpDown, Ban, Building2, ChevronDown, Copy, DoorOpen, ExternalLink, Footprints, Layers, Lock, LogOut, Package, PanelTop, Plug, Plus, Search, Shapes, Shirt, Sparkles, Square, Star, Toilet, Trash2, Unlock, type LucideIcon } from 'lucide-react';
 import { EQUIPMENT_CATEGORIES, KIND_LABEL, formatVND, type Equipment, type EquipmentCategory, type EquipmentKind } from '@/lib/equipment';
 import { BUSINESS_MODELS, FIXTURE_KINDS, FLOOR_USES, LINK_KINDS, STRATEGIES, fmtArea, newProject, type BusinessModel, type FixtureKind, type Floor, type FurnKind, type InteriorStyle, type LinkKind, type Project, type Reception, type Strategy } from '@/lib/gym-project';
 import { FURNITURE, INTERIOR_STYLES, RECEPTION_SIZES } from '@/lib/gym-decor';
@@ -131,21 +131,26 @@ export function FloorsPanel({ p, floor, setFloorId, act, selectItem }: {
         <Num label="Người tập cùng lúc" value={floor.users} min={0} max={500} step={1} onChange={v => act.updateFloor(floor.id, { users: Math.round(v) })} />
       </div>
       <label className="gs-text"><span>Ngân sách riêng của tầng</span><span className="gs-num__box"><input inputMode="numeric" value={floor.budget ? Math.round(floor.budget / 1e6) : ''} placeholder="chia từ ngân sách dự án" onChange={e => act.updateFloor(floor.id, { budget: Number(e.target.value.replace(/\D/g, '')) * 1e6 })} /><i>triệu</i></span></label>
-      <h3>Vật cố định <small>bấm để thêm, kéo trên sàn để đặt</small></h3>
-      <div className="gs-addgrid">
-        {(Object.keys(FIXTURE_KINDS) as FixtureKind[]).map(k => <button key={k} type="button" onClick={() => act.addFixture(k)} style={{ ['--c' as string]: FIXTURE_KINDS[k].color }}><Plus aria-hidden="true" />{FIXTURE_KINDS[k].label}</button>)}
+      <h3>Vật cố định <small>bấm để thêm, kéo để đặt</small></h3>
+      <div className="gs-tiles">
+        {(Object.keys(FIXTURE_KINDS) as FixtureKind[]).map(k => { const [Ic, short] = FIX_TILE[k]; return <button key={k} type="button" onClick={() => act.addFixture(k)} title={`Thêm ${FIXTURE_KINDS[k].label.toLowerCase()}`} style={{ ['--c' as string]: FIXTURE_KINDS[k].color }}><Ic aria-hidden="true" /><span>{short}</span></button>; })}
       </div>
-      {floor.fixtures.length > 0 && <ul className="gs-list">{floor.fixtures.map(fx => <li key={fx.id}><button type="button" onClick={() => selectItem(fx.id)}><i style={{ background: FIXTURE_KINDS[fx.kind].color }} />{fx.label || FIXTURE_KINDS[fx.kind].label}{fx.main ? ' (cửa chính)' : ''}<small>{fx.w}×{fx.d} m</small></button></li>)}</ul>}
-      <h3>Cầu thang / thang máy</h3>
-      {p.floors.length < 2 ? <p className="gs-note">Thêm tầng để khai báo lõi giao thông.</p> : <>
-        <div className="gs-chipsel">{sorted.map(f => { const on = linkFloors.includes(f.id); return <button key={f.id} type="button" role="checkbox" aria-checked={on} className={on ? 'is-on' : ''} onClick={() => setLinkFloors(l => on ? l.filter(x => x !== f.id) : [...l, f.id])}>{f.name}</button>; })}</div>
-        <div className="gs-row">{(Object.keys(LINK_KINDS) as LinkKind[]).map(k => <button key={k} type="button" className="gs-btn" disabled={linkFloors.length < 2} onClick={() => act.addLink(k, linkFloors)}><Building2 aria-hidden="true" /> {LINK_KINDS[k].label}</button>)}</div>
-        <ul className="gs-list">{p.links.map(l => <li key={l.id}><button type="button" onClick={() => selectItem(l.id)}><i style={{ background: LINK_KINDS[l.kind].color }} />{LINK_KINDS[l.kind].label}<small>{l.floors.map(id => p.floors.find(f => f.id === id)?.name).join(' ↔ ')}</small></button></li>)}</ul>
+      {floor.fixtures.length > 0 && <div className="gs-placed">{floor.fixtures.map(fx => { const [Ic] = FIX_TILE[fx.kind]; return <button key={fx.id} type="button" onClick={() => selectItem(fx.id)} title={`${fx.label || FIXTURE_KINDS[fx.kind].label}${fx.main ? ' (cửa chính)' : ''} · ${fx.w}×${fx.d} m`} style={{ ['--c' as string]: FIXTURE_KINDS[fx.kind].color }}><Ic aria-hidden="true" />{fx.main ? <b>chính</b> : null}</button>; })}</div>}
+      {p.floors.length > 1 && <>
+        <h3>Cầu thang / thang máy <small>nối các tầng đã chọn</small></h3>
+        <div className="gs-linkrow">
+          <div className="gs-chipsel">{sorted.map(f => { const on = linkFloors.includes(f.id); return <button key={f.id} type="button" role="checkbox" aria-checked={on} className={on ? 'is-on' : ''} onClick={() => setLinkFloors(l => on ? l.filter(x => x !== f.id) : [...l, f.id])}>{f.level === 0 ? 'Trệt' : `T${f.level + 1}`}</button>; })}</div>
+          {(Object.keys(LINK_KINDS) as LinkKind[]).map(k => { const Ic = k === 'stairs' ? Footprints : ArrowUpDown; return <button key={k} type="button" className="gs-tilebtn" disabled={linkFloors.length < 2} onClick={() => act.addLink(k, linkFloors)} title={`Thêm ${LINK_KINDS[k].label.toLowerCase()}`}><Ic aria-hidden="true" /><span>{k === 'stairs' ? 'Thang bộ' : 'Thang máy'}</span></button>; })}
+        </div>
+        {p.links.length > 0 && <div className="gs-placed">{p.links.map(l => { const Ic = l.kind === 'stairs' ? Footprints : ArrowUpDown; return <button key={l.id} type="button" onClick={() => selectItem(l.id)} title={`${LINK_KINDS[l.kind].label}: ${l.floors.map(id => p.floors.find(f => f.id === id)?.name).join(' ↔ ')}`} style={{ ['--c' as string]: LINK_KINDS[l.kind].color }}><Ic aria-hidden="true" /></button>; })}</div>}
       </>}
-      {opt && <button type="button" className="gs-btn gs-wide" onClick={() => act.lockFloor(!lockedAll)}>{lockedAll ? <Unlock aria-hidden="true" /> : <Lock aria-hidden="true" />} {lockedAll ? 'Mở khoá' : 'Khoá'} toàn bộ máy & nội thất {floor.name.toLowerCase()}</button>}
+      {opt && <button type="button" className="gs-lock" onClick={() => act.lockFloor(!lockedAll)}>{lockedAll ? <Unlock aria-hidden="true" /> : <Lock aria-hidden="true" />} {lockedAll ? 'Mở khoá' : 'Khoá'} cả tầng</button>}
     </div>
   );
 }
+
+/** Icon + tên ngắn cho ô vật cố định */
+const FIX_TILE: Record<FixtureKind, [LucideIcon, string]> = { door: [DoorOpen, 'Cửa'], exit: [LogOut, 'Thoát hiểm'], window: [PanelTop, 'Cửa sổ'], column: [Square, 'Cột'], wc: [Toilet, 'WC'], locker: [Shirt, 'Thay đồ'], storage: [Package, 'Kho'], void: [Ban, 'Không dùng'], outlet: [Plug, 'Ổ điện'], other: [Shapes, 'Khác'] };
 
 /* ---------- Thiết bị ---------- */
 const PAGE = 30;

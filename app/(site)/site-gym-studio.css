@@ -564,3 +564,23 @@ button.gs-sticky { border: 0; font: inherit; cursor: pointer; }
 .gs-menuwrap { position: relative; display: inline-flex; }
 .gs-dropdown--right { position: absolute; top: calc(100% + 6px); right: 0; z-index: 20; }
 .gs-icon.is-on { border-color: var(--gs-navy); }
+
+/* Vật cố định: lưới ô icon 5 cột; đã đặt: hàng icon nhỏ; cầu thang gọn một hàng */
+.gs-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.gs-tiles button, .gs-tilebtn { display: grid; justify-items: center; gap: 3px; padding: 8px 2px 6px; border: 1px solid color-mix(in srgb, var(--c, #64748b) 22%, #fff); border-radius: 12px; background: color-mix(in srgb, var(--c, #64748b) 6%, #fff); color: var(--c, var(--gs-navy)); font: inherit; font-size: 10.5px; font-weight: 700; line-height: 1.15; text-align: center; cursor: pointer; transition: transform .15s, background .15s; }
+.gs-tiles button:hover, .gs-tilebtn:hover:not(:disabled) { transform: translateY(-1px); background: color-mix(in srgb, var(--c, #64748b) 12%, #fff); }
+.gs-tiles svg, .gs-tilebtn svg { width: 19px; height: 19px; }
+.gs-tiles span { color: var(--gs-navy); }
+.gs-placed { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.gs-placed button { position: relative; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 9px; background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--c); cursor: pointer; }
+.gs-placed svg { width: 16px; height: 16px; }
+.gs-placed b { position: absolute; bottom: -6px; padding: 0 3px; border-radius: 4px; background: var(--c); color: #fff; font-size: 8px; }
+.gs-linkrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.gs-linkrow .gs-chipsel button { padding: 4px 8px; }
+.gs-tilebtn { --c: #5b6478; grid-auto-flow: column; align-items: center; gap: 5px; padding: 6px 10px; font-size: 12px; }
+.gs-tilebtn span { color: var(--gs-navy); }
+.gs-tilebtn:disabled { opacity: .45; cursor: not-allowed; }
+.gs-lock { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; padding: 0; border: 0; background: none; color: var(--gs-muted); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.gs-lock svg { width: 14px; height: 14px; }
+.gs-lock:hover { color: var(--gs-navy); }
+@media (max-width: 360px) { .gs-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
