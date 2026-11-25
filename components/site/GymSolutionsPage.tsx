@@ -153,10 +153,13 @@ export function GymSolutionsPage({ data }: { data: SiteData }) {
           <ol className="gy-process">
             {process.map((p, i) => (
               <li key={p.k} style={{ ['--i' as string]: i }}>
-                <span className="gy-process__icon"><p.icon aria-hidden="true" /></span>
-                <span className="gy-process__no">0{i + 1}</span>
-                <b>{T(`process.${p.k}.title`, p.title, 'Bước')}</b>
-                <p>{T(`process.${p.k}.text`, p.text, 'Mô tả bước', { multiline: true })}</p>
+                <span className="gy-process__no" aria-hidden="true">0{i + 1}</span>
+                <div className="gy-process__card">
+                  <span className="gy-process__icon"><p.icon aria-hidden="true" /></span>
+                  <small className="gy-process__step">{T('process.step', 'Bước', 'Chữ trước số bước')} {i + 1}</small>
+                  <b>{T(`process.${p.k}.title`, p.title, 'Bước')}</b>
+                  <p>{T(`process.${p.k}.text`, p.text, 'Mô tả bước', { multiline: true })}</p>
+                </div>
               </li>
             ))}
           </ol>
