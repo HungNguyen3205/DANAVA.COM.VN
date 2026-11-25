@@ -202,12 +202,12 @@ export function ContactPage({ initialService }: { initialService: string }) {
                   <strong {...(state === 'open' ? P('status.open', 'Đang làm việc', 'Trạng thái: trong giờ')
                     : state === 'lunch' ? P('status.lunch', 'Đang nghỉ trưa', 'Trạng thái: nghỉ trưa')
                     : P('status.closed', 'Ngoài giờ làm việc', 'Trạng thái: ngoài giờ'))} />
-                  {state === 'lunch' && hours.lunch && <small><span {...P('status.lunch-note', 'Làm việc lại lúc', 'Ghi chú nghỉ trưa')} /> {hours.lunchText!.split(' – ')[1]}</small>}
-                  {state === 'closed' && <small {...P('status.closed-note', 'DANAVA gọi lại vào ngày làm việc kế tiếp', 'Ghi chú ngoài giờ')} />}
-                  {/* Giờ rút gọn: 2 viên thuốc ngắn thay cho một câu dài */}
+                  {state === 'lunch' && hours.lunch && <small className="c-status__note"><span {...P('status.lunch-note', 'Làm việc lại lúc', 'Ghi chú nghỉ trưa')} /> <b>{hours.lunchText!.split(' – ')[1]}</b></small>}
+                  {state === 'closed' && <small className="c-status__note" {...P('status.closed-note', 'DANAVA gọi lại vào ngày làm việc kế tiếp', 'Ghi chú ngoài giờ')} />}
+                  {/* Thẻ giờ: dòng giờ làm việc + dòng nghỉ trưa, ngăn bằng vạch mảnh */}
                   <ul className="c-hours" aria-label={co.hours}>
-                    <li><b>{hours.days}</b> {hours.time}</li>
-                    {hours.lunchText && <li className={state === 'lunch' ? 'is-now' : ''}><span {...P('status.lunch-label', 'Nghỉ trưa', 'Nhãn giờ nghỉ trưa')} /> {hours.lunchText}</li>}
+                    <li><b>{hours.days}:</b> {hours.time}</li>
+                    {hours.lunchText && <li className={`c-hours__lunch${state === 'lunch' ? ' is-now' : ''}`}><span {...P('status.lunch-label', 'Nghỉ trưa', 'Nhãn giờ nghỉ trưa')} />: {hours.lunchText}</li>}
                   </ul>
                   {/* Chuỗi gốc: chỉ hiện trong trình chỉnh sửa để sửa giờ làm việc */}
                   <span className="c-hours-raw" {...cmsText('block.company.hours', 'Giờ làm việc', G)}>{co.hours}</span>
