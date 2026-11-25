@@ -5,7 +5,7 @@
  */
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { ArrowUp, Calculator, Dumbbell, MessageCircle, Phone, RotateCcw, Square, X } from 'lucide-react';
+import { ArrowUp, Calculator, Dumbbell, MessageCircle, Phone, RotateCcw, Send, Square, X } from 'lucide-react';
 import { MayFigure } from './MayFigure';
 import { useSite } from '../../SiteStore';
 import { block } from '@/lib/blocks';
@@ -42,7 +42,7 @@ function Channels() {
       {zalo && <li><a href={zalo} target="_blank" rel="noopener noreferrer"><BrandIcon name="zalo" />Zalo</a></li>}
       {messenger && <li><a href={messenger} target="_blank" rel="noopener noreferrer"><BrandIcon name="messenger" />Messenger</a></li>}
       {tel && <li><a href={tel}><Phone aria-hidden="true" /><U data={data} k="channels.hotline" def="Hotline" label="Kênh liên hệ (ANNA)" inline /></a></li>}
-      <li><Link href="/lien-he/"><U data={data} k="channels.form" def="Gửi yêu cầu" label="Kênh liên hệ (ANNA)" inline /></Link></li>
+      <li><Link href="/lien-he/"><Send aria-hidden="true" /><U data={data} k="channels.form" def="Gửi yêu cầu" label="Kênh liên hệ (ANNA)" inline /></Link></li>
     </ul>
   );
 }
