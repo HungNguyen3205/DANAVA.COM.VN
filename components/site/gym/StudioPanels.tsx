@@ -43,31 +43,29 @@ export function StartWizard({ onCreate, aiNote }: { onCreate: (p: Project) => vo
   };
   return (
     <form className="gs-start" onSubmit={submit}>
-      <h2>Phòng tập của bạn thế nào?</h2>
-      <p className="gs-start__lead">Trả lời 4 câu, xem ngay phòng tập 3D gợi ý và chi phí dự kiến.</p>
-      <fieldset><legend><b>1</b> Loại phòng tập</legend>
+      <h2>Phòng tập của bạn rộng bao nhiêu?</h2>
+      <div className="gs-start__areas">
+        {Array.from({ length: n }, (_, i) => <Num key={i} label={n > 1 ? (i === 0 ? 'Tầng trệt' : `Tầng ${i + 1}`) : 'Diện tích'} value={areas[i]} min={20} max={2000} step={5} unit="m²" onChange={v => setAreas(a => a.map((x, j) => (j === i ? v : x)))} />)}
+      </div>
+      <button type="submit" className="s-btn s-btn--primary s-btn--lg gs-start__go"><Sparkles aria-hidden="true" /> Xem phòng tập gợi ý</button>
+      <details className="gs-start__opts"><summary>Thêm lựa chọn: loại phòng, số tầng, ngân sách</summary>
+      <fieldset><legend>Loại phòng tập</legend>
         <div className="gs-cards gs-cards--start">
           {(Object.keys(BUSINESS_MODELS) as BusinessModel[]).map(k => (
             <button key={k} type="button" role="radio" aria-checked={model === k} className={model === k ? 'is-on' : ''} onClick={() => setModel(k)}><b>{BUSINESS_MODELS[k].label}</b></button>
           ))}
         </div>
       </fieldset>
-      <fieldset><legend><b>2</b> Số tầng <small>(tính cả tầng trệt)</small></legend>
+      <fieldset><legend>Số tầng <small>(tính cả tầng trệt)</small></legend>
         <Seg label="Số tầng" value={String(n)} options={[1, 2, 3, 4, 5].map(i => [String(i), `${i}`] as [string, string])} onChange={v => setN(Number(v))} />
       </fieldset>
-      <fieldset><legend><b>3</b> Diện tích {n > 1 ? 'từng tầng' : 'sàn'}</legend>
-        <div className="gs-start__areas">
-          {Array.from({ length: n }, (_, i) => <Num key={i} label={n > 1 ? (i === 0 ? 'Tầng trệt' : `Tầng ${i + 1}`) : 'Diện tích'} value={areas[i]} min={20} max={2000} step={5} unit="m²" onChange={v => setAreas(a => a.map((x, j) => (j === i ? v : x)))} />)}
-        </div>
-      </fieldset>
-      <fieldset><legend><b>4</b> Ngân sách dự kiến</legend>
+      <fieldset><legend>Ngân sách dự kiến</legend>
         <div className="gs-budgetrow">
           <button type="button" role="radio" aria-checked={noBudget} className={`gs-chip${noBudget ? ' is-on' : ''}`} onClick={() => setNoBudget(true)}>Chưa xác định</button>
           <label className={`gs-budget${noBudget ? ' is-dim' : ''}`}><input inputMode="decimal" value={budget} placeholder="vd 800" onFocus={() => setNoBudget(false)} onChange={e => { setBudget(e.target.value.replace(/[^\d.,]/g, '').slice(0, 8)); setNoBudget(false); }} aria-label="Ngân sách (triệu đồng)" /> triệu đồng</label>
         </div>
       </fieldset>
-      <button type="submit" className="s-btn s-btn--primary s-btn--lg gs-start__go"><Sparkles aria-hidden="true" /> Xem phòng tập gợi ý</button>
-      <p className="gs-start__after">Cột, cửa, cầu thang, thiết bị, màu sắc… chỉnh sau trong phần <b>Tùy chỉnh</b>.</p>
+      </details>
       {aiNote}
     </form>
   );
@@ -155,7 +153,7 @@ const PRICE_BANDS: { label: string; ok: (p: number) => boolean }[] = [
   { label: 'Mọi mức giá', ok: () => true }, { label: 'Dưới 20 triệu', ok: p => p > 0 && p < 20e6 }, { label: '20 – 50 triệu', ok: p => p >= 20e6 && p < 50e6 },
   { label: '50 – 100 triệu', ok: p => p >= 50e6 && p < 100e6 }, { label: 'Trên 100 triệu', ok: p => p >= 100e6 }, { label: 'Đã có giá', ok: p => p > 0 }
 ];
-export function EquipmentPanel({ equipment, p, floor, onAdd, onMust }: { equipment: Equipment[]; p: Project; floor: Floor; onAdd: (e: Equipment) => void; onMust: (id: string) => void }) {
+export function EquipmentPanel({ equipment, p, floor, onAdd, onMust, simple }: { equipment: Equipment[]; p: Project; floor: Floor; onAdd: (e: Equipment) => void; onMust: (id: string) => void; simple?: boolean }) {
   const [cat, setCat] = useState<EquipmentCategory | ''>('');
   const [q, setQ] = useState('');
   const [muscle, setMuscle] = useState<Muscle | ''>('');
@@ -178,11 +176,11 @@ export function EquipmentPanel({ equipment, p, floor, onAdd, onMust }: { equipme
         {(Object.keys(EQUIPMENT_CATEGORIES) as EquipmentCategory[]).filter(c => equipment.some(e => e.category === c)).map(c => <button key={c} type="button" role="radio" aria-checked={cat === c} className={cat === c ? 'is-on' : ''} onClick={() => { setCat(c); setMuscle(''); setLimit(PAGE); }}>{c === 'strength' ? 'Máy sức mạnh' : EQUIPMENT_CATEGORIES[c]}<small>{equipment.filter(e => e.category === c).length}</small></button>)}
       </div>
       {cat === 'strength' && <div className="gp-muscles">{(Object.keys(MUSCLES) as Muscle[]).map(m => { const n = inCat.filter(e => muscleOf(e) === m).length; return n ? <button key={m} type="button" role="radio" aria-checked={muscle === m} className={muscle === m ? 'is-on' : ''} onClick={() => { setMuscle(muscle === m ? '' : m); setLimit(PAGE); }}>{MUSCLES[m].label} <small>{n}</small></button> : null; })}</div>}
-      <div className="gp-filterbar">
+      {!simple && <div className="gp-filterbar">
         <label className="gp-select" aria-label="Mức giá"><select value={band} onChange={e => { setBand(Number(e.target.value)); setLimit(PAGE); }}>{PRICE_BANDS.map((b, i) => <option key={b.label} value={i}>{b.label}</option>)}</select><ChevronDown aria-hidden="true" /></label>
         <button type="button" className={`gp-sort${sort ? ' is-on' : ''}`} onClick={() => setSort(sort === '' ? 'asc' : sort === 'asc' ? 'desc' : '')}><ArrowDownUp aria-hidden="true" />{sort === 'asc' ? 'Giá thấp' : sort === 'desc' ? 'Giá cao' : 'Sắp xếp'}</button>
-      </div>
-      <p className="gp-count"><b>{shown.length}</b> máy · bấm + để thêm vào <b>{floor.name.toLowerCase()}</b>{filtered && <button type="button" onClick={() => { setCat(''); setMuscle(''); setBand(0); setQ(''); }}>Xoá lọc</button>}</p>
+      </div>}
+      {!simple && <p className="gp-count"><b>{shown.length}</b> máy · bấm + để thêm vào <b>{floor.name.toLowerCase()}</b>{filtered && <button type="button" onClick={() => { setCat(''); setMuscle(''); setBand(0); setQ(''); }}>Xoá lọc</button>}</p>}
       <ul className="gp-eq">
         {shown.slice(0, limit).map(e => {
           const n = qty(e.id), must = p.brief.mustHave.includes(e.id);
@@ -190,10 +188,10 @@ export function EquipmentPanel({ equipment, p, floor, onAdd, onMust }: { equipme
             <li key={e.id} className={open === e.id ? 'is-open' : ''}>
               <button type="button" className="gp-eq__row" onClick={() => setOpen(open === e.id ? '' : e.id)} aria-expanded={open === e.id}>
                 <span className="gp-eq__sw" style={{ background: e.color }}>{e.image ? <img src={e.image} alt="" loading="lazy" /> : null}</span>
-                <span className="gp-eq__txt"><b title={e.name}>{e.name}</b><span><em className={e.price ? '' : 'is-contact'}>{e.price ? formatVND(Number(e.price)) : 'Chưa có giá'}</em>{n ? <i>Trong phương án ×{n}</i> : null}{e.dimsEstimated ? <i className="is-est">KT ước tính</i> : null}</span></span>
+                <span className="gp-eq__txt"><b title={e.name}>{e.name}</b><span><em className={e.price ? '' : 'is-contact'}>{e.price ? formatVND(Number(e.price)) : 'Chưa có giá'}</em>{n ? <i>Trong phòng ×{n}</i> : null}{e.dimsEstimated && !simple ? <i className="is-est">KT ước tính</i> : null}</span></span>
               </button>
               <span className="gs-eqbtns">
-                <button type="button" className={`gs-star${must ? ' is-on' : ''}`} onClick={() => onMust(e.id)} aria-label={must ? `Bỏ bắt buộc ${e.name}` : `Đánh dấu bắt buộc ${e.name}`} title="Máy bắt buộc khi tạo phương án"><Star aria-hidden="true" /></button>
+                {!simple && <button type="button" className={`gs-star${must ? ' is-on' : ''}`} onClick={() => onMust(e.id)} aria-label={must ? `Bỏ bắt buộc ${e.name}` : `Đánh dấu bắt buộc ${e.name}`} title="Máy bắt buộc khi tạo phương án"><Star aria-hidden="true" /></button>}
                 <button type="button" className="gp-eq__add" onClick={() => onAdd(e)} aria-label={`Thêm ${e.name} vào ${floor.name}`}><Plus aria-hidden="true" /></button>
               </span>
               {open === e.id && (
@@ -209,7 +207,7 @@ export function EquipmentPanel({ equipment, p, floor, onAdd, onMust }: { equipme
         {shown.length > limit && <li className="gp-eq__moreBtn"><button type="button" onClick={() => setLimit(l => l + PAGE)}>Xem thêm {Math.min(PAGE, shown.length - limit)} máy</button></li>}
         {shown.length === 0 && <li className="gp-eq__none">Không có máy nào khớp.</li>}
       </ul>
-      <p className="gp-src">Danh mục, giá và hình ảnh: đối tác <a href="https://thietbigym.vn/" target="_blank" rel="noopener">thietbigym.vn</a></p>
+      {!simple && <p className="gp-src">Danh mục, giá và hình ảnh: đối tác <a href="https://thietbigym.vn/" target="_blank" rel="noopener">thietbigym.vn</a></p>}
     </div>
   );
 }

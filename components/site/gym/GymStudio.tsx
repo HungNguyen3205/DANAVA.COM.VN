@@ -266,7 +266,6 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
             <div className="gs-float gs-float--tl">
               <div className="gs-chiprow">
                 <button type="button" className={`gs-chipbtn${custom ? ' is-on' : ''}`} onClick={() => setCustom(c => !c)} aria-expanded={custom}><SlidersHorizontal aria-hidden="true" /> {custom ? 'Danh mục máy' : 'Tùy chỉnh'}</button>
-                {project.options.length > 1 && <button type="button" className="gs-chipbtn" onClick={nextOption} title="Xem phương án bố trí khác"><Shuffle aria-hidden="true" /><span>Phương án khác</span></button>}
               </div>
               {sorted.length > 1 && <div className="gs-floortabs" role="radiogroup" aria-label="Tầng đang xem">
                 {sorted.map(f => <button key={f.id} type="button" role="radio" aria-checked={f.id === floor.id} className={f.id === floor.id ? 'is-on' : ''} onClick={() => { setFloorId(f.id); setSel(null); }}>{f.name}</button>)}
@@ -276,14 +275,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               <div className="gs-views" role="radiogroup" aria-label="Góc xem">
                 {gl !== 'fail' && <button type="button" role="radio" aria-checked={mode === 'orbit'} className={mode === 'orbit' ? 'is-on' : ''} onClick={() => { setMode('orbit'); setMoreViews(false); setTimeout(() => studio.current?.resetView(), 0); }}><span>3D</span></button>}
                 <button type="button" role="radio" aria-checked={mode === 'plan'} className={mode === 'plan' ? 'is-on' : ''} onClick={() => { setMode('plan'); setMoreViews(false); setTimeout(() => studio.current?.resetView(), 0); }}><span>2D</span></button>
-                {gl !== 'fail' && <button type="button" className={`gs-more${!['orbit', 'plan'].includes(mode) ? ' is-on' : ''}`} aria-expanded={moreViews} aria-label="Góc nhìn khác" title="Góc nhìn khác" onClick={() => setMoreViews(v => !v)}><Eye aria-hidden="true" /></button>}
               </div>
-              {moreViews && gl !== 'fail' && (
-                <div className="gs-moreviews">
-                  {VIEWS.filter(([k]) => k !== 'orbit' && k !== 'plan').filter(([k]) => project.floors.length > 1 || (k !== 'stack' && k !== 'exploded')).map(([k, l, ic]) => <button key={k} type="button" className={mode === k ? 'is-on' : ''} onClick={() => { setMode(k); setTimeout(() => studio.current?.resetView(), 0); }}>{ic}{l}</button>)}
-                  <label className="gs-toggle"><input type="checkbox" checked={showClear} onChange={e => setShowClear(e.target.checked)} /><span>Khoảng trống quanh máy</span></label>
-                </div>
-              )}
             </div>
             {option && !sel && (
               <div className="gs-dock">
@@ -325,7 +317,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
         {/* ----- Cột trái: danh mục máy tập (mặc định) ----- */}
         {!custom && (
           <aside className="gs-side gs-cat" aria-label="Danh mục máy tập">
-            <EquipmentPanel equipment={equipment} p={project} floor={floor} onMust={id => set(p => ({ ...p, brief: { ...p.brief, mustHave: p.brief.mustHave.includes(id) ? p.brief.mustHave.filter(x => x !== id) : [...p.brief.mustHave, id] } }))}
+            <EquipmentPanel simple equipment={equipment} p={project} floor={floor} onMust={id => set(p => ({ ...p, brief: { ...p.brief, mustHave: p.brief.mustHave.includes(id) ? p.brief.mustHave.filter(x => x !== id) : [...p.brief.mustHave, id] } }))}
               onAdd={eq => { if (!option) return; const r = E.addEquipment(project, floor.id, eq, catalog); commit(r.project, r.placed ? `Đã thêm ${eq.name}` : `Hết chỗ cho ${eq.name} — đã đặt giữa sàn (tô đỏ), hãy dời máy khác`); setSel(r.id); }} />
           </aside>
         )}
@@ -361,8 +353,14 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
             {tab === 'style' && <StylePanel p={project} floor={floor} set={fn => set(fn)} addDecor={(k: FurnKind) => { const F = FURNITURE[k]; set(p => E.addFurniture(p, floor.id, { kind: k, x: 0, z: 0, rot: 0, w: F.w, d: F.d, group: 'decor' }), `Đã thêm ${F.label.toLowerCase()} — kéo để đặt`); }} />}
             {tab === 'assistant' && extras?.assistant?.({ project, commit, floorId: floor.id })}
             {tab === 'sim' && extras?.sim?.({ project, catalog, floorId: floor.id, setFloorId, saveSim, setPeople: pushPeople, setHeat, onPick: fn => { pickRef.current = fn; } })}
+            <div className="gs-side__more">
+              {project.options.length > 1 && <button type="button" className="gs-btn" onClick={nextOption}><Shuffle aria-hidden="true" /> Phương án khác</button>}
+              {gl !== 'fail' && VIEWS.filter(([k]) => k !== 'orbit' && k !== 'plan').filter(([k]) => project.floors.length > 1 || (k !== 'stack' && k !== 'exploded')).map(([k, l, ic]) => <button key={k} type="button" className={`gs-btn${mode === k ? ' is-on' : ''}`} onClick={() => { setMode(k); setTimeout(() => studio.current?.resetView(), 0); }}>{ic}{l}</button>)}
+              <label className="gs-toggle"><input type="checkbox" checked={showClear} onChange={e => setShowClear(e.target.checked)} /><span>Khoảng trống quanh máy</span></label>
+            </div>
             <p className="gs-side__foot">
               <button type="button" className="gs-link" onClick={() => setCompare(c => !c)}>So sánh cả {project.options.length} phương án</button>
+              <button type="button" className="gs-link" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) { setProject(null); setCustom(false); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}>Bắt đầu lại</button>
               <button type="button" className="gs-link" onClick={() => void save()} disabled={share.busy}>{share.busy ? 'Đang lưu…' : project.code ? `Lưu (${project.code})` : 'Lưu & lấy đường dẫn'}</button>
             </p>
           </aside>
@@ -429,9 +427,6 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
         </div>
       )}
       {option && !form.done && !form.open && <button type="button" className="gs-sticky" onClick={openSend}><Send aria-hidden="true" /> Nhận tư vấn phương án này</button>}
-      <p className="gs-foot">
-        <button type="button" className="gs-link" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) { setProject(null); setCustom(false); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}>Bắt đầu lại</button>
-      </p>
     </div>
   );
 }
