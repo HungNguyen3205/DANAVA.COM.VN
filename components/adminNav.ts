@@ -69,7 +69,7 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
     items: [
       { slug: 'cai-dat', label: 'Cài đặt', perm: 'system.manage', desc: 'Email và hotline chính của website.' },
       { slug: 'tai-khoan', label: 'Tài khoản & quyền', perm: 'users.manage', desc: 'Tài khoản đăng nhập admin và vai trò. Tách biệt với hồ sơ nhân sự hiển thị trên website.' },
-      { slug: 'seo', label: 'SEO & chuyển hướng', perm: 'content.read', desc: 'Kiểm tra đường dẫn trùng và chuyển hướng đường dẫn cũ sang đường dẫn mới.' },
+      { slug: 'seo', label: 'SEO & chuyển hướng', perm: 'content.read', desc: 'Tiêu đề, mô tả, ảnh chia sẻ cho từng trang; chuyển hướng đường dẫn cũ và kiểm tra đường dẫn.' },
       { slug: 'tich-hop', label: 'Tích hợp', perm: 'integrations.read', desc: 'Kết nối kỹ thuật của trợ lý ANNA. Khóa API đặt trên máy chủ, không nhập ở đây.' },
       { slug: 'nhat-ky', label: 'Nhật ký & sao lưu', perm: 'content.read', desc: 'Lịch sử xuất bản, khôi phục phiên bản, nhật ký thao tác và sao lưu dữ liệu.',
         tabs: [{ id: 'phien-ban', label: 'Phiên bản' }, { id: 'nhat-ky', label: 'Nhật ký thao tác', perm: 'system.manage' }, { id: 'sao-luu', label: 'Sao lưu & nhập', perm: 'system.manage' }] },

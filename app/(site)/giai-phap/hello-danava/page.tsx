@@ -1,5 +1,5 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import { JsonLd } from '@/components/site/blocks';
 import { HelloPage } from '@/components/site/ProductPages';
@@ -7,12 +7,7 @@ import { HELLO } from '@/lib/products';
 import { block } from '@/lib/blocks';
 import { parsePrice } from '@/lib/quote';
 
-export const generateMetadata = seoLater(
-  'Hello DANAVA — Bảng giá và báo giá DANAVA Studio',
-  'Hello DANAVA: bảng giá 4 gói DANAVA Studio, so sánh tính năng từng module và nhận báo giá cho phòng tập Gym, Yoga, Pilates, bể bơi, Spa.',
-  '/giai-phap/hello-danava/',
-  '/assets/products/hello-pricing.webp'
-);
+export const generateMetadata = seoPage('/giai-phap/hello-danava/');
 
 export default async function Page() {
   const { data } = await getSiteContent();

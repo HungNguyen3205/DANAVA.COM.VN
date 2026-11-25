@@ -1,16 +1,11 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import { publicPartners, publicPlaces } from '@/lib/site-queries';
 import { PartnersPage } from '@/components/site/PartnersPage';
 import { JsonLd } from '@/components/site/blocks';
 
-export const generateMetadata = seoLater(
-  'Đối tác đồng hành',
-  'Đối tác đồng hành và các địa điểm yoga, pilates, gym, spa trên nền tảng danava.vn: địa chỉ, giờ mở cửa, dịch vụ và tiện ích.',
-  '/doi-tac/',
-  '/assets/partners/covers/yoga-club-vietnam.webp'
-);
+export const generateMetadata = seoPage('/doi-tac/');
 
 export default async function Page() {
   const { data } = await getSiteContent();

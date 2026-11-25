@@ -1,13 +1,9 @@
 import { seo, jsonLD, siteURL, breadcrumbLD } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { PrivacyPolicy } from '@/components/PrivacyPolicy';
 import { getSiteContent } from '@/lib/database';
 
-export const generateMetadata = seoLater(
-  'Chính sách quyền riêng tư và đo lường',
-  'Thông tin minh bạch về cơ chế tiếp nhận dữ liệu qua Form liên hệ, hệ thống đo lường nội bộ ẩn danh SHA-256 và chính sách bảo vệ quyền riêng tư tại DANAVA Solutions.',
-  '/chinh-sach-rieng-tu/'
-);
+export const generateMetadata = seoPage('/chinh-sach-rieng-tu/');
 
 export default async function Page() {
   const { data } = await getSiteContent();

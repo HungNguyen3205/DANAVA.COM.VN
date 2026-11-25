@@ -1,14 +1,10 @@
 import { seo, breadcrumbLD } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { JsonLd } from '@/components/site/blocks';
 import { Crumbs } from '@/components/site/ui';
 import { QuoteChat } from '@/components/site/QuoteChat';
 
-export const generateMetadata = seoLater(
-  'Báo giá thiết kế landing page và website',
-  'Điền yêu cầu để nhận báo giá tham khảo thiết kế landing page hoặc website doanh nghiệp tại DANAVA.',
-  '/bao-gia-web/'
-);
+export const generateMetadata = seoPage('/bao-gia-web/');
 
 export default function Page() {
   return (

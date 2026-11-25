@@ -68,7 +68,7 @@ test('privacy route page exports SEO metadata and WebPage JSON-LD schema', () =>
   assert.ok(fs.existsSync(pagePath), 'Route app/chinh-sach-rieng-tu/page.tsx phải tồn tại');
 
   const content = fs.readFileSync(pagePath, 'utf8');
-  assert.ok(content.includes('generateMetadata = seoLater('), 'Page phải tạo metadata bằng seoLater() (seo() theo ngôn ngữ của yêu cầu)');
+  assert.ok(content.includes("generateMetadata = seoPage('/chinh-sach-rieng-tu/')"), 'Page phải tạo metadata bằng seoPage() (SEO chỉnh được trong quản trị)');
   assert.ok(content.includes('/chinh-sach-rieng-tu/'), 'URL canonical phải là /chinh-sach-rieng-tu/');
   assert.ok(content.includes('PrivacyPolicy'), 'Page phải render PrivacyPolicy component');
   assert.ok(content.includes('application/ld+json'), 'Page phải có script JSON-LD schema');

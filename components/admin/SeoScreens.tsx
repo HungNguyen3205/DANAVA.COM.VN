@@ -10,14 +10,15 @@ import type { Redirect, SiteData } from '@/lib/content';
 import { contentProblem, recordUrls } from '@/lib/content-check';
 import { can } from '@/lib/permissions';
 import { useAdminLeads } from '../adminData';
+import { PageSeoEditor } from './PageSeoEditor';
 import { Empty, ErrorBox, Loading, SearchBar, matches, useAdminUser, usePaged, useTabs } from './ui';
 
 const today = () => new Date(Date.now() + 7 * 3600_000).toISOString().slice(0, 10);
 const PATH = /^\/[a-z0-9\-/._]*\/$/i;
 
 export function SeoScreen({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
-  const { tab, bar } = useTabs([{ id: 'chuyen-huong', label: 'Chuyển hướng' }, { id: 'kiem-tra', label: 'Kiểm tra đường dẫn & SEO' }]);
-  return <div className="blk-stack">{bar}{tab === 'kiem-tra' ? <SeoCheck draft={draft} /> : <Redirects draft={draft} setDraft={setDraft} />}</div>;
+  const { tab, bar } = useTabs([{ id: 'trang', label: 'SEO từng trang' }, { id: 'chuyen-huong', label: 'Chuyển hướng' }, { id: 'kiem-tra', label: 'Kiểm tra đường dẫn & SEO' }]);
+  return <div className="blk-stack">{bar}{tab === 'kiem-tra' ? <SeoCheck draft={draft} /> : tab === 'chuyen-huong' ? <Redirects draft={draft} setDraft={setDraft} /> : <PageSeoEditor draft={draft} setDraft={setDraft} />}</div>;
 }
 
 function Redirects({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {

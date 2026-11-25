@@ -1,15 +1,9 @@
 import { seo, siteURL, ORG_ID, jsonLD, BRAND } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import HomePage from '@/components/site/HomePage';
 
-export const generateMetadata = seoLater(
-  'DANAVA Solutions — Giải pháp công nghệ, website và sự kiện cho doanh nghiệp dịch vụ',
-  'Phần mềm quản lý Gym, Yoga, Pilates & Spa DANAVA Studio, thiết kế website, tổ chức sự kiện và du lịch trải nghiệm cho doanh nghiệp dịch vụ. Cùng bạn phát triển.',
-  '/',
-  '/assets/profile/set-stage.webp',
-  { absoluteTitle: true }
-);
+export const generateMetadata = seoPage('/');
 
 export default async function Page() {
   const { data } = await getSiteContent();

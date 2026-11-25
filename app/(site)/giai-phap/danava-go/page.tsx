@@ -1,16 +1,11 @@
 import { seo, siteURL, ORG_ID, breadcrumbLD } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { getSiteContent } from '@/lib/database';
 import { JsonLd } from '@/components/site/blocks';
 import { GoPage } from '@/components/site/ProductPages';
 import { GO } from '@/lib/products';
 
-export const generateMetadata = seoLater(
-  'DANAVA GO — Đặt vé xe khách trực tuyến',
-  'DANAVA GO: nền tảng đặt vé xe khách trực tuyến cao cấp do DANAVA phát triển. Chọn chuyến, chọn chỗ trực quan, nhận vé điện tử.',
-  '/giai-phap/danava-go/',
-  '/assets/products/go-hero.webp'
-);
+export const generateMetadata = seoPage('/giai-phap/danava-go/');
 
 export default async function Page() {
   const { data } = await getSiteContent();

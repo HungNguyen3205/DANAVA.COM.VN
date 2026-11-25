@@ -1,13 +1,9 @@
 import { seo, jsonLD, siteURL, breadcrumbLD } from '@/lib/seo';
-import { seoLater } from '@/lib/seo-page';
+import { seoPage } from '@/lib/seo-page';
 import { ServicePolicy } from '@/components/ServicePolicy';
 import { getSiteContent } from '@/lib/database';
 
-export const generateMetadata = seoLater(
-  'Chính sách dịch vụ và bảo hành kỹ thuật',
-  'Quy chuẩn phạm vi hỗ trợ, cam kết chất lượng SLA 99.9%, chính sách bảo hành phần mềm và website 12 tháng, bàn giao mã nguồn sạch và bảo mật tài nguyên tại DANAVA Solutions.',
-  '/chinh-sach-dich-vu/'
-);
+export const generateMetadata = seoPage('/chinh-sach-dich-vu/');
 
 export default async function Page() {
   const { data } = await getSiteContent();

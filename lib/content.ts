@@ -88,6 +88,8 @@ export type Landing = {
 };
 /** Chuyển hướng 301 từ đường dẫn cũ sang đường dẫn mới (tự tạo khi đổi URL bản ghi đã công khai, hoặc thêm tay). */
 export type Redirect = { id: string; from: string; to: string; auto?: boolean; created: string };
+/** SEO một trang cố định: tiêu đề, mô tả, ảnh chia sẻ (OG 1200×630), ẩn khỏi Google. Ô trống = mặc định. */
+export type PageSeo = { title?: string; description?: string; image?: string; noindex?: boolean };
 
 export type Service = {
   id: string; slug: string; title: string; description: string; items: string[];
@@ -251,6 +253,8 @@ export type SiteData = {
   landings?: Landing[];
   /** Chuyển hướng đường dẫn cũ → mới */
   redirects?: Redirect[];
+  /** SEO tự nhập cho từng trang cố định (khóa = đường dẫn, vd. "/du-an/"); ô trống = mặc định trong lib/seo-pages.ts */
+  pageSeo?: Record<string, PageSeo>;
   /** Màn mở đầu trang chủ (lib/home-hero.ts). Trống = chữ mặc định đang hiển thị. */
   homeHero?: Partial<HomeHero>;
   /** Chữ sửa trực tiếp trên website (khóa ổn định → chữ); trống = dùng chữ mặc định trong mã nguồn (lib/site-text.ts). */
@@ -418,6 +422,14 @@ function validLanding(l: unknown) {
 }
 
 const PATH = /^\/[a-z0-9\-/._]*\/$/i;
+function validPageSeo(v: unknown) {
+  if (!object(v)) return false;
+  const entries = Object.entries(v);
+  return entries.length <= 100 && entries.every(([path, s]) => path.length <= 200 && PATH.test(path) && object(s)
+    && optStr(s.title, 200) && optStr(s.description, 300) && (s.image === undefined || safeImage(s.image))
+    && (s.noindex === undefined || typeof s.noindex === 'boolean'));
+}
+
 function validRedirect(r: unknown) {
   return object(r) && str(r.id, 60) && typeof r.from === 'string' && PATH.test(r.from) && r.from.length <= 250 && !r.from.startsWith('/admin') && !r.from.startsWith('/api')
     && typeof r.to === 'string' && r.to.length <= 300 && (PATH.test(r.to) || httpsURL(r.to)) && r.to !== r.from
@@ -505,6 +517,7 @@ export function validateContent(v: unknown): v is SiteData {
   if (v.productGroups !== undefined && (!Array.isArray(v.productGroups) || v.productGroups.length > 30 || !v.productGroups.every(validGroup) || !uniqueBy(v.productGroups as ProductGroup[], g => g.id))) return false;
   if (v.landings !== undefined && (!Array.isArray(v.landings) || v.landings.length > 100 || !v.landings.every(validLanding)
     || !uniqueBy(v.landings as Landing[], l => l.id) || !uniqueBy((v.landings as Landing[]).filter(l => l.kind === 'internal'), l => l.slug))) return false;
+  if (v.pageSeo !== undefined && !validPageSeo(v.pageSeo)) return false;
   if (v.redirects !== undefined && (!Array.isArray(v.redirects) || v.redirects.length > 500 || !v.redirects.every(validRedirect) || !uniqueBy(v.redirects as Redirect[], r => r.from))) return false;
   if (v.subServices !== undefined && (!Array.isArray(v.subServices) || v.subServices.length > 100 || !v.subServices.every(s => validSubService(s, serviceIds))
     || !uniqueBy(v.subServices as SubService[], s => s.id) || !uniqueBy(v.subServices as SubService[], s => s.parentId + '/' + s.slug))) return false;
