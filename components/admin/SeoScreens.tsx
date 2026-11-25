@@ -21,7 +21,7 @@ export function SeoScreen({ draft, setDraft }: { draft: SiteData; setDraft: (d: 
   return <div className="blk-stack">{bar}{tab === 'kiem-tra' ? <SeoCheck draft={draft} /> : tab === 'chuyen-huong' ? <Redirects draft={draft} setDraft={setDraft} /> : <PageSeoEditor draft={draft} setDraft={setDraft} />}</div>;
 }
 
-function Redirects({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
+export function Redirects({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteData) => void }) {
   const user = useAdminUser();
   const editable = can(user.role, 'content.draft');
   const list = draft.redirects || [];
@@ -84,7 +84,7 @@ function Redirects({ draft, setDraft }: { draft: SiteData; setDraft: (d: SiteDat
   );
 }
 
-function SeoCheck({ draft }: { draft: SiteData }) {
+export function SeoCheck({ draft }: { draft: SiteData }) {
   const problem = contentProblem(draft);
   const urls = recordUrls(draft);
   const counts = new Map<string, number>();

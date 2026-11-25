@@ -46,7 +46,7 @@ export function OverviewTasks({ data, leads, draft }: { data: SiteData; leads: A
     const lp = (data.landings || []).filter(l => l.status === 'draft').length;
     if (lp) tasks.push({ text: `${lp} landing page ở trạng thái Nháp`, href: '/admin/chinh-sua/?panel=landings' });
     const noSeo = data.posts.filter(p => p.published && !p.archived && !p.seoDescription && !p.excerpt).length + data.services.filter(s => s.published !== false && !s.seoDescription).length;
-    if (noSeo) tasks.push({ text: `${noSeo} trang công khai chưa có mô tả SEO`, href: '/admin/seo/?tab=kiem-tra' });
+    if (noSeo) tasks.push({ text: `${noSeo} trang công khai chưa có mô tả SEO`, href: '/admin/cai-dat/?tab=kiem-tra' });
   }
   const shortcuts = [
     can(user.role, 'content.draft') && { label: 'Viết bài', href: '/admin/bai-viet/?new=1', icon: Plus },

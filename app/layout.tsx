@@ -4,6 +4,7 @@ import { getSiteContent, requestLocale } from '@/lib/database';
 import { LOCALE_INFO } from '@/lib/i18n';
 import { publicContent } from '@/lib/site-queries';
 import Analytics from '@/components/Analytics';
+import TrackingTags from '@/components/TrackingTags';
 import { siteURL, jsonLD, indexable, ORG_ID, BRAND } from '@/lib/seo';
 import { CONTACT } from '@/lib/company';
 import { fontVariables } from '@/lib/site-font';
@@ -79,6 +80,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           {children}
           {/* Sau nội dung: phím Tab đầu tiên tới liên kết "Đến nội dung chính" thay vì thanh đồng ý đo lường */}
           <Analytics />
+          <TrackingTags />
         </SiteStore>
       </body>
     </html>

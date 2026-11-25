@@ -33,7 +33,9 @@ import { PostsScreen } from './admin/PostsScreen';
 import { BlockLibraryScreen, LandingsScreen } from './admin/LandingsScreen';
 import { LiveEditor, type EditorPanel } from './admin/LiveEditor';
 import { PageSettings } from './admin/PageSettings';
-import { ContentPerformance, SeoScreen } from './admin/SeoScreens';
+import { ContentPerformance, Redirects, SeoCheck } from './admin/SeoScreens';
+import { PageSeoEditor } from './admin/PageSeoEditor';
+import { TrackingEditor } from './admin/TrackingEditor';
 import { OverviewTasks } from './admin/OverviewTasks';
 import { HomeHeroEditor } from './admin/HomeHeroEditor';
 import { GalleryOrder, MenuEditor, StaffOrder } from './admin/SortEditors';
@@ -233,8 +235,8 @@ function AdminWorkspace({ section }: { section: string }) {
       <div className="blk-stack">
         <div className="lv-links">
           <button type="button" className="ax-btn ax-btn--secondary" onClick={() => setEdPanel('menu')}>Menu điều hướng (đầu trang)</button>
-          <a className="ax-btn ax-btn--secondary" href="/admin/thuong-hieu/?tab=cong-ty">Thông tin công ty (chân trang)</a>
-          <a className="ax-btn ax-btn--secondary" href="/admin/thuong-hieu/?tab=kenh-lien-he">Kênh liên hệ & mạng xã hội</a>
+          <a className="ax-btn ax-btn--secondary" href="/admin/cai-dat/?tab=nhan-dien">Thông tin công ty (chân trang)</a>
+          <a className="ax-btn ax-btn--secondary" href="/admin/cai-dat/?tab=mang-xa-hoi">Kênh liên hệ & mạng xã hội</a>
         </div>
         {contactSettings}
         {blockPanel('anna')}
@@ -403,12 +405,12 @@ function AdminWorkspace({ section }: { section: string }) {
         : <ProjectManager projects={draft.projects || []} services={draft.services} onChange={(projects) => setDraft({ ...draft, projects })} />;
       case 'thuong-hieu':
         switch (tab) {
-          case 'kenh-lien-he': return <ChannelsEditor draft={draft} setDraft={setDraft} />;
           case 'doi-ngu': return <div className="blk-stack"><StaffOrder draft={draft} setDraft={setDraft} />{staffEditor}</div>;
           case 'ho-so-nhan-su': return blockPanel('staff');
           case 'doi-tac': return <ProofEditor draft={draft} setDraft={setDraft} part="clients" />; // liên kết cũ thuong-hieu/?tab=doi-tac
           case 'so-lieu': return metricsEditor;
-          default: return blockPanel('company');
+          case 'cong-ty': return blockPanel('company'); // liên kết cũ
+          default: return <div className="blk-stack"><StaffOrder draft={draft} setDraft={setDraft} />{staffEditor}</div>;
         }
       case 'khach-hang': return <LeadsManager />;
       case 'danh-ba': return <ContactBook />;
@@ -419,9 +421,17 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'thong-ke': return <AnalyticsDashboard />;
       case 'nguon-khach': return <SourcesReport />;
       case 'hieu-qua': return <ContentPerformance draft={draft} />;
-      case 'seo': return <SeoScreen draft={draft} setDraft={setDraft} />;
-      case 'cai-dat': return contactSettings;
-      case 'tich-hop': return <AnnaStatus />;
+      case 'cai-dat':
+        switch (tab) {
+          case 'lien-he': return contactSettings;
+          case 'mang-xa-hoi': return <ChannelsEditor draft={draft} setDraft={setDraft} />;
+          case 'theo-doi': return <TrackingEditor draft={draft} setDraft={setDraft} />;
+          case 'seo': return <PageSeoEditor draft={draft} setDraft={setDraft} />;
+          case 'chuyen-huong': return <Redirects draft={draft} setDraft={setDraft} />;
+          case 'kiem-tra': return <SeoCheck draft={draft} />;
+          case 'tich-hop': return <AnnaStatus />;
+          default: return blockPanel('company');
+        }
       case 'tai-khoan': return <UsersScreen />;
       case 'nhat-ky':
         if (tab === 'nhat-ky') return <AuditScreen />;

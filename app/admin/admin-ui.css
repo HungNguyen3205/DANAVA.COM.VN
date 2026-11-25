@@ -953,3 +953,7 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
 .ax-scope .ps-count.is-short { color: #b54708; }
 .ax-scope .ps-count.is-over { color: #b42318; }
 @media (max-width: 760px) { .ax-scope .ps-body { grid-template-columns: 1fr; } }
+
+/* Cài đặt website → Theo dõi (components/admin/TrackingEditor.tsx) */
+.ax-scope .tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 8px 0 12px; }
+.ax-scope .tk-grid input[aria-invalid="true"] { border-color: #f04438; }

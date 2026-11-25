@@ -35,9 +35,9 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
         tabs: [{ id: 'bai-viet', label: 'Bài viết' }, { id: 'danh-muc', label: 'Danh mục' }] },
       { slug: 'du-an', label: 'Dự án & Portfolio', perm: 'content.read', desc: 'Hồ sơ dự án đã triển khai, website và landing page đã làm cho khách hàng.',
         tabs: [{ id: 'du-an', label: 'Dự án' }, { id: 'portfolio', label: 'Portfolio' }] },
-      { slug: 'thuong-hieu', label: 'Hồ sơ thương hiệu', perm: 'content.read', desc: 'Thông tin công ty, kênh liên hệ, đội ngũ và số liệu công bố.',
+      { slug: 'thuong-hieu', label: 'Hồ sơ thương hiệu', perm: 'content.read', desc: 'Đội ngũ, hồ sơ nhân sự và số liệu công bố. Thông tin công ty và kênh liên hệ ở Hệ thống → Cài đặt website.',
         tabs: [
-          { id: 'cong-ty', label: 'Công ty' }, { id: 'kenh-lien-he', label: 'Kênh liên hệ' }, { id: 'doi-ngu', label: 'Đội ngũ' },
+          { id: 'doi-ngu', label: 'Đội ngũ' },
           { id: 'ho-so-nhan-su', label: 'Hồ sơ nhân sự' }, { id: 'so-lieu', label: 'Số liệu công bố' },
         ] },
     ],
@@ -67,10 +67,13 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
   {
     group: 'Hệ thống',
     items: [
-      { slug: 'cai-dat', label: 'Cài đặt', perm: 'system.manage', desc: 'Email và hotline chính của website.' },
+      { slug: 'cai-dat', label: 'Cài đặt website', perm: 'content.read', desc: 'Thông tin công ty, liên hệ, mạng xã hội, mã theo dõi và SEO: áp dụng cho toàn bộ website.',
+        tabs: [
+          { id: 'nhan-dien', label: 'Nhận diện' }, { id: 'lien-he', label: 'Liên hệ', perm: 'system.manage' }, { id: 'mang-xa-hoi', label: 'Mạng xã hội' },
+          { id: 'theo-doi', label: 'Theo dõi', perm: 'system.manage' }, { id: 'seo', label: 'SEO từng trang' }, { id: 'chuyen-huong', label: 'Chuyển hướng' },
+          { id: 'kiem-tra', label: 'Kiểm tra SEO' }, { id: 'tich-hop', label: 'Tích hợp', perm: 'integrations.read' },
+        ] },
       { slug: 'tai-khoan', label: 'Tài khoản & quyền', perm: 'users.manage', desc: 'Tài khoản đăng nhập admin và vai trò. Tách biệt với hồ sơ nhân sự hiển thị trên website.' },
-      { slug: 'seo', label: 'SEO & chuyển hướng', perm: 'content.read', desc: 'Tiêu đề, mô tả, ảnh chia sẻ cho từng trang; chuyển hướng đường dẫn cũ và kiểm tra đường dẫn.' },
-      { slug: 'tich-hop', label: 'Tích hợp', perm: 'integrations.read', desc: 'Kết nối kỹ thuật của trợ lý ANNA. Khóa API đặt trên máy chủ, không nhập ở đây.' },
       { slug: 'nhat-ky', label: 'Nhật ký & sao lưu', perm: 'content.read', desc: 'Lịch sử xuất bản, khôi phục phiên bản, nhật ký thao tác và sao lưu dữ liệu.',
         tabs: [{ id: 'phien-ban', label: 'Phiên bản' }, { id: 'nhat-ky', label: 'Nhật ký thao tác', perm: 'system.manage' }, { id: 'sao-luu', label: 'Sao lưu & nhập', perm: 'system.manage' }] },
     ],
@@ -96,8 +99,10 @@ export const LEGACY_SECTIONS: Record<string, string> = {
   'bang-chung': 'doi-tac/',
   'nhan-su': 'thuong-hieu/?tab=doi-ngu',
   'ho-so-nhan-su': 'thuong-hieu/?tab=ho-so-nhan-su',
-  'cong-ty': 'thuong-hieu/?tab=cong-ty',
-  'kenh-lien-he': 'thuong-hieu/?tab=kenh-lien-he',
+  'cong-ty': 'cai-dat/?tab=nhan-dien',
+  'kenh-lien-he': 'cai-dat/?tab=mang-xa-hoi',
+  'seo': 'cai-dat/?tab=seo',
+  'tich-hop': 'cai-dat/?tab=tich-hop',
   'so-lieu': 'thuong-hieu/?tab=so-lieu',
 };
 

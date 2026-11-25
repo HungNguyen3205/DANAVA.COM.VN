@@ -36,3 +36,11 @@ test('SEO từng trang: dữ liệu hợp lệ được lưu, dữ liệu sai b�
   const kept = normalizeContent({ ...d, pageSeo: { '/': { title: 'Trang chủ mới' } } });
   assert.equal(kept.pageSeo?.['/']?.title, 'Trang chủ mới');
 });
+
+test('Mã theo dõi: chỉ nhận đúng định dạng GA4 / GTM / Meta Pixel', async () => {
+  const { initial: base, validateContent: valid } = await import('../lib/content.ts');
+  const d = normalizeContent(structuredClone(base));
+  assert.equal(valid({ ...d, tracking: { ga4: 'G-SFJQ2SGV07', gtm: 'GTM-AB12CD3', metaPixel: '123456789012345' } }), true);
+  for (const bad of [{ ga4: "G-1');alert(1);//" }, { gtm: 'GTM-<script>' }, { metaPixel: '12ab' }, { ga4: 'UA-12345-1' }])
+    assert.equal(valid({ ...d, tracking: bad }), false, JSON.stringify(bad));
+});

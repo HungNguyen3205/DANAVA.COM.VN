@@ -90,6 +90,9 @@ export type Landing = {
 export type Redirect = { id: string; from: string; to: string; auto?: boolean; created: string };
 /** SEO một trang cố định: tiêu đề, mô tả, ảnh chia sẻ (OG 1200×630), ẩn khỏi Google. Ô trống = mặc định. */
 export type PageSeo = { title?: string; description?: string; image?: string; noindex?: boolean };
+/** Google Analytics 4 (G-XXXX), Google Tag Manager (GTM-XXXX), Meta Pixel (dãy số). Trống = không nạp. */
+export type Tracking = { ga4?: string; gtm?: string; metaPixel?: string };
+export const TRACKING_RULES = { ga4: /^G-[A-Z0-9]{4,15}$/, gtm: /^GTM-[A-Z0-9]{4,12}$/, metaPixel: /^\d{6,20}$/ } as const;
 
 export type Service = {
   id: string; slug: string; title: string; description: string; items: string[];
@@ -255,6 +258,8 @@ export type SiteData = {
   redirects?: Redirect[];
   /** SEO tự nhập cho từng trang cố định (khóa = đường dẫn, vd. "/du-an/"); ô trống = mặc định trong lib/seo-pages.ts */
   pageSeo?: Record<string, PageSeo>;
+  /** Mã theo dõi bên ngoài (Cài đặt website → Theo dõi). Chỉ nạp khi khách bấm "Đồng ý" ở bảng cookie. */
+  tracking?: Tracking;
   /** Màn mở đầu trang chủ (lib/home-hero.ts). Trống = chữ mặc định đang hiển thị. */
   homeHero?: Partial<HomeHero>;
   /** Chữ sửa trực tiếp trên website (khóa ổn định → chữ); trống = dùng chữ mặc định trong mã nguồn (lib/site-text.ts). */
@@ -518,6 +523,8 @@ export function validateContent(v: unknown): v is SiteData {
   if (v.landings !== undefined && (!Array.isArray(v.landings) || v.landings.length > 100 || !v.landings.every(validLanding)
     || !uniqueBy(v.landings as Landing[], l => l.id) || !uniqueBy((v.landings as Landing[]).filter(l => l.kind === 'internal'), l => l.slug))) return false;
   if (v.pageSeo !== undefined && !validPageSeo(v.pageSeo)) return false;
+  if (v.tracking !== undefined && !(object(v.tracking) && (Object.keys(TRACKING_RULES) as (keyof Tracking)[])
+    .every(k => (v.tracking as Tracking)[k] === undefined || ((v.tracking as Tracking)[k] === '' || TRACKING_RULES[k].test((v.tracking as Tracking)[k]!))))) return false;
   if (v.redirects !== undefined && (!Array.isArray(v.redirects) || v.redirects.length > 500 || !v.redirects.every(validRedirect) || !uniqueBy(v.redirects as Redirect[], r => r.from))) return false;
   if (v.subServices !== undefined && (!Array.isArray(v.subServices) || v.subServices.length > 100 || !v.subServices.every(s => validSubService(s, serviceIds))
     || !uniqueBy(v.subServices as SubService[], s => s.id) || !uniqueBy(v.subServices as SubService[], s => s.parentId + '/' + s.slug))) return false;
