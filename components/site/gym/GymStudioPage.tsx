@@ -14,8 +14,8 @@ import { useAnna } from '../anna/AnnaProvider';
 export function GymStudioPage(props: { equipment: Equipment[]; flooring: Flooring | null; addId?: string; code?: string; aiEnabled: boolean }) {
   const { aiEnabled, ...rest } = props;
   const anna = useAnna();
-  const { setDesign } = anna;
-  useEffect(() => { if (!anna.enabled) return; setDesign(true); return () => setDesign(false); }, [anna.enabled, setDesign]);
+  const { setPage } = anna;
+  useEffect(() => { if (!anna.enabled) return; setPage({ label: 'Chỉnh phòng', icon: 'gym' }); return () => setPage(null); }, [anna.enabled, setPage]);
   const panel = (project: Parameters<typeof AssistantPanel>[0]['project'], commit: Parameters<typeof AssistantPanel>[0]['commit'], variant?: 'anna') =>
     <AssistantPanel project={project} commit={commit} equipment={props.equipment} flooring={props.flooring} aiEnabled={aiEnabled} variant={variant} />;
   return (

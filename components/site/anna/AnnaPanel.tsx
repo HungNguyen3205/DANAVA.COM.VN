@@ -5,8 +5,9 @@
  */
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { ArrowUp, Calculator, Dumbbell, MessageCircle, Phone, RotateCcw, Send, Square, X } from 'lucide-react';
+import { ArrowUp, Calculator, ClipboardList, Dumbbell, MessageCircle, Phone, RotateCcw, Send, Square, X } from 'lucide-react';
 import { MayFigure } from './MayFigure';
+import type { AnnaPageTab } from './AnnaProvider';
 import { useSite } from '../../SiteStore';
 import { block } from '@/lib/blocks';
 import { contactChannels } from '@/lib/contact-channels';
@@ -56,11 +57,13 @@ type Props = {
   onQuestionTaken: () => void;
   onClose: () => void;
   /** có thẻ "Chỉnh phòng tập" (chỉ trên trang thiết kế phòng tập) */
-  design?: boolean;
+  page?: AnnaPageTab | null;
   setSlot?: (el: HTMLElement | null) => void;
 };
 
-export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken, onClose, design, setSlot }: Props) {
+export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken, onClose, page, setSlot }: Props) {
+  const design = !!page;
+  const PageIcon = page?.icon === 'form' ? ClipboardList : Dumbbell;
   const { data } = useSite();
   const config = block(data, 'anna');
   const ref = useDialog(open, onClose, modal);
@@ -144,7 +147,7 @@ export function AnnaPanel({ open, modal, tab, setTab, question, onQuestionTaken,
       </header>
 
       <div className={`an-tabs${design ? ' an-tabs--3' : ''}`} role="group" aria-label={txt(data, 'anna.ui.tabs.aria', 'Chọn cách tư vấn')}>
-        {design && <button type="button" aria-pressed={tab === 'design'} onClick={() => setTab('design')}><Dumbbell aria-hidden="true" />Chỉnh phòng</button>}
+        {design && <button type="button" aria-pressed={tab === 'design'} onClick={() => setTab('design')}><PageIcon aria-hidden="true" />{page?.label}</button>}
         <button type="button" aria-pressed={tab === 'chat'} onClick={() => setTab('chat')}><MessageCircle aria-hidden="true" /><U data={data} k="tabs.chat" def="Trò chuyện" label="Thẻ ANNA" inline /></button>
         <button type="button" aria-pressed={tab === 'quote'} onClick={() => setTab('quote')}><Calculator aria-hidden="true" /><U data={data} k="tabs.quote" def="Báo giá nhanh" label="Thẻ ANNA" inline /></button>
       </div>

@@ -1,13 +1,18 @@
 'use client';
 /*
- * Phiếu báo giá dạng hội thoại (chatbot). Bot hỏi từng câu, khách chọn nút hoặc gõ.
+ * Phiếu báo giá dạng hội thoại. ANNA (bé Mây, chatbot duy nhất của website) hỏi từng câu trong khung chat của mình
+ * (thẻ "Phiếu báo giá", render qua portal vào ANNA); trên trang chỉ còn thẻ mở ANNA + các câu đã trả lời.
+ * ANNA bị tắt trên toàn website → hội thoại hiện ngay trên trang như cũ.
  * Bảng bên cạnh cập nhật tiến độ và báo giá tham khảo. Khách xác nhận rồi mới gửi vào admin
  * qua /api/lead (nguồn theo từng loại phiếu). Hai loại: landing page / website và tổ chức sự kiện.
  */
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { useAnna } from './anna/AnnaProvider';
+import { MayFigure } from './anna/MayFigure';
 import { useSubmitLock } from './useSubmitLock';
 import { useRouter } from 'next/navigation';
-import { Bot, Check, Send } from 'lucide-react';
+import { ArrowUp, Bot, Check, MessageCircle, Send } from 'lucide-react';
 import { ADVICE, SCALE_TO_TIER, SECTIONS, STEPS, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
 import { EVENT_SECTIONS, EVENT_STEPS, eventEstimate } from '@/lib/event-brief';
 import { ADDONS, estimate, rangeText } from '@/lib/web-quote';
@@ -57,6 +62,16 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
   const thread = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const anna = useAnna();
+  const inAnna = anna.enabled;
+  const { setPage, openDesign } = anna;
+  // Đăng ký thẻ "Phiếu báo giá" trong ANNA; máy tính: mở sẵn khung chat
+  useEffect(() => {
+    if (!inAnna) return;
+    setPage({ label: 'Phiếu báo giá', icon: 'form' });
+    const t = window.matchMedia('(min-width: 1024px)').matches ? window.setTimeout(openDesign, 500) : 0;
+    return () => { clearTimeout(t); setPage(null); };
+  }, [inAnna, setPage, openDesign]);
 
   const finished = index >= steps.length;
   const step: Step | undefined = steps[index];
@@ -142,10 +157,83 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
     }
   };
 
+
   const currentSection = step ? step.section : cfg.sections.length - 1;
 
+  /* ---------- Hội thoại trong khung chat ANNA ---------- */
+  const textInput = step && step.kind !== 'single' && step.kind !== 'multi';
+  const annaChat: ReactNode = (
+    <div className="an-chat qc-anna">
+      <div className="an-log" ref={thread} role="log" aria-live="polite" aria-label={cfg.panel}>
+        <p className="qc-anna__tag">{cfg.panel} · khoảng 5 phút</p>
+        {messages.map((m, i) => m.from === 'user'
+          ? <p key={i} className="an-msg an-msg--me">{m.text}</p>
+          : <div key={i} className="an-msg an-msg--bot"><p>{m.text}</p></div>)}
+        {typing && <p className="an-typing" role="status"><i /><i /><i />ANNA đang soạn…</p>}
+        {!finished && step && !typing && (
+          <>
+            {step.hint && <p className="qc-anna__hint">{step.hint}</p>}
+            {(step.kind === 'single' || step.kind === 'multi') && (
+              <ul className="an-suggest qc-anna__chips" aria-label="Chọn câu trả lời">
+                {(step.options ?? []).map(opt => (
+                  <li key={opt}><button type="button" className={step.kind === 'multi' && picked.includes(opt) ? 'is-on' : opt === ADVICE ? 'is-advice' : undefined} onClick={() => choose(opt)} aria-pressed={step.kind === 'multi' ? picked.includes(opt) : undefined}>{step.kind === 'multi' && picked.includes(opt) && <Check aria-hidden="true" />}{opt}</button></li>
+                ))}
+                {step.kind === 'multi' && <li><button type="button" className="is-go" onClick={confirmMulti}>Xong <Check aria-hidden="true" /></button></li>}
+              </ul>
+            )}
+            {(step.allowAdvice && textInput) || (!step.required && textInput) ? (
+              <ul className="an-suggest qc-anna__chips">
+                {step.allowAdvice && textInput && <li><button type="button" className="is-advice" onClick={() => answer(ADVICE, ADVICE)}>{ADVICE}</button></li>}
+                {!step.required && textInput && <li><button type="button" onClick={() => answer('', 'Bỏ qua')}>Bỏ qua</button></li>}
+              </ul>
+            ) : null}
+          </>
+        )}
+        {finished && (
+          <div className="an-msg an-msg--bot qc-anna__finish">
+            <p>Mình đã có đủ thông tin. Bạn kiểm tra lại rồi xác nhận để DANAVA nhận phiếu nhé.</p>
+            <pre className="qc__brief">{brief}</pre>
+            {price && <p className="qc-anna__price">Báo giá tham khảo: <b>{rangeText(price)}</b></p>}
+            <button type="button" className="qc__btn" onClick={lock(submit)} disabled={status === 'sending'}>
+              {status === 'sending' ? 'Đang gửi…' : <>Xác nhận và gửi báo giá <Send aria-hidden="true" /></>}
+            </button>
+          </div>
+        )}
+        {error && <p className="qc__error" role="alert">{error}</p>}
+      </div>
+      {!finished && textInput && !typing && (
+        <form className="an-form" onSubmit={sendText}>
+          {step.kind === 'long'
+            ? <textarea rows={1} value={draft} onChange={e => setDraft(e.target.value)} placeholder="Bạn trả lời ở đây…" maxLength={2000} aria-label={step.bot} />
+            : <input value={draft} onChange={e => setDraft(e.target.value)} placeholder="Bạn trả lời ở đây…" maxLength={step.kind === 'phone' ? 25 : 200} type={step.kind === 'phone' ? 'tel' : step.kind === 'email' ? 'email' : 'text'} inputMode={step.kind === 'phone' ? 'tel' : undefined} autoComplete={step.kind === 'phone' ? 'tel' : step.kind === 'email' ? 'email' : undefined} aria-label={step.bot} />}
+          <button type="submit" className="an-send" aria-label="Gửi câu trả lời"><ArrowUp aria-hidden="true" /></button>
+        </form>
+      )}
+      <p className="an-legal">Thông tin chỉ dùng để DANAVA liên hệ báo giá cho bạn.</p>
+    </div>
+  );
+  const answered = messages.filter(m => m.from === 'user').length;
+
   return (
-    <div className="qc">
+    <div className={`qc${inAnna ? ' qc--anna' : ''}`}>
+      {inAnna && anna.slot && createPortal(annaChat, anna.slot)}
+      {inAnna ? (
+        <section className="qc__start" aria-label={cfg.panel}>
+          <div className="qc__starthead">
+            <span className="qc__may" aria-hidden="true"><MayFigure /></span>
+            <div>
+              <strong>Trả lời cùng ANNA</strong>
+              <span>{finished ? 'Đã đủ thông tin — xác nhận trong khung chat để gửi phiếu.' : answered ? `Đang ở phần ${currentSection + 1}/${cfg.sections.length}: ${cfg.sections[currentSection]} — tiếp tục trong khung chat.` : `${cfg.sections.length} phần ngắn, khoảng 5 phút. ANNA hỏi, bạn chọn hoặc gõ.`}</span>
+            </div>
+          </div>
+          {answered > 0 && (
+            <ol className="qc__answers">
+              {messages.map((m, i) => m.from === 'user' ? <li key={i}><small>{messages[i - 1]?.text}</small><b>{m.text}</b></li> : null)}
+            </ol>
+          )}
+          <button type="button" className="qc__btn qc__open" onClick={openDesign}><MessageCircle aria-hidden="true" />{answered ? 'Tiếp tục với ANNA' : 'Bắt đầu với ANNA'}</button>
+        </section>
+      ) : (
       <section className="qc__chat" aria-label={cfg.panel}>
         <div className="qc__head">
           <span className="qc__avatar" aria-hidden="true"><Bot /></span>
@@ -155,7 +243,7 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
           </div>
         </div>
 
-        <div className="qc__thread" ref={thread} aria-live="polite">
+        <div className="qc__thread" ref={inAnna ? undefined : thread} aria-live="polite">
           {messages.map((m, i) => (
             <div key={i} className={`qc__msg qc__msg--${m.from}`}>
               {m.from === 'bot' && <span className="qc__bot" aria-hidden="true"><Bot /></span>}
@@ -232,6 +320,7 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
           </div>
         )}
       </section>
+      )}
 
       <aside className="qc__side" aria-label="Tiến độ và báo giá">
         <p className="qc__side-label">Báo giá tham khảo</p>

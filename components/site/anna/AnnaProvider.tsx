@@ -6,6 +6,8 @@ import { block } from '@/lib/blocks';
 import { AnnaPanel } from './AnnaPanel';
 
 export type AnnaTab = 'chat' | 'quote' | 'design';
+/** Thẻ riêng của trang đang xem (nội dung render qua portal vào `slot`): thiết kế phòng tập, phiếu báo giá… */
+export type AnnaPageTab = { label: string; icon: 'gym' | 'form' };
 
 type AnnaApi = {
   enabled: boolean;
@@ -13,14 +15,14 @@ type AnnaApi = {
   /** Mở hội thoại; có câu hỏi thì gửi luôn. */
   ask: (question?: string) => void;
   quote: () => void;
-  /** Trang thiết kế phòng tập đăng ký thẻ "Chỉnh phòng tập" (nội dung render qua portal vào `slot`) */
-  setDesign: (on: boolean) => void;
-  design: boolean;
+  /** Trang đăng ký thẻ riêng trong ANNA (null = bỏ) */
+  setPage: (tab: AnnaPageTab | null) => void;
+  page: AnnaPageTab | null;
   slot: HTMLElement | null;
   openDesign: () => void;
 };
 
-const Context = createContext<AnnaApi>({ enabled: false, open: false, ask: () => {}, quote: () => {}, setDesign: () => {}, design: false, slot: null, openDesign: () => {} });
+const Context = createContext<AnnaApi>({ enabled: false, open: false, ask: () => {}, quote: () => {}, setPage: () => {}, page: null, slot: null, openDesign: () => {} });
 export const useAnna = () => useContext(Context);
 
 export function AnnaProvider({ children }: { children: ReactNode }) {
@@ -30,7 +32,8 @@ export function AnnaProvider({ children }: { children: ReactNode }) {
   const [modal, setModal] = useState(false);
   const [tab, setTab] = useState<AnnaTab>('chat');
   const [question, setQuestion] = useState<{ text: string; id: number } | null>(null);
-  const [design, setDesign] = useState(false);
+  const [page, setPage] = useState<AnnaPageTab | null>(null);
+  const design = !!page;
   const [slot, setSlot] = useState<HTMLElement | null>(null);
 
   const show = useCallback((next: AnnaTab) => {
@@ -49,12 +52,12 @@ export function AnnaProvider({ children }: { children: ReactNode }) {
   const close = useCallback(() => setOpen(false), []);
   const taken = useCallback(() => setQuestion(null), []);
   useEffect(() => { if (!design && tab === 'design') setTab('chat'); }, [design, tab]);
-  const api = useMemo(() => ({ enabled, open, ask, quote, setDesign, design, slot, openDesign }), [enabled, open, ask, quote, design, slot, openDesign]);
+  const api = useMemo(() => ({ enabled, open, ask, quote, setPage, page, slot, openDesign }), [enabled, open, ask, quote, page, slot, openDesign]);
 
   return (
     <Context.Provider value={api}>
       {children}
-      {enabled && <AnnaPanel open={open} modal={modal} tab={tab} setTab={setTab} question={question} onQuestionTaken={taken} onClose={close} design={design} setSlot={setSlot} />}
+      {enabled && <AnnaPanel open={open} modal={modal} tab={tab} setTab={setTab} question={question} onQuestionTaken={taken} onClose={close} page={page} setSlot={setSlot} />}
     </Context.Provider>
   );
 }
