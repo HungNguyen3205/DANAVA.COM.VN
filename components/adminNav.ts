@@ -24,7 +24,7 @@ export const adminNav: { group: string; items: AdminItem[] }[] = [
   {
     group: 'Giải pháp',
     items: [
-      { slug: 'san-pham', label: 'Danh sách', perm: 'content.read', desc: 'Mỗi sản phẩm, dịch vụ có một hồ sơ. Trang chủ, hệ sinh thái, landing page và ANNA dùng lại dữ liệu đã xuất bản từ hồ sơ này.' },
+      { slug: 'san-pham', label: 'Danh sách', perm: 'content.read', desc: 'Mỗi giải pháp có một hồ sơ. Trang chủ, hệ sinh thái, landing page và ANNA dùng lại dữ liệu đã xuất bản từ hồ sơ này.' },
       { slug: 'nhom-loai', label: 'Nhóm & loại', perm: 'content.read', desc: 'Loại quyết định các trường cần nhập; nhóm dùng để phân loại và lọc.' },
     ],
   },

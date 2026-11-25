@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import type { PageSeo, SiteData } from '@/lib/content';
 import { STATIC_SEO, type StaticSeo } from '@/lib/seo-pages';
-import { uploadMedia } from '../MediaPicker';
+import { LibraryButton, uploadMedia } from '../MediaPicker';
 import { matches } from './ui';
 
 const BRAND = 'DANAVA Solutions';
@@ -62,8 +62,11 @@ function PageCard({ def, value, onChange }: { def: StaticSeo; value: PageSeo; on
               setBusy(false);
             }} />
           </label>
-          {value.image ? <button type="button" className="ps-link" onClick={() => set({ image: undefined })}>Dùng ảnh mặc định</button>
-            : <small className="ps-hint">Đang dùng ảnh mặc định</small>}
+          <div className="ps-og__actions">
+            <LibraryButton className="ps-libbtn" value={value.image} onPick={url => set({ image: url })}>▦ Chọn từ thư viện</LibraryButton>
+            {value.image ? <button type="button" className="ps-link" onClick={() => set({ image: undefined })}>Dùng ảnh mặc định</button>
+              : <small className="ps-hint">Đang dùng ảnh mặc định</small>}
+          </div>
           {err && <small className="ps-err" role="alert">{err}</small>}
         </div>
 

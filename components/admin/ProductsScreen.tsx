@@ -89,12 +89,12 @@ function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => 
       <PageHeader title="Giải pháp" description={`${draft.services.filter(s => s.published !== false).length} đang hiển thị · ${draft.services.filter(s => s.published === false).length} đang ẩn`}
         actions={<>
           <Button variant="secondary" onClick={() => setSorting(v => !v)} aria-pressed={sorting}><ArrowUpDown size={16} /> {sorting ? 'Xong sắp xếp' : 'Sắp xếp thứ tự'}</Button>
-          <Button variant="primary" onClick={() => setCreating(v => !v)}><Plus size={16} /> Thêm sản phẩm</Button>
+          <Button variant="primary" onClick={() => setCreating(v => !v)}><Plus size={16} /> Thêm giải pháp</Button>
         </>} />
       <AnimatePresence initial={false}>
         {creating && (
           <motion.form className="adm-create-row" onSubmit={create} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
-            <label>Tên sản phẩm / dịch vụ<input name="title" required maxLength={200} autoFocus placeholder="vd. DANAVA Booking" /></label>
+            <label>Tên giải pháp<input name="title" required maxLength={200} autoFocus placeholder="vd. DANAVA Booking" /></label>
             <label>Loại
               <select name="type" defaultValue="phan-mem">{Object.entries(PRODUCT_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>
             </label>
@@ -126,10 +126,10 @@ function ProductList({ draft, setDraft, open }: Props & { open: (id: string) => 
             <select aria-label="Lọc theo nhóm" value={group} onChange={e => setGroup(e.target.value)}><option value="">Mọi nhóm</option><option value="-">(chưa phân nhóm)</option>{groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</select>
             <select aria-label="Lọc theo trạng thái" value={status} onChange={e => setStatus(e.target.value)}><option value="">Mọi trạng thái</option><option value="hien">Đang hiển thị</option><option value="an">Đang ẩn</option></select>
           </SearchBar>
-          <DataTable caption="Danh sách sản phẩm & dịch vụ" rows={slice} rowKey={s => s.id} onRowClick={s => open(s.id)}
-            empty={<Empty title="Không có sản phẩm nào khớp bộ lọc">Thử đổi từ khóa hoặc bộ lọc.</Empty>}
+          <DataTable caption="Danh sách giải pháp" rows={slice} rowKey={s => s.id} onRowClick={s => open(s.id)}
+            empty={<Empty title="Không có giải pháp nào khớp bộ lọc">Thử đổi từ khóa hoặc bộ lọc.</Empty>}
             columns={[
-              { key: 'title', header: 'Sản phẩm', primary: true, cell: s => <span className="ax-cell-title"><b>{s.featured && <Star size={13} aria-label="Nổi bật" className="ax-star" />} {s.title}</b><small>/giai-phap/{s.slug}/</small></span> },
+              { key: 'title', header: 'Giải pháp', primary: true, cell: s => <span className="ax-cell-title"><b>{s.featured && <Star size={13} aria-label="Nổi bật" className="ax-star" />} {s.title}</b><small>/giai-phap/{s.slug}/</small></span> },
               { key: 'type', header: 'Loại', cell: s => PRODUCT_TYPES[typeOf(s)].label },
               { key: 'group', header: 'Nhóm', hideOnMobile: true, cell: s => groupName(s.groupId) || <span className="field-note">—</span> },
               { key: 'status', header: 'Trạng thái', width: '140px', cell: s => <StatusBadge tone={s.published === false ? 'neutral' : 'success'}>{s.published === false ? 'Đang ẩn' : 'Đang hiển thị'}</StatusBadge> }
@@ -199,7 +199,7 @@ function ProductProfile({ draft, setDraft, product: s, onBack, studioPricing, ct
 
       {tab === 'chung' && (
         <section className="admin-panel">
-          <Text label="Tên sản phẩm / dịch vụ" value={s.title} max={200} onChange={title => edit({ title })} />
+          <Text label="Tên giải pháp" value={s.title} max={200} onChange={title => edit({ title })} />
           <div className="admin-two adm-two-tight">
             <label>Loại (quyết định các phần cần nhập)
               <select value={type} onChange={e => edit({ type: e.target.value as ProductType })}>{Object.entries(PRODUCT_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>

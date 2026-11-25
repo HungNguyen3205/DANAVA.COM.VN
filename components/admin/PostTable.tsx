@@ -202,7 +202,7 @@ export function PostTable({ draft, setDraft, open, create, duplicate }: {
                 <tr key={p.id} className={picked.has(p.id) ? 'is-picked' : ''}>
                   <td className="wp-cb"><input type="checkbox" aria-label={`Chọn “${p.title}”`} checked={picked.has(p.id)} onChange={() => togglePick(p.id)} /></td>
                   <td className="wp-c-title">
-                    <button type="button" className="wp-title" onClick={() => open(p.id)}>{p.title || '(chưa có tiêu đề)'}</button>
+                    <button type="button" className="wp-title wp-clamp" title={p.title} onClick={() => open(p.id)}>{p.title || '(chưa có tiêu đề)'}</button>
                     {s !== 'cong-khai' && <span className="wp-state"> — {STATUS_LABEL[s]}</span>}
                     {p.noindex && <span className="wp-state"> — noindex</span>}
                     <div className="wp-row-actions">
@@ -220,22 +220,21 @@ export function PostTable({ draft, setDraft, open, create, duplicate }: {
                   <td className="wp-c-tags">{p.tags?.length ? p.tags.map((t, k) => <span key={t}>{k ? ', ' : ''}<button type="button" className="wp-link" onClick={() => { setQ(t); setQuery(t); reset(); }}>{t}</button></span>) : <span className="wp-muted">—</span>}</td>
                   <td className="wp-c-date">{STATUS_LABEL[s]}<br /><span className="wp-muted">{fmtDate(p.date)}</span>{p.updated && <><br /><span className="wp-muted">Sửa {fmtDate(p.updated)}</span></>}</td>
                   <td className="wp-c-seo">
-                    <span className={`wp-score is-${tone(i.score)}`} title={i.missing.length ? 'Cần cải thiện:\n• ' + i.missing.join('\n• ') : 'Đạt mọi tiêu chí'}>{i.score}<small>/100</small></span>
-                    <dl>
-                      <dt>Schema:</dt><dd>Article (BlogPosting)</dd>
-                      <dt>Liên kết:</dt><dd title="Nội bộ · Ra ngoài">{i.links.internal} nội bộ · {i.links.external} ngoài</dd>
-                      <dt>Độ dài:</dt><dd>{i.words.toLocaleString('vi-VN')} chữ</dd>
-                    </dl>
+                    {/* Gọn một khối: điểm + 1 dòng số liệu; Schema (luôn Article/BlogPosting) và tiêu chí thiếu nằm trong chú thích khi rê chuột */}
+                    <div className="wp-seo" title={`Schema: Article (BlogPosting)\n${i.missing.length ? 'Cần cải thiện:\n• ' + i.missing.join('\n• ') : 'Đạt mọi tiêu chí'}`}>
+                      <span className={`wp-score is-${tone(i.score)}`}>{i.score}<small>/100</small></span>
+                      <small className="wp-seo__meta">{i.words.toLocaleString('vi-VN')} chữ · {i.links.internal} link nội bộ · {i.links.external} link ngoài</small>
+                    </div>
                   </td>
                   <td className="wp-c-st">
                     {editCol === 'title'
                       ? <div className="wp-edit"><input value={p.seoTitle || ''} maxLength={300} placeholder={p.title} onChange={e => patch(p.id, { seoTitle: e.target.value || undefined })} /><small className={(p.seoTitle || p.title).length > 60 ? 'is-over' : ''}>{(p.seoTitle || p.title).length}/60</small></div>
-                      : <span className={i.titleDefault ? 'wp-muted' : ''}>{i.title}</span>}
+                      : <span className={`wp-clamp${i.titleDefault ? ' wp-muted' : ''}`} title={i.title}>{i.title}</span>}
                   </td>
                   <td className="wp-c-sd">
                     {editCol === 'desc'
                       ? <div className="wp-edit"><textarea rows={3} value={p.seoDescription || ''} maxLength={300} placeholder={p.excerpt || 'Mô tả hiện trên Google…'} onChange={e => patch(p.id, { seoDescription: e.target.value || undefined })} /><small className={i.desc.length > 160 ? 'is-over' : ''}>{i.desc.length}/160</small></div>
-                      : i.desc ? <span className={i.descDefault ? 'wp-muted' : ''}>{i.desc.length > 140 ? i.desc.slice(0, 140) + '…' : i.desc}</span> : <span className="wp-warn">Chưa có mô tả</span>}
+                      : i.desc ? <span className={`wp-clamp${i.descDefault ? ' wp-muted' : ''}`} title={i.desc}>{i.desc}</span> : <span className="wp-warn">Chưa có mô tả</span>}
                   </td>
                 </tr>
               );

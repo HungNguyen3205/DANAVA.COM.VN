@@ -1157,3 +1157,25 @@ a.ax-kpi:hover { border-color: var(--ax-border-strong); box-shadow: var(--ax-sha
   .ax-scope .st-row { flex-wrap: wrap; padding-left: calc(8px + var(--depth, 0) * 14px); }
   .ax-scope .st-actions { width: 100%; padding-left: 36px; }
 }
+
+/* ==== Bài viết: mỗi bài gọn một hàng (tiêu đề / SEO title / SEO desc tối đa 2 dòng, rê chuột xem đủ) ==== */
+.ax-scope .wp-table td { vertical-align: middle; padding-top: 10px; padding-bottom: 10px; }
+.ax-scope .wp-clamp { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+.ax-scope .wp-c-title { width: 27%; }
+.ax-scope .wp-c-title .wp-title { font-size: 13.5px; line-height: 1.35; }
+.ax-scope .wp-c-st, .ax-scope .wp-c-sd { width: 16%; font-size: 12.5px; line-height: 1.45; }
+.ax-scope .wp-c-author, .ax-scope .wp-c-cat { font-size: 13px; }
+.ax-scope .wp-c-date { font-size: 12.5px; line-height: 1.4; }
+.ax-scope .wp-c-seo { width: 11%; }
+/* Thao tác hàng: không chiếm chỗ khi ẩn → hàng không cao thêm */
+.ax-scope .wp-row-actions { height: 0; margin-top: 0; overflow: hidden; }
+.ax-scope .wp-table tr:hover .wp-row-actions, .ax-scope .wp-row-actions:focus-within { height: auto; margin-top: 3px; }
+@media (hover: none) { .ax-scope .wp-row-actions { height: auto; margin-top: 3px; } }
+/* SEO Details gọn: điểm + 1 dòng số liệu */
+.ax-scope .wp-seo { display: grid; gap: 4px; justify-items: start; cursor: help; }
+.ax-scope .wp-seo__meta { color: #8a94a8; font-size: 11.5px; line-height: 1.35; }
+
+/* SEO từng trang: nút Chọn từ thư viện dưới ảnh chia sẻ */
+.ax-scope .ps-og__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.ax-scope .ps-libbtn { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 12px; border: 1px solid #2b4294; border-radius: 8px; background: #fff; color: #2b4294; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.ax-scope .ps-libbtn:hover { background: #f0f4ff; }

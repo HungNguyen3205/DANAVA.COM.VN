@@ -5,7 +5,7 @@
  * Mọi thay đổi chỉ nằm trong bản chỉnh sửa (draft) cho tới khi bấm "Lưu thay đổi" → lưu vào database.
  */
 import { useState } from 'react';
-import MediaPicker, { uploadMedia } from './MediaPicker';
+import MediaPicker, { LibraryButton, uploadMedia } from './MediaPicker';
 import { ask } from './admin/kit';
 import { CLIENT_SEEDS } from '@/lib/content-defaults';
 import { homePartners } from '@/lib/site-queries';
@@ -261,6 +261,7 @@ function LogoField({ value, name, onChange }: { value: string; name: string; onC
           setBusy(false);
         }} />
       </label>
+      <LibraryButton className="pf-logo__rm" value={value} onPick={onChange}>Chọn từ thư viện</LibraryButton>
       {value && <button type="button" className="pf-logo__rm" onClick={() => onChange('')}>Gỡ logo</button>}
       {err && <small className="pf-logo__err" role="alert">{err}</small>}
     </div>
