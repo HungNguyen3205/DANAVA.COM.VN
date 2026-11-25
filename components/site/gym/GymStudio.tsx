@@ -251,8 +251,8 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   const products = option ? [...option.placements.reduce((m, pl) => { const eq = catalog.get(pl.eqId); if (!eq) return m; const x = m.get(eq.id) ?? { eq, qty: 0, first: pl }; x.qty++; m.set(eq.id, x); return m; }, new Map<string, { eq: Equipment; qty: number; first: (typeof option.placements)[number] }>()).values()].sort((a, b) => (b.eq.price ? 1 : 0) - (a.eq.price ? 1 : 0)) : [];
   const notes = option ? attention(project, option, catalog, cost, validation) : [];
   const fixFirst = () => { const i = errors[0]; if (!i) return; setCustom(true); setFloorId(i.floorId); setSel(i.id); };
-  const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Lễ tân & đón tiếp', <Users key="e" />], ['style', 'Màu sắc, trang trí', <Palette key="s" />],
-    ...(extras?.assistant ? [['assistant', 'Nhờ ANNA chỉnh', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Xem phòng hoạt động', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
+  const SIDE_TABS: [Tab, string, ReactNode][] = [['plan', 'Mặt bằng', <Ruler key="f" />], ['eqrec', 'Lễ tân', <Users key="e" />], ['style', 'Màu sắc', <Palette key="s" />],
+    ...(extras?.assistant ? [['assistant', 'ANNA', <MessageCircle key="a" />] as [Tab, string, ReactNode]] : []), ...(extras?.sim ? [['sim', 'Vận hành', <Move3d key="m" />] as [Tab, string, ReactNode]] : [])];
 
   return (
     <div className={`gs${custom ? ' is-custom' : ''}`}>
@@ -333,7 +333,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               </span>
             </div>
             <div className="gs-menu" role="tablist">
-              {SIDE_TABS.map(([k, l, ic]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)}>{ic}<span>{l}</span></button>)}
+              {SIDE_TABS.map(([k, l, ic]) => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-on' : ''} onClick={() => setTab(k)} title={({ plan: 'Mặt bằng: tầng, cửa, cầu thang, nhu cầu', eqrec: 'Lễ tân & đón tiếp', style: 'Màu sắc, trang trí', assistant: 'Nhờ ANNA chỉnh giúp', sim: 'Xem phòng hoạt động' } as Record<Tab, string>)[k]}>{ic}<span>{l}</span></button>)}
             </div>
             {tab === 'plan' && <>
               <Seg label="Mặt bằng" value={planSub} options={[['floors', 'Tầng, cửa, cầu thang'], ['brief', 'Nhu cầu & ngân sách']]} onChange={setPlanSub} />
