@@ -17,6 +17,7 @@ import type { SiteData } from '@/lib/content';
 import { initial } from '@/lib/content';
 import { block, withBlock } from '@/lib/blocks';
 import { DICH_VU } from '@/lib/dich-vu';
+import { SERVICE_MENU } from '@/lib/services-menu';
 import { slugify } from './ProductsScreen';
 import { fold } from './ui';
 
@@ -90,6 +91,15 @@ function buildTree(d: SiteData, setDraft: (d: SiteData) => void): Node[] {
     staticNode('Trang chủ', '/'),
     staticNode('Giới thiệu', '/ve-danava/'),
     staticNode('Giải pháp', '/giai-phap/', columns),
+    // Menu chính → Dịch vụ: từng nhóm báo giá và các trang trong nhóm (lib/services-menu.ts)
+    { key: 'svc-menu', label: 'Dịch vụ (menu chính)', group: true, note: 'Báo giá & setup phòng gym', children: SERVICE_MENU.map(g => ({
+      key: 'svcg-' + g.id, label: g.label, group: true,
+      children: g.items.map(it => ({
+        ...staticNode(it.label, it.href), key: `svci-${g.id}-${it.id}`, note: it.badge,
+        // Trang thiết bị: giá / kích thước / mô hình 3D sửa ở mục riêng
+        ...(it.href === '/thiet-bi-gym/' ? { edit: { href: '/admin/thiet-bi/', label: 'Sửa giá thiết bị' } } : {})
+      }))
+    })) },
     staticNode('Dịch vụ', '/dich-vu/', DICH_VU.map(s => ({ key: 'dv-' + s.id, label: s.title, path: `/dich-vu/${s.slug}/`, status: 'live' as Status, edit: editor(`/dich-vu/${s.slug}/`), slug: { value: s.slug, prefix: '/dich-vu/', set: () => null, lockReason: 'Trang dịch vụ cố định trong mã nguồn.' } }))),
     staticNode('Dự án', '/du-an/', [
       ...(d.projects || []).map(p => ({ key: 'prj-' + p.id, label: p.title, path: projectPath(p.slug), status: (p.published ? 'live' : 'draft') as Status, edit: { href: '/admin/du-an/', label: 'Sửa hồ sơ' },

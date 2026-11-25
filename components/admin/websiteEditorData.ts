@@ -16,6 +16,11 @@ export function editorPages(d: SiteData): EditorPage[] {
   const add = (p: EditorPage) => { if (!out.some(x => x.path === p.path)) out.push(p); };
   add({ path: '/dich-vu/', label: 'Dịch vụ (tổng hợp)', type: 'Trang' });
   add({ path: '/bao-gia-web/', label: 'Báo giá website', type: 'Trang' });
+  // Menu Dịch vụ (lib/services-menu.ts): báo giá sự kiện, setup phòng gym
+  add({ path: '/bao-gia-su-kien/', label: 'Báo giá tổ chức sự kiện', type: 'Trang' });
+  add({ path: '/giai-phap/setup-van-hanh-phong-gym/', label: 'Setup & vận hành phòng gym', type: 'Trang' });
+  add({ path: '/bao-gia-setup-phong-gym/', label: 'Phòng lab 3D setup phòng gym', type: 'Trang' });
+  add({ path: '/thiet-bi-gym/', label: 'Thiết bị phòng gym', type: 'Trang', note: 'giá máy sửa ở Giải pháp → Thiết bị phòng gym' });
   for (const s of d.services) if (s.published !== false) add({ path: `/giai-phap/${s.slug}/`, label: s.title, type: 'Sản phẩm' });
   for (const s of d.subServices || []) {
     const parent = d.services.find(x => x.id === s.parentId);
