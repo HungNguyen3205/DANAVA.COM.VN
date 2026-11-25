@@ -8,7 +8,20 @@
 import type { Equipment, EquipmentKind } from './equipment.ts';
 
 export type LayoutStyle = 'balanced' | 'cardio' | 'strength' | 'pt';
-export type LayoutInput = { w: number; l: number; style: LayoutStyle; budget?: number };
+/** Khu không đặt máy (cửa, cầu thang, nhà vệ sinh…): hình chữ nhật trên sàn, toạ độ tâm (m) như máy */
+export type ZoneKind = 'door' | 'stairs' | 'wc' | 'column' | 'reception' | 'other';
+export type Zone = { kind: ZoneKind; x: number; z: number; w: number; d: number; rot: number };
+export const ZONE_KINDS: Record<ZoneKind, { label: string; w: number; d: number; color: string; pad: number }> = {
+  door: { label: 'Cửa ra vào', w: 1.2, d: 1, color: '#2b4294', pad: 1 },
+  stairs: { label: 'Cầu thang', w: 1.2, d: 3, color: '#5b6478', pad: .5 },
+  wc: { label: 'Nhà vệ sinh', w: 2, d: 2, color: '#0e7490', pad: .5 },
+  column: { label: 'Cột', w: .4, d: .4, color: '#475569', pad: .3 },
+  reception: { label: 'Quầy lễ tân', w: 2.4, d: 1, color: '#7c3aed', pad: .6 },
+  other: { label: 'Khu khác', w: 1.5, d: 1.5, color: '#b42318', pad: .5 }
+};
+/** Kích thước chiếm sàn của khu theo hướng xoay */
+export const zoneFoot = (z: Pick<Zone, 'w' | 'd' | 'rot'>) => (z.rot % 2 ? [z.d, z.w] : [z.w, z.d]);
+export type LayoutInput = { w: number; l: number; style: LayoutStyle; budget?: number; zones?: Zone[] };
 export type LayoutItem = { eqId: string; x: number; z: number; rot: number };
 export type LayoutResult = { items: LayoutItem[]; total: number; zones: { cardio: number; strength: number; free: number } };
 
@@ -36,22 +49,38 @@ const footprint = (eq: Equipment, rot: number): Box => {
   return { eq, rot, fw: rot % 2 ? d : w, fd: rot % 2 ? w : d };
 };
 
-/** Xếp lần lượt theo hàng trong một vùng chữ nhật (mét, toạ độ tâm phòng); trả về máy đặt được */
-function pack(boxes: Box[], x0: number, x1: number, z0: number, z1: number, gapX: number, gapZ: number): LayoutItem[] {
+type Rect = { x0: number; x1: number; z0: number; z1: number };
+/** Xếp lần lượt theo hàng trong một vùng chữ nhật (mét, toạ độ tâm phòng), né các vùng cấm; trả về máy đặt được */
+function pack(boxes: Box[], x0: number, x1: number, z0: number, z1: number, gapX: number, gapZ: number, blocked: Rect[] = []): LayoutItem[] {
   const out: LayoutItem[] = [];
   let x = x0, z = z0, rowD = 0;
+  const hit = (ax0: number, az0: number, w: number, d: number) => blocked.find(r => ax0 < r.x1 && ax0 + w > r.x0 && az0 < r.z1 && az0 + d > r.z0);
   for (const b of boxes) {
-    if (x + b.fw > x1 + 1e-6) { x = x0; z += rowD + gapZ; rowD = 0; }
-    if (z + b.fd > z1 + 1e-6 || b.fw > x1 - x0 + 1e-6) continue;
-    out.push({ eqId: b.eq.id, x: x + b.fw / 2, z: z + b.fd / 2, rot: b.rot });
-    x += b.fw + gapX;
-    rowD = Math.max(rowD, b.fd);
+    if (b.fw > x1 - x0 + 1e-6) continue;
+    for (let guard = 0; guard < 200; guard++) {
+      if (x + b.fw > x1 + 1e-6) { x = x0; z += Math.max(rowD, .4) + gapZ; rowD = 0; }
+      if (z + b.fd > z1 + 1e-6) break;
+      const r = hit(x, z, b.fw, b.fd);
+      if (!r) {
+        out.push({ eqId: b.eq.id, x: x + b.fw / 2, z: z + b.fd / 2, rot: b.rot });
+        blocked.push({ x0: x, x1: x + b.fw, z0: z, z1: z + b.fd });
+        x += b.fw + gapX;
+        rowD = Math.max(rowD, b.fd);
+        break;
+      }
+      x = r.x1 + .05; // bước qua vùng cấm rồi thử tiếp
+    }
   }
   return out;
 }
 
 export function autoLayout(equipment: Equipment[], input: LayoutInput): LayoutResult {
   const { w: W, l: L, style } = input;
+  // Khu không đặt máy + lối đi xung quanh (cửa ra vào chừa rộng hơn); dùng chung cho mọi khu
+  const blocked: Rect[] = (input.zones || []).map(z => {
+    const [fw, fd] = zoneFoot(z), p = ZONE_KINDS[z.kind]?.pad ?? .5;
+    return { x0: z.x - fw / 2 - p, x1: z.x + fw / 2 + p, z0: z.z - fd / 2 - p, z1: z.z + fd / 2 + p };
+  });
   const [cShare, sShare, fShare] = LAYOUT_STYLES[style].share;
   const area = W * L;
   const usable = equipment.filter(e => e.published && e.category !== 'accessory' && e.kind);
@@ -82,7 +111,7 @@ export function autoLayout(equipment: Equipment[], input: LayoutInput): LayoutRe
     if (e && afford(e)) cardioPick.push(take(e)); else if (!e) break;
   }
   const cardioDepth = Math.min(2.6, L * .35);
-  const cardioItems = pack(cardioPick.map(e => footprint(e, 1)), -W / 2 + .3, W / 2 - .3, -L / 2 + .2, -L / 2 + .2 + cardioDepth, .5, .6);
+  const cardioItems = pack(cardioPick.map(e => footprint(e, 1)), -W / 2 + .3, W / 2 - .3, -L / 2 + .2, -L / 2 + .2 + cardioDepth, .5, .6, blocked);
 
   // --- Tạ tự do: góc phải trước (khung tạ / Smith, ghế, kệ tạ)
   const freeW = Math.min(W * .45, Math.max(3, W * fShare * 1.4));
@@ -94,7 +123,7 @@ export function autoLayout(equipment: Equipment[], input: LayoutInput): LayoutRe
     const e = freePool.find(x => x.kind === kind && !freePick.includes(x) && afford(x));
     if (e) freePick.push(take(e));
   }
-  const freeItems = pack(freePick.map(e => footprint(e, 0)), W / 2 - freeW, W / 2 - .3, freeZ0, L / 2 - .3, .9, 1);
+  const freeItems = pack(freePick.map(e => footprint(e, 0)), W / 2 - freeW, W / 2 - .3, freeZ0, L / 2 - .3, .9, 1, blocked);
 
   // --- Máy tạ: phần giữa còn lại, mỗi bài một máy (đa dạng), cùng dòng máy nếu được
   const stackPool = usable.filter(e => ['stack', 'plate', 'multi', 'cable'].includes(kindOf(e)!)).sort(tierSort);
@@ -112,7 +141,7 @@ export function autoLayout(equipment: Equipment[], input: LayoutInput): LayoutRe
     if (seen.has(ex) || !afford(e)) continue;
     seen.add(ex); strengthPick.push(take(e));
   }
-  const strengthItems = pack(strengthPick.map(e => footprint(e, 0)), -W / 2 + .4, W / 2 - freeW - .8, freeZ0, L / 2 - .3, .8, 1);
+  const strengthItems = pack(strengthPick.map(e => footprint(e, 0)), -W / 2 + .4, W / 2 - freeW - .8, freeZ0, L / 2 - .3, .8, 1, blocked);
 
   const items = [...cardioItems, ...strengthItems, ...freeItems];
   const byId = new Map(equipment.map(e => [e.id, e]));

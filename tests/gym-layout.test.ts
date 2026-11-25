@@ -35,3 +35,23 @@ test('không chọn 2 máy tạ cùng một bài tập', () => {
   const names = r.items.map(i => byId.get(i.eqId)!).filter(e => e.kind === 'stack' || e.kind === 'plate').map(e => e.name);
   assert.ok(names.length >= 4, names.join(', '));
 });
+
+test('khu không đặt máy (cửa, cầu thang, nhà vệ sinh): máy không nằm trong khu, kể cả lối đi chừa quanh khu', async () => {
+  const { ZONE_KINDS, zoneFoot } = await import('../lib/gym-layout.ts');
+  const W = 12, L = 9;
+  const zones = [
+    { kind: 'door' as const, x: 0, z: L / 2 - .5, w: 1.2, d: 1, rot: 0 },
+    { kind: 'stairs' as const, x: -W / 2 + .6, z: 0, w: 1.2, d: 3, rot: 0 },
+    { kind: 'wc' as const, x: W / 2 - 1, z: -L / 2 + 1, w: 2, d: 2, rot: 0 }
+  ];
+  const r = autoLayout(EQUIPMENT_SEEDS, { w: W, l: L, style: 'balanced', zones });
+  assert.ok(r.items.length >= 5, String(r.items.length));
+  for (const it of r.items) {
+    const [fw, fd] = foot(it.eqId, it.rot);
+    for (const z of zones) {
+      const [zw, zd] = zoneFoot(z), p = ZONE_KINDS[z.kind].pad;
+      const overlap = Math.abs(it.x - z.x) < (fw + zw) / 2 + p - 1e-6 && Math.abs(it.z - z.z) < (fd + zd) / 2 + p - 1e-6;
+      assert.ok(!overlap, `${byId.get(it.eqId)!.name} nằm trong ${ZONE_KINDS[z.kind].label}`);
+    }
+  }
+});

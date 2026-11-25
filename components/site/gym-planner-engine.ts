@@ -1,27 +1,34 @@
 /**
  * Bộ máy 3D của phòng lab setup phòng gym (components/site/GymPlanner.tsx).
- * Đơn vị: mét. Sàn W × L chia ô gạch `tile` (m). Máy là khối hộp theo kích thước thật (hoặc mô hình .glb nếu có),
- * (mô hình dựng sẵn theo loại máy, hoặc file .glb), bám ô gạch khi kéo, xoay 90°, tô đỏ khi chồng nhau hoặc ra ngoài phòng.
+ * Đơn vị: mét. Sàn W × L chia ô gạch `tile` (m). Máy theo kích thước thật (mô hình dựng sẵn theo loại máy, hoặc file .glb),
+ * bám ô gạch khi kéo, xoay 90°, tô đỏ khi chồng nhau, ra ngoài phòng hoặc nằm trong "khu không đặt máy"
+ * (cửa ra vào, cầu thang, nhà vệ sinh… — ô gạch chéo đỏ trắng, kéo / xoay / đổi kích thước được).
  */
 import type * as T from 'three';
 import type { Equipment } from '@/lib/equipment';
 import { buildModel } from './gym-planner-models';
+import { ZONE_KINDS, zoneFoot, type Zone, type ZoneKind } from '@/lib/gym-layout';
 
 export type Placed = { uid: string; eqId: string; x: number; z: number; rot: number; bad: boolean };
-type Item = { uid: string; eq: Equipment; group: T.Group; x: number; z: number; rot: number; bad: boolean; mats: T.MeshStandardMaterial[] };
+/** Một vật trên sàn: máy (eq) hoặc khu không đặt máy (zone) */
+type Item = { uid: string; eq?: Equipment; zone?: { kind: ZoneKind; w: number; d: number }; group: T.Group; x: number; z: number; rot: number; bad: boolean; mats: T.MeshStandardMaterial[] };
+export type PlacedZone = Zone & { uid: string };
 export type Engine = {
   setRoom: (w: number, l: number, tile: number) => void;
   add: (eq: Equipment, at?: { x: number; z: number; rot: number }) => string;
+  addZone: (kind: ZoneKind, at?: Partial<Zone>) => string;
+  resizeZone: (uid: string, w: number, d: number) => void;
   remove: (uid: string) => void;
   rotate: (uid: string) => void;
   duplicate: (uid: string) => void;
   select: (uid: string | null) => void;
-  clear: () => void;
+  /** Xóa máy (giữ khu không đặt máy nếu keepZones) */
+  clear: (keepZones?: boolean) => void;
   resetView: () => void;
   dispose: () => void;
 };
 
-export async function createEngine(el: HTMLElement, cb: { change: (items: Placed[]) => void; select: (uid: string | null) => void }): Promise<Engine> {
+export async function createEngine(el: HTMLElement, cb: { change: (items: Placed[]) => void; zones: (zones: PlacedZone[]) => void; select: (uid: string | null) => void }): Promise<Engine> {
   const THREE = await import('three');
   const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
   const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
@@ -99,7 +106,7 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
   }
 
   /** Kích thước chiếm sàn (m) theo hướng xoay */
-  const foot = (it: Item) => (it.rot % 2 ? [it.eq.depth / 100, it.eq.width / 100] : [it.eq.width / 100, it.eq.depth / 100]);
+  const foot = (it: Item) => (it.zone ? zoneFoot({ ...it.zone, rot: it.rot }) : it.rot % 2 ? [it.eq!.depth / 100, it.eq!.width / 100] : [it.eq!.width / 100, it.eq!.depth / 100]);
   function place(it: Item, x: number, z: number) {
     const [fw, fd] = foot(it);
     // mép trái / trên bám lưới ô gạch, giữ trong phòng
@@ -115,7 +122,8 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
     for (const a of items) {
       const [aw, ad] = foot(a);
       const out = aw > W + 1e-6 || ad > L + 1e-6;
-      const hit = items.some(b => {
+      // Khu không đặt máy không bị tô đỏ; máy chồng lên máy khác hoặc lên khu → đỏ
+      const hit = !a.zone && items.some(b => {
         if (b === a) return false;
         const [bw, bd] = foot(b);
         return Math.abs(a.x - b.x) < (aw + bw) / 2 - 1e-3 && Math.abs(a.z - b.z) < (ad + bd) / 2 - 1e-3;
@@ -124,7 +132,8 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
       for (const m of a.mats) m.emissive.setHex(a.bad ? 0xb42318 : a.uid === selected ? 0xf26b1d : 0x000000);
       for (const m of a.mats) m.emissiveIntensity = a.bad ? .55 : a.uid === selected ? .35 : 0;
     }
-    cb.change(items.map(({ uid, eq, x, z, rot, bad }) => ({ uid, eqId: eq.id, x, z, rot, bad })));
+    cb.change(items.filter(i => i.eq).map(({ uid, eq, x, z, rot, bad }) => ({ uid, eqId: eq!.id, x, z, rot, bad })));
+    cb.zones(items.filter(i => i.zone).map(({ uid, zone, x, z, rot }) => ({ uid, kind: zone!.kind, w: zone!.w, d: zone!.d, x, z, rot })));
   }
 
   const loader = new GLTFLoader();
@@ -154,6 +163,56 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
       }, undefined, () => { /* lỗi tải mô hình → giữ khối hộp */ });
     }
     return it;
+  }
+  /** Khu không đặt máy: sàn gạch chéo đỏ trắng + viền + nhãn tên nổi */
+  function zoneGroup(kind: ZoneKind, w: number, d: number) {
+    const k = ZONE_KINDS[kind];
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const x = c.getContext('2d')!;
+    x.fillStyle = '#fff5f5'; x.fillRect(0, 0, 64, 64);
+    x.strokeStyle = 'rgba(180, 35, 24, .55)'; x.lineWidth = 9;
+    for (let i = -64; i < 128; i += 22) { x.beginPath(); x.moveTo(i, 64); x.lineTo(i + 64, 0); x.stroke(); }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(w / .45, d / .45); t.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.MeshStandardMaterial({ map: t, roughness: .9, transparent: true, opacity: .92 });
+    const g = new THREE.Group();
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, .03, d), mat); slab.position.y = .016; slab.receiveShadow = true; g.add(slab);
+    const edge = new THREE.MeshStandardMaterial({ color: k.color });
+    for (const [bw, bd, bx, bz] of [[w, .05, 0, -d / 2], [w, .05, 0, d / 2], [.05, d, -w / 2, 0], [.05, d, w / 2, 0]]) { const b = new THREE.Mesh(new THREE.BoxGeometry(bw, .06, bd), edge); b.position.set(bx, .03, bz); g.add(b); }
+    // nhãn tên
+    const lc = document.createElement('canvas'); lc.width = 512; lc.height = 128;
+    const lx = lc.getContext('2d')!;
+    lx.fillStyle = k.color; lx.beginPath(); lx.roundRect(8, 16, 496, 96, 48); lx.fill();
+    lx.fillStyle = '#fff'; lx.font = 'bold 54px system-ui, sans-serif'; lx.textAlign = 'center'; lx.textBaseline = 'middle'; lx.fillText('⛔ ' + k.label, 256, 66);
+    const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace;
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: lt, depthTest: false }));
+    const sw = Math.min(Math.max(w, 1.4), 2.6); sprite.scale.set(sw, sw / 4, 1); sprite.position.y = .7; sprite.renderOrder = 10;
+    g.add(sprite);
+    return { g, mats: [mat, edge] };
+  }
+  function addZone(kind: ZoneKind, at?: Partial<Zone>) {
+    const k = ZONE_KINDS[kind];
+    const w = at?.w ?? k.w, d = at?.d ?? k.d;
+    const { g, mats } = zoneGroup(kind, w, d);
+    const group = new THREE.Group(); group.add(g);
+    const it: Item = { uid: 'z' + ++seq, zone: { kind, w, d }, group, x: 0, z: 0, rot: at?.rot ?? 0, bad: false, mats };
+    group.userData.uid = it.uid;
+    scene.add(group);
+    // Mặc định: cửa ra vào ở giữa tường trước, khu khác ở chỗ trống đầu tiên
+    const [x, z] = at?.x !== undefined && at?.z !== undefined ? [at.x, at.z] : kind === 'door' ? [0, L / 2 - d / 2] : freeSpot(it);
+    place(it, x, z);
+    items.push(it);
+    if (at?.x === undefined) select(it.uid); else check();
+    return it.uid;
+  }
+  function resizeZone(uid: string, w: number, d: number) {
+    const it = items.find(i => i.uid === uid && i.zone);
+    if (!it || !it.zone) return;
+    it.zone = { ...it.zone, w: Math.min(Math.max(w, .2), W), d: Math.min(Math.max(d, .2), L) };
+    it.group.clear();
+    const { g, mats } = zoneGroup(it.zone.kind, it.zone.w, it.zone.d);
+    it.group.add(g); it.mats = mats;
+    place(it, it.x, it.z);
+    check();
   }
   /** Chỗ trống đầu tiên quét theo ô gạch từ góc phòng */
   function freeSpot(it: Item): [number, number] {
@@ -189,9 +248,12 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
     place(it, it.x, it.z);
     check();
   }
-  function duplicate(uid: string) { const it = items.find(x => x.uid === uid); if (it) add(it.eq); }
+  function duplicate(uid: string) { const it = items.find(x => x.uid === uid); if (it?.eq) add(it.eq); else if (it?.zone) addZone(it.zone.kind, { w: it.zone.w, d: it.zone.d }); }
   function select(uid: string | null) { selected = uid; check(); cb.select(uid); }
-  function clear() { for (const it of items) scene.remove(it.group); items.length = 0; select(null); }
+  function clear(keepZones = false) {
+    for (let i = items.length - 1; i >= 0; i--) if (!keepZones || !items[i].zone) { scene.remove(items[i].group); items.splice(i, 1); }
+    select(null);
+  }
 
   // Chọn & kéo máy trên sàn
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hitP = new THREE.Vector3();
@@ -230,7 +292,7 @@ export async function createEngine(el: HTMLElement, cb: { change: (items: Placed
   buildRoom(); resetView();
   return {
     setRoom(w, l, t) { const first = W === 10 && L === 10 && !items.length; W = w; L = l; tile = t; buildRoom(); if (first) resetView(); },
-    add, remove, rotate, duplicate, select, clear, resetView,
+    add, addZone, resizeZone, remove, rotate, duplicate, select, clear, resetView,
     dispose() {
       cancelAnimationFrame(frame); ro.disconnect(); controls.dispose();
       renderer.domElement.removeEventListener('pointerdown', onDown);

@@ -8,14 +8,14 @@
  * Thiết kế lưu trên trình duyệt của khách (localStorage) để tải lại trang không mất.
  */
 import Link from 'next/link';
-import { Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Sparkles, Trash2, TriangleAlert } from 'lucide-react';
+import { Ban, Boxes, Copy, Grid3x3, Maximize2, Plus, RotateCw, Ruler, Search, Send, Sparkles, Trash2, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { EQUIPMENT_CATEGORIES, formatVND, type Equipment, type EquipmentCategory, type Flooring } from '@/lib/equipment';
-import { createEngine, type Engine, type Placed } from './gym-planner-engine';
-import { LAYOUT_STYLES, autoLayout, type LayoutStyle } from '@/lib/gym-layout';
+import { createEngine, type Engine, type Placed, type PlacedZone } from './gym-planner-engine';
+import { LAYOUT_STYLES, ZONE_KINDS, autoLayout, type LayoutStyle, type ZoneKind } from '@/lib/gym-layout';
 
 const KEY = 'danava-gym-planner';
-type Saved = { area: number; w: number; l: number; tile: number; items: { eqId: string; x: number; z: number; rot: number }[] };
+type Saved = { area: number; w: number; l: number; tile: number; items: { eqId: string; x: number; z: number; rot: number }[]; zones?: { kind: ZoneKind; x: number; z: number; w: number; d: number; rot: number }[] };
 const round1 = (n: number) => Math.round(n * 10) / 10;
 /** Diện tích → phòng chữ nhật tỉ lệ ~1.4 : 1 */
 const dimsOf = (area: number) => { const l = Math.sqrt(area / 1.4); return { w: round1(l * 1.4), l: round1(area / round1(l * 1.4)) }; };
@@ -28,6 +28,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const [areaInput, setAreaInput] = useState('100');
   const [room, setRoom] = useState({ area: 100, w: 11.8, l: 8.5, tile: 0.4 });
   const [placed, setPlaced] = useState<Placed[]>([]);
+  const [zones, setZones] = useState<PlacedZone[]>([]);
   const [sel, setSel] = useState<string | null>(null);
   const [cat, setCat] = useState<EquipmentCategory | ''>('');
   const [q, setQ] = useState('');
@@ -42,13 +43,14 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   useEffect(() => {
     let off = false;
     try { const raw = localStorage.getItem(KEY); if (raw) restored.current = JSON.parse(raw) as Saved; } catch {}
-    void createEngine(host.current!, { change: setPlaced, select: setSel }).then(e => {
+    void createEngine(host.current!, { change: setPlaced, zones: setZones, select: setSel }).then(e => {
       if (off) { e.dispose(); return; }
       engine.current = e;
       const s = restored.current;
       if (s && s.w && s.l) {
         setRoom({ area: s.area, w: s.w, l: s.l, tile: s.tile });
         e.setRoom(s.w, s.l, s.tile);
+        for (const z of s.zones || []) if (z.kind in ZONE_KINDS) e.addZone(z.kind, z);
         for (const it of s.items || []) { const eq = byId.get(it.eqId); if (eq) e.add(eq, it); }
         setStarted(true);
       }
@@ -70,8 +72,8 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   // Lưu thiết kế trên trình duyệt
   useEffect(() => {
     if (!started) return;
-    try { localStorage.setItem(KEY, JSON.stringify({ ...room, items: placed.map(({ eqId, x, z, rot }) => ({ eqId, x, z, rot })) } satisfies Saved)); } catch {}
-  }, [room, placed, started]);
+    try { localStorage.setItem(KEY, JSON.stringify({ ...room, items: placed.map(({ eqId, x, z, rot }) => ({ eqId, x, z, rot })), zones: zones.map(({ kind, x, z, w, d, rot }) => ({ kind, x, z, w, d, rot })) } satisfies Saved)); } catch {}
+  }, [room, placed, zones, started]);
 
   function applyRoom(next: { area?: number; w?: number; l?: number; tile?: number }) {
     const r = { ...room, ...next };
@@ -79,13 +81,16 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
     setRoom(r);
     engine.current?.setRoom(r.w, r.l, r.tile);
   }
-  /** Xếp sẵn máy theo kiểu phòng / ngân sách (lib/gym-layout.ts); thay toàn bộ máy đang có */
+  // Khu không đặt máy mới nhất (engine báo về đồng bộ, dùng ngay trong cùng lượt bấm)
+  const zonesRef = useRef<PlacedZone[]>([]);
+  zonesRef.current = zones;
+  /** Xếp sẵn máy theo kiểu phòng / ngân sách (lib/gym-layout.ts), né khu không đặt máy; thay toàn bộ máy đang có */
   function runAuto(w: number, l: number) {
     const e = engine.current;
     if (!e) return;
     const budget = Number(auto.budget.replace(/[^\d.,]/g, '').replace(',', '.')) * 1e6 || undefined;
-    const r = autoLayout(equipment, { w, l, style: auto.style, budget });
-    e.clear();
+    const r = autoLayout(equipment, { w, l, style: auto.style, budget, zones: zonesRef.current });
+    e.clear(true);
     for (const it of r.items) { const eq = byId.get(it.eqId); if (eq) e.add(eq, it); }
     e.select(null);
     setAuto(a => ({ ...a, open: false, note: `Đã bố trí ${r.items.length} máy: ${r.zones.cardio} cardio · ${r.zones.strength} máy tạ · ${r.zones.free} tạ tự do. Kéo để chỉnh, bấm + để thêm.` }));
@@ -99,6 +104,8 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
     engine.current?.setRoom(w, l, room.tile);
     engine.current?.resetView();
     setStarted(true);
+    // Cửa ra vào mặc định ở giữa tường trước (kéo / xoay / xóa được), để bố trí chừa lối vào
+    if (!zonesRef.current.some(z => z.kind === 'door')) engine.current?.addZone('door', { x: 0, z: l / 2 - ZONE_KINDS.door.d / 2, rot: 0 });
     if (auto.on) runAuto(w, l);
   }
 
@@ -116,6 +123,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
   const bad = placed.filter(p => p.bad).length;
   const tiles = Math.ceil(room.w / room.tile) * Math.ceil(room.l / room.tile);
   const selEq = sel ? byId.get(placed.find(p => p.uid === sel)?.eqId || '') : undefined;
+  const selZone = sel ? zones.find(z => z.uid === sel) : undefined;
   const fold = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase();
   const shown = equipment.filter(e => (!cat || e.category === cat) && (!q.trim() || fold(`${e.name} ${e.sku || ''}`).includes(fold(q.trim()))));
 
@@ -124,6 +132,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
     setForm(f => ({ ...f, sending: true, error: '' }));
     const summary = [
       `Phòng tập ${room.area} m² (${room.w} × ${room.l} m), ô gạch ${Math.round(room.tile * 100)} cm (~${tiles} viên).`,
+      zones.length ? `Khu không đặt máy: ${zones.map(z => `${ZONE_KINDS[z.kind].label} ${z.w}×${z.d} m`).join(', ')}.` : '',
       'Thiết bị:',
       ...lines.map(l => `- ${l.eq.name}${l.eq.sku ? ` [${l.eq.sku}]` : ''} × ${l.qty}: ${l.eq.price ? formatVND(Number(l.eq.price) * l.qty) : 'Liên hệ'}`),
       flooring && floorOn ? `- ${flooring.name} × ${floorTiles} viên: ${flooring.price ? formatVND(floorCost) : 'Liên hệ'}` : '',
@@ -154,6 +163,16 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
               <span><Grid3x3 aria-hidden="true" /> Ô gạch <b>{Math.round(room.tile * 100)} × {Math.round(room.tile * 100)} cm</b></span>
               <input type="range" min={30} max={100} step={5} value={Math.round(room.tile * 100)} onChange={e => applyRoom({ tile: Number(e.target.value) / 100 })} />
             </label>
+          </section>
+
+          <section className="gp-box gp-zones">
+            <h2><Ban aria-hidden="true" /> Khu không đặt máy <small>{zones.length ? `${zones.length} khu` : 'cửa, cầu thang…'}</small></h2>
+            <div className="gp-zones__btns">
+              {(Object.keys(ZONE_KINDS) as ZoneKind[]).map(k => (
+                <button key={k} type="button" disabled={!started} onClick={() => engine.current?.addZone(k)} style={{ ['--zc' as string]: ZONE_KINDS[k].color }}><Plus aria-hidden="true" />{ZONE_KINDS[k].label}</button>
+              ))}
+            </div>
+            <p className="gp-zones__hint">Đánh dấu chỗ không được đặt máy. Máy đặt vào sẽ bị tô đỏ; “Tự động bố trí” tự né và chừa lối đi.</p>
           </section>
 
           <section className="gp-box gp-box--list">
@@ -195,6 +214,15 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
               <button type="submit" className="s-btn s-btn--primary s-btn--lg">{auto.on ? 'Dựng phòng và bố trí sẵn' : 'Dựng phòng 3D'}</button>
             </form>
           )}
+          {started && sel && selZone && (
+            <div className="gp-toolbar gp-toolbar--zone" role="toolbar" aria-label={`Khu đang chọn: ${ZONE_KINDS[selZone.kind].label}`}>
+              <b>{ZONE_KINDS[selZone.kind].label}</b>
+              <label>Rộng<input type="number" min={.2} max={room.w} step={.1} value={selZone.w} onChange={e => engine.current?.resizeZone(sel, Number(e.target.value) || .2, selZone.d)} />m</label>
+              <label>Sâu<input type="number" min={.2} max={room.l} step={.1} value={selZone.d} onChange={e => engine.current?.resizeZone(sel, selZone.w, Number(e.target.value) || .2)} />m</label>
+              <button type="button" onClick={() => engine.current?.rotate(sel)}><RotateCw aria-hidden="true" /> Xoay</button>
+              <button type="button" className="is-danger" onClick={() => engine.current?.remove(sel)}><Trash2 aria-hidden="true" /> Xóa</button>
+            </div>
+          )}
           {started && sel && selEq && (
             <div className="gp-toolbar" role="toolbar" aria-label={`Máy đang chọn: ${selEq.name}`}>
               <b>{selEq.name}</b>
@@ -204,7 +232,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
             </div>
           )}
           {started && <p className="gp-hint">Kéo máy để di chuyển · kéo nền để xoay góc nhìn · cuộn / chụm 2 ngón để phóng to</p>}
-          {started && bad > 0 && <p className="gp-warn"><TriangleAlert aria-hidden="true" /> {bad} máy đang chồng lên nhau hoặc ra ngoài phòng (tô đỏ)</p>}
+          {started && bad > 0 && <p className="gp-warn"><TriangleAlert aria-hidden="true" /> {bad} máy đang chồng lên nhau, ra ngoài phòng hoặc nằm trong khu không đặt máy (tô đỏ)</p>}
         </div>
       </div>
 
@@ -216,7 +244,7 @@ export function GymPlanner({ equipment, addId, flooring }: { equipment: Equipmen
             <div className="gp-cost__tools">
               <button type="button" className="gp-auto-btn" onClick={() => setAuto(a => ({ ...a, open: !a.open }))}><Sparkles aria-hidden="true" /> Tự động bố trí lại</button>
               <button type="button" onClick={() => engine.current?.resetView()}>Góc nhìn ban đầu</button>
-              <button type="button" onClick={() => { engine.current?.clear(); setStarted(false); try { localStorage.removeItem(KEY); } catch {} }}>Làm lại phòng</button>
+              <button type="button" onClick={() => { engine.current?.clear(false); setStarted(false); try { localStorage.removeItem(KEY); } catch {} }}>Làm lại phòng</button>
             </div>
           </div>
           {auto.open && (

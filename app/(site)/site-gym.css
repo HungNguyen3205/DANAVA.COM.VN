@@ -321,3 +321,15 @@
 @media (max-width: 640px) { .gp-auto__styles { grid-template-columns: 1fr; } }
 .gp-start { overflow-y: auto; align-content: start; padding-top: clamp(16px, 4vh, 40px); }
 @media (min-height: 760px) { .gp-start { align-content: center; } }
+
+/* Phòng lab: khu không đặt máy */
+.gp-zones__btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.gp-zones__btns button { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--zc) 35%, #fff); border-radius: 999px; background: color-mix(in srgb, var(--zc) 8%, #fff); color: var(--zc); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.gp-zones__btns button:hover:not(:disabled) { background: color-mix(in srgb, var(--zc) 16%, #fff); }
+.gp-zones__btns button:disabled { opacity: .45; cursor: not-allowed; }
+.gp-zones__btns svg { width: 13px; height: 13px; }
+.gp-zones__hint { margin: 8px 0 0; color: #8a94a8; font-size: 11.5px; line-height: 1.45; }
+.gp-side { grid-template-rows: auto auto minmax(0, 1fr); }
+.gp-toolbar--zone { background: #7f1d1d; }
+.gp-toolbar--zone label { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; }
+.gp-toolbar--zone input { width: 58px; height: 30px; padding: 0 6px; border: 0; border-radius: 8px; background: rgba(255, 255, 255, .15); color: #fff; font: inherit; font-size: 13px; font-weight: 700; }
