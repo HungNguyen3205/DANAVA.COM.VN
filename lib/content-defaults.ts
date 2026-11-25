@@ -431,6 +431,8 @@ const BASE_CLIENT_SEEDS: Client[] = [
 
 /** Đợt đưa 9 khách hàng marketing (lib/marketing-portfolio.ts) vào danh sách quản trị (25/11/2026) */
 export const MARKETING_SEED = 'marketing-clients-2026-11';
+/** Đợt đổi tên / mô tả giải pháp Website, Marketing, Sự kiện theo bản mới — chỉ áp một lần, sau đó tên do quản trị viên sửa được giữ nguyên */
+export const SERVICE_RENAME_SEED = 'service-rename-2026-11';
 /** Khách hàng marketing đã hợp tác → bản ghi khách hàng, đã xác minh, hiện ở khối logo trang chủ */
 export const MARKETING_CLIENT_SEEDS: Client[] = MARKETING_ENGAGEMENTS.map(m => ({
   id: 'mkt-' + m.id, name: m.client, logo: m.logo || '', url: m.website || m.fanpage || '', projectId: '',
@@ -488,7 +490,7 @@ export function normalizeContent(data: SiteData): SiteData {
     showcase,
     services: services.map(s => {
       const seed = SERVICE_SEEDS[s.id] || {};
-      const updatedService = ['website', 'marketing', 'events'].includes(s.id)
+      const updatedService = !(data.seeded || []).includes(SERVICE_RENAME_SEED) && ['website', 'marketing', 'events'].includes(s.id)
         ? initial.services.find(item => item.id === s.id)
         : undefined;
       const isMarketing = s.id === 'marketing';
@@ -541,7 +543,7 @@ export function normalizeContent(data: SiteData): SiteData {
     // Thiết bị phòng gym: dữ liệu cũ chưa có → danh mục mẫu (giá trống); danh sách quản trị viên đã sửa giữ nguyên
     // Danh sách còn y nguyên danh mục mẫu cũ (chưa nhập giá) → thay bằng danh mục đối tác thietbigym.vn
     equipment: !data.equipment || (data.equipment.every(x => LEGACY_SEED_IDS.includes(x.id) && !x.price && !x.image && !x.model)) ? structuredClone(EQUIPMENT_SEEDS) : data.equipment,
-    seeded: Array.from(new Set([...(data.seeded || []), PARTNER_SEED, MARKETING_SEED])),
+    seeded: Array.from(new Set([...(data.seeded || []), PARTNER_SEED, MARKETING_SEED, SERVICE_RENAME_SEED])),
     testimonials: fill(data.testimonials, []),
     posts: data.posts.filter(p => !REMOVED_POST_IDS.includes(p.id)).map(p => {
       const saved = fill(p.topicId, POST_TOPICS[p.id] || '');
