@@ -177,6 +177,13 @@
 .ev-hero__title { margin: 0; max-width: 12ch; font-family: var(--font-sans); font-weight: 800; font-size: clamp(39px, 6.5vw, 94px); line-height: var(--service-heading-line-height); letter-spacing: -.045em; color: #fff; }
 .ev-hero__lead { margin: 20px 0 28px; max-width: 620px; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.7; color: rgba(255, 255, 255, .86); }
 .ev-hero__caption { margin: 24px 0 0; font-size: 12.5px; letter-spacing: .04em; color: rgba(255, 255, 255, .55); }
+/* Điện thoại: không ép cao gần hết màn hình (chữ bị đẩy xuống đáy, trên trống một mảng ảnh) → chữ lên cao, vẫn lộ một dải ảnh sân khấu */
+@media (max-width: 760px) {
+  .ev-hero { min-height: 0; }
+  .ev-hero__inner { padding-top: clamp(150px, 42vw, 200px); padding-bottom: 36px; }
+  .ev-hero__kicker { margin-top: 12px; font-size: 11px; letter-spacing: .14em; line-height: 1.7; }
+  .ev-hero__lead { margin: 14px 0 22px; font-size: 15.5px; line-height: 1.6; }
+}
 .ev-btn-ghost { background: rgba(255, 255, 255, .06); color: #fff; border: 1.5px solid rgba(255, 255, 255, .45); }
 .ev-btn-ghost:hover { background: rgba(255, 255, 255, .14); color: #fff; }
 @media (prefers-reduced-motion: no-preference) {
