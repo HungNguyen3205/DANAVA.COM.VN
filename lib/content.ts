@@ -6,6 +6,7 @@ import { okImage, okLink, validPageBlock, type PageBlock } from './page-blocks.t
 import { HOME_HERO_LIMITS, type HomeHero } from './home-hero.ts';
 import { validTextStyles, type TextStyles } from './text-styles.ts';
 import { equipmentError, type Equipment } from './equipment.ts';
+import { webTemplatesError, type WebTemplate } from './web-templates.ts';
 import { validTranslations, type ForeignLocale, type TranslationMap, type Translations } from './i18n.ts';
 
 /** Ngôn ngữ đang hiển thị (chỉ khi xem /en/, /ja/; không lưu): bản dịch chữ cố định txt.* và SEO meta:… — lib/i18n-server.ts */
@@ -265,6 +266,8 @@ export type SiteData = {
   tracking?: Tracking;
   /** Thiết bị phòng gym: giá, kích thước, ảnh, mô hình 3D (lib/equipment.ts) */
   equipment?: Equipment[];
+  /** Kho mẫu website /mau-website/ (lib/web-templates.ts) */
+  webTemplates?: WebTemplate[];
   /** Màn mở đầu trang chủ (lib/home-hero.ts). Trống = chữ mặc định đang hiển thị. */
   homeHero?: Partial<HomeHero>;
   /** Chữ sửa trực tiếp trên website (khóa ổn định → chữ); trống = dùng chữ mặc định trong mã nguồn (lib/site-text.ts). */
@@ -530,6 +533,7 @@ export function validateContent(v: unknown): v is SiteData {
     || !uniqueBy(v.landings as Landing[], l => l.id) || !uniqueBy((v.landings as Landing[]).filter(l => l.kind === 'internal'), l => l.slug))) return false;
   if (v.pageSeo !== undefined && !validPageSeo(v.pageSeo)) return false;
   if (v.equipment !== undefined && equipmentError(v.equipment)) return false;
+  if (v.webTemplates !== undefined && webTemplatesError(v.webTemplates)) return false;
   if (v.tracking !== undefined && !(object(v.tracking) && (Object.keys(TRACKING_RULES) as (keyof Tracking)[])
     .every(k => (v.tracking as Tracking)[k] === undefined || ((v.tracking as Tracking)[k] === '' || TRACKING_RULES[k].test((v.tracking as Tracking)[k]!))))) return false;
   if (v.redirects !== undefined && (!Array.isArray(v.redirects) || v.redirects.length > 500 || !v.redirects.every(validRedirect) || !uniqueBy(v.redirects as Redirect[], r => r.from))) return false;
@@ -672,6 +676,7 @@ export function contentError(v: unknown): string | null {
     return 'Cài đặt website → SEO từng trang: quá 100 trang.';
   }
   if (v.equipment !== undefined) { const e = equipmentError(v.equipment); if (e) return e; }
+  if (v.webTemplates !== undefined) { const e = webTemplatesError(v.webTemplates); if (e) return e; }
   if (v.tracking !== undefined) {
     const t = (object(v.tracking) ? v.tracking : {}) as Tracking;
     const names: Record<keyof Tracking, string> = { ga4: 'Google Analytics 4 (dạng G-XXXXXXXXXX)', gtm: 'Google Tag Manager (dạng GTM-XXXXXXX)', metaPixel: 'Meta Pixel ID (chỉ gồm số)' };

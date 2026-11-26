@@ -5,14 +5,16 @@
 import Link from 'next/link';
 import { ArrowRight, Palette, PenTool, Rocket } from 'lucide-react';
 import type { SiteData } from '@/lib/content';
-import { WEB_TEMPLATES, demoTemplates } from '@/lib/web-templates';
+import { publishedTemplates } from '@/lib/web-templates';
 import { ct } from './cms';
 import { Crumbs, CtaBand } from './ui';
 import { TemplateGallery } from './TemplateGallery';
 
 export function TemplatesPage({ data }: { data: SiteData }) {
   const T = (k: string, def: string, label: string, opts: { multiline?: boolean; rich?: boolean } = {}) => { const x = ct(data, `mau.${k}`, def, label, opts); return <span {...x.a}>{x.v}</span>; };
-  const fan = demoTemplates().slice(0, 3);
+  const list = publishedTemplates(data);
+  const demos = list.filter(t => t.kind === 'demo');
+  const fan = (demos.length >= 3 ? demos : list).filter(t => t.thumb).slice(0, 3);
   const steps = [
     { icon: Palette, t: 'Chọn một mẫu', d: 'Xem demo chạy thật trên máy tính và điện thoại, chọn phong cách gần với thương hiệu của bạn.' },
     { icon: PenTool, t: 'DANAVA may đo', d: 'Thay màu, chữ, ảnh và nội dung theo ngành; thêm bớt khối theo mục tiêu bán hàng.' },
@@ -28,13 +30,13 @@ export function TemplatesPage({ data }: { data: SiteData }) {
             <h1 className="mau-h1">{T('title1', 'Mẫu website & landing page', 'Tiêu đề (dòng 1)')} <em>{T('title2', 'có hồn theo ngành', 'Tiêu đề (chữ nhấn)')}</em></h1>
             <p className="mau-lead">{T('lead', 'Mỗi mẫu là một hướng nghệ thuật riêng: bảng màu, cặp chữ, bố cục và chuyển động được thiết kế cho từng ngành. Xem demo chạy thật, rồi để DANAVA may đo theo thương hiệu của bạn.', 'Câu dẫn', { multiline: true })}</p>
             <div className="mau-hero__stats">
-              <div><b>{demoTemplates().length}</b><span>{T('stat.art', 'mẫu nghệ thuật', 'Số liệu: mẫu')}</span></div>
-              <div><b>{WEB_TEMPLATES.length - demoTemplates().length}</b><span>{T('stat.live', 'dự án thật đã bàn giao', 'Số liệu: dự án thật')}</span></div>
+              <div><b>{demos.length}</b><span>{T('stat.art', 'mẫu nghệ thuật', 'Số liệu: mẫu')}</span></div>
+              <div><b>{list.length - demos.length}</b><span>{T('stat.live', 'dự án thật đã bàn giao', 'Số liệu: dự án thật')}</span></div>
               <div><b>7</b><span>{T('stat.days', 'ngày lên sóng', 'Số liệu: ngày')}</span></div>
             </div>
           </div>
           <div className="mau-fan" aria-hidden="true">
-            {fan.map((t, i) => <span key={t.slug} className={`mau-fan__card mau-fan__card--${i + 1}`} style={{ backgroundImage: `url(${t.thumb})` }} />)}
+            {fan.map((t, i) => <span key={t.id} className={`mau-fan__card mau-fan__card--${i + 1}`} style={{ backgroundImage: `url(${t.thumb})` }} />)}
             <span className="mau-fan__tag">{T('fan.tag', 'Demo chạy thật', 'Nhãn trên ảnh mẫu')}</span>
           </div>
         </div>

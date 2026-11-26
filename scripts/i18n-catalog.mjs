@@ -29,6 +29,8 @@ await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, dev
 await go(base + '/sitemap.xml');
 const urls = (await ev(`[...document.querySelectorAll('loc')].map(l=>l.textContent)`)) || [];
 const paths = [...new Set(['/', ...urls.map(u => new URL(u).pathname)])].filter(p => !/^\/(en|ja)\//.test(p));
+// Demo của kho mẫu (không có trong sitemap vì noindex): /mau-website/<mã>/ → /demo/<mã>/
+paths.push(...paths.filter(p => /^\/mau-website\/[^/]+\/$/.test(p)).map(p => p.replace('/mau-website/', '/demo/')));
 
 // Giống cms-editor.ts → serialize: phần nhấn mạnh trong tiêu đề giữ dạng *chữ*
 const PROBE = `(() => {

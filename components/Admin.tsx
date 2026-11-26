@@ -38,6 +38,7 @@ import { PageSeoEditor } from './admin/PageSeoEditor';
 import { TrackingEditor } from './admin/TrackingEditor';
 import { SiteTree } from './admin/SiteTree';
 import { EquipmentScreen } from './admin/EquipmentScreen';
+import { WebTemplatesScreen } from './admin/WebTemplatesScreen';
 import { OverviewTasks } from './admin/OverviewTasks';
 import { HomeHeroEditor } from './admin/HomeHeroEditor';
 import { FooterMenuEditor, GalleryOrder, MenuEditor, StaffOrder } from './admin/SortEditors';
@@ -402,6 +403,7 @@ function AdminWorkspace({ section }: { section: string }) {
       case 'san-pham': return <ProductsScreen draft={draft} setDraft={setDraft} studioPricing={blockPanel('pricing')} ctaText={pageTextPanel} saveBar={recordSave} />;
       case 'nhom-loai': return <GroupsScreen draft={draft} setDraft={setDraft} />;
       case 'thiet-bi': return <EquipmentScreen draft={draft} setDraft={setDraft} />;
+      case 'kho-mau': return <WebTemplatesScreen draft={draft} setDraft={setDraft} />;
       case 'trang-website': return <SiteTree draft={draft} setDraft={setDraft} />;
       case 'menu-dieu-huong': return tab === 'dau-trang' ? <MenuEditor draft={draft} setDraft={setDraft} /> : <FooterMenuEditor draft={draft} setDraft={setDraft} />;
       case 'bai-viet': return tab === 'danh-muc' ? <TopicsEditor draft={draft} setDraft={setDraft} /> : <PostsScreen draft={draft} setDraft={setDraft} saveBar={recordSave} />;

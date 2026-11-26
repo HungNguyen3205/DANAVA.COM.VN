@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowUpRight, Monitor, Smartphone, Tablet } from 'lucide-rea
 import type { WebTemplate } from '@/lib/web-templates';
 import { useSite } from '../SiteStore';
 import { ct } from './cms';
+import { localePath } from '@/lib/i18n';
 
 const DEVICES = [
   { id: 'desktop', label: 'Máy tính', icon: Monitor, w: '100%' },
@@ -21,7 +22,8 @@ export function TemplatePreview({ t }: { t: WebTemplate }) {
   const T = (k: string, def: string, label: string) => { const x = ct(data, `mau.${k}`, def, label, { scope: 'global' }); return <span {...x.a}>{x.v}</span>; };
   const [dev, setDev] = useState<(typeof DEVICES)[number]['id']>('desktop');
   const [loaded, setLoaded] = useState(false);
-  const src = `/demo/${t.slug}/`;
+  // Đang xem /en/, /ja/ → demo cùng ngôn ngữ
+  const src = localePath(`/demo/${t.id}/`, data.localeView?.loc ?? 'vi');
   const w = DEVICES.find(d => d.id === dev)!.w;
   return (
     <div className="mau-pv">
@@ -34,7 +36,7 @@ export function TemplatePreview({ t }: { t: WebTemplate }) {
         </div>
         <div className="mau-pv__act">
           <a className="mau-pv__full" href={src} target="_blank" rel="noopener">{T('pv.full', 'Mở toàn màn hình', 'Xem trước: mở tab mới')} <ArrowUpRight aria-hidden="true" /></a>
-          <Link className="s-btn s-btn--primary s-btn--sm" href={`/bao-gia-web/?mau=${t.slug}`}>{T('pv.use', 'Dùng mẫu này', 'Xem trước: nút dùng mẫu')}</Link>
+          <Link className="s-btn s-btn--primary s-btn--sm" href={`/bao-gia-web/?mau=${t.id}`}>{T('pv.use', 'Dùng mẫu này', 'Xem trước: nút dùng mẫu')}</Link>
         </div>
       </div>
       <div className={`mau-pv__stage is-${dev}`}>

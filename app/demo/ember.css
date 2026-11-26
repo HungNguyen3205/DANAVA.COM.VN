@@ -3,7 +3,7 @@
 .em-wrap { width: min(1220px, calc(100% - 40px)); margin: 0 auto; }
 .em h1, .em h2 { font-family: var(--f-anton), Impact, sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: .01em; line-height: 1.08; }
 .em h2 { font-size: clamp(46px, 7vw, 104px); }
-.em h1 span, .em h2 span { color: transparent; -webkit-text-stroke: 1.6px var(--o); }
+.em h1 > span:not([data-cms]), .em h2 > span:not([data-cms]) { color: transparent; -webkit-text-stroke: 1.6px var(--o); }
 .em-center { text-align: center; }
 .em-kicker { color: var(--o); font-weight: 800; letter-spacing: .22em; text-transform: uppercase; font-size: 12.5px; margin-bottom: 16px !important; }
 .em-muted { color: var(--mu); line-height: 1.7; margin-top: 18px !important; max-width: 460px; }
@@ -18,7 +18,7 @@
 
 .em-nav { position: absolute; z-index: 5; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px clamp(20px, 4vw, 56px); }
 .em-logo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--f-anton), sans-serif; font-size: 28px; letter-spacing: .12em; text-decoration: none; }
-.em-logo span { color: var(--o); font-size: 18px; }
+.em-logo > span[aria-hidden] { color: var(--o); font-size: 18px; }
 .em-nav nav { display: flex; gap: 30px; font-size: 13.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
 .em-nav nav a { text-decoration: none; opacity: .75; } .em-nav nav a:hover { opacity: 1; color: var(--o); }
 
@@ -30,17 +30,17 @@
 @keyframes em-rise { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translate(40px, -90vh) scale(.3); opacity: 0; } }
 .em-hero__in { width: min(1220px, calc(100% - 40px)); margin: 0 auto; }
 .em-tag { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 999px; font-size: 13px; color: var(--mu); margin-bottom: 28px !important; }
-.em-tag span { width: 8px; height: 8px; border-radius: 50%; background: #3ee07a; box-shadow: 0 0 0 4px rgba(62, 224, 122, .2); }
+.em-tag > span:not([data-cms]) { width: 8px; height: 8px; border-radius: 50%; background: #3ee07a; box-shadow: 0 0 0 4px rgba(62, 224, 122, .2); }
 .em h1 { font-size: clamp(60px, 10vw, 156px); margin-bottom: 34px; animation: em-slam .9s cubic-bezier(.2, .8, .2, 1) both; }
 @keyframes em-slam { from { opacity: 0; transform: translateY(40px) skewY(4deg); } }
 .em-lead { max-width: 520px; font-size: 18px; line-height: 1.7; color: #cfc9c0; margin-bottom: 34px !important; }
 .em-hero__nums { display: flex; gap: clamp(26px, 6vw, 80px); width: min(1220px, calc(100% - 40px)); margin: 70px auto 0; padding-top: 26px; border-top: 1px solid rgba(255, 255, 255, .1); }
 .em-hero__nums b { display: block; font-family: var(--f-anton), sans-serif; font-weight: 400; font-size: clamp(38px, 4.4vw, 62px); color: var(--o); line-height: 1; }
-.em-hero__nums span { font-size: 13px; text-transform: uppercase; letter-spacing: .14em; color: var(--mu); }
+.em-hero__nums li > span { font-size: 13px; text-transform: uppercase; letter-spacing: .14em; color: var(--mu); }
 
 .em-marquee { overflow: hidden; padding: 20px 0; background: var(--o); color: #120700; transform: rotate(-1.6deg) scale(1.03); }
 .em-marquee div { display: flex; width: max-content; animation: em-scroll 26s linear infinite; }
-.em-marquee span { font-family: var(--f-anton), sans-serif; font-size: 34px; letter-spacing: .06em; white-space: nowrap; padding-right: 20px; }
+.em-marquee > div > span { font-family: var(--f-anton), sans-serif; font-size: 34px; letter-spacing: .06em; white-space: nowrap; padding-right: 20px; }
 @keyframes em-scroll { to { transform: translateX(-50%); } }
 
 .em-sec { padding: clamp(90px, 11vw, 150px) 0; }
@@ -57,7 +57,7 @@
 .em-sched li { display: grid; grid-template-columns: 86px 1fr auto; gap: 18px; align-items: center; padding: 20px 6px; border-bottom: 1px solid rgba(255, 255, 255, .08); transition: background .2s, padding .2s; }
 .em-sched li:hover { background: rgba(255, 90, 31, .06); padding-left: 16px; }
 .em-sched time { font-family: var(--f-anton), sans-serif; font-size: 30px; color: var(--o); }
-.em-sched b { display: block; font-size: 17px; } .em-sched span { color: var(--mu); font-size: 13.5px; }
+.em-sched b { display: block; font-size: 17px; } .em-sched div > span { color: var(--mu); font-size: 13.5px; }
 .em-sched em { font-style: normal; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; padding: 6px 10px; border-radius: 4px; background: rgba(255, 255, 255, .06); color: var(--mu); white-space: nowrap; }
 .em-sched em.is-hot { background: rgba(255, 90, 31, .16); color: var(--o2); }
 

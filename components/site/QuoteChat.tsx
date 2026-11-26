@@ -14,7 +14,8 @@ import { useRouter } from 'next/navigation';
 import { ArrowUp, Bot, Check, MessageCircle, Send } from 'lucide-react';
 import { ADVICE, QUICK_SECTIONS, QUICK_STEPS, SCALE_TO_TIER, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
 import { EVENT_QUICK_SECTIONS, EVENT_QUICK_STEPS, eventEstimate } from '@/lib/event-brief';
-import { templateBySlug, type WebTemplate } from '@/lib/web-templates';
+import { templateById, type WebTemplate } from '@/lib/web-templates';
+import { useSite } from '../SiteStore';
 import { ADDONS, estimate, rangeText } from '@/lib/web-quote';
 import { isValidPhoneNumber } from '@/lib/contact-services';
 
@@ -64,12 +65,14 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   const router = useRouter();
   // Khách bấm "Dùng mẫu này" ở kho mẫu (/mau-website/) → /bao-gia-web/?mau=<slug>: ghi tên mẫu vào phiếu và nhắc trong khung chat
   const [tpl, setTpl] = useState<WebTemplate | null>(null);
+  const siteData = useSite().data;
   useEffect(() => {
     if (flow !== 'landing') return;
-    const t = templateBySlug(new URLSearchParams(window.location.search).get('mau') || '');
+    const t = templateById(siteData, new URLSearchParams(window.location.search).get('mau') || '');
     if (!t) return;
     setTpl(t);
     setMessages(m => [{ from: 'bot', text: `Bạn đã chọn ${t.name.toLowerCase()} (${t.brand}, phong cách ${t.style}). DANAVA sẽ may đo mẫu này theo thương hiệu của bạn.` }, ...m]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ đọc một lần khi mở trang
   }, [flow]);
   const anna = useAnna();
   const inAnna = anna.enabled;
@@ -136,7 +139,7 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   };
 
   const price = cfg.estimate(answers);
-  const brief = (tpl ? `Mẫu đã chọn: ${tpl.name} — ${tpl.brand} (/mau-website/${tpl.slug}/)
+  const brief = (tpl ? `Mẫu đã chọn: ${tpl.name} — ${tpl.brand} (/mau-website/${tpl.id}/)
 ` : '') + buildBrief(answers, steps, cfg.sections, cfg.title);
 
   /** Khách xác nhận: gửi vào admin rồi sang trang cảm ơn */

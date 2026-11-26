@@ -32,13 +32,14 @@
 .lt-sign { position: absolute; left: -8%; bottom: 14%; font-family: var(--f-vibes), cursive; font-size: clamp(60px, 7vw, 96px); color: var(--ink); transform: rotate(-8deg); }
 .lt-badge { position: absolute; right: -10px; top: 12%; display: flex; gap: 10px; align-items: center; padding: 14px 18px; border-radius: 18px; background: #fffaf4; box-shadow: 0 20px 40px -20px rgba(59, 42, 34, .4); font-size: 12px; color: var(--mu); line-height: 1.4; }
 .lt-badge b { font-family: var(--f-cormorant), serif; font-size: 40px; color: var(--ink); }
-.lt-badge span { color: #c98a2e; }
+.lt-badge i { font-style: normal; color: #c98a2e; }
+.lt-badge__txt { color: var(--mu); }
 
 .lt-philo { padding: clamp(80px, 10vw, 130px) 0; background: var(--ink); color: var(--iv); text-align: center; }
 .lt-quote { font-family: var(--f-cormorant), serif; font-style: italic; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.25; max-width: 900px; margin: 0 auto !important; }
 .lt-philo__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 760px; margin: 60px auto 0; }
 .lt-philo__row b { display: block; font-family: var(--f-cormorant), serif; font-size: 58px; font-weight: 500; color: #e9b99c; line-height: 1; }
-.lt-philo__row span { font-size: 13px; letter-spacing: .08em; opacity: .7; }
+.lt-philo__row div > span { font-size: 13px; letter-spacing: .08em; opacity: .7; }
 
 .lt-menu { padding: clamp(90px, 11vw, 150px) 0; }
 .lt-menu__grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(40px, 6vw, 90px); align-items: start; }

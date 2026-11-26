@@ -10,24 +10,30 @@ import { useEffect, useState } from 'react';
 export function DemoFx() {
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Trong trình biên tập (?cms=1): không chạy số, giữ nguyên chữ để sửa được
+    const editing = /[?&]cms=1(&|$)/.test(location.search);
     const els = document.querySelectorAll<HTMLElement>('[data-rv], [data-count]');
     const count = (el: HTMLElement) => {
-      const end = Number(el.dataset.count), dec = (el.dataset.count || '').split('.')[1]?.length || 0;
-      if (reduced || !Number.isFinite(end)) { el.textContent = end.toLocaleString('vi-VN', { minimumFractionDigits: dec }); return; }
+      // Số lấy từ chính nội dung (vd. "1.800", "1,2"): dấu chấm = phân cách nghìn, dấu phẩy = thập phân
+      const raw = (el.textContent || '').trim();
+      const m = raw.match(/^([\d.]+)(,(\d+))?(.*)$/);
+      if (editing || !m) return;
+      const dec = m[3]?.length || 0, end = Number(m[1].replace(/\./g, '') + (dec ? '.' + m[3] : '')), tail = m[4];
+      if (reduced || !Number.isFinite(end)) return;
       const t0 = performance.now(), dur = 1600;
       const step = (t: number) => {
         const p = Math.min(1, (t - t0) / dur), v = end * (1 - Math.pow(1 - p, 3));
-        el.textContent = v.toLocaleString('vi-VN', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+        el.textContent = v.toLocaleString('vi-VN', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + tail;
         if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
     };
-    if (reduced || !('IntersectionObserver' in window)) { els.forEach(el => { el.classList.add('is-in'); if (el.dataset.count) count(el); }); return; }
+    if (editing || reduced || !('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('is-in')); return; }
     const io = new IntersectionObserver(entries => entries.forEach(e => {
       if (!e.isIntersecting) return;
       const el = e.target as HTMLElement;
       el.classList.add('is-in');
-      if (el.dataset.count) count(el);
+      if (el.dataset.count !== undefined) count(el);
       io.unobserve(el);
     }), { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
     els.forEach(el => io.observe(el));

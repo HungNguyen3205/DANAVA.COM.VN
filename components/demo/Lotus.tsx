@@ -1,5 +1,6 @@
-/** Mẫu "Hoa Sen Spa" — spa & chăm sóc sắc đẹp, phong cách sen ngà (app/demo/lotus.css). */
+/** Mẫu "Hoa Sen Spa" — spa & chăm sóc sắc đẹp, phong cách sen ngà (app/demo/lotus.css). Mọi chữ: txt.demo.lt.* (sửa + dịch). */
 import { DemoFx, DemoForm } from './fx';
+import { demoText } from './text';
 
 function LotusArt({ className }: { className?: string }) {
   // Hoa sen vẽ tay bằng SVG: 7 cánh xoay quanh tâm, viền mảnh đất nung
@@ -22,54 +23,61 @@ const MENU = [
   { g: 'Nghi thức trọn gói', items: [['Nửa ngày an yên', '3 giờ', '1.990K'], ['Cặp đôi dưới trăng', '2 giờ', '2.400K']] }
 ];
 const RITUAL = [
-  ['Trà gừng mật ong', 'Đón bạn bằng tách trà ấm và khăn lạnh sả chanh.'],
-  ['Ngâm chân thảo mộc', 'Muối hồng, lá bưởi và cánh hoa hồng Đà Lạt.'],
-  ['Liệu trình chính', 'Kỹ thuật viên 5 năm kinh nghiệm, dầu ép lạnh hữu cơ.'],
-  ['Nghỉ trong vườn', 'Chè hạt sen, tiếng nước chảy và không có điện thoại.']
+  ['Một', 'Trà gừng mật ong', 'Đón bạn bằng tách trà ấm và khăn lạnh sả chanh.'],
+  ['Hai', 'Ngâm chân thảo mộc', 'Muối hồng, lá bưởi và cánh hoa hồng Đà Lạt.'],
+  ['Ba', 'Liệu trình chính', 'Kỹ thuật viên 5 năm kinh nghiệm, dầu ép lạnh hữu cơ.'],
+  ['Bốn', 'Nghỉ trong vườn', 'Chè hạt sen, tiếng nước chảy và không có điện thoại.']
 ];
+const VOICES = [
+  ['Lần đầu tiên tôi ngủ quên trên giường spa. Mùi sả và tiếng nước làm mình nhẹ cả người.', 'Chị Minh Thư · Đà Nẵng'],
+  ['Liệu trình đá nóng rất đáng tiền, kỹ thuật viên hỏi kỹ chỗ đau trước khi làm.', 'Anh Quốc Bảo · TP.HCM'],
+  ['Không gian như một khu vườn cũ của bà ngoại. Sẽ quay lại cùng mẹ.', 'Chị Hà Linh · Hà Nội']
+];
+const PHILO = [['12', 'năm gìn giữ công thức'], ['36', 'loại thảo mộc tự trồng'], ['100', '% dầu ép lạnh hữu cơ']];
+const SLOTS = ['09:30', '11:00', '14:00', '15:30', '17:00', '19:00'];
 
 export function LotusDemo() {
+  const { t, s, n } = demoText('lt', 'Hoa Sen Spa');
+  const logo = <>{t('logo.name', 'Hoa Sen')}<small>{t('logo.sub', 'spa & retreat')}</small></>;
   return (
     <main className="lt">
       <DemoFx />
       <header className="lt-nav">
-        <a className="lt-logo" href="#top">Hoa Sen<small>spa & retreat</small></a>
-        <nav aria-label="Mục lục"><a href="#triet-ly">Triết lý</a><a href="#lieu-trinh">Liệu trình</a><a href="#nghi-thuc">Nghi thức</a><a href="#dat-lich">Đặt lịch</a></nav>
+        <a className="lt-logo" href="#top">{logo}</a>
+        <nav aria-label={s('nav.aria', 'Mục lục')}><a href="#triet-ly">{t('nav.0', 'Triết lý')}</a><a href="#lieu-trinh">{t('nav.1', 'Liệu trình')}</a><a href="#nghi-thuc">{t('nav.2', 'Nghi thức')}</a><a href="#dat-lich">{t('nav.3', 'Đặt lịch')}</a></nav>
       </header>
 
       <section className="lt-hero" id="top">
         <div className="lt-hero__text">
-          <p className="lt-kicker">Spa thảo mộc · Hội An</p>
-          <h1>Chậm lại,<br /><em>để được chăm</em><br />như một đoá sen</h1>
-          <p className="lt-lead">Liệu trình từ thảo mộc vườn nhà, nước giếng cổ và đôi tay của những người thợ Hội An.</p>
-          <a className="lt-btn" href="#dat-lich">Đặt lịch hẹn</a>
+          <p className="lt-kicker">{t('hero.kicker', 'Spa thảo mộc · Hội An')}</p>
+          <h1>{t('hero.title1', 'Chậm lại,')}<br /><em>{t('hero.title2', 'để được chăm')}</em><br />{t('hero.title3', 'như một đoá sen')}</h1>
+          <p className="lt-lead">{t('hero.lead', 'Liệu trình từ thảo mộc vườn nhà, nước giếng cổ và đôi tay của những người thợ Hội An.', { multiline: true })}</p>
+          <a className="lt-btn" href="#dat-lich">{t('hero.cta', 'Đặt lịch hẹn')}</a>
         </div>
         <div className="lt-hero__art">
           <div className="lt-arch"><div className="lt-arch__sun" /><LotusArt className="lt-lotus" /><div className="lt-arch__water" /></div>
-          <span className="lt-sign">Hoa Sen</span>
-          <div className="lt-badge"><b>4.9</b><span>★★★★★<br />1.240 đánh giá</span></div>
+          <span className="lt-sign">{t('hero.sign', 'Hoa Sen')}</span>
+          <div className="lt-badge"><b>{t('hero.rating', '4.9')}</b><span className="lt-badge__txt"><i>★★★★★</i><br />{t('hero.reviews', '1.240 đánh giá')}</span></div>
         </div>
       </section>
 
       <section className="lt-philo" id="triet-ly">
         <div className="lt-wrap" data-rv>
-          <p className="lt-quote">“Sắc đẹp không vội. Nó nở ra khi cơ thể được nghỉ ngơi đủ lâu.”</p>
+          <p className="lt-quote">{t('philo.quote', '“Sắc đẹp không vội. Nó nở ra khi cơ thể được nghỉ ngơi đủ lâu.”', { multiline: true })}</p>
           <div className="lt-philo__row">
-            <div><b data-count="12">0</b><span>năm gìn giữ công thức</span></div>
-            <div><b data-count="36">0</b><span>loại thảo mộc tự trồng</span></div>
-            <div><b data-count="100">0</b><span>% dầu ép lạnh hữu cơ</span></div>
+            {PHILO.map(([v, l], i) => <div key={i}><b>{n(`philo.${i}.n`, v)}</b><span>{t(`philo.${i}.label`, l)}</span></div>)}
           </div>
         </div>
       </section>
 
       <section className="lt-menu" id="lieu-trinh">
         <div className="lt-wrap lt-menu__grid">
-          <div className="lt-menu__head" data-rv><p className="lt-kicker">Thực đơn liệu trình</p><h2>Chọn như <em>chọn trà</em></h2><p>Giá đã gồm trà đón, khăn nóng và nghỉ trong vườn sau liệu trình.</p></div>
+          <div className="lt-menu__head" data-rv><p className="lt-kicker">{t('menu.kicker', 'Thực đơn liệu trình')}</p><h2>{t('menu.title1', 'Chọn như')} <em>{t('menu.title2', 'chọn trà')}</em></h2><p>{t('menu.lead', 'Giá đã gồm trà đón, khăn nóng và nghỉ trong vườn sau liệu trình.', { multiline: true })}</p></div>
           <div className="lt-menu__card">
             {MENU.map((m, i) => (
-              <div key={m.g} className="lt-menu__group" data-rv style={{ ['--d' as string]: `${i * 100}ms` }}>
-                <h3>{m.g}</h3>
-                <ul>{m.items.map(([n, t, p]) => <li key={n}><span className="lt-menu__n">{n}<small>{t}</small></span><span className="lt-menu__dots" aria-hidden="true" /><b>{p}</b></li>)}</ul>
+              <div key={i} className="lt-menu__group" data-rv style={{ ['--d' as string]: `${i * 100}ms` }}>
+                <h3>{t(`menu.${i}.group`, m.g)}</h3>
+                <ul>{m.items.map(([nm, tm, p], j) => <li key={j}><span className="lt-menu__n">{t(`menu.${i}.${j}.name`, nm)}<small>{t(`menu.${i}.${j}.time`, tm)}</small></span><span className="lt-menu__dots" aria-hidden="true" /><b>{t(`menu.${i}.${j}.price`, p)}</b></li>)}</ul>
               </div>
             ))}
           </div>
@@ -78,10 +86,10 @@ export function LotusDemo() {
 
       <section className="lt-ritual" id="nghi-thuc">
         <div className="lt-wrap">
-          <h2 className="lt-center" data-rv>Nghi thức <em>bốn bước</em></h2>
+          <h2 className="lt-center" data-rv>{t('ritual.title1', 'Nghi thức')} <em>{t('ritual.title2', 'bốn bước')}</em></h2>
           <ol className="lt-ritual__list">
-            {RITUAL.map(([h, p], i) => (
-              <li key={h} data-rv style={{ ['--d' as string]: `${i * 110}ms` }}><span className="lt-ritual__no">{['Một', 'Hai', 'Ba', 'Bốn'][i]}</span><h3>{h}</h3><p>{p}</p></li>
+            {RITUAL.map(([no, h, p], i) => (
+              <li key={i} data-rv style={{ ['--d' as string]: `${i * 110}ms` }}><span className="lt-ritual__no">{t(`ritual.${i}.no`, no)}</span><h3>{t(`ritual.${i}.title`, h)}</h3><p>{t(`ritual.${i}.text`, p, { multiline: true })}</p></li>
             ))}
           </ol>
         </div>
@@ -89,26 +97,26 @@ export function LotusDemo() {
 
       <section className="lt-voice">
         <div className="lt-wrap lt-voice__grid">
-          {[['Lần đầu tiên tôi ngủ quên trên giường spa. Mùi sả và tiếng nước làm mình nhẹ cả người.', 'Chị Minh Thư · Đà Nẵng'], ['Liệu trình đá nóng rất đáng tiền, kỹ thuật viên hỏi kỹ chỗ đau trước khi làm.', 'Anh Quốc Bảo · TP.HCM'], ['Không gian như một khu vườn cũ của bà ngoại. Sẽ quay lại cùng mẹ.', 'Chị Hà Linh · Hà Nội']].map(([q, n], i) => (
-            <figure key={n} data-rv style={{ ['--d' as string]: `${i * 100}ms` }}><blockquote>{q}</blockquote><figcaption>{n}</figcaption></figure>
+          {VOICES.map(([q, nm], i) => (
+            <figure key={i} data-rv style={{ ['--d' as string]: `${i * 100}ms` }}><blockquote>{t(`voice.${i}.quote`, q, { multiline: true })}</blockquote><figcaption>{t(`voice.${i}.name`, nm)}</figcaption></figure>
           ))}
         </div>
       </section>
 
       <section className="lt-book" id="dat-lich">
         <div className="lt-wrap lt-book__grid">
-          <div data-rv><span className="lt-script">Hẹn bạn</span><h2>Giữ một khoảng lặng <em>cho mình</em></h2><p>Mở cửa 9:00 – 21:00 mỗi ngày. Spa sẽ gọi xác nhận trong 10 phút.</p></div>
-          <DemoForm className="lt-form" done="Hoa Sen đã nhận lịch hẹn minh hoạ của bạn. Trên website thật, lễ tân sẽ gọi xác nhận ngay.">
-            <label>Liệu trình<select name="svc" defaultValue="Đá nóng núi lửa">{MENU.flatMap(m => m.items.map(i => <option key={i[0]}>{i[0]}</option>))}</select></label>
-            <fieldset><legend>Khung giờ</legend>
-              <div className="lt-slots">{['09:30', '11:00', '14:00', '15:30', '17:00', '19:00'].map((s, i) => <label key={s}><input type="radio" name="slot" value={s} defaultChecked={i === 2} /><span>{s}</span></label>)}</div>
+          <div data-rv><span className="lt-script">{t('book.script', 'Hẹn bạn')}</span><h2>{t('book.title1', 'Giữ một khoảng lặng')} <em>{t('book.title2', 'cho mình')}</em></h2><p>{t('book.lead', 'Mở cửa 9:00 – 21:00 mỗi ngày. Spa sẽ gọi xác nhận trong 10 phút.', { multiline: true })}</p></div>
+          <DemoForm className="lt-form" done={s('form.done', 'Hoa Sen đã nhận lịch hẹn minh hoạ của bạn. Trên website thật, lễ tân sẽ gọi xác nhận ngay.')}>
+            <label>{t('form.svc', 'Liệu trình')}<select name="svc">{MENU.flatMap((m, i) => m.items.map((it, j) => <option key={`${i}-${j}`}>{s(`menu.${i}.${j}.name`, it[0])}</option>))}</select></label>
+            <fieldset><legend>{t('form.slot', 'Khung giờ')}</legend>
+              <div className="lt-slots">{SLOTS.map((v, i) => <label key={v}><input type="radio" name="slot" value={v} defaultChecked={i === 2} /><span>{v}</span></label>)}</div>
             </fieldset>
-            <div className="lt-form__row"><label>Tên của bạn<input name="name" required /></label><label>Điện thoại<input name="phone" required inputMode="tel" /></label></div>
-            <button className="lt-btn" type="submit">Xác nhận lịch hẹn</button>
+            <div className="lt-form__row"><label>{t('form.name', 'Tên của bạn')}<input name="name" required /></label><label>{t('form.phone', 'Điện thoại')}<input name="phone" required inputMode="tel" /></label></div>
+            <button className="lt-btn" type="submit">{t('form.submit', 'Xác nhận lịch hẹn')}</button>
           </DemoForm>
         </div>
       </section>
-      <footer className="lt-foot"><span className="lt-logo">Hoa Sen<small>spa & retreat</small></span><p>Thương hiệu minh hoạ — mẫu giao diện do DANAVA thiết kế.</p></footer>
+      <footer className="lt-foot"><span className="lt-logo">{logo}</span><p>{t('foot', 'Thương hiệu minh hoạ — mẫu giao diện do DANAVA thiết kế.')}</p></footer>
     </main>
   );
 }

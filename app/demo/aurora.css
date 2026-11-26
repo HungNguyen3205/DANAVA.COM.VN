@@ -24,7 +24,7 @@
 
 .au-nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px clamp(20px, 4vw, 56px); }
 .au-logo { font-weight: 800; font-size: 22px; letter-spacing: .2em; text-decoration: none; }
-.au-logo span { color: var(--c); letter-spacing: 0; }
+.au-logo__yr { color: var(--c); letter-spacing: 0; }
 .au-nav nav { display: flex; gap: 30px; font-size: 14px; } .au-nav nav a { text-decoration: none; color: var(--mu); } .au-nav nav a:hover { color: var(--tx); }
 
 .au-hero { min-height: calc(100vh - 90px); display: grid; place-content: center; justify-items: center; text-align: center; padding: 40px 20px 100px; }

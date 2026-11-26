@@ -37,7 +37,7 @@ export function validCmsPath(path: string): boolean {
  * (Giải pháp, Bài viết, Dự án, Hồ sơ thương hiệu…). Chỉ ghi vào trường đang là chữ;
  * trường kỹ thuật (mã, đường dẫn, liên kết, quan hệ, trạng thái) không sửa ở đây.
  */
-export const REC_KINDS = ['services', 'subServices', 'posts', 'projects', 'topics', 'staff', 'testimonials', 'clients', 'showcase', 'metrics'] as const;
+export const REC_KINDS = ['services', 'subServices', 'posts', 'projects', 'topics', 'staff', 'testimonials', 'clients', 'showcase', 'metrics', 'webTemplates'] as const;
 const REC_BLOCKED = new Set(['id', 'slug', 'parentId', 'serviceId', 'serviceIds', 'projectId', 'topicId', 'authorId', 'groupId', 'type', 'href', 'url', 'source', 'date', 'updated', 'published', 'visible', 'featured', 'status', 'order', 'logo', 'icon', 'tone', 'body']);
 type RecKind = (typeof REC_KINDS)[number];
 type RecItem = { id: string } & Record<string, unknown>;

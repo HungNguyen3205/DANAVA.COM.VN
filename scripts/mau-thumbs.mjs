@@ -9,7 +9,8 @@ import sharp from 'sharp';
 
 const base = process.argv[2] || 'http://localhost:3000';
 const src = readFileSync('lib/web-templates.ts', 'utf8');
-const all = [...src.matchAll(/slug: '([^']+)'[^\n]*\n(?:(?!slug:)[\s\S])*?thumb: '\/assets\/mau\//g)].map(m => m[1]);
+// Mẫu demo có trong mã (lib/web-templates.ts → DEMO_IDS)
+const all = JSON.parse(src.match(/DEMO_IDS = (\[[^\]]+\])/)[1].replace(/'/g, '"'));
 const slugs = process.argv.slice(3).length ? process.argv.slice(3) : all;
 const BROWSER = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Google/Chrome/Application/chrome.exe', '/usr/bin/google-chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'].find(existsSync);
 const sleep = ms => new Promise(r => setTimeout(r, ms));

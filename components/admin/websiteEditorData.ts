@@ -6,6 +6,7 @@ import type { SiteData } from '@/lib/content';
 import { DICH_VU } from '@/lib/dich-vu';
 import { SITE_PAGES, findSitePage } from './websitePages';
 import type { EditorPage } from './LiveEditor';
+import { webTemplatesOf } from '@/lib/web-templates';
 
 export const EDITOR_SLUG = 'chinh-sua';
 export const EDITOR_LAST_KEY = 'danava-editor-last';
@@ -21,6 +22,12 @@ export function editorPages(d: SiteData): EditorPage[] {
   add({ path: '/giai-phap/setup-van-hanh-phong-gym/', label: 'Setup & vận hành phòng gym', type: 'Trang' });
   add({ path: '/bao-gia-setup-phong-gym/', label: 'Phòng lab 3D setup phòng gym', type: 'Trang' });
   add({ path: '/thiet-bi-gym/', label: 'Thiết bị phòng gym', type: 'Trang', note: 'giá máy sửa ở Giải pháp → Thiết bị phòng gym' });
+  // Kho mẫu website: trang danh sách, trang xem trước và chữ bên trong từng demo (Giải pháp → Kho mẫu website)
+  add({ path: '/mau-website/', label: 'Kho mẫu website', type: 'Trang', note: 'thẻ mẫu sửa ở Giải pháp → Kho mẫu website' });
+  for (const t of webTemplatesOf(d)) if (t.kind === 'demo') {
+    add({ path: `/mau-website/${t.id}/`, label: `Xem trước: ${t.name}`, type: 'Kho mẫu' });
+    add({ path: `/demo/${t.id}/`, label: `Demo: ${t.brand}`, type: 'Kho mẫu', note: 'chữ bên trong trang demo' });
+  }
   for (const s of d.services) if (s.published !== false) add({ path: `/giai-phap/${s.slug}/`, label: s.title, type: 'Sản phẩm' });
   for (const s of d.subServices || []) {
     const parent = d.services.find(x => x.id === s.parentId);

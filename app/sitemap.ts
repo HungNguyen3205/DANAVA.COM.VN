@@ -3,7 +3,7 @@ import { localePath } from '@/lib/i18n';
 import { getSiteContent } from '@/lib/database';
 import { siteURL, indexable } from '@/lib/seo';
 import { DICH_VU } from '@/lib/dich-vu';
-import { demoTemplates } from '@/lib/web-templates';
+import { publishedTemplates } from '@/lib/web-templates';
 import { showcaseCaseStudies, publishedProjects, publishedSubServices, subServiceHref, topicHasPage, topicHref, postsForTopic } from '@/lib/site-queries';
 
 export const dynamic = 'force-dynamic';
@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/thiet-bi-gym/'),
     entry('/bao-gia-web/'),
     entry('/mau-website/'),
-    ...demoTemplates().map(t => entry(`/mau-website/${t.slug}/`)),
+    ...publishedTemplates(data).filter(t => t.kind === 'demo').map(t => entry(`/mau-website/${t.id}/`)),
     entry('/bao-gia-su-kien/'),
     entry('/du-an/', latest(...projects.map(p => p.updated))),
     ...projects.map(p => entry(`/du-an/${p.slug}/`, p.updated)),
