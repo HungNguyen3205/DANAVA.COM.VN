@@ -167,7 +167,7 @@ export function GymSolutionsPage({ data }: { data: SiteData }) {
         </div>
       </section>
 
-      <CtaBand data={data} title="Cùng bạn phát triển" lead="Trao đổi với DANAVA về kế hoạch mở mới hoặc nâng cấp phòng tập của bạn."
+      <CtaBand data={data} title={T('cta.title', 'Cùng bạn phát triển', 'Dải cuối trang: tiêu đề')} lead={T('cta.lead', 'Trao đổi với DANAVA về kế hoạch mở mới hoặc nâng cấp phòng tập của bạn.', 'Dải cuối trang: câu dẫn', { multiline: true })}
         primary={{ href: CONSULT, label: 'Đặt lịch tư vấn setup phòng gym' }} secondary={{ href: LAB, label: 'Setup phòng tập 3D' }} />
     </main>
   );

@@ -56,9 +56,9 @@ export function EquipmentPage({ data }: { data: SiteData }) {
           </div>
         </section>
       ))}
-      {!list.length && <section className="eqp-group"><div className="s-container"><p className="gy-lead">Danh mục thiết bị đang được cập nhật.</p></div></section>}
+      {!list.length && <section className="eqp-group"><div className="s-container"><p className="gy-lead">{(() => { const x = ct(data, 'equipment.empty', 'Danh mục thiết bị đang được cập nhật.', 'Khi chưa có thiết bị'); return <span {...x.a}>{x.v}</span>; })()}</p></div></section>}
 
-      <CtaBand data={data} title="Cần tư vấn chọn máy cho phòng tập?" lead="DANAVA khảo sát mặt bằng, đề xuất bố cục và danh mục thiết bị phù hợp ngân sách."
+      <CtaBand data={data} title={(() => { const x = ct(data, 'equipment.cta.title', 'Cần tư vấn chọn máy cho phòng tập?', 'Dải cuối trang: tiêu đề'); return <span {...x.a}>{x.v}</span>; })()} lead={(() => { const x = ct(data, 'equipment.cta.lead', 'DANAVA khảo sát mặt bằng, đề xuất bố cục và danh mục thiết bị phù hợp ngân sách.', 'Dải cuối trang: câu dẫn', { multiline: true }); return <span {...x.a}>{x.v}</span>; })()}
         primary={{ href: '/lien-he/?service=danava-studio', label: 'Đặt lịch tư vấn setup phòng gym' }} secondary={{ href: '/giai-phap/setup-van-hanh-phong-gym/', label: 'Xem giải pháp setup' }} />
     </main>
   );
