@@ -38,6 +38,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/giai-phap/danava-go/'),
     entry('/giai-phap/hello-danava/'),
     entry('/giai-phap/danava-work/'),
+    // Gym & báo giá (trang riêng, không thuộc data.services)
+    entry('/giai-phap/setup-van-hanh-phong-gym/'),
+    entry('/bao-gia-setup-phong-gym/'),
+    entry('/thiet-bi-gym/'),
+    entry('/bao-gia-web/'),
+    entry('/bao-gia-su-kien/'),
     entry('/du-an/', latest(...projects.map(p => p.updated))),
     ...projects.map(p => entry(`/du-an/${p.slug}/`, p.updated)),
     ...showcaseCaseStudies(data).map(x => entry(`/du-an/${x.slug}/`, x.updated)),
