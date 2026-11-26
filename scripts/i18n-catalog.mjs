@@ -17,7 +17,8 @@ let target; for (let i = 0; i < 60 && !target; i++) { try { target = (await (awa
 const ws = new WebSocket(target.webSocketDebuggerUrl); await new Promise(r => ws.addEventListener('open', r, { once: true }));
 let id = 0; const waiting = new Map();
 ws.addEventListener('message', e => { const m = JSON.parse(e.data); if (m.id && waiting.has(m.id)) { waiting.get(m.id)(m); waiting.delete(m.id); } });
-const send = (method, params = {}) => new Promise(r => { const n = ++id; waiting.set(n, r); ws.send(JSON.stringify({ id: n, method, params })); });
+// Mỗi lệnh tối đa 30 giây (trang có khung demo đôi khi làm trình duyệt ẩn không trả lời) → bỏ qua thay vì treo cả lượt quét
+const send = (method, params = {}) => new Promise(r => { const n = ++id; waiting.set(n, r); ws.send(JSON.stringify({ id: n, method, params })); setTimeout(() => { if (waiting.delete(n)) { console.log(`  quá giờ: ${method}`); r({}); } }, 30_000); });
 const ev = async expr => (await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true })).result?.result?.value;
 const go = async url => { await send('Page.navigate', { url }); for (let i = 0; i < 80; i++) { await sleep(150); if (await ev('document.readyState') === 'complete') break; } await sleep(900); };
 await send('Page.enable'); await send('Runtime.enable');
