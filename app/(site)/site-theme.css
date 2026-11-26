@@ -925,6 +925,26 @@ html[data-cms-edit] .c-hours-raw { display: inline-block !important; }
 }
 @media (max-width: 380px) { .s-cta-wrap { --anna-w: 112px; } }
 
+/* Điện thoại (≤600px) — gọn lại theo yêu cầu khách 26/11/2026:
+   ANNA thu nhỏ thành ảnh chân dung ở góc trên trái, cạnh tiêu đề + câu dẫn; các nút trải hết bề ngang bên dưới
+   (trước đây nút bị ép vào cột hẹp cạnh ANNA nên chữ tràn ra ngoài). Bớt khoảng trống phía trên dải. */
+@media (max-width: 600px) {
+  .s-section:has(> .s-container > .s-cta-wrap) { padding-top: 8px; }
+  .s-cta-wrap { --anna-w: 104px; margin-top: 12px; }
+  .s-app .s-cta.s-cta--anna { min-height: 0; padding: 16px 14px 14px; gap: 14px; border-radius: 22px; }
+  .s-app .s-cta.s-cta--anna > div:first-child { display: flex; flex-direction: column; justify-content: center; min-height: 104px; padding-left: calc(var(--anna-w) - 2px); }
+  .s-cta__anna {
+    top: 0; bottom: auto; left: 0; width: var(--anna-w); height: 128px; border-radius: 22px 0 0 0; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%); mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  }
+  .s-cta__anna img { position: absolute; left: 0; top: 0; width: 100%; height: 175%; object-fit: cover; object-position: 18% top; -webkit-mask-image: none; mask-image: none; }
+  .s-cta__halo { top: 4%; left: -10%; right: -10%; }
+  .s-app .s-cta.s-cta--anna .s-h2 { font-size: 20px; line-height: 1.2; }
+  .s-app .s-cta.s-cta--anna .s-lead { display: block; margin-top: 6px; font-size: 13px; line-height: 1.45; }
+  .s-app .s-cta.s-cta--anna .s-row { gap: 8px; }
+  .s-app .s-cta.s-cta--anna .s-btn { min-height: 44px; padding: 8px 14px; font-size: 14px; line-height: 1.25; white-space: normal; text-align: center; }
+}
+
 /* Dải cuối trang có ANNA: cột chữ đủ rộng, cột nút tối đa 460px, nút tự xuống dòng (trang có 3 nút) */
 @media (min-width: 861px) {
   .s-app .s-cta.s-cta--anna { grid-template-columns: minmax(260px, 1fr) minmax(0, 460px); }

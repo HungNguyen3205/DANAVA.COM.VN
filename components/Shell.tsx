@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { ChevronDown, Menu, Phone, Mail, MapPin, ArrowRight, ArrowUpRight, Home, LayoutGrid, MessageCircle, Briefcase, Newspaper, Info, FolderKanban, BriefcaseBusiness, Users, type LucideIcon } from 'lucide-react';
 import { useSite } from './SiteStore';
 import { sortServices, CONTACT, formatPhone } from './site/catalog';
@@ -133,6 +133,9 @@ export function Header() {
   const enter = () => { if (closeTimer.current) clearTimeout(closeTimer.current); setMega(true); };
   const leave = () => { closeTimer.current = setTimeout(() => setMega(false), 120); };
   const active = (href: string) => path.startsWith(href);
+  // Mở menu thả xuống khi rê chuột — chỉ với chuột thật. Màn cảm ứng (máy tính bảng, điện thoại xoay ngang) cũng phát sự kiện "rê vào"
+  // ngay trước cú bấm: menu vừa mở đã bị nút bấm đảo lại thành đóng → bấm "Giải pháp / Dịch vụ / Về chúng tôi" không mở được.
+  const hover = (fn: () => void) => (e: ReactPointerEvent) => { if (e.pointerType === 'mouse') fn(); };
 
   return (
     <>
@@ -147,7 +150,7 @@ export function Header() {
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/" aria-current={path === '/' ? 'page' : undefined}><S data={data} k="nav.home" def="Trang chủ" label="Menu: Trang chủ" /></Link>
               </li>
-              <li ref={megaRef} className={`s-nav__item s-nav__item--mega${mega ? ' is-open' : ''}`} onMouseEnter={enter} onMouseLeave={leave}>
+              <li ref={megaRef} className={`s-nav__item s-nav__item--mega${mega ? ' is-open' : ''}`} onPointerEnter={hover(enter)} onPointerLeave={hover(leave)}>
                 <button
                   type="button"
                   className="s-nav__link"
@@ -178,7 +181,7 @@ export function Header() {
                 </div>
               </li>
               {/* Dịch vụ: danh mục báo giá bên trái, mục của danh mục đang chọn bên phải (lib/services-menu.ts) */}
-              <li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onMouseEnter={() => setSvc(true)} onMouseLeave={() => setSvc(false)}>
+              <li ref={svcRef} className={`s-nav__item s-nav__item--mega${svc ? ' is-open' : ''}`} onPointerEnter={hover(() => setSvc(true))} onPointerLeave={hover(() => setSvc(false))}>
                 <button
                   type="button"
                   className="s-nav__link"
@@ -212,7 +215,7 @@ export function Header() {
                         <Link key={g.id + it.id} className="s-svc__item" href={it.href} onClick={() => setSvc(false)}>
                           <span className="s-svc__arrow" aria-hidden="true"><ArrowRight /></span>
                           <span className="s-svc__txt">
-                            <span className="s-svc__label"><span {...l.a}>{l.v}</span>{it.badge && <span className="s-svc__badge">{it.badge}</span>}</span>
+                            <span className="s-svc__label"><span {...l.a}>{l.v}</span>{it.badge && (() => { const b = ct(data, `nav.svc.${g.id}.${it.id}.badge`, it.badge, 'Menu Dịch vụ: nhãn nổi bật', { scope: 'global' }); return <span className="s-svc__badge" {...b.a}>{b.v}</span>; })()}</span>
                             <span className="s-svc__desc" {...d.a}>{d.v}</span>
                           </span>
                         </Link>
@@ -224,7 +227,7 @@ export function Header() {
               <li className="s-nav__item">
                 <Link className="s-nav__link" href="/he-sinh-thai/" aria-current={active('/he-sinh-thai/') ? 'page' : undefined}><S data={data} k="nav.ecosystem" def="Hệ sinh thái" label="Menu: Hệ sinh thái" /></Link>
               </li>
-              <li ref={aboutRef} className={`s-nav__item s-nav__item--mega${about ? ' is-open' : ''}`} onMouseEnter={() => setAbout(true)} onMouseLeave={() => setAbout(false)}>
+              <li ref={aboutRef} className={`s-nav__item s-nav__item--mega${about ? ' is-open' : ''}`} onPointerEnter={hover(() => setAbout(true))} onPointerLeave={hover(() => setAbout(false))}>
                 <button
                   type="button"
                   className="s-nav__link"
@@ -260,6 +263,7 @@ export function Header() {
 
           <div className="s-header__actions">
             <LangSwitch />
+            <LangSwitch variant="flags" />
             <Link className="s-btn s-btn--primary s-btn--sm" href="/lien-he/#dang-ky-tu-van"><S data={data} k="nav.cta" def="Nhận tư vấn" label="Nút đầu trang" /></Link>
             <button
               type="button"

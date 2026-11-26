@@ -5,7 +5,6 @@
  * Nhóm và mục lấy từ CMS (Menu Giải pháp); các trang chính không có trong nhóm được liệt kê ở "Khám phá".
  */
 import Link from 'next/link';
-import { LangSwitch } from './LangSwitch';
 import { useEffect } from 'react';
 import { AppWindow, ArrowRight, ArrowUpRight, Box, BriefcaseBusiness, Calculator, ChevronRight, Dumbbell, FolderKanban, Globe, Home, Info, LayoutGrid, LayoutTemplate, MessageCircle, Network, Newspaper, PartyPopper, Phone, Plane, Ticket, Users, Warehouse, X, type LucideIcon } from 'lucide-react';
 import { MayFigure } from './anna/MayFigure';
@@ -88,7 +87,6 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
       </div>
 
       <div className="sm__scroll" data-scroll-top>
-        <LangSwitch variant="row" onPick={onClose} />
         <nav aria-label="Menu chính">
           <Link className="sm__row sm__row--home" href="/" onClick={onClose} aria-current={current('/')}>
             <Home className="sm__icon" aria-hidden="true" /><span className="sm__label" {...home.a}>{home.v}</span>
@@ -124,16 +122,17 @@ export function MobileMenu({ open, onClose, path }: { open: boolean; onClose: ()
           ))}
 
           {/* Dịch vụ: mỗi nhóm báo giá một nhóm nhỏ (lib/services-menu.ts) */}
-          {SERVICE_MENU.map(g => { const GI = GROUP_ICON[g.icon]; return (
+          {/* Chữ dùng chung khóa với menu Dịch vụ trên máy tính (nav.svc.*) → có bản dịch EN/JA; tên ngắn: nav.svc.<nhóm>.<mục>.short */}
+          {SERVICE_MENU.map(g => { const GI = GROUP_ICON[g.icon]; const gl = ct(data, `nav.svc.${g.id}.label`, g.label, 'Menu Dịch vụ: tên nhóm', { scope: 'global' }); return (
             <section key={g.id} className="sm__group sm__group--more sm__svcgroup" style={{ ['--i' as string]: menu.columns.length }} aria-labelledby={`sm-svc-${g.id}`}>
-              <h2 className="sm__subtitle sm__svchead" id={`sm-svc-${g.id}`}><GI aria-hidden="true" strokeWidth={2} />{g.label}</h2>
+              <h2 className="sm__subtitle sm__svchead" id={`sm-svc-${g.id}`}><GI aria-hidden="true" strokeWidth={2} /><span {...gl.a}>{gl.v}</span></h2>
               <ul className="sm__svc">
-                {g.items.map(it => { const Icon = it.icon ? SVC_ICON[it.icon] : ChevronRight; return (
+                {g.items.map(it => { const Icon = it.icon ? SVC_ICON[it.icon] : ChevronRight; const full = txt(data, `nav.svc.${g.id}.${it.id}.label`, it.label); const s = it.short ? ct(data, `nav.svc.${g.id}.${it.id}.short`, it.short, 'Menu Dịch vụ: tên ngắn (điện thoại)', { scope: 'global' }) : ct(data, `nav.svc.${g.id}.${it.id}.label`, it.label, 'Menu Dịch vụ: tên mục', { scope: 'global' }); return (
                   <li key={it.id}>
-                    <Link className="sm__tile" href={it.href} onClick={onClose} aria-current={current(it.href)} title={it.label}>
+                    <Link className="sm__tile" href={it.href} onClick={onClose} aria-current={current(it.href)} title={full}>
                       <span className="sm__tileicon"><Icon aria-hidden="true" strokeWidth={1.9} /></span>
-                      <span className="sm__tilelabel">{it.short || it.label}</span>
-                      {it.badge ? <small className="sm__tilebadge">{it.badge}</small> : null}
+                      <span className="sm__tilelabel" {...s.a}>{s.v}</span>
+                      {it.badge ? (() => { const b = ct(data, `nav.svc.${g.id}.${it.id}.badge`, it.badge, 'Menu Dịch vụ: nhãn nổi bật', { scope: 'global' }); return <small className="sm__tilebadge" {...b.a}>{b.v}</small>; })() : null}
                     </Link>
                   </li>
                 ); })}

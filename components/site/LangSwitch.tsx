@@ -23,7 +23,7 @@ function hrefFor(loc: Locale) {
   return localePath(path, loc) + window.location.search.replace(/([?&])cms=1(&|$)/, '$1').replace(/[?&]$/, '') + window.location.hash;
 }
 
-export function LangSwitch({ variant = 'menu', onPick }: { variant?: 'menu' | 'row'; onPick?: () => void }) {
+export function LangSwitch({ variant = 'menu', onPick }: { variant?: 'menu' | 'row' | 'flags'; onPick?: () => void }) {
   const current = useLocale();
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -38,6 +38,16 @@ export function LangSwitch({ variant = 'menu', onPick }: { variant?: 'menu' | 'r
   // Đổi ngôn ngữ = tải lại trang ở đường dẫn mới (máy chủ render đúng ngôn ngữ, kể cả SEO và <html lang>)
   const go = (loc: Locale) => { onPick?.(); setOpen(false); if (loc !== current) window.location.assign(hrefFor(loc)); };
 
+  // Đầu trang điện thoại: 3 lá cờ bấm thẳng (không cần mở menu) — yêu cầu khách 26/11/2026
+  if (variant === 'flags') {
+    return (
+      <div className="s-lang-flags" role="group" aria-label="Ngôn ngữ / Language / 言語">
+        {LOCALES.map(l => (
+          <button key={l} type="button" lang={LOCALE_INFO[l].html} aria-pressed={l === current} aria-label={LOCALE_INFO[l].label} title={LOCALE_INFO[l].label} onClick={() => go(l)}><Flag loc={l} /></button>
+        ))}
+      </div>
+    );
+  }
   if (variant === 'row') {
     return (
       <div className="s-lang-row" role="group" aria-label="Ngôn ngữ / Language / 言語">

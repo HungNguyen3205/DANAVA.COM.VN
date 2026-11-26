@@ -238,6 +238,20 @@ html.is-cine .s-app .cd, html.has-modal .s-app .cd { opacity: 0; visibility: hid
 .s-lang-row button[aria-pressed=true] { background: #fff; color: #13244f; box-shadow: 0 2px 6px rgba(17, 26, 51, .1); }
 /* Màn hẹp: nút gọn (chỉ biểu tượng + mã) — menu điện thoại đã có hàng chọn đầy đủ */
 @media (max-width: 760px) { .s-header .s-lang { display: none; } }
+/* Điện thoại: 3 lá cờ ngay trên đầu trang (giữa logo và nút MENU), bấm là đổi ngôn ngữ */
+.s-lang-flags { display: none; }
+@media (max-width: 760px) {
+  .s-header .s-lang-flags { display: flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid #e3e7ef; border-radius: 999px; background: #fff; }
+  .s-app .s-header .s-lang-flags button { display: grid; place-items: center; width: 32px; height: 30px; padding: 0; border: 0; border-radius: 999px; background: none; cursor: pointer; opacity: .55; filter: saturate(.7); transition: opacity .15s, background-color .15s; -webkit-tap-highlight-color: transparent; }
+  .s-app .s-header .s-lang-flags button[aria-pressed=true] { opacity: 1; filter: none; background: #fff1e6 !important; box-shadow: inset 0 0 0 1.5px #f6b98c !important; }
+  .s-lang-flags button:focus-visible { outline: 3px solid rgba(242, 107, 29, .45); outline-offset: 1px; }
+  .s-lang-flags .s-flag { width: 21px; height: 14px; }
+  .s-app .s-header__actions { gap: 8px; }
+}
+@media (max-width: 359px) {
+  .s-app .s-header .s-lang-flags button { width: 27px; }
+  .s-lang-flags .s-flag { width: 18px; height: 12px; }
+}
 @media (prefers-reduced-motion: reduce) { .s-lang__menu { animation: none; } }
 /* Lá cờ trước tên ngôn ngữ (components/site/Flag.tsx) */
 .s-flag { display: block; flex: none; width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(17, 26, 51, .12); overflow: hidden; }
