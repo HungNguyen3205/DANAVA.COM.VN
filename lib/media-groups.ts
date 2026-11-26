@@ -29,6 +29,7 @@ export const MEDIA_GROUPS: MediaGroup[] = [
   { id: 'portfolio-vinhomes', section: 'Dự án', label: 'Portfolio: Vinhomes', prefix: '/assets/portfolio/vinhomes/', hint: 'Website / landing page Vinhomes' },
   { id: 'portfolio-hudi', section: 'Dự án', label: 'Portfolio: HUDI Sofa', prefix: '/assets/portfolio/hudi-sofa/', hint: 'Website HUDI Sofa' },
   { id: 'portfolio', section: 'Dự án', label: 'Portfolio website', prefix: '/assets/portfolio/', hint: 'Website, landing page đã làm cho khách hàng' },
+  { id: 'mau', section: 'Dự án', label: 'Kho mẫu website', prefix: '/assets/mau/', hint: 'Ảnh chụp toàn trang các mẫu demo (scripts/mau-thumbs.mjs)' },
   { id: 'marketing-projects', section: 'Dự án', label: 'Dự án marketing', prefix: '/assets/marketing/projects/', hint: 'Logo và ảnh các khách hàng marketing' },
   { id: 'marketing', section: 'Dự án', label: 'Marketing & truyền thông', prefix: '/assets/marketing/', hint: 'Trang dịch vụ Digital Marketing' },
 

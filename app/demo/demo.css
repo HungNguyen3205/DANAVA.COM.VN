@@ -1,0 +1,28 @@
+/* ===== Khung chung các mẫu demo (/demo/*) ===== */
+@import './son-tra.css';
+@import './ember.css';
+@import './lotus.css';
+@import './aurora.css';
+@import './may.css';
+@import './saas.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: var(--font-bvp), system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+/* Reset bọc trong :where() (độ ưu tiên 0) để CSS riêng của từng mẫu luôn thắng */
+:where(.dm) img { max-width: 100%; display: block; }
+:where(.dm) a { color: inherit; }
+:where(.dm) :is(h1, h2, h3, p, figure, blockquote) { margin: 0; }
+:where(.dm) :is(ul, ol) { margin: 0; padding: 0; list-style: none; }
+:where(.dm) :is(button, input, select, textarea) { font: inherit; }
+/* Thanh đồng ý cookie của DANAVA không thuộc mẫu demo */
+.dm ~ .consent-banner, body:has(.dm) .consent-banner { display: none !important; }
+.dm-sent { padding: 22px; border-radius: 16px; background: rgba(255, 255, 255, .1); line-height: 1.6; font-weight: 600; }
+
+/* Hiện dần khi cuộn ([data-rv] → .is-in, components/demo/fx.tsx) */
+.dm [data-rv] { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2, .7, .2, 1) var(--d, 0ms), transform .9s cubic-bezier(.2, .7, .2, 1) var(--d, 0ms); }
+.dm [data-rv].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .dm [data-rv] { opacity: 1; transform: none; transition: none; }
+  .dm *, .dm *::before, .dm *::after { animation: none !important; }
+}

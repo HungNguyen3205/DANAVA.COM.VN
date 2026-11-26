@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowUp, Bot, Check, MessageCircle, Send } from 'lucide-react';
 import { ADVICE, QUICK_SECTIONS, QUICK_STEPS, SCALE_TO_TIER, buildBrief, type Answers, type Step } from '@/lib/landing-brief';
 import { EVENT_QUICK_SECTIONS, EVENT_QUICK_STEPS, eventEstimate } from '@/lib/event-brief';
+import { templateBySlug, type WebTemplate } from '@/lib/web-templates';
 import { ADDONS, estimate, rangeText } from '@/lib/web-quote';
 import { isValidPhoneNumber } from '@/lib/contact-services';
 
@@ -61,6 +62,15 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
   const thread = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  // Khách bấm "Dùng mẫu này" ở kho mẫu (/mau-website/) → /bao-gia-web/?mau=<slug>: ghi tên mẫu vào phiếu và nhắc trong khung chat
+  const [tpl, setTpl] = useState<WebTemplate | null>(null);
+  useEffect(() => {
+    if (flow !== 'landing') return;
+    const t = templateBySlug(new URLSearchParams(window.location.search).get('mau') || '');
+    if (!t) return;
+    setTpl(t);
+    setMessages(m => [{ from: 'bot', text: `Bạn đã chọn ${t.name.toLowerCase()} (${t.brand}, phong cách ${t.style}). DANAVA sẽ may đo mẫu này theo thương hiệu của bạn.` }, ...m]);
+  }, [flow]);
   const anna = useAnna();
   const inAnna = anna.enabled;
   const { setPage, openDesign } = anna;
@@ -126,7 +136,8 @@ export function QuoteChat({ flow = 'landing' }: { flow?: FlowId }) {
   };
 
   const price = cfg.estimate(answers);
-  const brief = buildBrief(answers, steps, cfg.sections, cfg.title);
+  const brief = (tpl ? `Mẫu đã chọn: ${tpl.name} — ${tpl.brand} (/mau-website/${tpl.slug}/)
+` : '') + buildBrief(answers, steps, cfg.sections, cfg.title);
 
   /** Khách xác nhận: gửi vào admin rồi sang trang cảm ơn */
   const lock = useSubmitLock();

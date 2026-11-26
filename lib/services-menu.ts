@@ -13,7 +13,7 @@ export const SERVICE_MENU: ServiceMenuGroup[] = [
     items: [
       { id: 'quote', label: 'Báo giá landing page', short: 'Báo giá nhanh', icon: 'quote', badge: 'Chat 3 phút', desc: 'Trả lời vài câu hỏi, nhận khoảng giá tham khảo ngay', href: '/bao-gia-web/' },
       { id: 'website', label: 'Thiết kế website & landing page', short: 'Thiết kế website', icon: 'web', desc: 'Website, trang đích theo thương hiệu và mục tiêu bán hàng', href: '/giai-phap/thiet-ke-website/' },
-      { id: 'portfolio', label: 'Mẫu website đã làm', short: 'Mẫu đã làm', icon: 'portfolio', desc: 'Website, landing page DANAVA đã triển khai cho khách hàng', href: '/du-an/' }
+      { id: 'portfolio', label: 'Kho mẫu website', short: 'Kho mẫu', icon: 'portfolio', badge: 'Demo', desc: 'Mẫu website, landing page theo ngành — xem demo chạy thật', href: '/mau-website/' }
     ]
   },
   {

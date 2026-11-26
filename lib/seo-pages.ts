@@ -97,6 +97,11 @@ export const STATIC_SEO: StaticSeo[] = [
     description: 'Trao đổi trực tiếp với DANAVA Solutions qua hotline 0935 91 76 77, email hello@danava.vn hoặc gửi yêu cầu tư vấn số hóa phòng tập và truyền thông trực tuyến.'
   },
   {
+    path: '/mau-website/', name: 'Kho mẫu website', image: '/assets/mau/son-tra-residences.webp',
+    title: 'Kho mẫu website & landing page theo ngành',
+    description: 'Mẫu website và landing page do DANAVA thiết kế cho bất động sản, gym, spa, yoga, sự kiện và phần mềm. Xem demo chạy thật trên máy tính và điện thoại, chọn mẫu để may đo theo thương hiệu.'
+  },
+  {
     path: '/bao-gia-web/', name: 'Báo giá website',
     title: 'Báo giá thiết kế landing page và website',
     description: 'Điền yêu cầu để nhận báo giá tham khảo thiết kế landing page hoặc website doanh nghiệp tại DANAVA.'
