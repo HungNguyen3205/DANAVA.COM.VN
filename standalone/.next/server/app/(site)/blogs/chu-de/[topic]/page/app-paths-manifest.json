@@ -1,0 +1,3 @@
+{
+  "/(site)/blogs/chu-de/[topic]/page": "app/(site)/blogs/chu-de/[topic]/page.js"
+}

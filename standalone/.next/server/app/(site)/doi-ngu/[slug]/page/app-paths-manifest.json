@@ -1,0 +1,3 @@
+{
+  "/(site)/doi-ngu/[slug]/page": "app/(site)/doi-ngu/[slug]/page.js"
+}

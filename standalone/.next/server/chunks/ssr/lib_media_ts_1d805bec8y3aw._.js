@@ -1,0 +1,3 @@
+module.exports=[90571,a=>{"use strict";let b="/assets/legacy/",c={thanh:b+"founder.webp",trang:b+"pham-trang.webp",nam:b+"tran-van-nam.webp",avinash:b+"avinash.webp",thong:b+"dang-ngoc-thong.webp"};a.s(["O",0,a=>void 0===a.image?c[a.id]||"":a.image,"i",0,{"cong-nang-luong":b+"post-energy.webp","thien-tra":b+"post-tea.webp",marketing:b+"marketing.webp"}])}];
+
+//# sourceMappingURL=lib_media_ts_1d805bec8y3aw._.js.map

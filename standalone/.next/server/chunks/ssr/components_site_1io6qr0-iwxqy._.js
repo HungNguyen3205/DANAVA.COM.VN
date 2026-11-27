@@ -1,0 +1,3 @@
+module.exports=[46954,a=>{"use strict";var b=a.i(72131);a.s(["CmsOverlay",0,function(){return(0,b.useEffect)(()=>{if(!function(){if(window.parent===window||"1"!==new URLSearchParams(location.search).get("cms"))return!1;try{return window.parent.location.origin===location.origin&&window.parent.location.pathname.startsWith("/admin")}catch{return!1}}())return;let b=!0;return a.A(77045).then(a=>{b&&a.startCmsEditor()}),()=>{b=!1}},[]),null}])},77045,a=>{a.v(b=>Promise.all(["server/chunks/ssr/components_site_cms-editor_ts_1c0rtzrgp2czb._.js"].map(b=>a.l(b))).then(()=>b(55430)))}];
+
+//# sourceMappingURL=components_site_1io6qr0-iwxqy._.js.map

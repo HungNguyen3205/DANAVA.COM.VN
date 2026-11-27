@@ -1,0 +1,3 @@
+module.exports=[5425,a=>{"use strict";var b=a.i(7997),c=a.i(8587),d=a.i(3838);a.s(["default",0,function({children:a}){return(0,b.jsxs)(c.f,{children:[a,(0,b.jsx)(d.CmsOverlay,{})]})}])},89858,function(a){a.n(a.i(5425))},19773,a=>{"use strict";let b=(0,a.i(11857).registerClientReference)(function(){throw Error("Attempted to call CmsOverlay() from the server but CmsOverlay is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.")},"[project]/components/site/CmsOverlay.tsx","CmsOverlay");a.s(["CmsOverlay",0,b])},3838,a=>{"use strict";var b=a.i(19773);a.n(b)}];
+
+//# sourceMappingURL=_1fe9k_jvt1xo0._.js.map

@@ -1,0 +1,3 @@
+module.exports=[66680,(e,r,t)=>{r.exports=e.x("node:crypto",()=>require("node:crypto"))},68105,e=>{"use strict";e.S([18414,"canPreview,x"])},6877,e=>{"use strict";e.s(["f",0,function(e){let r=e.headers.get("origin");if(!r)return!1;let t=new Set([new URL(process.env.SITE_URL||e.url).origin,new URL(e.url).origin]),o=e.headers.get("x-forwarded-host")||e.headers.get("host");if(o){let r=(e.headers.get("x-forwarded-proto")||new URL(e.url).protocol.replace(":","")).split(",")[0].trim();t.add(`${r}://${o.split(",")[0].trim()}`)}return t.has(r)}])}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__1_gto3koeefm6._.js.map

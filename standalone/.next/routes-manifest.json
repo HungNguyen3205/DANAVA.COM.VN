@@ -1,0 +1,982 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:file((?!\\.well-known(?:/.*)?)(?:[^/]+/)*[^/]+\\.\\w+)/",
+      "destination": "/:file",
+      "internal": true,
+      "priority": true,
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-nextjs-data"
+        }
+      ],
+      "statusCode": 308,
+      "regex": "^(?:/((?!\\.well-known(?:/.*)?)(?:[^/]+/)*[^/]+\\.\\w+))/$"
+    },
+    {
+      "source": "/:notfile((?!\\.well-known(?:/.*)?)(?:[^/]+/)*[^/\\.]+)",
+      "destination": "/:notfile/",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?!\\.well-known(?:/.*)?)(?:[^/]+/)*[^/\\.]+))$"
+    },
+    {
+      "source": "/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-nang/",
+      "destination": "/blogs/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-nang/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/cam-on-team-tumy-cac-cau-lac-bo-yoga-da-dong-hanh-chuoi-su-kien-cong-nang-luong-05-05-tai-da-nang/(?:/)?$"
+    },
+    {
+      "source": "/chuoi-su-kien-cong-nang-luong-05-05-lan-dau-tien-tai-da-nang/",
+      "destination": "/blogs/cong-nang-luong/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/chuoi-su-kien-cong-nang-luong-05-05-lan-dau-tien-tai-da-nang/(?:/)?$"
+    },
+    {
+      "source": "/danava-workshop-thien-tra-voi-chu-de-voi/",
+      "destination": "/blogs/thien-tra/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/danava-workshop-thien-tra-voi-chu-de-voi/(?:/)?$"
+    },
+    {
+      "source": "/3-yoga-workshop-tam-quan-trong-cua-the-luc-trong-tap-luyen-yoga/",
+      "destination": "/blogs/3-yoga-workshop-tam-quan-trong-cua-the-luc-trong-tap-luyen-yoga/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/3-yoga-workshop-tam-quan-trong-cua-the-luc-trong-tap-luyen-yoga/(?:/)?$"
+    },
+    {
+      "source": "/2-yoga-workshop-yoga-tri-lieu-co-vai-gay-voi-chu-de-cot-song-la-cuoc-song/",
+      "destination": "/blogs/2-yoga-workshop-yoga-tri-lieu-co-vai-gay-voi-chu-de-cot-song-la-cuoc-song/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/2-yoga-workshop-yoga-tri-lieu-co-vai-gay-voi-chu-de-cot-song-la-cuoc-song/(?:/)?$"
+    },
+    {
+      "source": "/yoga-workshop-nhung-nguy-co-tiem-tang-trong-luyen-tap-yoga/",
+      "destination": "/blogs/yoga-workshop-nhung-nguy-co-tiem-tang-trong-luyen-tap-yoga/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/yoga-workshop-nhung-nguy-co-tiem-tang-trong-luyen-tap-yoga/(?:/)?$"
+    },
+    {
+      "source": "/nganh-digital-marketing-la-gi-xu-huong-va-co-hoi-nghe-nghiep/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/nganh-digital-marketing-la-gi-xu-huong-va-co-hoi-nghe-nghiep/(?:/)?$"
+    },
+    {
+      "source": "/le-hoi-phao-hoa-quoc-te-da-nang-nam-2023-co-gi-moi/",
+      "destination": "/blogs/le-hoi-phao-hoa-quoc-te-da-nang-nam-2023-co-gi-moi/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/le-hoi-phao-hoa-quoc-te-da-nang-nam-2023-co-gi-moi/(?:/)?$"
+    },
+    {
+      "source": "/tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi/(?:/)?$"
+    },
+    {
+      "source": "/huong-dan-xem-bao-cao-tren-dien-thoai-phan-mem-danava-simple-system-quan-ly-yoga-online-don-gian-nhat/",
+      "destination": "/blogs/huong-dan-xem-bao-cao-tren-dien-thoai-phan-mem-danava-simple-system-quan-ly-yoga-online-don-gian-nhat/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/huong-dan-xem-bao-cao-tren-dien-thoai-phan-mem-danava-simple-system-quan-ly-yoga-online-don-gian-nhat/(?:/)?$"
+    },
+    {
+      "source": "/lo-trinh-phap-ly-de-trien-khai-mot-bat-dong-san-du-an/",
+      "destination": "/blogs/lo-trinh-phap-ly-de-trien-khai-mot-bat-dong-san-du-an/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/lo-trinh-phap-ly-de-trien-khai-mot-bat-dong-san-du-an/(?:/)?$"
+    },
+    {
+      "source": "/lam-kinh-doanh-ban-khong-the-bo-qqua-11-kenh-youtube-nay/",
+      "destination": "/blogs/lam-kinh-doanh-ban-khong-the-bo-qqua-11-kenh-youtube-nay/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/lam-kinh-doanh-ban-khong-the-bo-qqua-11-kenh-youtube-nay/(?:/)?$"
+    },
+    {
+      "source": "/htd-smart-carplay-ai-box-la-gi/",
+      "destination": "/blogs/htd-smart-carplay-ai-box-la-gi/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/htd-smart-carplay-ai-box-la-gi/(?:/)?$"
+    },
+    {
+      "source": "/doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch/(?:/)?$"
+    },
+    {
+      "source": "/tam-quan-trong-cua-viec-dang-ky-ten-mien-cho-doanh-nghiep-2/",
+      "destination": "/blogs/tam-quan-trong-cua-viec-dang-ky-ten-mien-cho-doanh-nghiep-2/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/tam-quan-trong-cua-viec-dang-ky-ten-mien-cho-doanh-nghiep-2/(?:/)?$"
+    },
+    {
+      "source": "/kinh-nghiem-lai-xe-an-toan-duoi-troi-mua-bao/",
+      "destination": "/blogs/kinh-nghiem-lai-xe-an-toan-duoi-troi-mua-bao/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kinh-nghiem-lai-xe-an-toan-duoi-troi-mua-bao/(?:/)?$"
+    },
+    {
+      "source": "/nhung-loi-xe-yeu-thuong-gap-khi-bi-duoi-nuoc/",
+      "destination": "/blogs/nhung-loi-xe-yeu-thuong-gap-khi-bi-duoi-nuoc/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/nhung-loi-xe-yeu-thuong-gap-khi-bi-duoi-nuoc/(?:/)?$"
+    },
+    {
+      "source": "/luu-y-cho-nhung-nguoi-moi-lai-xe-o-to/",
+      "destination": "/blogs/luu-y-cho-nhung-nguoi-moi-lai-xe-o-to/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/luu-y-cho-nhung-nguoi-moi-lai-xe-o-to/(?:/)?$"
+    },
+    {
+      "source": "/cac-loai-nuoc-rua-kinh-o-to-tot-nhat-hien-nay/",
+      "destination": "/blogs/cac-loai-nuoc-rua-kinh-o-to-tot-nhat-hien-nay/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/cac-loai-nuoc-rua-kinh-o-to-tot-nhat-hien-nay/(?:/)?$"
+    },
+    {
+      "source": "/nhung-dieu-can-biet-ve-ten-mien-domain/",
+      "destination": "/blogs/nhung-dieu-can-biet-ve-ten-mien-domain/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/nhung-dieu-can-biet-ve-ten-mien-domain/(?:/)?$"
+    },
+    {
+      "source": "/top-10-website-tai-anh-chat-luong-cao-mien-phi/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/top-10-website-tai-anh-chat-luong-cao-mien-phi/(?:/)?$"
+    },
+    {
+      "source": "/dau-hieu-nhan-biet-bau-tro-luc-phanh-bi-hu-hong/",
+      "destination": "/blogs/dau-hieu-nhan-biet-bau-tro-luc-phanh-bi-hu-hong/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dau-hieu-nhan-biet-bau-tro-luc-phanh-bi-hu-hong/(?:/)?$"
+    },
+    {
+      "source": "/nen-lam-gi-truoc-khi-khoi-dong-o-to-de-dam-bao-an-toan/",
+      "destination": "/blogs/nen-lam-gi-truoc-khi-khoi-dong-o-to-de-dam-bao-an-toan/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/nen-lam-gi-truoc-khi-khoi-dong-o-to-de-dam-bao-an-toan/(?:/)?$"
+    },
+    {
+      "source": "/gia-dat-nen-o-dau-tang-manh-nhat/",
+      "destination": "/blogs/gia-dat-nen-o-dau-tang-manh-nhat/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/gia-dat-nen-o-dau-tang-manh-nhat/(?:/)?$"
+    },
+    {
+      "source": "/kham-pha-4-nhat-cua-sieu-show-trieu-do-man-nhan-du-khach-den-phu-quoc/",
+      "destination": "/blogs/kham-pha-4-nhat-cua-sieu-show-trieu-do-man-nhan-du-khach-den-phu-quoc/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kham-pha-4-nhat-cua-sieu-show-trieu-do-man-nhan-du-khach-den-phu-quoc/(?:/)?$"
+    },
+    {
+      "source": "/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/(?:/)?$"
+    },
+    {
+      "source": "/5-quy-tac-ung-xu-niyama-cua-yoga/",
+      "destination": "/blogs/5-quy-tac-ung-xu-niyama-cua-yoga/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/5-quy-tac-ung-xu-niyama-cua-yoga/(?:/)?$"
+    },
+    {
+      "source": "/moi-yogi-se-la-mot-hat-mam-cua-yeu-thuong/",
+      "destination": "/blogs/moi-yogi-se-la-mot-hat-mam-cua-yeu-thuong/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/moi-yogi-se-la-mot-hat-mam-cua-yeu-thuong/(?:/)?$"
+    },
+    {
+      "source": "/cac-buoc-tu-ve-sinh-he-thong-cam-bien-abs-o-to-tai-nha/",
+      "destination": "/blogs/cac-buoc-tu-ve-sinh-he-thong-cam-bien-abs-o-to-tai-nha/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/cac-buoc-tu-ve-sinh-he-thong-cam-bien-abs-o-to-tai-nha/(?:/)?$"
+    },
+    {
+      "source": "/kinh-nghiem-lai-xe-giup-o-to-luon-ben-dep/",
+      "destination": "/blogs/kinh-nghiem-lai-xe-giup-o-to-luon-ben-dep/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kinh-nghiem-lai-xe-giup-o-to-luon-ben-dep/(?:/)?$"
+    },
+    {
+      "source": "/gioi-thieu/",
+      "destination": "/ve-danava/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/gioi-thieu/(?:/)?$"
+    },
+    {
+      "source": "/le-tan-thanh/",
+      "destination": "/ve-danava/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/le-tan-thanh/(?:/)?$"
+    },
+    {
+      "source": "/blog/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/blog/(?:/)?$"
+    },
+    {
+      "source": "/thiet-ke-website/",
+      "destination": "/giai-phap/thiet-ke-website/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/thiet-ke-website/(?:/)?$"
+    },
+    {
+      "source": "/landingpage/",
+      "destination": "/giai-phap/thiet-ke-website/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/landingpage/(?:/)?$"
+    },
+    {
+      "source": "/landing-page/",
+      "destination": "/giai-phap/thiet-ke-website/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/landing-page/(?:/)?$"
+    },
+    {
+      "source": "/digital-marketing/",
+      "destination": "/giai-phap/digital-marketing/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/digital-marketing/(?:/)?$"
+    },
+    {
+      "source": "/phan-mem/",
+      "destination": "/giai-phap/danava-studio/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/phan-mem/(?:/)?$"
+    },
+    {
+      "source": "/workshop/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/workshop/(?:/)?$"
+    },
+    {
+      "source": "/su-kien/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/su-kien/(?:/)?$"
+    },
+    {
+      "source": "/dich-vu/thiet-ke-website/",
+      "destination": "/giai-phap/thiet-ke-website/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dich-vu/thiet-ke-website/(?:/)?$"
+    },
+    {
+      "source": "/dich-vu/website/",
+      "destination": "/giai-phap/thiet-ke-website/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dich-vu/website/(?:/)?$"
+    },
+    {
+      "source": "/website/",
+      "destination": "/giai-phap/thiet-ke-website/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/website/(?:/)?$"
+    },
+    {
+      "source": "/dich-vu/danava-studio/",
+      "destination": "/giai-phap/danava-studio/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dich-vu/danava-studio/(?:/)?$"
+    },
+    {
+      "source": "/dich-vu/digital-marketing/",
+      "destination": "/giai-phap/digital-marketing/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dich-vu/digital-marketing/(?:/)?$"
+    },
+    {
+      "source": "/marketing/",
+      "destination": "/giai-phap/digital-marketing/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/marketing/(?:/)?$"
+    },
+    {
+      "source": "/dich-vu/marketing/",
+      "destination": "/giai-phap/digital-marketing/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dich-vu/marketing/(?:/)?$"
+    },
+    {
+      "source": "/media/",
+      "destination": "/giai-phap/su-kien-truyen-thong/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/media/(?:/)?$"
+    },
+    {
+      "source": "/dich-vu/media/",
+      "destination": "/giai-phap/su-kien-truyen-thong/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dich-vu/media/(?:/)?$"
+    },
+    {
+      "source": "/truyen-thong/",
+      "destination": "/giai-phap/su-kien-truyen-thong/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/truyen-thong/(?:/)?$"
+    },
+    {
+      "source": "/team/",
+      "destination": "/doi-ngu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/team/(?:/)?$"
+    },
+    {
+      "source": "/nhan-su/",
+      "destination": "/doi-ngu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/nhan-su/(?:/)?$"
+    },
+    {
+      "source": "/doi-ngu-danava/",
+      "destination": "/doi-ngu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/doi-ngu-danava/(?:/)?$"
+    },
+    {
+      "source": "/du-an/hariver-studio/",
+      "destination": "/du-an/hariver-gym-danava-studio/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/du-an/hariver-studio/(?:/)?$"
+    },
+    {
+      "source": "/du-an/hue-studio/",
+      "destination": "/du-an/hue-pilates-yoga-danava-studio/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/du-an/hue-studio/(?:/)?$"
+    },
+    {
+      "source": "/ecosystem/",
+      "destination": "/he-sinh-thai/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/ecosystem/(?:/)?$"
+    },
+    {
+      "source": "/he-thong/",
+      "destination": "/he-sinh-thai/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/he-thong/(?:/)?$"
+    },
+    {
+      "source": "/don-vi-thanh-vien/",
+      "destination": "/he-sinh-thai/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/don-vi-thanh-vien/(?:/)?$"
+    },
+    {
+      "source": "/privacy/",
+      "destination": "/chinh-sach-rieng-tu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/privacy/(?:/)?$"
+    },
+    {
+      "source": "/privacy-policy/",
+      "destination": "/chinh-sach-rieng-tu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/privacy-policy/(?:/)?$"
+    },
+    {
+      "source": "/chinh-sach-bao-mat/",
+      "destination": "/chinh-sach-rieng-tu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/chinh-sach-bao-mat/(?:/)?$"
+    },
+    {
+      "source": "/chinh-sach/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/chinh-sach/(?:/)?$"
+    },
+    {
+      "source": "/dieu-khoan-dich-vu/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dieu-khoan-dich-vu/(?:/)?$"
+    },
+    {
+      "source": "/dieu-khoan/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/dieu-khoan/(?:/)?$"
+    },
+    {
+      "source": "/terms/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/terms/(?:/)?$"
+    },
+    {
+      "source": "/terms-of-service/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/terms-of-service/(?:/)?$"
+    },
+    {
+      "source": "/chinh-sach-bao-hanh/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/chinh-sach-bao-hanh/(?:/)?$"
+    },
+    {
+      "source": "/bao-hanh/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/bao-hanh/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/(?:/)?$"
+    },
+    {
+      "source": "/blog/",
+      "destination": "/blogs/",
+      "statusCode": 307,
+      "regex": "^(?!/_next)/blog/(?:/)?$"
+    },
+    {
+      "source": "/ho-tro/",
+      "destination": "/chinh-sach-dich-vu/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/ho-tro/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/:path*",
+      "destination": "/blogs/:path*",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    },
+    {
+      "source": "/favicon.ico",
+      "destination": "/icon.png",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/favicon\\.ico(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/chu-de/digital-marketing/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/chu-de/digital-marketing/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/digital-marketing/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/digital-marketing/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/tat-tan-tat-kien-thuc-chuyen-mon-ve-marketing-thoi-dai-moi/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/doi-tac-do-luong-di-dong-chon-appsflyer-adjust-kochava-hay-branch/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/top-10-website-tai-anh-chat-luong-cao-mien-phi/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/top-10-website-tai-anh-chat-luong-cao-mien-phi/(?:/)?$"
+    },
+    {
+      "source": "/kien-thuc/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/",
+      "destination": "/blogs/",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/kien-thuc/digital-marketing-la-gi-tim-hieu-tat-ca-cac-hinh-thuc/(?:/)?$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/admin/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ],
+      "regex": "^/admin(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    },
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ],
+      "regex": "^/api(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    },
+    {
+      "source": "/blogs/doc/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ],
+      "regex": "^/blogs/doc(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    },
+    {
+      "source": "/xem-truoc-landing/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ],
+      "regex": "^/xem-truoc-landing(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    }
+  ],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/admin/[section]",
+      "regex": "^/admin/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPsection": "nxtPsection"
+      },
+      "namedRegex": "^/admin/(?<nxtPsection>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/gym-designs/[code]",
+      "regex": "^/api/gym\\-designs/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPcode": "nxtPcode"
+      },
+      "namedRegex": "^/api/gym\\-designs/(?<nxtPcode>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/gym-designs/[code]/preview",
+      "regex": "^/api/gym\\-designs/([^/]+?)/preview(?:/)?$",
+      "routeKeys": {
+        "nxtPcode": "nxtPcode"
+      },
+      "namedRegex": "^/api/gym\\-designs/(?<nxtPcode>[^/]+?)/preview(?:/)?$"
+    },
+    {
+      "page": "/assets/uploads/[file]",
+      "regex": "^/assets/uploads/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPfile": "nxtPfile"
+      },
+      "namedRegex": "^/assets/uploads/(?<nxtPfile>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/blogs/chu-de/[topic]",
+      "regex": "^/blogs/chu\\-de/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPtopic": "nxtPtopic"
+      },
+      "namedRegex": "^/blogs/chu\\-de/(?<nxtPtopic>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/blogs/[slug]",
+      "regex": "^/blogs/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/blogs/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/demo/[slug]",
+      "regex": "^/demo/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/demo/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dich-vu/[slug]",
+      "regex": "^/dich\\-vu/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/dich\\-vu/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/doi-ngu/[slug]",
+      "regex": "^/doi\\-ngu/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/doi\\-ngu/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/du-an/[slug]",
+      "regex": "^/du\\-an/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/du\\-an/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/giai-phap/[slug]",
+      "regex": "^/giai\\-phap/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/giai\\-phap/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/giai-phap/[slug]/[sub]",
+      "regex": "^/giai\\-phap/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug",
+        "nxtPsub": "nxtPsub"
+      },
+      "namedRegex": "^/giai\\-phap/(?<nxtPslug>[^/]+?)/(?<nxtPsub>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/lp/[slug]",
+      "regex": "^/lp/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/lp/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/mau-website/[slug]",
+      "regex": "^/mau\\-website/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/mau\\-website/(?<nxtPslug>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/api/admin/analytics",
+      "regex": "^/api/admin/analytics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/analytics(?:/)?$"
+    },
+    {
+      "page": "/api/admin/audit",
+      "regex": "^/api/admin/audit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/audit(?:/)?$"
+    },
+    {
+      "page": "/api/admin/content",
+      "regex": "^/api/admin/content(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/content(?:/)?$"
+    },
+    {
+      "page": "/api/admin/leads",
+      "regex": "^/api/admin/leads(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/leads(?:/)?$"
+    },
+    {
+      "page": "/api/admin/media",
+      "regex": "^/api/admin/media(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/media(?:/)?$"
+    },
+    {
+      "page": "/api/admin/models",
+      "regex": "^/api/admin/models(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/models(?:/)?$"
+    },
+    {
+      "page": "/api/admin/revisions",
+      "regex": "^/api/admin/revisions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/revisions(?:/)?$"
+    },
+    {
+      "page": "/api/admin/session",
+      "regex": "^/api/admin/session(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/session(?:/)?$"
+    },
+    {
+      "page": "/api/admin/translate",
+      "regex": "^/api/admin/translate(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/translate(?:/)?$"
+    },
+    {
+      "page": "/api/admin/users",
+      "regex": "^/api/admin/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/users(?:/)?$"
+    },
+    {
+      "page": "/api/analytics",
+      "regex": "^/api/analytics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/analytics(?:/)?$"
+    },
+    {
+      "page": "/api/anna",
+      "regex": "^/api/anna(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/anna(?:/)?$"
+    },
+    {
+      "page": "/api/gym-assistant",
+      "regex": "^/api/gym\\-assistant(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/gym\\-assistant(?:/)?$"
+    },
+    {
+      "page": "/api/gym-designs",
+      "regex": "^/api/gym\\-designs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/gym\\-designs(?:/)?$"
+    },
+    {
+      "page": "/api/lead",
+      "regex": "^/api/lead(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/lead(?:/)?$"
+    },
+    {
+      "page": "/api/recruit",
+      "regex": "^/api/recruit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/recruit(?:/)?$"
+    },
+    {
+      "page": "/bao-gia-setup-phong-gym",
+      "regex": "^/bao\\-gia\\-setup\\-phong\\-gym(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/bao\\-gia\\-setup\\-phong\\-gym(?:/)?$"
+    },
+    {
+      "page": "/bao-gia-su-kien",
+      "regex": "^/bao\\-gia\\-su\\-kien(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/bao\\-gia\\-su\\-kien(?:/)?$"
+    },
+    {
+      "page": "/bao-gia-web",
+      "regex": "^/bao\\-gia\\-web(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/bao\\-gia\\-web(?:/)?$"
+    },
+    {
+      "page": "/bao-gia-web/cam-on",
+      "regex": "^/bao\\-gia\\-web/cam\\-on(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/bao\\-gia\\-web/cam\\-on(?:/)?$"
+    },
+    {
+      "page": "/blogs",
+      "regex": "^/blogs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/blogs(?:/)?$"
+    },
+    {
+      "page": "/blogs/doc",
+      "regex": "^/blogs/doc(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/blogs/doc(?:/)?$"
+    },
+    {
+      "page": "/chinh-sach-dich-vu",
+      "regex": "^/chinh\\-sach\\-dich\\-vu(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/chinh\\-sach\\-dich\\-vu(?:/)?$"
+    },
+    {
+      "page": "/chinh-sach-rieng-tu",
+      "regex": "^/chinh\\-sach\\-rieng\\-tu(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/chinh\\-sach\\-rieng\\-tu(?:/)?$"
+    },
+    {
+      "page": "/dich-vu",
+      "regex": "^/dich\\-vu(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dich\\-vu(?:/)?$"
+    },
+    {
+      "page": "/doi-ngu",
+      "regex": "^/doi\\-ngu(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/doi\\-ngu(?:/)?$"
+    },
+    {
+      "page": "/doi-tac",
+      "regex": "^/doi\\-tac(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/doi\\-tac(?:/)?$"
+    },
+    {
+      "page": "/du-an",
+      "regex": "^/du\\-an(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/du\\-an(?:/)?$"
+    },
+    {
+      "page": "/giai-phap",
+      "regex": "^/giai\\-phap(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/giai\\-phap(?:/)?$"
+    },
+    {
+      "page": "/giai-phap/danava-go",
+      "regex": "^/giai\\-phap/danava\\-go(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/giai\\-phap/danava\\-go(?:/)?$"
+    },
+    {
+      "page": "/giai-phap/danava-work",
+      "regex": "^/giai\\-phap/danava\\-work(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/giai\\-phap/danava\\-work(?:/)?$"
+    },
+    {
+      "page": "/giai-phap/hello-danava",
+      "regex": "^/giai\\-phap/hello\\-danava(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/giai\\-phap/hello\\-danava(?:/)?$"
+    },
+    {
+      "page": "/giai-phap/setup-van-hanh-phong-gym",
+      "regex": "^/giai\\-phap/setup\\-van\\-hanh\\-phong\\-gym(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/giai\\-phap/setup\\-van\\-hanh\\-phong\\-gym(?:/)?$"
+    },
+    {
+      "page": "/he-sinh-thai",
+      "regex": "^/he\\-sinh\\-thai(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/he\\-sinh\\-thai(?:/)?$"
+    },
+    {
+      "page": "/icon.png",
+      "regex": "^/icon\\.png(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/icon\\.png(?:/)?$"
+    },
+    {
+      "page": "/lien-he",
+      "regex": "^/lien\\-he(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/lien\\-he(?:/)?$"
+    },
+    {
+      "page": "/manifest.webmanifest",
+      "regex": "^/manifest\\.webmanifest(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/manifest\\.webmanifest(?:/)?$"
+    },
+    {
+      "page": "/mau-website",
+      "regex": "^/mau\\-website(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/mau\\-website(?:/)?$"
+    },
+    {
+      "page": "/robots.txt",
+      "regex": "^/robots\\.txt(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/robots\\.txt(?:/)?$"
+    },
+    {
+      "page": "/sitemap.xml",
+      "regex": "^/sitemap\\.xml(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sitemap\\.xml(?:/)?$"
+    },
+    {
+      "page": "/thiet-bi-gym",
+      "regex": "^/thiet\\-bi\\-gym(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/thiet\\-bi\\-gym(?:/)?$"
+    },
+    {
+      "page": "/tuyen-dung",
+      "regex": "^/tuyen\\-dung(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tuyen\\-dung(?:/)?$"
+    },
+    {
+      "page": "/ve-danava",
+      "regex": "^/ve\\-danava(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ve\\-danava(?:/)?$"
+    },
+    {
+      "page": "/xem-truoc-landing",
+      "regex": "^/xem\\-truoc\\-landing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/xem\\-truoc\\-landing(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

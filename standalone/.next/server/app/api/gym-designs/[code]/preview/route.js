@@ -1,0 +1,12 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/gym-designs/[code]/preview/route.js")
+R.c("server/chunks/_0hngiicsnh_ug._.js")
+R.c("server/chunks/[root-of-the-server]__19uxaadnh69tf._.js")
+R.c("server/chunks/node_modules_next_dist_compiled_@edge-runtime_cookies_index_03l45n-uz3kdi.js")
+R.c("server/chunks/_17v0ipy24h34k._.js")
+R.c("server/chunks/lib_database_ts_1-ca56-urq4fu._.js")
+R.c("server/chunks/[root-of-the-server]__1pi-us-sbliba._.js")
+R.c("server/chunks/lib_gym-project_ts_1zp3e_y6k1gu5._.js")
+R.c("server/chunks/lib_0_0k7v9qudsll._.js")
+R.c("server/chunks/1oeh_server_app_api_gym-designs_[code]_preview_route_actions_0-vmo3pkyh98j.js")
+R.m(81127)
+module.exports=R.m(81127).exports

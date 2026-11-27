@@ -1,0 +1,3 @@
+{
+  "/(site)/giai-phap/[slug]/page": "app/(site)/giai-phap/[slug]/page.js"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "danava-company-website-deploy",
+  "private": true,
+  "main": "server.cjs"
+}
