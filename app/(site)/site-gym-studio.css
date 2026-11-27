@@ -77,6 +77,8 @@
 .gs-icon { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--gs-line); border-radius: 10px; background: #fff; color: var(--gs-navy); cursor: pointer; }
 .gs-icon:disabled { opacity: .35; cursor: not-allowed; }
 .gs-icon svg { width: 17px; height: 17px; }
+.gs-icon--reset { color: #c2410c; }
+.gs-icon--reset:hover { background: #fff3ea; border-color: #f26b1d; }
 .gs-link { padding: 0; border: 0; background: none; color: #c2410c; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
 
 /* ---------- Thanh phương án ---------- */

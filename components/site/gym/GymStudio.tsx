@@ -78,6 +78,13 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
   }, []);
   const set = useCallback((fn: (p: Project) => Project, label = '') => { setProject(prev => { if (!prev) return prev; const next = fn(prev); if (next !== prev) { hist.current.past.push(prev); hist.current.future = []; } return next; }); if (label) setNotice(label); }, []);
   const undo = useCallback(() => { setProject(cur => { const prev = hist.current.past.pop(); if (!prev || !cur) return cur; hist.current.future.push(cur); return prev; }); force(x => x + 1); setNotice('Đã hoàn tác'); }, []);
+  /** Nút reset: xoá phương án trên máy, quay về bước bắt đầu (bản đã lưu bằng đường dẫn vẫn còn) */
+  const resetAll = useCallback(() => {
+    if (!confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) return;
+    setProject(null); setCustom(false); setMoreMenu(false); hist.current = { past: [], future: [] };
+    try { localStorage.removeItem(KEY); } catch {}
+    setNotice('Đã bắt đầu lại');
+  }, []);
   const redo = useCallback(() => { setProject(cur => { const nx = hist.current.future.pop(); if (!nx || !cur) return cur; hist.current.past.push(cur); return nx; }); force(x => x + 1); setNotice('Đã làm lại'); }, []);
 
   // Tải: mã chia sẻ (?ma=) → localStorage → (phiên bản cũ) phòng lab 1 tầng
@@ -344,6 +351,7 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
               <span className="gs-side__tools">
                 <button type="button" className="gs-icon" onClick={undo} disabled={!hist.current.past.length} title="Hoàn tác (Ctrl+Z)" aria-label="Hoàn tác"><Undo2 /></button>
                 <button type="button" className="gs-icon" onClick={redo} disabled={!hist.current.future.length} title="Làm lại (Ctrl+Y)" aria-label="Làm lại"><Redo2 /></button>
+                <button type="button" className="gs-icon gs-icon--reset" onClick={resetAll} title="Bắt đầu lại từ đầu" aria-label="Bắt đầu lại từ đầu"><RotateCcw /></button>
                 <span className="gs-menuwrap">
                   <button type="button" className={`gs-icon${moreMenu ? ' is-on' : ''}`} aria-label="Thêm" title="Thêm" aria-expanded={moreMenu} onClick={() => setMoreMenu(v => !v)}><MoreHorizontal /></button>
                   {moreMenu && (
@@ -351,7 +359,6 @@ export function GymStudio({ equipment, flooring, addId, code, extras }: { equipm
                       {project.options.length > 1 && <button type="button" role="menuitem" onClick={nextOption}><Shuffle aria-hidden="true" /> Phương án khác</button>}
                       {project.options.length > 1 && <button type="button" role="menuitem" onClick={() => setCompare(c => !c)}><Columns3 aria-hidden="true" /> So sánh {project.options.length} phương án</button>}
                       <button type="button" role="menuitem" onClick={() => void save()} disabled={share.busy}><Save aria-hidden="true" /> {share.busy ? 'Đang lưu…' : 'Lưu & lấy đường dẫn'}</button>
-                      <button type="button" role="menuitem" className="is-danger" onClick={() => { if (confirm('Bắt đầu lại từ đầu? Phương án hiện tại trên máy sẽ bị xoá (bản đã lưu bằng đường dẫn vẫn còn).')) { setProject(null); setCustom(false); hist.current = { past: [], future: [] }; try { localStorage.removeItem(KEY); } catch {} } }}><RotateCcw aria-hidden="true" /> Bắt đầu lại</button>
                     </span>
                   )}
                 </span>
