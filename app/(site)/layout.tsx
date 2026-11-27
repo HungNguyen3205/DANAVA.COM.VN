@@ -32,6 +32,7 @@ import './site-services.css';
 import './site-gym.css';
 import './site-mau.css';
 import './site-travel.css';
+import './site-cta.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 import { CmsOverlay } from '@/components/site/CmsOverlay';
 

@@ -129,22 +129,24 @@ export function CtaBand({
   return (
     <section className="s-section s-section--tight" aria-label="Liên hệ tư vấn" data-cms-block="Dải cuối trang">
       <div className="s-container">
-        {/* ANNA đứng cạnh dải, nổi lên khỏi mép trên (ảnh tách nền: public/assets/anna/anna-present.webp) */}
-        <div className="s-cta-wrap">
-        <figure className="s-cta__anna" aria-hidden="true">
-          <span className="s-cta__halo" />
-          <span className="s-cta__spark s-cta__spark--1" /><span className="s-cta__spark s-cta__spark--2" /><span className="s-cta__spark s-cta__spark--3" />
+        {/* Dải cuối trang (CSS: site-cta.css). ANNA (ảnh tách nền) đứng trước "mặt trời" cam, đầu nhô khỏi mép trên dải;
+            mặt trời + vòng quỹ đạo nằm trong khung (bị cắt theo khung), ANNA nằm ngoài khung nên vượt lên được. */}
+        <div className="s-ctab">
+        <figure className="s-ctab__anna" aria-hidden="true">
+          <span className="s-ctab__star s-ctab__star--1">✦</span><span className="s-ctab__star s-ctab__star--2">✦</span><span className="s-ctab__star s-ctab__star--3">✦</span>
           <img src="/assets/anna/anna-present.webp" alt="" width={820} height={857} loading="lazy" decoding="async" />
         </figure>
-        {(() => { const b = ct(data, 'shared.cta.anna-bubble', 'Mình là ANNA, sẵn sàng tư vấn cho bạn!', 'Dải cuối trang: lời chào ANNA', { scope: 'global' }); return <p className="s-cta__bubble"><span {...b.a}>{b.v}</span></p>; })()}
-        <div className="s-cta s-cta--anna">
-          <div>
-            <h2 className="s-h2" {...(cms?.title ? { 'data-cms': cms.title, 'data-cms-label': 'Dải cuối trang: tiêu đề', 'data-cms-rich': '', ...(cms.titleDefault ? { 'data-cms-default': cms.titleDefault } : {}) } : {})}>{title}</h2>
-            {lead && <p className="s-lead" {...(cms?.lead ? { 'data-cms': cms.lead, 'data-cms-label': cms.lead.startsWith('pages.mac-dinh.') ? 'Dải cuối trang: câu dẫn (dùng chung)' : 'Dải cuối trang: câu dẫn', 'data-cms-multiline': '', ...(cms.leadDefault ? { 'data-cms-default': cms.leadDefault } : {}) } : {})}>{lead}</p>}
+        {(() => { const b = ct(data, 'shared.cta.anna-bubble', 'Mình là ANNA, sẵn sàng tư vấn cho bạn!', 'Dải cuối trang: lời chào ANNA', { scope: 'global' }); return <p className="s-ctab__bubble"><span {...b.a}>{b.v}</span></p>; })()}
+        <div className="s-ctab__card">
+          <span className="s-ctab__stage" aria-hidden="true"><i className="s-ctab__sun" /><i className="s-ctab__ring s-ctab__ring--1" /><i className="s-ctab__ring s-ctab__ring--2" /><i className="s-ctab__ring s-ctab__ring--3" /></span>
+          <div className="s-ctab__copy">
+            {(() => { const e = ct(data, 'shared.cta.eyebrow', 'Tư vấn cùng DANAVA', 'Dải cuối trang: dòng chữ nhỏ', { scope: 'global' }); return <p className="s-ctab__eyebrow"><span {...e.a}>{e.v}</span></p>; })()}
+            <h2 className="s-h2 s-ctab__title" {...(cms?.title ? { 'data-cms': cms.title, 'data-cms-label': 'Dải cuối trang: tiêu đề', 'data-cms-rich': '', ...(cms.titleDefault ? { 'data-cms-default': cms.titleDefault } : {}) } : {})}>{title}</h2>
+            {lead && <p className="s-ctab__lead" {...(cms?.lead ? { 'data-cms': cms.lead, 'data-cms-label': cms.lead.startsWith('pages.mac-dinh.') ? 'Dải cuối trang: câu dẫn (dùng chung)' : 'Dải cuối trang: câu dẫn', 'data-cms-multiline': '', ...(cms.leadDefault ? { 'data-cms-default': cms.leadDefault } : {}) } : {})}>{lead}</p>}
           </div>
-          <div className="s-row">
-            <Link className="s-btn s-btn--light s-btn--lg" href={primary.href}><SharedLabel data={data} group="cta" href={primary.href} label={primary.label} what="Dải cuối trang: nút chính" /></Link>
-            {secondary && <Link className="s-btn s-btn--outline-light s-btn--lg" href={secondary.href}><SharedLabel data={data} group="cta" href={secondary.href} label={secondary.label} what="Dải cuối trang: nút phụ" /></Link>}
+          <div className="s-ctab__actions">
+            <Link className="s-ctab__btn s-ctab__btn--primary" href={primary.href}><SharedLabel data={data} group="cta" href={primary.href} label={primary.label} what="Dải cuối trang: nút chính" /><ArrowRight aria-hidden="true" /></Link>
+            {secondary && <Link className="s-ctab__btn s-ctab__btn--ghost" href={secondary.href}><SharedLabel data={data} group="cta" href={secondary.href} label={secondary.label} what="Dải cuối trang: nút phụ" /></Link>}
             {(() => {
               // Hotline: số trong Cài đặt website → Liên hệ (trình duyệt: data.phone; máy chủ: kho của yêu cầu), mặc định số công ty
               let phone = data?.phone || '';
@@ -154,7 +156,7 @@ export function CtaBand({
               const shown = /^0\d{9}$/.test(phone.trim()) ? phone.trim().replace(/^(\d{4})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4') : phone;
               const digits = phone.replace(/[^\d+]/g, '');
               const label = ct(data, 'shared.cta.hotline', 'Hotline', 'Dải cuối trang: nút hotline', { scope: 'global' });
-              return <a className="s-btn s-btn--outline-light s-btn--lg s-cta__hotline" href={`tel:${digits}`}><Phone aria-hidden="true" /><span {...label.a}>{label.v}</span> <b>{shown}</b></a>;
+              return <a className="s-ctab__hotline" href={`tel:${digits}`}><span className="s-ctab__phone"><Phone aria-hidden="true" /></span><span className="s-ctab__hotline-text"><small {...label.a}>{label.v}</small><b>{shown}</b></span></a>;
             })()}
           </div>
         </div>
