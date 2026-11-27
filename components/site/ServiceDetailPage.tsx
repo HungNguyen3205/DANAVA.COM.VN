@@ -16,10 +16,10 @@ import { WebsitePage } from './WebsitePage';
 import { MarketingPage } from './MarketingPage';
 import { EventsPage } from './EventsPage';
 import { StudioPage } from './StudioPage';
+import { TravelPage } from './TravelPage';
 import { cmsText, ct } from './cms';
 import { StudioShowcase } from './StudioShowcase';
 import { ProductGallery } from './ProductGallery';
-import { DanavaGoShowcase } from './DanavaGoShowcase';
 import { STUDIO_GALLERY } from './product-showcase';
 import { PackagesSection } from './ProductPackages';
 import { FaqSection, FeatureGrid, PricingSection, ProblemsSection, ProcessSection, RelatedPosts, RelatedProjects, ScopeSection, ServiceLinks } from './blocks';
@@ -37,6 +37,7 @@ export function ServiceDetailPage({ service, data, section }: { service: Service
   if (service.id === 'marketing') return <MarketingPage service={service} data={data} />;
   if (service.id === 'events') return <EventsPage service={service} data={data} />;
   if (service.id === 'studio') return <StudioPage service={service} data={data} />;
+  if (service.id === 'travel') return <TravelPage service={service} data={data} />;
   return <StandardServicePage service={service} data={data} section={section} />;
 }
 
@@ -78,9 +79,6 @@ function StandardServicePage({ service: raw, data, section }: { service: Service
   const kicker = tOwn('kicker', m.kicker, 'Nhãn nhóm sản phẩm');
   const demoBtn = t('hero.demo', 'Xem demo', 'Nút xem demo');
   const signupBtn = t('hero.signup', 'Đăng ký', 'Nút đăng ký');
-  const tvT = t('travel-events.title', 'Tổ chức hội nghị, kick-off, gala hay booth trưng bày?', 'Liên kết sự kiện: câu hỏi');
-  const tvX = t('travel-events.text', 'Xem các chương trình thực tế và hạng mục tại trang Tổ chức sự kiện.', 'Liên kết sự kiện: mô tả');
-  const tvB = t('travel-events.button', 'Tổ chức sự kiện', 'Liên kết sự kiện: nút');
   const prE = t('promises.eyebrow', 'Cam kết', 'Dòng chữ nhỏ cam kết');
   const prT = t('promises.title', 'Minh bạch và tôn trọng tài sản của bạn', 'Tiêu đề cam kết');
   const subE = t('subs.eyebrow', 'Theo nhu cầu', 'Dòng chữ nhỏ dịch vụ con');
@@ -155,16 +153,6 @@ function StandardServicePage({ service: raw, data, section }: { service: Service
         </section>
       )}
 
-      {service.id === 'travel' && <DanavaGoShowcase />}
-
-      {service.id === 'travel' && (
-        <section className="s-section s-section--tight" aria-label="Sự kiện doanh nghiệp">
-          <div className="s-container u-crosslink">
-            <p><strong {...tvT.a}>{tvT.v}</strong> <span {...tvX.a}>{tvX.v}</span></p>
-            <Link className="s-btn s-btn--secondary" href="/giai-phap/su-kien-truyen-thong/"><span {...tvB.a}>{tvB.v}</span></Link>
-          </div>
-        </section>
-      )}
 
       {d?.blocks.map((b, bi) => {
         // Khối trình bày trong mã (service-content.ts) → khóa product.<mã sản phẩm>.blocks.<khối>.*

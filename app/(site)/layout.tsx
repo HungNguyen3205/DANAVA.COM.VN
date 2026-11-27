@@ -31,6 +31,7 @@ import './site-quote-chat.css';
 import './site-services.css';
 import './site-gym.css';
 import './site-mau.css';
+import './site-travel.css';
 import { SiteFrame } from '@/components/site/SiteFrame';
 import { CmsOverlay } from '@/components/site/CmsOverlay';
 
