@@ -374,34 +374,9 @@ body:has(.s-app) { background: var(--s-bg); }
 .s-lightbox__close { position: absolute; top: 12px; right: 12px; }
 .s-lightbox svg { width: 22px; height: 22px; }
 
-/* ---------- DANAVA GO trên trang Du lịch & Sự kiện ---------- */
-.s-go__intro { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
-.s-go__intro .s-lead { margin-top: 16px; }
-.s-go__cta { margin-top: 26px; }
-.s-go__cta .s-btn svg { width: 18px; height: 18px; }
-.s-go__hero { display: block; overflow: hidden; border: 1px solid var(--s-line); border-radius: 18px; background: #fff; box-shadow: var(--s-shadow-lg); transition: transform .3s var(--s-ease); }
-.s-go__hero:hover { transform: translateY(-4px); }
-.s-go__hero .s-shot__bar { height: 32px; }
-.s-go__hero img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
-.s-go__block { margin-top: clamp(56px, 7vw, 88px); }
-.s-go__block .s-h3 { margin-top: 10px; font-size: clamp(24px, 2.4vw, 32px); }
-.s-go__goals, .s-go__features { margin-top: 26px; }
-.s-go__goal { display: flex; flex-direction: column; gap: 10px; }
-.s-go__goal .s-icon { background: var(--s-green-soft); color: var(--s-green); }
-.s-go__feature { display: flex; gap: 16px; align-items: flex-start; padding: 22px; border: 1px solid var(--s-line); border-radius: var(--s-radius); background: #fff; }
-.s-go__feature .s-text { margin-top: 6px; }
-.s-go__ficon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 12px; background: var(--s-amber-soft); color: #b86e00; }
-.s-go__ficon svg { width: 22px; height: 22px; }
-.s-go__roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 0; padding: 18px; border-radius: var(--s-radius); background: var(--s-grad-blue); list-style: none; }
-.s-go__roles li { display: flex; gap: 12px; align-items: flex-start; color: #c9d4f5; font-size: 14.5px; line-height: 1.5; }
-.s-go__roles svg { flex: none; width: 22px; height: 22px; margin-top: 2px; color: var(--s-amber); }
-.s-go__roles strong { display: block; color: #fff; font-size: 15.5px; }
-
 @media (max-width: 1000px) {
   .s-gallery__grid--desktop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .s-gallery__grid--phone { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .s-go__intro { grid-template-columns: minmax(0, 1fr); }
-  .s-go__roles { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 620px) {
   .s-gallery__grid--desktop { grid-template-columns: minmax(0, 1fr); }
@@ -413,7 +388,7 @@ body:has(.s-app) { background: var(--s-bg); }
   .s-lightbox__fig img { max-height: calc(100vh - 190px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .s-shot__frame, .s-shot__zoom, .s-go__hero { transition: none; }
+  .s-shot__frame, .s-shot__zoom { transition: none; }
 }
 
 /* Logo "Đã thông báo Bộ Công Thương" ở góc dưới footer */

@@ -1,12 +1,11 @@
 /**
- * Ảnh giao diện thật của các sản phẩm DANAVA, dùng ở /giai-phap/danava-studio/ và /giai-phap/du-lich-su-kien/.
- * Ảnh DANAVA Studio lấy từ bộ hướng dẫn sử dụng (dự án danava); ảnh DANAVA GO lấy từ dự án DatVeXeONL.
+ * Ảnh giao diện thật của DANAVA Studio, dùng ở /giai-phap/danava-studio/.
+ * Ảnh lấy từ bộ hướng dẫn sử dụng (dự án danava).
  * Dữ liệu trong ảnh là dữ liệu mẫu (demo).
  */
 import type { ShotGroup } from './ProductGallery';
 
 const S = '/assets/studio';
-const G = '/assets/danavago';
 
 export const STUDIO_GALLERY: ShotGroup[] = [
   {
@@ -76,50 +75,3 @@ export const STUDIO_GALLERY: ShotGroup[] = [
     ]
   }
 ];
-
-export const DANAVAGO_URL = 'https://danavago.com';
-
-export const DANAVAGO = {
-  goals: [
-    { title: 'Đặt vé dễ như mua hàng online', text: 'Hành khách tìm chuyến, chọn ghế và thanh toán trong vài phút, không cần gọi điện hay ra bến.' },
-    { title: 'Số hóa cho nhà xe vừa và nhỏ', text: 'Mỗi nhà xe có website, app thương hiệu riêng và phần mềm quản lý vé mà không phải tự xây dựng.' },
-    { title: 'Chuyến đi an toàn, minh bạch', text: 'Theo dõi vị trí xe theo thời gian thực, cảnh báo khi xe lệch tuyến, vé điện tử chống gian lận.' }
-  ],
-  features: [
-    { title: 'Tìm chuyến thông minh', text: 'Tìm theo điểm đi, điểm đến, ngày và số hành khách; lọc theo giờ, loại xe và giá.' },
-    { title: 'Chọn ghế trên sơ đồ xe', text: 'Sơ đồ ghế thật cho xe giường nằm, limousine và cabin; thấy ngay ghế trống, ghế đã bán.' },
-    { title: 'Vé điện tử QR', text: 'Thanh toán xong nhận vé điện tử; tài xế quét mã khi khách lên xe.' },
-    { title: 'Theo dõi xe trên bản đồ', text: 'Khách xem vị trí xe và nhật ký chuyến; chủ xe thấy mọi xe đang chạy.' },
-    { title: 'App riêng cho từng nhà xe', text: 'Cùng một nền tảng, mỗi nhà xe đổi logo, màu và tên miền thành app của mình.' },
-    { title: 'Studio quản lý nhà xe', text: 'Tuyến, điểm đón, chuyến chạy, tổ lái, đại lý và báo cáo doanh thu ở một nơi.' }
-  ],
-  roles: [
-    { title: 'Khách hàng', text: 'Đặt vé, nhập mã ưu đãi, xem vé của tôi và theo dõi xe.' },
-    { title: 'Tài xế / Lơ xe', text: 'Xem chuyến được phân công, bật GPS, quét vé đúng xe.' },
-    { title: 'Chủ nhà xe', text: 'Chuyến hôm nay, tổ lái, số khách đã lên xe, bản đồ đội xe.' }
-  ],
-  gallery: [
-    {
-      id: 'website',
-      label: 'Website đặt vé',
-      device: 'desktop',
-      shots: [
-        { src: `${G}/home.webp`, title: 'Trang chủ danavago.com', text: 'Chọn điểm đi, điểm đến, ngày đi và loại xe.' },
-        { src: `${G}/search-results.webp`, title: 'Kết quả tìm chuyến', text: 'So sánh giờ chạy, loại xe, giá; lọc theo nhu cầu.' },
-        { src: `${G}/seat-map.webp`, title: 'Chọn ghế', text: 'Sơ đồ ghế xe limousine, giữ chỗ trong 10 phút.' }
-      ]
-    },
-    {
-      id: 'app',
-      label: 'App DANAVA GO',
-      device: 'phone',
-      shots: [
-        { src: `${G}/app-home.webp`, title: 'Trang chủ app', text: 'Tìm chuyến nhanh, điểm đến nổi bật và ưu đãi.' },
-        { src: `${G}/app-trips.webp`, title: 'Danh sách chuyến', text: 'Chọn ngày, xem giờ chạy, đánh giá và giá vé.' },
-        { src: `${G}/app-seats.webp`, title: 'Chọn chỗ', text: 'Sơ đồ tầng dưới/tầng trên, chọn ghế trống.' },
-        { src: `${G}/app-payment.webp`, title: 'Thanh toán', text: 'QR ngân hàng, ví điện tử hoặc thẻ.' },
-        { src: `${G}/app-tickets.webp`, title: 'Vé của tôi', text: 'Vé điện tử, thông tin chuyến và theo dõi xe.' }
-      ]
-    }
-  ] as ShotGroup[]
-};
